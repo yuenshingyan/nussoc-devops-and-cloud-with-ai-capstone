@@ -8,7 +8,7 @@
 - Explain and verify each step, then pause for review before merging and continuing.
 - Do not claim external deployment, notifications, security scans, or recovery succeeded without real execution evidence.
 
-Steps 1.1–1.3 are reviewed and merged into `main`. Step 1.4 is implemented and locally verified on `task-01/step-04-tests`, pending review and merge. Step 1.5 onward remains pending. See the [evidence index](evidence/README.md) and [approved API contract](docs/api-contract.md).
+Steps 1.1–1.4 are reviewed, merged into `main`, and published to GitHub. Step 1.5 packaging and anonymous source-access checks passed; its documentation is pending review on `task-01/step-05-source-publication`. Task 2 onward remains pending. See the [evidence index](evidence/README.md), [approved API contract](docs/api-contract.md), and [publication runbook](docs/runbooks/source-publication.md).
 
 ## Technology choices
 
@@ -270,7 +270,7 @@ The assignment allows equivalent application, build, and unit-testing tools with
 
 ## Decisions needed when their steps are reached
 
-- **Task 1:** Python 3.14 selected; transaction schema/rules approved and documented in `docs/api-contract.md`. Evaluator access to the configured GitHub repository still needs confirmation.
+- **Task 1:** Python 3.14 and transaction contract confirmed. Anonymous access to the public `main` branch verified. Approval to change GitHub's default branch from the scaffold branch to `main` remains pending.
 - **Task 2:** Registry namespace and target CPU architecture.
 - **Task 3:** Cloud provider, region, credentials configured locally, budget, exposure policy, and teardown timing.
 - **Task 4:** Jenkins hosting and agent setup; webhook reachability.
@@ -279,4 +279,4 @@ The assignment allows equivalent application, build, and unit-testing tools with
 
 ## Immediate next action
 
-Review **Task 1, Step 4** on `task-01/step-04-tests`. After approval, merge it into `main` and create `task-01/step-05-source-publication` to verify clean packaging and GitHub/evaluator access. Confirm external publishing before pushing changes.
+Review **Task 1, Step 5** on `task-01/step-05-source-publication`. Obtain approval before merging its documentation or changing the GitHub default branch. After approval to continue, create `task-02/step-01-dockerfile` from the updated `main`; do not skip directly to registry publication or cloud provisioning.

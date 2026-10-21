@@ -4,11 +4,15 @@ A Python/FastAPI transaction-validation API and cloud-native DevOps capstone.
 
 ## Status
 
-Task 1, Step 4: `GET /health` and `POST /validate` are implemented with locked
-dependencies, expanded unit/API boundary tests, and pytest-generated JUnit XML and
-coverage reports. Transaction rules and safe errors are documented in the API
-contract. Source-publication verification, containers, pipeline, and cloud work
-remain pending.
+Task 1 implementation and verification are complete: application endpoints, 167
+passing tests, JUnit/coverage reports, clean wheel/source-distribution checks, and
+public GitHub source access. Step 1.5 documentation is pending review and merge.
+Container, pipeline, and cloud work remain pending.
+
+**Evaluator source link:** [reviewed application on main](https://github.com/yuenshingyan/nussoc-devops-and-cloud-with-ai-capstone/tree/main).
+The repository currently defaults to an older scaffold branch; use this explicit
+link or clone with `--branch main`. See the
+[publication runbook](docs/runbooks/source-publication.md) for verified links and details.
 See [PLAN.md](PLAN.md) for ordered steps and branch names.
 
 ## Quick start
@@ -96,8 +100,8 @@ Remove a placeholder when its directory receives real content.
 
 ## Files to add during implementation
 
-- Remaining Task 1: verify clean packaging and source publication/evaluator access.
-  No environment settings or secrets are needed yet.
+- Task 1: implementation, tests, packaging checks, and source publication verified;
+  Step 1.5 documentation awaits review. No environment settings or secrets are needed yet.
 - Task 2: `Dockerfile`, `.dockerignore`, and container smoke tests.
 - Task 3: Kubernetes manifests and provider-specific infrastructure setup.
 - Task 4: `Jenkinsfile` and pipeline setup instructions.
