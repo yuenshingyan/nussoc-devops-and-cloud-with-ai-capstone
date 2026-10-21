@@ -1,0 +1,83 @@
+#0 building with "desktop-linux" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 1.43kB done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for ghcr.io/astral-sh/uv:0.9.21@sha256:15f68a476b768083505fe1dbfcc998344d0135f0ca1b8465c4760b323904f05a
+#2 ...
+
+#3 [auth] library/python:pull token for registry-1.docker.io
+#3 DONE 0.0s
+
+#2 [internal] load metadata for ghcr.io/astral-sh/uv:0.9.21@sha256:15f68a476b768083505fe1dbfcc998344d0135f0ca1b8465c4760b323904f05a
+#2 DONE 1.1s
+
+#4 [internal] load metadata for docker.io/library/python:3.14.7-slim-bookworm@sha256:82bc3c539b8813ada9d68c63b40158fa002f7f33de9bf3312a3dfdc0620dff56
+#4 DONE 1.7s
+
+#5 [internal] load .dockerignore
+#5 transferring context: 391B done
+#5 DONE 0.0s
+
+#6 [uv 1/1] FROM ghcr.io/astral-sh/uv:0.9.21@sha256:15f68a476b768083505fe1dbfcc998344d0135f0ca1b8465c4760b323904f05a
+#6 DONE 0.0s
+
+#7 [builder 1/6] FROM docker.io/library/python:3.14.7-slim-bookworm@sha256:82bc3c539b8813ada9d68c63b40158fa002f7f33de9bf3312a3dfdc0620dff56
+#7 DONE 0.0s
+
+#8 [internal] load build context
+#8 transferring context: 59.18kB done
+#8 DONE 0.0s
+
+#9 [builder 2/6] COPY --from=uv /uv /usr/local/bin/uv
+#9 CACHED
+
+#10 [builder 3/6] WORKDIR /build
+#10 CACHED
+
+#11 [builder 4/6] COPY pyproject.toml uv.lock README.md ./
+#11 DONE 0.0s
+
+#12 [builder 5/6] COPY src/ ./src/
+#12 DONE 0.0s
+
+#13 [builder 6/6] RUN --mount=type=cache,target=/root/.cache/uv     uv sync --locked --no-dev --no-editable
+#13 0.211 Using CPython 3.14.7 interpreter at: /usr/local/bin/python3
+#13 0.211 Creating virtual environment at: /opt/venv
+#13 0.226 Resolved 27 packages in 6ms
+#13 0.236    Building finsecure-pay @ file:///build
+#13 0.895       Built finsecure-pay @ file:///build
+#13 0.897 Prepared 1 package in 663ms
+#13 0.927 Installed 15 packages in 29ms
+#13 0.927  + annotated-doc==0.0.5
+#13 0.927  + annotated-types==0.8.0
+#13 0.927  + anyio==4.15.1
+#13 0.928  + click==8.5.0
+#13 0.928  + fastapi==0.156.8
+#13 0.928  + finsecure-pay==0.1.0 (from file:///build)
+#13 0.928  + h11==0.16.0
+#13 0.928  + idna==3.20
+#13 0.928  + opentelemetry-api==1.45.1
+#13 0.928  + pydantic==2.14.1
+#13 0.928  + pydantic-core==2.50.1
+#13 0.928  + starlette==1.9.0
+#13 0.928  + typing-extensions==4.16.0
+#13 0.928  + typing-inspection==0.4.4
+#13 0.928  + uvicorn==0.54.0
+#13 DONE 1.0s
+
+#14 [runtime 2/4] RUN groupadd --gid 10001 app     && useradd --uid 10001 --gid 10001 --no-create-home --shell /usr/sbin/nologin app
+#14 CACHED
+
+#15 [runtime 3/4] WORKDIR /app
+#15 CACHED
+
+#16 [runtime 4/4] COPY --from=builder /opt/venv /opt/venv
+#16 DONE 0.0s
+
+#17 exporting to image
+#17 exporting layers 0.0s done
+#17 writing image sha256:42592d31c98fee276015202061fda94e41e61e060fe69b39fbac6677b599bb90 done
+#17 naming to docker.io/library/finsecure-pay:sha-dec0da0-arm64 done
+#17 DONE 0.0s

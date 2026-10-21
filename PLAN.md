@@ -8,7 +8,7 @@
 - Explain and verify each step, then pause for review before merging and continuing.
 - Do not claim external deployment, notifications, security scans, or recovery succeeded without real execution evidence.
 
-Task 1 is reviewed, merged into `main`, and published to GitHub; `main` is the repository default branch. Step 2.1 is reviewed and merged locally. Step 2.2 is implemented and runtime-verified on `task-02/step-02-container-validation`, pending review and merge. Step 2.3 onward remains pending. See the [evidence index](evidence/README.md) and [container execution runbook](docs/runbooks/container-execution.md).
+Task 1 and Steps 2.1–2.2 are reviewed, merged into `main`, and published to GitHub. Step 2.3 has published and pull-tested ARM64/AMD64 release `yuenshingyan/finsecure-pay:0.1.0`; its publication notes await review on `task-02/step-03-image-publication`. Task 3 onward remains pending. See the [evidence index](evidence/README.md) and [image publication runbook](docs/runbooks/image-publication.md).
 
 ## Technology choices
 
@@ -271,7 +271,7 @@ The assignment allows equivalent application, build, and unit-testing tools with
 ## Decisions needed when their steps are reached
 
 - **Task 1:** Complete; Python 3.14 and transaction contract confirmed. Public source access verified, and GitHub defaults to `main` following approval.
-- **Task 2:** Local ARM64 build and execution verified. Registry namespace, visibility/access, credentials configured locally, and cloud-target CPU architecture still need confirmation before publishing.
+- **Task 2:** Public Docker Hub repository `yuenshingyan/finsecure-pay` confirmed. Version 0.1.0 published for ARM64/AMD64 and verified after registry pulls; AMD64 was tested under emulation. Cluster node architecture remains a cloud-deployment decision.
 - **Task 3:** Cloud provider, region, credentials configured locally, budget, exposure policy, and teardown timing.
 - **Task 4:** Jenkins hosting and agent setup; webhook reachability.
 - **Task 6:** SMTP/notification receiver and cloud logging configuration.
@@ -279,4 +279,4 @@ The assignment allows equivalent application, build, and unit-testing tools with
 
 ## Immediate next action
 
-Review **Task 2, Step 2** on `task-02/step-02-container-validation`. After approval, merge it into `main` and create `task-02/step-03-image-publication`. Confirm the registry destination, access/visibility, authentication setup, and target architecture before publishing.
+Review **Task 2, Step 3** on `task-02/step-03-image-publication`. After approval, merge its documentation into `main` and create `task-03/step-01-manifests`. Use the recorded release digest for deployment configuration; do not provision billable cloud resources before provider, region, budget, and access approval.

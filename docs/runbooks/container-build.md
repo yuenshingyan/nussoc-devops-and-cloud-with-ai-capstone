@@ -32,10 +32,11 @@ docker image inspect finsecure-pay:task-02-step-01 \
 ```
 
 Expect the configured user to be `10001:10001`, not root. This tag is a local
-step-specific build tag, not the versioned registry release planned in Step 2.3.
-The initial verified build targets `linux/arm64` on the current Apple Silicon
-machine. The upstream image indexes also include AMD64, but an AMD64 application
-build has not been verified. Select the cloud node/image architecture before publishing.
+step-specific build tag, not the versioned registry release.
+The initial Step 2.1 build verified only `linux/arm64` on Apple Silicon. Step 2.3
+subsequently built, tested, and published both ARM64 and AMD64; see the
+[image publication runbook](image-publication.md). AMD64 execution was emulated.
+Select the managed-cluster node architecture explicitly before cloud deployment.
 
 Keep Docker context outside `.venv`, evidence, and raw build/test reports. Rebuild
 after application or dependency changes. Update base-image digests deliberately and
@@ -68,7 +69,9 @@ This command uses the Docker Desktop plugin path on macOS; other environments
 should use their normal Docker setup. Anonymous pulls may be rate-limited. Do not
 use the empty configuration for private registries or authenticated pushes. Repair
 or approve changes to the normal credential setup separately if publishing needs it.
-No global Docker settings were modified during verification.
+No global Docker settings were modified during verification. After the user
+corrected the Docker Hub login, Step 2.3 builds and pushes succeeded with the normal
+authenticated configuration; the temporary workaround was not needed for that release.
 
 ## Step boundaries
 

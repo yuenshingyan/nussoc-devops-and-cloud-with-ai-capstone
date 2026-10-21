@@ -1,0 +1,6 @@
+#1 [internal] pushing docker.io/yuenshingyan/finsecure-pay
+#1 0.000 copying sha256:33d541d4987fddfd8e7b6dfc185db33eaca499c973d28acd5afc2cf866678e77 from docker.io/yuenshingyan/finsecure-pay@sha256:33d541d4987fddfd8e7b6dfc185db33eaca499c973d28acd5afc2cf866678e77 to docker.io/yuenshingyan/finsecure-pay
+#1 0.000 copying sha256:0f302152c2152b6bef90665efeb861d223731a290ed6fd02ef8ae49c15ca32ce from docker.io/yuenshingyan/finsecure-pay@sha256:0f302152c2152b6bef90665efeb861d223731a290ed6fd02ef8ae49c15ca32ce to docker.io/yuenshingyan/finsecure-pay
+#1 3.001 pushing sha256:18397d4d8391cdfde3220222f0b5d07afa8cbc2afaf92ef8b7d2b23b6494c10c to docker.io/yuenshingyan/finsecure-pay:0.1.0
+#1 4.898 pushing sha256:18397d4d8391cdfde3220222f0b5d07afa8cbc2afaf92ef8b7d2b23b6494c10c to docker.io/yuenshingyan/finsecure-pay:sha-dec0da0
+#1 DONE 7.5s

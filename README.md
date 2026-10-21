@@ -6,9 +6,9 @@ A Python/FastAPI transaction-validation API and cloud-native DevOps capstone.
 
 Task 1 is complete and merged: application endpoints, 167 passing tests,
 JUnit/coverage reports, clean package-installation checks, and public GitHub access.
-Task 2 includes a multi-stage, non-root Docker image and verified local execution
-with live endpoint checks and cleanup. Step 2.2 awaits review; registry publication,
-pipeline, and cloud work remain pending.
+Task 2 includes a multi-stage, non-root Docker image, verified local execution,
+and public versioned ARM64/AMD64 images on Docker Hub. Step 2.3 publication notes
+await review; Kubernetes, pipeline, and cloud work remain pending.
 
 **Evaluator source link:** [reviewed application on main](https://github.com/yuenshingyan/nussoc-devops-and-cloud-with-ai-capstone/tree/main).
 GitHub now defaults to `main`. See the
@@ -81,7 +81,23 @@ uv run --locked python scripts/smoke_test.py
 It uses a loopback-only port, checks the actual non-root process and HTTP responses,
 then stops/removes its test container. See the
 [execution runbook](docs/runbooks/container-execution.md). No image is pulled or
-published by this script; registry publication remains a separate step.
+published by this script.
+
+## Published container
+
+**[Docker Hub: yuenshingyan/finsecure-pay](https://hub.docker.com/r/yuenshingyan/finsecure-pay)**
+
+```sh
+docker pull yuenshingyan/finsecure-pay:0.1.0
+uv run --locked python scripts/smoke_test.py --image yuenshingyan/finsecure-pay:0.1.0
+```
+
+Version `0.1.0` and commit tag `sha-dec0da0` point to the same multi-platform release.
+ARM64 and AMD64 passed smoke tests before publication and after pulling their
+registry digests; AMD64 was tested under emulation, not on a native cloud node.
+See the [image publication runbook](docs/runbooks/image-publication.md) for the
+immutable deployment digest, source revision, and exact evidence. This demo release
+has not yet passed the security scans planned for Task 5; use synthetic data only.
 
 ## Repository structure
 
@@ -123,7 +139,7 @@ Remove a placeholder when its directory receives real content.
 ## Files to add during implementation
 
 - Task 1: complete. No application environment settings or secrets are needed yet.
-- Remaining Task 2: versioned registry publication after destination/architecture approval.
+- Task 2: builds, execution, and registry publication verified; publication notes await review.
 - Task 3: Kubernetes manifests and provider-specific infrastructure setup.
 - Task 4: `Jenkinsfile` and pipeline setup instructions.
 - Tasks 5–6: Security policies, monitoring/logging configuration, and demo scripts.

@@ -1,0 +1,34 @@
+{
+  "verified_at_utc": "2026-10-21T16:02:28.311630+00:00",
+  "repository": "docker.io/yuenshingyan/finsecure-pay",
+  "docker_hub_url": "https://hub.docker.com/r/yuenshingyan/finsecure-pay",
+  "public": true,
+  "source_commit": "dec0da00b6e19defb34001ed84fc7696bf0f8089",
+  "release_tags": [
+    "0.1.0",
+    "sha-dec0da0"
+  ],
+  "index_digest": "sha256:18397d4d8391cdfde3220222f0b5d07afa8cbc2afaf92ef8b7d2b23b6494c10c",
+  "platforms": [
+    {
+      "platform": "linux/arm64",
+      "manifest_digest": "sha256:0f302152c2152b6bef90665efeb861d223731a290ed6fd02ef8ae49c15ca32ce",
+      "image_config_digest": "sha256:42592d31c98fee276015202061fda94e41e61e060fe69b39fbac6677b599bb90",
+      "local_smoke_passed": true,
+      "registry_smoke_passed": true,
+      "execution_environment": "Docker Desktop ARM64 Linux VM"
+    },
+    {
+      "platform": "linux/amd64",
+      "manifest_digest": "sha256:33d541d4987fddfd8e7b6dfc185db33eaca499c973d28acd5afc2cf866678e77",
+      "image_config_digest": "sha256:efa84869c27fbe80f684b1afb2871d714e7cfc5336cc032a5c96ab55a0ac4b4b",
+      "local_smoke_passed": true,
+      "registry_smoke_passed": true,
+      "execution_environment": "Docker Desktop AMD64 emulation on ARM64 host"
+    }
+  ],
+  "anonymous_manifest_and_config_access": true,
+  "source_dockerfile_publicly_verified": true,
+  "all_smoke_containers_removed": true,
+  "pulls_reused_cached_layers": true
+}

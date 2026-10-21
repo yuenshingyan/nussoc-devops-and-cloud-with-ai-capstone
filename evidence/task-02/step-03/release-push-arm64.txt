@@ -1,0 +1,18 @@
+The push refers to repository [docker.io/yuenshingyan/finsecure-pay]
+3bd41717deb5: Preparing
+9c73b40d927e: Preparing
+15d7298760cf: Preparing
+ef2a4cea11ec: Preparing
+092e7c3a12ec: Preparing
+753e476ed7f1: Preparing
+055ab12bd547: Preparing
+753e476ed7f1: Waiting
+055ab12bd547: Waiting
+092e7c3a12ec: Mounted from library/python
+ef2a4cea11ec: Mounted from library/python
+9c73b40d927e: Pushed
+753e476ed7f1: Mounted from library/python
+055ab12bd547: Mounted from library/python
+3bd41717deb5: Pushed
+15d7298760cf: Pushed
+sha-dec0da0-arm64: digest: sha256:0f302152c2152b6bef90665efeb861d223731a290ed6fd02ef8ae49c15ca32ce size: 1784

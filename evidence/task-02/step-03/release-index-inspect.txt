@@ -1,0 +1,12 @@
+Name:      docker.io/yuenshingyan/finsecure-pay:0.1.0
+MediaType: application/vnd.docker.distribution.manifest.list.v2+json
+Digest:    sha256:18397d4d8391cdfde3220222f0b5d07afa8cbc2afaf92ef8b7d2b23b6494c10c
+
+Manifests:
+  Name:      docker.io/yuenshingyan/finsecure-pay:0.1.0@sha256:0f302152c2152b6bef90665efeb861d223731a290ed6fd02ef8ae49c15ca32ce
+  MediaType: application/vnd.docker.distribution.manifest.v2+json
+  Platform:  linux/arm64
+
+  Name:      docker.io/yuenshingyan/finsecure-pay:0.1.0@sha256:33d541d4987fddfd8e7b6dfc185db33eaca499c973d28acd5afc2cf866678e77
+  MediaType: application/vnd.docker.distribution.manifest.v2+json
+  Platform:  linux/amd64

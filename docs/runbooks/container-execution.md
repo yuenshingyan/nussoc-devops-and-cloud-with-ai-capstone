@@ -93,4 +93,5 @@ Manual commands do not install a cleanup trap: if a check fails, still stop/remo
 only the container you created. Use synthetic data only and keep logs sanitized.
 
 See [Step 2.2 evidence](../../evidence/task-02/step-02-container-validation.md) for
-actual execution and cleanup results. Registry publication remains Step 2.3.
+actual execution and cleanup results. See the [image publication runbook](image-publication.md)
+for Step 2.3's public registry release and digest-pinned pull commands.

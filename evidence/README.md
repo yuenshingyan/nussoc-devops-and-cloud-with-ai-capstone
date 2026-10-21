@@ -2,12 +2,13 @@
 
 Store only reviewed, sanitized evidence from actual execution here. Task 1 has
 application, test, package-installation, and public source-access evidence.
-Task 2 has image-build, inspection, and local execution evidence; registry publication remains pending.
+Task 2 has image-build, execution, versioned registry publication, and anonymous
+pull/access evidence for ARM64 and AMD64.
 
 | Task | Directory | Status |
 | --- | --- | --- |
 | 1 — Application and Git | [task-01](task-01/) | Complete and merged |
-| 2 — Containerisation | [task-02](task-02/) | Steps 2.1–2.2 verified; Step 2.3 pending |
+| 2 — Containerisation | [task-02](task-02/) | Steps 2.1–2.3 verified; publication notes pending review |
 | 3 — Kubernetes and cloud | [task-03](task-03/) | Pending |
 | 4 — CI/CD | [task-04](task-04/) | Pending |
 | 5 — DevSecOps | [task-05](task-05/) | Pending |
@@ -33,6 +34,9 @@ Task 2 has image-build, inspection, and local execution evidence; registry publi
 - [Step 2.2 — Container execution](task-02/step-02-container-validation.md): actual
   non-root PID 1, loopback HTTP checks, clean shutdown/removal, and a missing-image
   failure check.
+- [Step 2.3 — Image publication](task-02/step-03-image-publication.md): public Docker Hub
+  version/commit tags, ARM64/AMD64 manifests, smoke tests before and after registry
+  pulls, and anonymous digest/provenance verification.
 
 For each artifact, record the requirement demonstrated, timestamp, command or
 procedure, actual result, commit, applicable image digest, and artifact path or
