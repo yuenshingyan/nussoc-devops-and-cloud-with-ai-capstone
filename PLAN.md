@@ -8,7 +8,7 @@
 - Explain and verify each step, then pause for review before merging and continuing.
 - Do not claim external deployment, notifications, security scans, or recovery succeeded without real execution evidence.
 
-Step 1.1 is implemented and locally verified on `task-01/step-01-scaffold`, pending review and merge. All later steps remain pending. See [scaffold evidence](evidence/task-01/step-01-scaffold.md).
+Step 1.1 is reviewed and merged into `main`. Step 1.2 is implemented and locally verified on `task-01/step-02-health`, pending review and merge. Steps 1.3 onward remain pending. See [scaffold evidence](evidence/task-01/step-01-scaffold.md) and [health evidence](evidence/task-01/step-02-health.md).
 
 ## Technology choices
 
@@ -279,4 +279,4 @@ The assignment allows equivalent application, build, and unit-testing tools with
 
 ## Immediate next action
 
-Review **Task 1, Step 1** on `task-01/step-01-scaffold`. After approval, merge it into `main` and create `task-01/step-02-health` for Step 1.2. Do not start Step 1.2 or publish changes before approval.
+Review **Task 1, Step 2** on `task-01/step-02-health`. After approval, merge it into `main` and create `task-01/step-03-validation`. Agree on the transaction contract before implementing Step 1.3. Do not publish changes without approval.

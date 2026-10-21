@@ -30,9 +30,16 @@ curl --fail --silent --show-error http://127.0.0.1:8000/openapi.json
 The schema's `info` contains the title `FinSecure Pay` and version `0.1.0`.
 Stop the server with Ctrl-C. Local development binds only to loopback by default.
 
-At Step 1.1 the application has no business endpoints. `/`, `/health`, and
-`/validate` return 404; `/health` is added in Step 1.2. No environment variables
-or credentials are required for this scaffold, so there is no `.env.example` yet.
+Check application liveness:
+
+```sh
+curl --fail --silent --show-error http://127.0.0.1:8000/health
+```
+
+Expect HTTP 200 with `{"status":"healthy"}`. This checks the application itself,
+not external dependencies. See the [API contract](../api-contract.md).
+`/` and `/validate` still return 404. No environment variables or credentials
+are required yet, so there is no `.env.example`.
 
 ## Check and test
 
@@ -42,8 +49,9 @@ uv run --locked ruff format --check .
 uv run --locked pytest
 ```
 
-The initial tests verify schema metadata and independent application instances.
-They are scaffold checks, not transaction-rule tests.
+The tests verify schema metadata, independent application instances, and the
+health endpoint's response, allowed method, and published schema. They are not
+transaction-rule tests; those will be added with `/validate`.
 
 The locked Starlette version currently emits a deprecation warning for HTTPX-based
 `TestClient`. Tests pass; the warning is not suppressed. Revisit the testing-client

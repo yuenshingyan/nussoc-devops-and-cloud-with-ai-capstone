@@ -4,9 +4,9 @@ A Python/FastAPI transaction-validation API and cloud-native DevOps capstone.
 
 ## Status
 
-Task 1, Step 1: Python/FastAPI scaffold with locked dependencies, application-factory
-checks, and local development instructions. `/health` and `/validate` are not yet
-implemented. Container, pipeline, and cloud work remain pending.
+Task 1, Step 2: Python/FastAPI scaffold and `GET /health` are implemented with
+locked dependencies, API tests, and local development instructions. `/validate`
+is not yet implemented. Container, pipeline, and cloud work remain pending.
 See [PLAN.md](PLAN.md) for ordered steps and branch names.
 
 ## Quick start
@@ -20,7 +20,15 @@ uv run --locked uvicorn finsecure_pay.main:create_app --factory --host 127.0.0.1
 ```
 
 Open `http://127.0.0.1:8000/docs` or request `/openapi.json`. Stop with Ctrl-C.
-The root `/` returns 404; no business routes have been added yet.
+The root `/` returns 404. Check application liveness from another terminal:
+
+```sh
+curl --fail --silent --show-error http://127.0.0.1:8000/health
+# {"status":"healthy"}
+```
+
+This checks application liveness, not external dependencies. See the
+[API contract](docs/api-contract.md).
 
 ```sh
 uv run --locked ruff check .
@@ -69,7 +77,7 @@ Remove a placeholder when its directory receives real content.
 
 ## Files to add during implementation
 
-- Remaining Task 1: health and validation endpoints, transaction tests, configuration
+- Remaining Task 1: validation endpoint, transaction tests, configuration
   examples when needed, and source publication. No environment settings or secrets
   are needed for the initial scaffold.
 - Task 2: `Dockerfile`, `.dockerignore`, and container smoke tests.
