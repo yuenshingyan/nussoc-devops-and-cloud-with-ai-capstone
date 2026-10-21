@@ -2,12 +2,12 @@
 
 Store only reviewed, sanitized evidence from actual execution here. Task 1 has
 application, test, package-installation, and public source-access evidence.
-Task 2 has image-build and static inspection evidence; execution/publication remain pending.
+Task 2 has image-build, inspection, and local execution evidence; registry publication remains pending.
 
 | Task | Directory | Status |
 | --- | --- | --- |
 | 1 — Application and Git | [task-01](task-01/) | Complete and merged |
-| 2 — Containerisation | [task-02](task-02/) | Step 2.1 verified; Steps 2.2–2.3 pending |
+| 2 — Containerisation | [task-02](task-02/) | Steps 2.1–2.2 verified; Step 2.3 pending |
 | 3 — Kubernetes and cloud | [task-03](task-03/) | Pending |
 | 4 — CI/CD | [task-04](task-04/) | Pending |
 | 5 — DevSecOps | [task-05](task-05/) | Pending |
@@ -30,6 +30,9 @@ Task 2 has image-build and static inspection evidence; execution/publication rem
 - [Step 2.1 — Container definition and build](task-02/step-01-dockerfile.md): pinned
   multi-stage build, non-root configuration, final filesystem inspection, and the
   documented Docker Desktop metadata-timeout workaround.
+- [Step 2.2 — Container execution](task-02/step-02-container-validation.md): actual
+  non-root PID 1, loopback HTTP checks, clean shutdown/removal, and a missing-image
+  failure check.
 
 For each artifact, record the requirement demonstrated, timestamp, command or
 procedure, actual result, commit, applicable image digest, and artifact path or

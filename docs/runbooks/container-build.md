@@ -74,7 +74,8 @@ No global Docker settings were modified during verification.
 
 Step 2.1 verifies image construction, configured user, and filesystem contents.
 Application execution, actual process identity, port mapping, endpoint requests,
-and shutdown behavior belong to Step 2.2. Docker/Kubernetes health-probe decisions
+and shutdown behavior are covered by the [Step 2.2 execution runbook](container-execution.md).
+Docker/Kubernetes health-probe decisions
 will be validated in their appropriate steps. Registry publication is Step 2.3.
 
 See [Step 2.1 evidence](../../evidence/task-02/step-01-dockerfile.md) for actual build

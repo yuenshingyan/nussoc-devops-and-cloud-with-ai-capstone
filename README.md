@@ -6,8 +6,9 @@ A Python/FastAPI transaction-validation API and cloud-native DevOps capstone.
 
 Task 1 is complete and merged: application endpoints, 167 passing tests,
 JUnit/coverage reports, clean package-installation checks, and public GitHub access.
-Task 2.1 adds a multi-stage, non-root Docker image definition. Container execution,
-registry publication, pipeline, and cloud work remain pending.
+Task 2 includes a multi-stage, non-root Docker image and verified local execution
+with live endpoint checks and cleanup. Step 2.2 awaits review; registry publication,
+pipeline, and cloud work remain pending.
 
 **Evaluator source link:** [reviewed application on main](https://github.com/yuenshingyan/nussoc-devops-and-cloud-with-ai-capstone/tree/main).
 GitHub now defaults to `main`. See the
@@ -69,8 +70,18 @@ docker build --progress=plain --tag finsecure-pay:task-02-step-01 .
 
 The image uses locked runtime dependencies and runs as UID/GID `10001:10001`.
 See the [container build runbook](docs/runbooks/container-build.md), including the
-local Docker Desktop credential-helper workaround. Running and publishing the
-image remain separate steps.
+local Docker Desktop credential-helper workaround.
+
+Run the local image smoke test:
+
+```sh
+uv run --locked python scripts/smoke_test.py
+```
+
+It uses a loopback-only port, checks the actual non-root process and HTTP responses,
+then stops/removes its test container. See the
+[execution runbook](docs/runbooks/container-execution.md). No image is pulled or
+published by this script; registry publication remains a separate step.
 
 ## Repository structure
 
@@ -96,6 +107,7 @@ ops/
   security/             Scanner policies and remediation guidance
 scripts/
   test.sh               Full pytest run with JUnit XML and coverage reports
+  smoke_test.py         Local container execution, HTTP checks, and cleanup
   demos/                Controlled demonstration scripts
 docs/
   architecture/         Diagram sources
@@ -111,7 +123,7 @@ Remove a placeholder when its directory receives real content.
 ## Files to add during implementation
 
 - Task 1: complete. No application environment settings or secrets are needed yet.
-- Remaining Task 2: container execution/smoke tests and versioned registry publication.
+- Remaining Task 2: versioned registry publication after destination/architecture approval.
 - Task 3: Kubernetes manifests and provider-specific infrastructure setup.
 - Task 4: `Jenkinsfile` and pipeline setup instructions.
 - Tasks 5–6: Security policies, monitoring/logging configuration, and demo scripts.

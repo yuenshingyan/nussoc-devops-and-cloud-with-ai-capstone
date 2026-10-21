@@ -8,7 +8,7 @@
 - Explain and verify each step, then pause for review before merging and continuing.
 - Do not claim external deployment, notifications, security scans, or recovery succeeded without real execution evidence.
 
-Task 1 is reviewed, merged into `main`, and published to GitHub; `main` is now the repository default branch. Step 2.1 is implemented and build-verified on `task-02/step-01-dockerfile`, pending review and merge. Step 2.2 onward remains pending. See the [evidence index](evidence/README.md), [approved API contract](docs/api-contract.md), and [container build runbook](docs/runbooks/container-build.md).
+Task 1 is reviewed, merged into `main`, and published to GitHub; `main` is the repository default branch. Step 2.1 is reviewed and merged locally. Step 2.2 is implemented and runtime-verified on `task-02/step-02-container-validation`, pending review and merge. Step 2.3 onward remains pending. See the [evidence index](evidence/README.md) and [container execution runbook](docs/runbooks/container-execution.md).
 
 ## Technology choices
 
@@ -271,7 +271,7 @@ The assignment allows equivalent application, build, and unit-testing tools with
 ## Decisions needed when their steps are reached
 
 - **Task 1:** Complete; Python 3.14 and transaction contract confirmed. Public source access verified, and GitHub defaults to `main` following approval.
-- **Task 2:** Local ARM64 build verified. Registry namespace and cloud-target CPU architecture still need confirmation before publishing.
+- **Task 2:** Local ARM64 build and execution verified. Registry namespace, visibility/access, credentials configured locally, and cloud-target CPU architecture still need confirmation before publishing.
 - **Task 3:** Cloud provider, region, credentials configured locally, budget, exposure policy, and teardown timing.
 - **Task 4:** Jenkins hosting and agent setup; webhook reachability.
 - **Task 6:** SMTP/notification receiver and cloud logging configuration.
@@ -279,4 +279,4 @@ The assignment allows equivalent application, build, and unit-testing tools with
 
 ## Immediate next action
 
-Review **Task 2, Step 1** on `task-02/step-01-dockerfile`. After approval, merge it into `main` and create `task-02/step-02-container-validation` to run and test the built image locally. Do not publish the image or provision cloud resources in that step.
+Review **Task 2, Step 2** on `task-02/step-02-container-validation`. After approval, merge it into `main` and create `task-02/step-03-image-publication`. Confirm the registry destination, access/visibility, authentication setup, and target architecture before publishing.
