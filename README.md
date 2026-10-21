@@ -4,9 +4,33 @@ A Python/FastAPI transaction-validation API and cloud-native DevOps capstone.
 
 ## Status
 
-Directory structure only. The application, dependency configuration, tests,
-container image, pipeline, and cloud resources have not been implemented yet.
+Task 1, Step 1: Python/FastAPI scaffold with locked dependencies, application-factory
+checks, and local development instructions. `/health` and `/validate` are not yet
+implemented. Container, pipeline, and cloud work remain pending.
 See [PLAN.md](PLAN.md) for ordered steps and branch names.
+
+## Quick start
+
+Prerequisites: uv and Python 3.14 (uv can install the interpreter if needed).
+Run from this repository's root:
+
+```sh
+uv sync --locked
+uv run --locked uvicorn finsecure_pay.main:create_app --factory --host 127.0.0.1 --port 8000
+```
+
+Open `http://127.0.0.1:8000/docs` or request `/openapi.json`. Stop with Ctrl-C.
+The root `/` returns 404; no business routes have been added yet.
+
+```sh
+uv run --locked ruff check .
+uv run --locked ruff format --check .
+uv run --locked pytest
+uv build
+```
+
+See the [local development runbook](docs/runbooks/local-development.md) and
+[Python stack decision](docs/decisions/001-python-stack.md).
 
 ## Repository structure
 
@@ -45,8 +69,9 @@ Remove a placeholder when its directory receives real content.
 
 ## Files to add during implementation
 
-- Task 1: `pyproject.toml`, `uv.lock`, `.python-version`, `.env.example`,
-  application modules, tests, and local development instructions.
+- Remaining Task 1: health and validation endpoints, transaction tests, configuration
+  examples when needed, and source publication. No environment settings or secrets
+  are needed for the initial scaffold.
 - Task 2: `Dockerfile`, `.dockerignore`, and container smoke tests.
 - Task 3: Kubernetes manifests and provider-specific infrastructure setup.
 - Task 4: `Jenkinsfile` and pipeline setup instructions.
@@ -59,5 +84,6 @@ Do not add empty executable configuration files as if they were working artifact
 
 Work on one dedicated branch per step, verify changes, and pause for review
 before merging into `main`. Do not commit secrets or raw sensitive exports.
-The original `instructions.html` is local reference material and is ignored by Git.
+The original assignment HTML and local agent guide are stored outside this repository;
+do not copy them into published artifacts.
 No external resources should be created or published without confirmation.

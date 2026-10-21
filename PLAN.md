@@ -8,7 +8,7 @@
 - Explain and verify each step, then pause for review before merging and continuing.
 - Do not claim external deployment, notifications, security scans, or recovery succeeded without real execution evidence.
 
-This file records the plan only. No implementation steps have been completed.
+Step 1.1 is implemented and locally verified on `task-01/step-01-scaffold`, pending review and merge. All later steps remain pending. See [scaffold evidence](evidence/task-01/step-01-scaffold.md).
 
 ## Technology choices
 
@@ -270,7 +270,7 @@ The assignment allows equivalent application, build, and unit-testing tools with
 
 ## Decisions needed when their steps are reached
 
-- **Task 1:** Supported local Python version, transaction schema/rules, GitHub repository ownership and visibility.
+- **Task 1:** Python 3.14 selected. Transaction schema/rules and evaluator access to the configured GitHub repository still need confirmation.
 - **Task 2:** Registry namespace and target CPU architecture.
 - **Task 3:** Cloud provider, region, credentials configured locally, budget, exposure policy, and teardown timing.
 - **Task 4:** Jenkins hosting and agent setup; webhook reachability.
@@ -279,4 +279,4 @@ The assignment allows equivalent application, build, and unit-testing tools with
 
 ## Immediate next action
 
-After plan approval, begin **Task 1, Step 1** only, using `task-01/step-01-scaffold` after the minimal repository bootstrap. Do not provision cloud resources or publish anything during that step.
+Review **Task 1, Step 1** on `task-01/step-01-scaffold`. After approval, merge it into `main` and create `task-01/step-02-health` for Step 1.2. Do not start Step 1.2 or publish changes before approval.
