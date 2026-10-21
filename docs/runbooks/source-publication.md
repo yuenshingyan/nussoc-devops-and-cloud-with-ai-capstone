@@ -8,10 +8,10 @@
 - [Test evidence at that revision](https://github.com/yuenshingyan/nussoc-devops-and-cloud-with-ai-capstone/blob/277e44b4009410742027bea92654b8e5fdb54d63/evidence/task-01/step-04-tests.md)
 
 The repository is public. Anonymous HTTP access to `main`, selected source files,
-and JUnit evidence was verified on 2026-10-21. The repository default branch was
-still `task-01/step-01-scaffold`; use the explicit `main` link above rather than
-assuming the repository landing page shows the completed application. Changing
-the default branch to `main` requires separate confirmation.
+and JUnit evidence was verified on 2026-10-21. After approval, Step 1.5 was merged
+and pushed, and GitHub's default branch was changed from
+`task-01/step-01-scaffold` to `main`. The original Step 1.5 evidence preserves the
+repository state observed before that approved default-branch change.
 
 ## Clean packaging verification
 

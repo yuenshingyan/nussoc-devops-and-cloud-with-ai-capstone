@@ -8,7 +8,7 @@
 - Explain and verify each step, then pause for review before merging and continuing.
 - Do not claim external deployment, notifications, security scans, or recovery succeeded without real execution evidence.
 
-Steps 1.1–1.4 are reviewed, merged into `main`, and published to GitHub. Step 1.5 packaging and anonymous source-access checks passed; its documentation is pending review on `task-01/step-05-source-publication`. Task 2 onward remains pending. See the [evidence index](evidence/README.md), [approved API contract](docs/api-contract.md), and [publication runbook](docs/runbooks/source-publication.md).
+Task 1 is reviewed, merged into `main`, and published to GitHub; `main` is now the repository default branch. Step 2.1 is implemented and build-verified on `task-02/step-01-dockerfile`, pending review and merge. Step 2.2 onward remains pending. See the [evidence index](evidence/README.md), [approved API contract](docs/api-contract.md), and [container build runbook](docs/runbooks/container-build.md).
 
 ## Technology choices
 
@@ -270,8 +270,8 @@ The assignment allows equivalent application, build, and unit-testing tools with
 
 ## Decisions needed when their steps are reached
 
-- **Task 1:** Python 3.14 and transaction contract confirmed. Anonymous access to the public `main` branch verified. Approval to change GitHub's default branch from the scaffold branch to `main` remains pending.
-- **Task 2:** Registry namespace and target CPU architecture.
+- **Task 1:** Complete; Python 3.14 and transaction contract confirmed. Public source access verified, and GitHub defaults to `main` following approval.
+- **Task 2:** Local ARM64 build verified. Registry namespace and cloud-target CPU architecture still need confirmation before publishing.
 - **Task 3:** Cloud provider, region, credentials configured locally, budget, exposure policy, and teardown timing.
 - **Task 4:** Jenkins hosting and agent setup; webhook reachability.
 - **Task 6:** SMTP/notification receiver and cloud logging configuration.
@@ -279,4 +279,4 @@ The assignment allows equivalent application, build, and unit-testing tools with
 
 ## Immediate next action
 
-Review **Task 1, Step 5** on `task-01/step-05-source-publication`. Obtain approval before merging its documentation or changing the GitHub default branch. After approval to continue, create `task-02/step-01-dockerfile` from the updated `main`; do not skip directly to registry publication or cloud provisioning.
+Review **Task 2, Step 1** on `task-02/step-01-dockerfile`. After approval, merge it into `main` and create `task-02/step-02-container-validation` to run and test the built image locally. Do not publish the image or provision cloud resources in that step.

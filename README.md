@@ -4,14 +4,13 @@ A Python/FastAPI transaction-validation API and cloud-native DevOps capstone.
 
 ## Status
 
-Task 1 implementation and verification are complete: application endpoints, 167
-passing tests, JUnit/coverage reports, clean wheel/source-distribution checks, and
-public GitHub source access. Step 1.5 documentation is pending review and merge.
-Container, pipeline, and cloud work remain pending.
+Task 1 is complete and merged: application endpoints, 167 passing tests,
+JUnit/coverage reports, clean package-installation checks, and public GitHub access.
+Task 2.1 adds a multi-stage, non-root Docker image definition. Container execution,
+registry publication, pipeline, and cloud work remain pending.
 
 **Evaluator source link:** [reviewed application on main](https://github.com/yuenshingyan/nussoc-devops-and-cloud-with-ai-capstone/tree/main).
-The repository currently defaults to an older scaffold branch; use this explicit
-link or clone with `--branch main`. See the
+GitHub now defaults to `main`. See the
 [publication runbook](docs/runbooks/source-publication.md) for verified links and details.
 See [PLAN.md](PLAN.md) for ordered steps and branch names.
 
@@ -62,6 +61,17 @@ JUnit XML is a report format; all tests run in Python with pytest.
 See the [local development runbook](docs/runbooks/local-development.md) and
 [Python stack decision](docs/decisions/001-python-stack.md).
 
+## Container build
+
+```sh
+docker build --progress=plain --tag finsecure-pay:task-02-step-01 .
+```
+
+The image uses locked runtime dependencies and runs as UID/GID `10001:10001`.
+See the [container build runbook](docs/runbooks/container-build.md), including the
+local Docker Desktop credential-helper workaround. Running and publishing the
+image remain separate steps.
+
 ## Repository structure
 
 ```text
@@ -100,9 +110,8 @@ Remove a placeholder when its directory receives real content.
 
 ## Files to add during implementation
 
-- Task 1: implementation, tests, packaging checks, and source publication verified;
-  Step 1.5 documentation awaits review. No environment settings or secrets are needed yet.
-- Task 2: `Dockerfile`, `.dockerignore`, and container smoke tests.
+- Task 1: complete. No application environment settings or secrets are needed yet.
+- Remaining Task 2: container execution/smoke tests and versioned registry publication.
 - Task 3: Kubernetes manifests and provider-specific infrastructure setup.
 - Task 4: `Jenkinsfile` and pipeline setup instructions.
 - Tasks 5–6: Security policies, monitoring/logging configuration, and demo scripts.

@@ -1,0 +1,22 @@
+# Allow only the files needed to build the application.
+**
+!Dockerfile
+!.dockerignore
+!pyproject.toml
+!uv.lock
+!README.md
+!src/
+!src/**
+
+# Exclude local/generated/sensitive files even if placed beneath src/.
+**/__pycache__
+**/*.py[cod]
+**/.DS_Store
+**/.env
+**/.env.*
+**/*.pem
+**/*.key
+**/kubeconfig
+**/kubeconfig.*
+**/AGENTS.md
+**/instructions.html
