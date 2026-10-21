@@ -1,5 +1,7 @@
 """Test business rules independently of HTTP and external services."""
 
+from decimal import localcontext
+
 from pytest import mark
 
 from finsecure_pay.schemas.transaction import TransactionRequest
@@ -58,6 +60,61 @@ def test_validation_reports_all_applicable_errors_in_order(transaction_payload):
         "AMOUNT_PRECISION_EXCEEDED",
         "SAME_ACCOUNT",
     ]
+
+
+def test_validation_reports_nonpositive_combined_errors_in_order(transaction_payload):
+    transaction_payload.update(amount="-0.001", currency="EUR", recipient_id="account_001")
+
+    result = validate_transaction(TransactionRequest(**transaction_payload))
+
+    assert result.valid is False
+    assert result.errors == [
+        "AMOUNT_NOT_POSITIVE",
+        "UNSUPPORTED_CURRENCY",
+        "AMOUNT_PRECISION_EXCEEDED",
+        "SAME_ACCOUNT",
+    ]
+
+
+@mark.parametrize(
+    ("amount", "expected"),
+    [
+        ("10000." + "0" * 25 + "1", ["AMOUNT_LIMIT_EXCEEDED", "AMOUNT_PRECISION_EXCEEDED"]),
+        ("9999." + "9" * 27, ["AMOUNT_PRECISION_EXCEEDED"]),
+        ("9" * 32, ["AMOUNT_LIMIT_EXCEEDED"]),
+        ("0" * 28 + "1.00", []),
+    ],
+)
+def test_validation_preserves_exact_long_decimal_comparisons(transaction_payload, amount, expected):
+    transaction_payload["amount"] = amount
+
+    result = validate_transaction(TransactionRequest(**transaction_payload))
+
+    assert result.valid is (not expected)
+    assert result.errors == expected
+
+
+@mark.parametrize("amount", ["0.01", "10000.00", "10000.01"])
+def test_validation_does_not_round_using_decimal_context(transaction_payload, amount):
+    transaction_payload["amount"] = amount
+    request = TransactionRequest(**transaction_payload)
+
+    with localcontext() as context:
+        context.prec = 2
+        result = validate_transaction(request)
+
+    expected = ["AMOUNT_LIMIT_EXCEEDED"] if amount == "10000.01" else []
+    assert result.valid is (not expected)
+    assert result.errors == expected
+
+
+def test_validation_does_not_mutate_request(transaction_payload):
+    request = TransactionRequest(**transaction_payload)
+    before = request.model_dump()
+
+    validate_transaction(request)
+
+    assert request.model_dump() == before
 
 
 def test_validation_compares_account_identifiers_case_sensitively(transaction_payload):

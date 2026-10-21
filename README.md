@@ -4,10 +4,11 @@ A Python/FastAPI transaction-validation API and cloud-native DevOps capstone.
 
 ## Status
 
-Task 1, Step 3: `GET /health` and `POST /validate` are implemented with locked
-dependencies, unit/API tests, and local development instructions. Transaction rules
-and safe malformed-request errors are documented in the API contract. Container,
-pipeline, and cloud work remain pending.
+Task 1, Step 4: `GET /health` and `POST /validate` are implemented with locked
+dependencies, expanded unit/API boundary tests, and pytest-generated JUnit XML and
+coverage reports. Transaction rules and safe errors are documented in the API
+contract. Source-publication verification, containers, pipeline, and cloud work
+remain pending.
 See [PLAN.md](PLAN.md) for ordered steps and branch names.
 
 ## Quick start
@@ -50,6 +51,10 @@ uv run --locked pytest
 uv build
 ```
 
+Generate the complete test and coverage reports with `./scripts/test.sh`.
+Outputs are `reports/junit.xml` and `reports/coverage.xml` (ignored by Git).
+JUnit XML is a report format; all tests run in Python with pytest.
+
 See the [local development runbook](docs/runbooks/local-development.md) and
 [Python stack decision](docs/decisions/001-python-stack.md).
 
@@ -76,6 +81,7 @@ ops/
   logging/              Centralized logging configuration
   security/             Scanner policies and remediation guidance
 scripts/
+  test.sh               Full pytest run with JUnit XML and coverage reports
   demos/                Controlled demonstration scripts
 docs/
   architecture/         Diagram sources
@@ -90,8 +96,8 @@ Remove a placeholder when its directory receives real content.
 
 ## Files to add during implementation
 
-- Remaining Task 1: expand boundary tests, generate coverage/JUnit reports, and
-  verify source publication. No environment settings or secrets are needed yet.
+- Remaining Task 1: verify clean packaging and source publication/evaluator access.
+  No environment settings or secrets are needed yet.
 - Task 2: `Dockerfile`, `.dockerignore`, and container smoke tests.
 - Task 3: Kubernetes manifests and provider-specific infrastructure setup.
 - Task 4: `Jenkinsfile` and pipeline setup instructions.

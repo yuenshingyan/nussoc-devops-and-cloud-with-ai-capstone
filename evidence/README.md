@@ -1,12 +1,12 @@
 # Evidence index
 
-Store only reviewed, sanitized evidence from actual execution here. The scaffold,
-health endpoint, and transaction validation have local execution evidence; later
-requirements remain pending.
+Store only reviewed, sanitized evidence from actual execution here. The application,
+expanded tests, and report generation have local execution evidence; source-publication
+verification and later tasks remain pending.
 
 | Task | Directory | Status |
 | --- | --- | --- |
-| 1 — Application and Git | [task-01](task-01/) | Steps 1.1–1.3 verified; Steps 1.4–1.5 pending |
+| 1 — Application and Git | [task-01](task-01/) | Steps 1.1–1.4 verified; Step 1.5 pending |
 | 2 — Containerisation | [task-02](task-02/) | Pending |
 | 3 — Kubernetes and cloud | [task-03](task-03/) | Pending |
 | 4 — CI/CD | [task-04](task-04/) | Pending |
@@ -22,6 +22,8 @@ requirements remain pending.
   tests, lint/format checks, packaging, and live GET/POST requests.
 - [Step 1.3 — Transaction validation verification](task-01/step-03-validation.md):
   54 unit/API cases, build checks, and live accepted/rejected/malformed requests.
+- [Step 1.4 — Expanded tests and reports](task-01/step-04-tests.md): 167 passing cases,
+  100% measured line/branch coverage, parsed XML reports, and sanitized run artifacts.
 
 For each artifact, record the requirement demonstrated, timestamp, command or
 procedure, actual result, commit, applicable image digest, and artifact path or

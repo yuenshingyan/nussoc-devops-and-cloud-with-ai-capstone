@@ -8,7 +8,7 @@
 - Explain and verify each step, then pause for review before merging and continuing.
 - Do not claim external deployment, notifications, security scans, or recovery succeeded without real execution evidence.
 
-Steps 1.1–1.2 are reviewed and merged into `main`. Step 1.3 is implemented and locally verified on `task-01/step-03-validation`, pending review and merge. Steps 1.4 onward remain pending. See the [evidence index](evidence/README.md) and [approved API contract](docs/api-contract.md).
+Steps 1.1–1.3 are reviewed and merged into `main`. Step 1.4 is implemented and locally verified on `task-01/step-04-tests`, pending review and merge. Step 1.5 onward remains pending. See the [evidence index](evidence/README.md) and [approved API contract](docs/api-contract.md).
 
 ## Technology choices
 
@@ -279,4 +279,4 @@ The assignment allows equivalent application, build, and unit-testing tools with
 
 ## Immediate next action
 
-Review **Task 1, Step 3** on `task-01/step-03-validation`. After approval, merge it into `main` and create `task-01/step-04-tests` to expand boundary coverage and produce coverage/JUnit reports. Do not publish changes without approval.
+Review **Task 1, Step 4** on `task-01/step-04-tests`. After approval, merge it into `main` and create `task-01/step-05-source-publication` to verify clean packaging and GitHub/evaluator access. Confirm external publishing before pushing changes.
