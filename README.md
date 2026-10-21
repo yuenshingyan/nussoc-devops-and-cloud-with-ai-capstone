@@ -4,9 +4,10 @@ A Python/FastAPI transaction-validation API and cloud-native DevOps capstone.
 
 ## Status
 
-Task 1, Step 2: Python/FastAPI scaffold and `GET /health` are implemented with
-locked dependencies, API tests, and local development instructions. `/validate`
-is not yet implemented. Container, pipeline, and cloud work remain pending.
+Task 1, Step 3: `GET /health` and `POST /validate` are implemented with locked
+dependencies, unit/API tests, and local development instructions. Transaction rules
+and safe malformed-request errors are documented in the API contract. Container,
+pipeline, and cloud work remain pending.
 See [PLAN.md](PLAN.md) for ordered steps and branch names.
 
 ## Quick start
@@ -27,8 +28,20 @@ curl --fail --silent --show-error http://127.0.0.1:8000/health
 # {"status":"healthy"}
 ```
 
-This checks application liveness, not external dependencies. See the
-[API contract](docs/api-contract.md).
+This checks application liveness, not external dependencies.
+
+Validate a synthetic transaction:
+
+```sh
+curl --fail --silent --show-error http://127.0.0.1:8000/validate \
+  --header 'Content-Type: application/json' \
+  --data '{"transaction_id":"txn_001","sender_id":"account_001","recipient_id":"account_002","amount":"125.50","currency":"SGD"}'
+# {"valid":true,"errors":[]}
+```
+
+Amounts must be strings, not JSON numbers. Business-rule rejections return HTTP 200
+with `valid: false`; malformed request schemas return HTTP 422. See the
+[API contract](docs/api-contract.md) for rules, error codes, and limitations.
 
 ```sh
 uv run --locked ruff check .
@@ -77,9 +90,8 @@ Remove a placeholder when its directory receives real content.
 
 ## Files to add during implementation
 
-- Remaining Task 1: validation endpoint, transaction tests, configuration
-  examples when needed, and source publication. No environment settings or secrets
-  are needed for the initial scaffold.
+- Remaining Task 1: expand boundary tests, generate coverage/JUnit reports, and
+  verify source publication. No environment settings or secrets are needed yet.
 - Task 2: `Dockerfile`, `.dockerignore`, and container smoke tests.
 - Task 3: Kubernetes manifests and provider-specific infrastructure setup.
 - Task 4: `Jenkinsfile` and pipeline setup instructions.

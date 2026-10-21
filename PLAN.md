@@ -8,7 +8,7 @@
 - Explain and verify each step, then pause for review before merging and continuing.
 - Do not claim external deployment, notifications, security scans, or recovery succeeded without real execution evidence.
 
-Step 1.1 is reviewed and merged into `main`. Step 1.2 is implemented and locally verified on `task-01/step-02-health`, pending review and merge. Steps 1.3 onward remain pending. See [scaffold evidence](evidence/task-01/step-01-scaffold.md) and [health evidence](evidence/task-01/step-02-health.md).
+Steps 1.1–1.2 are reviewed and merged into `main`. Step 1.3 is implemented and locally verified on `task-01/step-03-validation`, pending review and merge. Steps 1.4 onward remain pending. See the [evidence index](evidence/README.md) and [approved API contract](docs/api-contract.md).
 
 ## Technology choices
 
@@ -270,7 +270,7 @@ The assignment allows equivalent application, build, and unit-testing tools with
 
 ## Decisions needed when their steps are reached
 
-- **Task 1:** Python 3.14 selected. Transaction schema/rules and evaluator access to the configured GitHub repository still need confirmation.
+- **Task 1:** Python 3.14 selected; transaction schema/rules approved and documented in `docs/api-contract.md`. Evaluator access to the configured GitHub repository still needs confirmation.
 - **Task 2:** Registry namespace and target CPU architecture.
 - **Task 3:** Cloud provider, region, credentials configured locally, budget, exposure policy, and teardown timing.
 - **Task 4:** Jenkins hosting and agent setup; webhook reachability.
@@ -279,4 +279,4 @@ The assignment allows equivalent application, build, and unit-testing tools with
 
 ## Immediate next action
 
-Review **Task 1, Step 2** on `task-01/step-02-health`. After approval, merge it into `main` and create `task-01/step-03-validation`. Agree on the transaction contract before implementing Step 1.3. Do not publish changes without approval.
+Review **Task 1, Step 3** on `task-01/step-03-validation`. After approval, merge it into `main` and create `task-01/step-04-tests` to expand boundary coverage and produce coverage/JUnit reports. Do not publish changes without approval.

@@ -38,8 +38,22 @@ curl --fail --silent --show-error http://127.0.0.1:8000/health
 
 Expect HTTP 200 with `{"status":"healthy"}`. This checks the application itself,
 not external dependencies. See the [API contract](../api-contract.md).
-`/` and `/validate` still return 404. No environment variables or credentials
-are required yet, so there is no `.env.example`.
+The root `/` still returns 404. No environment variables or credentials are
+required yet, so there is no `.env.example`.
+
+## Validate a transaction
+
+```sh
+curl --include --silent --show-error http://127.0.0.1:8000/validate \
+  --header 'Content-Type: application/json' \
+  --data '{"transaction_id":"txn_001","sender_id":"account_001","recipient_id":"account_002","amount":"125.50","currency":"SGD"}'
+```
+
+Expect HTTP 200 with `{"valid":true,"errors":[]}`. Change `amount` to `"0"` to
+get HTTP 200 with `{"valid":false,"errors":["AMOUNT_NOT_POSITIVE"]}`. Change it to
+the JSON number `125.50` (without quotes) to get HTTP 422 with safe schema-error
+metadata. Exact rules, bounds, and error codes are in the API contract.
+Use synthetic data only. This endpoint does not transfer money or check balances.
 
 ## Check and test
 
@@ -49,9 +63,9 @@ uv run --locked ruff format --check .
 uv run --locked pytest
 ```
 
-The tests verify schema metadata, independent application instances, and the
-health endpoint's response, allowed method, and published schema. They are not
-transaction-rule tests; those will be added with `/validate`.
+The tests cover application construction, health responses, pure transaction rules,
+and the validation API's accepted/rejected/malformed cases. Additional coverage
+and Jenkins-compatible reporting are planned for Step 1.4.
 
 The locked Starlette version currently emits a deprecation warning for HTTPX-based
 `TestClient`. Tests pass; the warning is not suppressed. Revisit the testing-client
