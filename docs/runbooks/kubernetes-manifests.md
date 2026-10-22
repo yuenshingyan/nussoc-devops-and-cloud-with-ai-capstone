@@ -1,4 +1,4 @@
-# Kubernetes manifests — Step 3.1
+# Kubernetes manifests — Steps 3.1–3.2
 
 ## Scope and readiness
 
@@ -9,16 +9,17 @@ Both platform images passed registry pull-back checks. Do not substitute 0.1.0: 
 does not consume the new validation settings. See the
 [publication evidence](../../evidence/task-03/step-01-image-publication.md).
 
-Probes, resource requests/limits, rolling-update policy, and the restricted pod
-security context belong to Step 3.2. Provider/region, cluster access, costs, external
-exposure, and teardown require approval before Step 3.3. These manifests are not
-yet a deployment-ready or production-secured configuration.
+Probes, resource requests/limits, rolling-update policy, and workload security
+settings are now configured; see the [runtime safeguards runbook](runtime-safeguards.md)
+for values, rationale, and limits of local verification. Provider/region, cluster
+access, costs, external exposure, and teardown still require approval before Step 3.3.
+Do not apply these manifests before that approval and target-cluster validation.
 
 ## Resource layout
 
 | Input | Purpose |
 | --- | --- |
-| `deploy/kubernetes/base/deployment.yaml` | Two desired replicas; Linux nodes; named container port `http` at 8000; ConfigMap-backed environment |
+| `deploy/kubernetes/base/deployment.yaml` | Two replicas; pinned image; ConfigMap environment; probes, resource/security settings, temporary volume, and rolling-update policy |
 | `deploy/kubernetes/base/service.yaml` | ClusterIP Service, port 80 to named target port `http`; selects the application pods |
 | `deploy/kubernetes/base/configmap.env` | Non-secret default validation settings |
 | `deploy/kubernetes/base/kustomization.yaml` | Shared resources and content-hashed ConfigMap generator |
@@ -55,10 +56,13 @@ These commands only use local files; they do not contact a cluster. Verify:
 - The generated ConfigMap name has a content hash and matches `envFrom.configMapRef`.
 - The generated data contains string settings matching the
   [application settings contract](application-settings.md).
+- Startup/readiness/liveness probes target `/health` on `http`; resource, security,
+  rollout, and temporary-volume settings match the [runtime policy](runtime-safeguards.md).
 
 Kustomize rendering and consistency checks are not Kubernetes API schema/admission
 validation. Server-side dry-run remains pending until an approved cluster is
-available and the image/runtime prerequisites above are complete. Later, with an
+available. Local Docker compatibility checks do not prove Kubernetes enforcement.
+Later, with an
 explicitly approved context, validate without persisting resources:
 
 ```sh
@@ -95,4 +99,5 @@ request bodies, or personal data in these files. The API currently needs no secr
 
 See [Step 3.1 evidence](../../evidence/task-03/step-01-manifests.md) for actual checks
 and [release follow-up](../../evidence/task-03/step-01-image-publication.md) for digest
-pinning and remaining deployment prerequisites.
+pinning. [Step 3.2 evidence](../../evidence/task-03/step-02-runtime-safeguards.md) records
+runtime-configuration checks and the remaining cluster validation.

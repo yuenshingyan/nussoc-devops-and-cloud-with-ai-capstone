@@ -4,10 +4,10 @@ A Python/FastAPI transaction-validation API and cloud-native DevOps capstone.
 
 ## Status
 
-Tasks 1–2 are reviewed, merged, and published. Step 3.1 adds configurable validation
-policy and locally verified Kubernetes resources pinned to public ARM64/AMD64
-release 0.2.0; 210 tests pass. Step 3.1 awaits final review. Server-side manifest
-validation, runtime safeguards, and all cloud deployment remain pending.
+Tasks 1–2 and Step 3.1 are reviewed, merged, and published. Kubernetes resources
+pin public ARM64/AMD64 release 0.2.0; 210 application tests pass. Step 3.2 adds probes,
+resource limits, runtime security, and rolling-update settings, verified locally and
+awaiting review. Kubernetes admission/probe behavior and all cloud deployment remain pending.
 
 **Evaluator source link:** [reviewed application on main](https://github.com/yuenshingyan/nussoc-devops-and-cloud-with-ai-capstone/tree/main).
 GitHub now defaults to `main`. See the
@@ -116,9 +116,11 @@ kubectl kustomize deploy/kubernetes/overlays/demo
 
 This renders a namespace, two-replica Deployment, internal ClusterIP Service, and
 content-hashed ConfigMap without contacting a cluster. The image is pinned to the
-verified 0.2.0 multi-platform digest. **Do not apply these manifests yet:**
-probes, resource limits, and pod security settings remain Step 3.2. See the
-[Kubernetes runbook](docs/runbooks/kubernetes-manifests.md).
+verified 0.2.0 multi-platform digest. Startup/readiness/liveness probes, resource limits,
+non-root/read-only security settings, and rolling-update policy are configured.
+**Do not apply these manifests yet:** provider, budget, access, and exposure approval
+are still required. See the [Kubernetes runbook](docs/runbooks/kubernetes-manifests.md)
+and [runtime policy](docs/runbooks/runtime-safeguards.md) for values and verification limits.
 
 ## Repository structure
 
@@ -160,8 +162,9 @@ Remove a placeholder when its directory receives real content.
 ## Files to add during implementation
 
 - Tasks 1–2: complete; published image 0.1.0 remains unchanged.
-- Task 3.1: configuration/manifests and 0.2.0 publication verified; final review pending.
-- Remaining Task 3: runtime safeguards, provider-specific infrastructure, deployment, and recovery.
+- Task 3.1: configuration/manifests and 0.2.0 publication reviewed and merged.
+- Task 3.2: runtime settings locally verified; review and Kubernetes execution pending.
+- Remaining Task 3: provider-specific infrastructure, deployment, and recovery.
 - Task 4: `Jenkinsfile` and pipeline setup instructions.
 - Tasks 5–6: Security policies, monitoring/logging configuration, and demo scripts.
 - Task 7: Design document, architecture diagram, AI use case, and presentation.

@@ -1,0 +1,41 @@
+"""Check rendered configuration choices, not API-server schema or admission behavior."""
+
+from datetime import UTC, datetime
+from json import dumps, loads
+from pathlib import Path
+from sys import argv
+
+resources = loads(Path(argv[1]).read_text())
+assert len(resources) == 4
+items = {item["kind"]: item for item in resources}
+assert set(items) == {"Namespace", "Deployment", "Service", "ConfigMap"}
+assert items["Namespace"]["metadata"]["name"] == "finsecure-pay"
+assert all(item["metadata"]["namespace"] == "finsecure-pay" for kind, item in items.items() if kind != "Namespace")
+deployment = items["Deployment"]["spec"]
+pod = deployment["template"]["spec"]
+assert len(pod["containers"]) == 1
+container = pod["containers"][0]
+assert container["image"] == "docker.io/yuenshingyan/finsecure-pay@sha256:48ee0ef91737fd2ee1d2efea93cf9a94e840eec6908bde6ed3af7afede884e99"
+assert deployment["replicas"] == 2
+assert deployment["strategy"] == {"type": "RollingUpdate", "rollingUpdate": {"maxUnavailable": 0, "maxSurge": 1}}
+assert deployment["minReadySeconds"] == 5 and deployment["progressDeadlineSeconds"] == 600
+assert pod["terminationGracePeriodSeconds"] == 30
+assert pod["automountServiceAccountToken"] is False
+assert pod["nodeSelector"]["kubernetes.io/os"] == "linux"
+assert pod["securityContext"] == {"runAsNonRoot": True, "runAsUser": 10001, "runAsGroup": 10001, "fsGroup": 10001, "seccompProfile": {"type": "RuntimeDefault"}}
+assert container["securityContext"] == {"allowPrivilegeEscalation": False, "readOnlyRootFilesystem": True, "capabilities": {"drop": ["ALL"]}}
+assert container["resources"] == {"requests": {"cpu": "100m", "memory": "128Mi"}, "limits": {"cpu": "500m", "memory": "256Mi"}}
+for name, period, failures in [("startupProbe", 2, 30), ("readinessProbe", 5, 2), ("livenessProbe", 10, 3)]:
+    assert container[name] == {"httpGet": {"path": "/health", "port": "http", "scheme": "HTTP"}, "periodSeconds": period, "timeoutSeconds": 2, "failureThreshold": failures, "successThreshold": 1}
+assert container["volumeMounts"] == [{"name": "tmp", "mountPath": "/tmp"}]
+assert pod["volumes"] == [{"name": "tmp", "emptyDir": {"medium": "Memory", "sizeLimit": "16Mi"}}]
+assert container["envFrom"][0]["configMapRef"]["name"] == items["ConfigMap"]["metadata"]["name"]
+assert items["ConfigMap"]["data"] == {"FINSECURE_MAX_TRANSACTION_AMOUNT": "10000", "FINSECURE_SUPPORTED_CURRENCIES": "SGD,USD,HKD"}
+labels = deployment["template"]["metadata"]["labels"]
+for selector in [deployment["selector"]["matchLabels"], items["Service"]["spec"]["selector"]]:
+    assert all(labels[key] == value for key, value in selector.items())
+service = items["Service"]["spec"]
+assert service["type"] == "ClusterIP" and not service.get("publishNotReadyAddresses", False)
+assert service["ports"][0]["targetPort"] == container["ports"][0]["name"] == "http"
+assert service["ports"][0]["port"] == 80 and container["ports"][0]["containerPort"] == 8000
+print(dumps({"verified_at_utc": datetime.now(UTC).isoformat(), "resource_count": 4, "image_digest_unchanged": True, "replicas": 2, "probes_checked": ["startupProbe", "readinessProbe", "livenessProbe"], "resources": container["resources"], "rolling_update": deployment["strategy"], "pod_and_container_security_fields_match": True, "temporary_volume_and_configmap_references_match": True, "namespace_and_service_selectors_and_ports_match": True, "service_account_token_automount_disabled": True, "cluster_contacted": False, "api_schema_and_admission_validation": "pending approved cluster", "kubernetes_runtime_verification": "pending Step 3.3"}, indent=2))

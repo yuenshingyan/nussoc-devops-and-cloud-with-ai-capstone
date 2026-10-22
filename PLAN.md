@@ -8,7 +8,7 @@
 - Explain and verify each step, then pause for review before merging and continuing.
 - Do not claim external deployment, notifications, security scans, or recovery succeeded without real execution evidence.
 
-Tasks 1–2 are reviewed, merged into `main`, and published. Step 3.1 adds configurable validation policy and locally verified Kubernetes manifests on `task-03/step-01-manifests`. Approved release 0.2.0 is published and pull-tested for ARM64/AMD64, and the Deployment pins its verified index digest. Step 3.1 awaits final review and merge. No cluster has been contacted; server-side validation awaits approved cluster access. See the [evidence index](evidence/README.md) and [Kubernetes runbook](docs/runbooks/kubernetes-manifests.md).
+Tasks 1–2 and Step 3.1 are reviewed, merged into `main`, and published. The Deployment still pins verified release 0.2.0. Step 3.2 adds locally checked probes, resource/security settings, temporary storage, and rolling-update policy on `task-03/step-02-runtime-safeguards`, pending review. No cluster has been contacted; server-side validation and actual probe/rollout behavior await approved cluster access. See the [evidence index](evidence/README.md) and [runtime policy](docs/runbooks/runtime-safeguards.md).
 
 ## Technology choices
 
@@ -118,6 +118,7 @@ The assignment allows equivalent application, build, and unit-testing tools with
 - **Branch:** `task-03/step-02-runtime-safeguards`
 - Configure readiness and liveness probes, startup handling, resource requests/limits, and a restricted security context.
 - Define rolling-update behavior and explain probe semantics.
+- Initial demo resource policy: requests `100m`/`128Mi`, limits `500m`/`256Mi`, memory-backed `/tmp` capped at `16Mi`. Probe and rollout timings are documented in the [runtime policy](docs/runbooks/runtime-safeguards.md); these are not production sizing or an availability SLA.
 - **Verify:** Validate configuration; verify actual probe behavior after deployment in Step 3.3.
 
 ### Step 3.3 — Deploy to managed cloud Kubernetes
@@ -273,11 +274,11 @@ The assignment allows equivalent application, build, and unit-testing tools with
 
 - **Task 1:** Complete; Python 3.14 and transaction contract confirmed. Public source access verified, and GitHub defaults to `main` following approval.
 - **Task 2:** Public Docker Hub repository `yuenshingyan/finsecure-pay` confirmed. Version 0.1.0 published for ARM64/AMD64 and verified after registry pulls; AMD64 was tested under emulation. Cluster node architecture remains a cloud-deployment decision.
-- **Task 3:** Configurable policy and 0.2.0 publication approved and verified; final Step 3.1 review pending. Cloud provider, region, credentials configured locally, budget, exposure policy, and teardown timing remain undecided.
+- **Task 3:** Step 3.1 reviewed and merged; Step 3.2 local verification complete, pending review. Cloud provider, region, credentials configured locally, budget, exposure policy, and teardown timing remain undecided. Approve these before provisioning or cluster access.
 - **Task 4:** Jenkins hosting and agent setup; webhook reachability.
 - **Task 6:** SMTP/notification receiver and cloud logging configuration.
 - **Task 7:** PowerPoint or PDF preference and evaluator access arrangements.
 
 ## Immediate next action
 
-Review completed **Task 3, Step 1** on `task-03/step-01-manifests`, including the 0.2.0 publication evidence and digest-pinned Deployment. After approval, merge and start `task-03/step-02-runtime-safeguards`. Do not apply manifests or provision cloud resources before the remaining runtime safeguards and provider/access/budget approvals.
+Review **Task 3, Step 2** on `task-03/step-02-runtime-safeguards`, including the documented demo limits/probe policy and local compatibility evidence. After approval, merge it. Before starting Step 3.3 infrastructure work, agree provider, region, account access, budget, exposure controls, and teardown timing; do not create resources or contact a cluster without that approval.

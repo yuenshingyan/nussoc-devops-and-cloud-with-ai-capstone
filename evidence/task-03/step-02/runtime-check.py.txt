@@ -1,0 +1,79 @@
+"""Record local compatibility checks; this does not execute Kubernetes probes."""
+
+from datetime import UTC, datetime
+from json import dumps, loads
+from subprocess import run
+from sys import argv
+from time import monotonic
+
+from scripts.smoke_test import docker, request_json, wait_for_health
+
+image = argv[1]
+metadata = loads(docker("image", "inspect", image))[0]
+image_id = metadata["Id"]
+assert metadata["Config"]["Labels"]["org.opencontainers.image.version"] == "0.2.0"
+container = docker(
+    "create", "--pull=never", "--user=10001:10001", "--read-only", "--cap-drop=ALL",
+    "--security-opt=no-new-privileges:true", "--cpus=0.5", "--memory=256m",
+    "--memory-swap=256m", "--tmpfs=/tmp:rw,nosuid,size=16m,uid=10001,gid=10001",
+    "--publish=127.0.0.1::8000", "--env-file=deploy/kubernetes/base/configmap.env", image_id,
+)
+inspection_code = '''
+from json import dumps
+from os import ST_RDONLY, statvfs
+from pathlib import Path
+from tempfile import TemporaryFile
+
+fields = {line.split(":")[0]: line.split()[1:] for line in Path("/proc/1/status").read_text().splitlines() if line.split(":")[0] in {"Uid", "Gid", "NoNewPrivs", "Seccomp", "CapEff", "CapPrm", "CapBnd", "CapAmb"}}
+cgroup = Path("/sys/fs/cgroup")
+with TemporaryFile(dir="/tmp") as scratch:
+    scratch.write(b"synthetic-runtime-check")
+    scratch.seek(0)
+    assert scratch.read() == b"synthetic-runtime-check"
+tmp = statvfs("/tmp")
+print(dumps({"pid_1": fields, "root_filesystem_read_only": bool(statvfs("/").f_flag & ST_RDONLY), "tmp_write_read_delete_passed": True, "tmp_capacity_bytes": tmp.f_blocks * tmp.f_frsize, "tmp_gid": Path("/tmp").stat().st_gid, "cpu_max": (cgroup / "cpu.max").read_text().strip(), "memory_max_bytes": int((cgroup / "memory.max").read_text()), "memory_current_bytes_including_inspection": int((cgroup / "memory.current").read_text()), "memory_peak_bytes_including_inspection": int((cgroup / "memory.peak").read_text()), "memory_events": {line.split()[0]: int(line.split()[1]) for line in (cgroup / "memory.events").read_text().splitlines()}}))
+'''
+try:
+    started = monotonic()
+    docker("start", container)
+    inspection = loads(docker("inspect", container))[0]
+    host = inspection["HostConfig"]
+    assert host["NanoCpus"] == 500000000 and host["Memory"] == 268435456
+    assert host["MemorySwap"] == 268435456
+    assert host["ReadonlyRootfs"] and host["CapDrop"] == ["ALL"]
+    bindings = inspection["NetworkSettings"]["Ports"]["8000/tcp"]
+    assert len(bindings) == 1 and bindings[0]["HostIp"] == "127.0.0.1"
+    base_url = "http://127.0.0.1:" + bindings[0]["HostPort"]
+    wait_for_health(container, base_url)
+    startup_seconds = monotonic() - started
+    payload = {"transaction_id": "txn_runtime", "sender_id": "sender", "recipient_id": "recipient", "amount": "125.50", "currency": "SGD"}
+    for _ in range(25):
+        assert request_json(base_url + "/validate", payload) == (200, {"valid": True, "errors": []})
+    assert request_json(base_url + "/validate", {**payload, "amount": "0"}) == (200, {"valid": False, "errors": ["AMOUNT_NOT_POSITIVE"]})
+    status, malformed = request_json(base_url + "/validate", {**payload, "amount": 125.50})
+    assert status == 422 and malformed["detail"][0]["type"] == "string_type"
+    assert request_json(base_url + "/health") == (200, {"status": "healthy"})
+    runtime = loads(docker("exec", container, "/opt/venv/bin/python", "-c", inspection_code))
+    assert runtime["pid_1"]["Uid"] == ["10001"] * 4
+    assert runtime["pid_1"]["Gid"] == ["10001"] * 4
+    assert runtime["pid_1"]["NoNewPrivs"] == ["1"]
+    assert runtime["pid_1"]["Seccomp"] == ["2"]
+    for key in ["CapEff", "CapPrm", "CapBnd", "CapAmb"]:
+        assert int(runtime["pid_1"][key][0], 16) == 0
+    assert runtime["root_filesystem_read_only"]
+    assert runtime["tmp_capacity_bytes"] == 16777216 and runtime["tmp_gid"] == 10001
+    quota, period = map(int, runtime["cpu_max"].split())
+    assert quota * 2 == period
+    assert runtime["memory_max_bytes"] == 268435456
+    assert runtime["memory_peak_bytes_including_inspection"] < 268435456
+    assert runtime["memory_events"]["oom"] == runtime["memory_events"]["oom_kill"] == 0
+    stopping = monotonic()
+    docker("stop", "--timeout=30", container, timeout=40)
+    shutdown_seconds = monotonic() - stopping
+    state = loads(docker("inspect", container))[0]["State"]
+    assert not state["Running"] and not state["OOMKilled"] and state["ExitCode"] == 0
+finally:
+    docker("rm", "--force", container)
+result = run(["docker", "inspect", container], capture_output=True, text=True, timeout=10)
+assert result.returncode != 0 and "no such object" in result.stderr.lower()
+print(dumps({"verified_at_utc": datetime.now(UTC).isoformat(), "image_reference": image, "image_id": image_id, "source_revision": metadata["Config"]["Labels"]["org.opencontainers.image.revision"], "platform": metadata["Os"] + "/" + metadata["Architecture"], "container_id": container, "startup_seconds_local_observation": startup_seconds, "accepted_serial_requests": 25, "business_rejection_checked": True, "schema_rejection_checked": True, "health_after_rejections": "healthy", "runtime": runtime, "shutdown_seconds_local_observation": shutdown_seconds, "shutdown_exit_code": state["ExitCode"], "oom_killed": state["OOMKilled"], "container_removed": True, "kubernetes_probe_execution": False, "kubernetes_scheduling_or_requests_tested": False}, indent=2))

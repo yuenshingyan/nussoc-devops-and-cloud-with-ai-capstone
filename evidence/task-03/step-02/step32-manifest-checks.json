@@ -1,0 +1,35 @@
+{
+  "verified_at_utc": "2026-10-22T06:21:12.780215+00:00",
+  "resource_count": 4,
+  "image_digest_unchanged": true,
+  "replicas": 2,
+  "probes_checked": [
+    "startupProbe",
+    "readinessProbe",
+    "livenessProbe"
+  ],
+  "resources": {
+    "limits": {
+      "cpu": "500m",
+      "memory": "256Mi"
+    },
+    "requests": {
+      "cpu": "100m",
+      "memory": "128Mi"
+    }
+  },
+  "rolling_update": {
+    "rollingUpdate": {
+      "maxSurge": 1,
+      "maxUnavailable": 0
+    },
+    "type": "RollingUpdate"
+  },
+  "pod_and_container_security_fields_match": true,
+  "temporary_volume_and_configmap_references_match": true,
+  "namespace_and_service_selectors_and_ports_match": true,
+  "service_account_token_automount_disabled": true,
+  "cluster_contacted": false,
+  "api_schema_and_admission_validation": "pending approved cluster",
+  "kubernetes_runtime_verification": "pending Step 3.3"
+}

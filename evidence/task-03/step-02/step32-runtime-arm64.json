@@ -1,0 +1,69 @@
+{
+  "verified_at_utc": "2026-10-22T06:19:59.805086+00:00",
+  "image_reference": "docker.io/yuenshingyan/finsecure-pay@sha256:fa11c7014e86747717d3eb6a2df121581cc66bce011e83456d2c7870d81ad3eb",
+  "image_id": "sha256:3f8096c09e173b78b3677273001dfb8ecdb0a0f37019e6d4ac373f24f0ea9a8a",
+  "source_revision": "ada935d033cd13f85e5e4adfed2d1e9ac449f6f8",
+  "platform": "linux/arm64",
+  "container_id": "b384c83f85718ab763158fabe0ab6d159908a81f7daf239db4a69745fd15d8e6",
+  "startup_seconds_local_observation": 2.61053304199595,
+  "accepted_serial_requests": 25,
+  "business_rejection_checked": true,
+  "schema_rejection_checked": true,
+  "health_after_rejections": "healthy",
+  "runtime": {
+    "pid_1": {
+      "Uid": [
+        "10001",
+        "10001",
+        "10001",
+        "10001"
+      ],
+      "Gid": [
+        "10001",
+        "10001",
+        "10001",
+        "10001"
+      ],
+      "CapPrm": [
+        "0000000000000000"
+      ],
+      "CapEff": [
+        "0000000000000000"
+      ],
+      "CapBnd": [
+        "0000000000000000"
+      ],
+      "CapAmb": [
+        "0000000000000000"
+      ],
+      "NoNewPrivs": [
+        "1"
+      ],
+      "Seccomp": [
+        "2"
+      ]
+    },
+    "root_filesystem_read_only": true,
+    "tmp_write_read_delete_passed": true,
+    "tmp_capacity_bytes": 16777216,
+    "tmp_gid": 10001,
+    "cpu_max": "50000 100000",
+    "memory_max_bytes": 268435456,
+    "memory_current_bytes_including_inspection": 88883200,
+    "memory_peak_bytes_including_inspection": 88887296,
+    "memory_events": {
+      "low": 0,
+      "high": 0,
+      "max": 0,
+      "oom": 0,
+      "oom_kill": 0,
+      "oom_group_kill": 0
+    }
+  },
+  "shutdown_seconds_local_observation": 0.4414931659994181,
+  "shutdown_exit_code": 0,
+  "oom_killed": false,
+  "container_removed": true,
+  "kubernetes_probe_execution": false,
+  "kubernetes_scheduling_or_requests_tested": false
+}

@@ -52,8 +52,9 @@ policy. This is a startup failure, not an HTTP 422 response to a transaction.
 The published **0.1.0 image ignores these new settings**. Do not use it to claim
 configurable transaction validation. Version 0.2.0 is now published and verified
 for ARM64 and AMD64; the Deployment pins its exact index digest. See the
-[publication runbook](image-publication.md). Runtime safeguards and approved cloud
-deployment are still required before applying the manifests.
+[publication runbook](image-publication.md). Runtime safeguards are configured and
+locally checked; approved cloud access and target-cluster validation are still
+required before deployment. See the [runtime policy](runtime-safeguards.md).
 
 For a locally built 0.2.0 image:
 

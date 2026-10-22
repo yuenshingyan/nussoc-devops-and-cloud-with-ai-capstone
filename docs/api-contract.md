@@ -34,8 +34,12 @@ method-error responses are not business-validation results.
 ### Operational scope
 
 The current application has no external runtime dependencies. Do not treat this
-endpoint as a dependency-aware readiness check. Kubernetes probe configuration and
-any additional readiness semantics will be defined during Task 3.
+endpoint as a dependency-aware readiness check. Step 3.2 configures startup,
+readiness, and liveness probes against this endpoint because the application validates
+its settings before serving and currently needs no downstream service. Their actions
+and timing differ; see the [runtime policy](runbooks/runtime-safeguards.md).
+Actual kubelet probe behavior remains unverified until deployment. Transaction
+rejections and malformed request schemas do not make the application unhealthy.
 
 ## POST /validate
 
