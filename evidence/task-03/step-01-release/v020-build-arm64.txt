@@ -1,0 +1,55 @@
+#0 building with "desktop-linux" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 1.43kB done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for ghcr.io/astral-sh/uv:0.9.21@sha256:15f68a476b768083505fe1dbfcc998344d0135f0ca1b8465c4760b323904f05a
+#2 DONE 0.0s
+
+#3 [internal] load metadata for docker.io/library/python:3.14.7-slim-bookworm@sha256:82bc3c539b8813ada9d68c63b40158fa002f7f33de9bf3312a3dfdc0620dff56
+#3 DONE 0.0s
+
+#4 [internal] load .dockerignore
+#4 transferring context: 391B done
+#4 DONE 0.0s
+
+#5 [uv 1/1] FROM ghcr.io/astral-sh/uv:0.9.21@sha256:15f68a476b768083505fe1dbfcc998344d0135f0ca1b8465c4760b323904f05a
+#5 DONE 0.0s
+
+#6 [builder 1/6] FROM docker.io/library/python:3.14.7-slim-bookworm@sha256:82bc3c539b8813ada9d68c63b40158fa002f7f33de9bf3312a3dfdc0620dff56
+#6 DONE 0.0s
+
+#7 [internal] load build context
+#7 transferring context: 64.73kB done
+#7 DONE 0.0s
+
+#8 [builder 5/6] COPY src/ ./src/
+#8 CACHED
+
+#9 [builder 4/6] COPY pyproject.toml uv.lock README.md ./
+#9 CACHED
+
+#10 [runtime 2/4] RUN groupadd --gid 10001 app     && useradd --uid 10001 --gid 10001 --no-create-home --shell /usr/sbin/nologin app
+#10 CACHED
+
+#11 [runtime 3/4] WORKDIR /app
+#11 CACHED
+
+#12 [builder 6/6] RUN --mount=type=cache,target=/root/.cache/uv     uv sync --locked --no-dev --no-editable
+#12 CACHED
+
+#13 [builder 3/6] WORKDIR /build
+#13 CACHED
+
+#14 [builder 2/6] COPY --from=uv /uv /usr/local/bin/uv
+#14 CACHED
+
+#15 [runtime 4/4] COPY --from=builder /opt/venv /opt/venv
+#15 CACHED
+
+#16 exporting to image
+#16 exporting layers done
+#16 writing image sha256:3f8096c09e173b78b3677273001dfb8ecdb0a0f37019e6d4ac373f24f0ea9a8a done
+#16 naming to docker.io/library/finsecure-pay:sha-ada935d-arm64 done
+#16 DONE 0.0s

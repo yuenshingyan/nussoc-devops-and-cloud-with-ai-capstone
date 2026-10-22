@@ -1,0 +1,141 @@
+{
+  "verified_at_utc": "2026-10-22T02:12:55.894909+00:00",
+  "image_reference": "finsecure-pay:sha-ada935d-arm64",
+  "image_id": "sha256:3f8096c09e173b78b3677273001dfb8ecdb0a0f37019e6d4ac373f24f0ea9a8a",
+  "platform": "linux/arm64",
+  "source_revision": "ada935d033cd13f85e5e4adfed2d1e9ac449f6f8",
+  "default_smoke": {
+    "verified_at_utc": "2026-10-22T02:12:52.936280+00:00",
+    "image_tag": "sha256:3f8096c09e173b78b3677273001dfb8ecdb0a0f37019e6d4ac373f24f0ea9a8a",
+    "image_id": "sha256:3f8096c09e173b78b3677273001dfb8ecdb0a0f37019e6d4ac373f24f0ea9a8a",
+    "platform": "linux/arm64",
+    "container_id": "aea1fe24ca01b8e8984b578b7b9bea20fd6700c9966808e1bcb39f4a90702f86",
+    "base_url": "http://127.0.0.1:62199",
+    "pid_1_identity": {
+      "Uid": [
+        "10001",
+        "10001",
+        "10001",
+        "10001"
+      ],
+      "Gid": [
+        "10001",
+        "10001",
+        "10001",
+        "10001"
+      ]
+    },
+    "read_only_root_filesystem": true,
+    "dropped_capabilities": [
+      "ALL"
+    ],
+    "security_options": [
+      "no-new-privileges:true"
+    ],
+    "tmpfs": {
+      "/tmp": "rw,noexec,nosuid,size=16m"
+    },
+    "http_checks": [
+      {
+        "case": "health",
+        "status": 200,
+        "body": {
+          "status": "healthy"
+        }
+      },
+      {
+        "case": "accepted",
+        "status": 200,
+        "body": {
+          "valid": true,
+          "errors": []
+        }
+      },
+      {
+        "case": "business_rejection",
+        "status": 200,
+        "body": {
+          "valid": false,
+          "errors": [
+            "AMOUNT_NOT_POSITIVE"
+          ]
+        }
+      },
+      {
+        "case": "malformed_amount",
+        "status": 422,
+        "body": {
+          "detail": [
+            {
+              "loc": [
+                "body",
+                "amount"
+              ],
+              "type": "string_type",
+              "msg": "Invalid request value. Check the API contract."
+            }
+          ]
+        }
+      }
+    ],
+    "shutdown_exit_code": 0,
+    "oom_killed": false,
+    "container_removed": true
+  },
+  "configured_smoke": {
+    "container_id": "5cc502b1917231f99f5d53c5a08f9a2019b0ba45d9fe64095755f534f9c52426",
+    "settings": {
+      "FINSECURE_MAX_TRANSACTION_AMOUNT": "100",
+      "FINSECURE_SUPPORTED_CURRENCIES": "USD"
+    },
+    "http_checks": [
+      {
+        "case": "inclusive_custom_limit",
+        "status": 200,
+        "body": {
+          "valid": true,
+          "errors": []
+        }
+      },
+      {
+        "case": "over_custom_limit",
+        "status": 200,
+        "body": {
+          "valid": false,
+          "errors": [
+            "AMOUNT_LIMIT_EXCEEDED"
+          ]
+        }
+      },
+      {
+        "case": "disabled_currency",
+        "status": 200,
+        "body": {
+          "valid": false,
+          "errors": [
+            "UNSUPPORTED_CURRENCY"
+          ]
+        }
+      },
+      {
+        "case": "combined_rejections",
+        "status": 200,
+        "body": {
+          "valid": false,
+          "errors": [
+            "AMOUNT_LIMIT_EXCEEDED",
+            "UNSUPPORTED_CURRENCY"
+          ]
+        }
+      }
+    ],
+    "shutdown_exit_code": 0,
+    "container_removed": true
+  },
+  "invalid_configuration": {
+    "container_id": "fe5512d6aeafbeb500a76a9580feb839fefd07b99c17cf296c45db64a0519bc8",
+    "exit_code": 1,
+    "invalid_value_not_logged": true,
+    "container_removed": true
+  }
+}

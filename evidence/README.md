@@ -3,14 +3,14 @@
 Store only reviewed, sanitized evidence from actual execution here. Task 1 has
 application, test, package-installation, and public source-access evidence.
 Task 2 has image-build, execution, versioned registry publication, and anonymous
-pull/access evidence for ARM64 and AMD64. Task 3 has locally verified configuration
-and manifest candidates, not cloud-deployment evidence.
+pull/access evidence for ARM64 and AMD64. Task 3 has locally verified configuration,
+0.2.0 registry publication, and digest-pinned manifests, not cloud-deployment evidence.
 
 | Task | Directory | Status |
 | --- | --- | --- |
 | 1 — Application and Git | [task-01](task-01/) | Complete and merged |
-| 2 — Containerisation | [task-02](task-02/) | Complete; reviewed and merged locally |
-| 3 — Kubernetes and cloud | [task-03](task-03/) | Step 3.1 locally verified; 0.2.0 publication/digest pinning and review pending |
+| 2 — Containerisation | [task-02](task-02/) | Complete, reviewed, merged, and published |
+| 3 — Kubernetes and cloud | [task-03](task-03/) | Step 3.1 verified including release/digest pinning; final review pending |
 | 4 — CI/CD | [task-04](task-04/) | Pending |
 | 5 — DevSecOps | [task-05](task-05/) | Pending |
 | 6 — Observability | [task-06](task-06/) | Pending |
@@ -40,7 +40,10 @@ and manifest candidates, not cloud-deployment evidence.
   pulls, and anonymous digest/provenance verification.
 - [Step 3.1 — Configurable policy and Kubernetes manifests](task-03/step-01-manifests.md):
   210 passing tests, local Kustomize checks, and ARM64 0.2.0 container checks with
-  default/custom/invalid settings. No image publication or cluster execution yet.
+  default/custom/invalid settings in the initial candidate; no cluster execution.
+- [Step 3.1 — Approved 0.2.0 publication follow-up](task-03/step-01-image-publication.md):
+  both platforms tested before/after registry pulls, public provenance, unchanged
+  0.1.0 release, local index-cache recovery, and Deployment digest verification.
 
 For each artifact, record the requirement demonstrated, timestamp, command or
 procedure, actual result, commit, applicable image digest, and artifact path or

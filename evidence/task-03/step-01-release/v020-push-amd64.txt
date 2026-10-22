@@ -1,0 +1,18 @@
+The push refers to repository [docker.io/yuenshingyan/finsecure-pay]
+6c3ef03519f8: Preparing
+c2c18a33d40b: Preparing
+b94c842c9913: Preparing
+0d4b166df3d7: Preparing
+c5035e13c06f: Preparing
+5033560a3372: Preparing
+34467cc93912: Preparing
+34467cc93912: Waiting
+5033560a3372: Waiting
+b94c842c9913: Layer already exists
+c5035e13c06f: Layer already exists
+c2c18a33d40b: Layer already exists
+0d4b166df3d7: Layer already exists
+34467cc93912: Layer already exists
+5033560a3372: Layer already exists
+6c3ef03519f8: Pushed
+sha-ada935d-amd64: digest: sha256:66ade57348103ac7fbcd01f323f6c01469f6a1e2c441196612942c2dcfb1e245 size: 1784

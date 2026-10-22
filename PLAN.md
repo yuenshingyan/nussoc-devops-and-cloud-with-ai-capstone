@@ -8,7 +8,7 @@
 - Explain and verify each step, then pause for review before merging and continuing.
 - Do not claim external deployment, notifications, security scans, or recovery succeeded without real execution evidence.
 
-Tasks 1–2 are reviewed and merged locally into `main`; Docker Hub release 0.1.0 remains published and unchanged. Step 3.1 adds configurable validation policy and locally verified Kubernetes manifests on `task-03/step-01-manifests`. Its new 0.2.0 image is verified locally on ARM64 but not published; release approval, digest pinning, and step review remain pending. No cluster has been contacted. See the [evidence index](evidence/README.md) and [Kubernetes runbook](docs/runbooks/kubernetes-manifests.md).
+Tasks 1–2 are reviewed, merged into `main`, and published. Step 3.1 adds configurable validation policy and locally verified Kubernetes manifests on `task-03/step-01-manifests`. Approved release 0.2.0 is published and pull-tested for ARM64/AMD64, and the Deployment pins its verified index digest. Step 3.1 awaits final review and merge. No cluster has been contacted; server-side validation awaits approved cluster access. See the [evidence index](evidence/README.md) and [Kubernetes runbook](docs/runbooks/kubernetes-manifests.md).
 
 ## Technology choices
 
@@ -111,7 +111,7 @@ The assignment allows equivalent application, build, and unit-testing tools with
 - Add a namespace, Deployment with at least two replicas, Service, and ConfigMap.
 - Define configurable limits/currencies and document which values must not be secrets.
 - The user confirmed configurable business policy: preserve defaults; validate environment overrides at startup; keep services pure. Currency configuration enables/disables the existing SGD/USD/HKD set without changing precision rules.
-- Reference a versioned image rather than relying on `latest`. Version 0.1.0 cannot consume the new settings: prepare 0.2.0, then publish only with approval and replace the draft reference with its verified digest before deployment.
+- Reference a versioned image rather than relying on `latest`. Version 0.1.0 cannot consume the new settings. Approved release 0.2.0 has been published and verified for ARM64/AMD64; the Deployment now pins its multi-platform index digest.
 - **Verify:** Validate manifest structure; use server-side dry-run when a cluster is available.
 
 ### Step 3.2 — Configure health and runtime safeguards
@@ -273,11 +273,11 @@ The assignment allows equivalent application, build, and unit-testing tools with
 
 - **Task 1:** Complete; Python 3.14 and transaction contract confirmed. Public source access verified, and GitHub defaults to `main` following approval.
 - **Task 2:** Public Docker Hub repository `yuenshingyan/finsecure-pay` confirmed. Version 0.1.0 published for ARM64/AMD64 and verified after registry pulls; AMD64 was tested under emulation. Cluster node architecture remains a cloud-deployment decision.
-- **Task 3:** Configurable policy approved; review 0.2.0 candidate and confirm publication before digest pinning. Cloud provider, region, credentials configured locally, budget, exposure policy, and teardown timing remain undecided.
+- **Task 3:** Configurable policy and 0.2.0 publication approved and verified; final Step 3.1 review pending. Cloud provider, region, credentials configured locally, budget, exposure policy, and teardown timing remain undecided.
 - **Task 4:** Jenkins hosting and agent setup; webhook reachability.
 - **Task 6:** SMTP/notification receiver and cloud logging configuration.
 - **Task 7:** PowerPoint or PDF preference and evaluator access arrangements.
 
 ## Immediate next action
 
-Review the **Task 3, Step 1** configuration/manifests candidate on `task-03/step-01-manifests`. Confirm publication of 0.2.0 to the existing public Docker Hub repository for ARM64/AMD64; then build from reviewed source, test both platforms, publish unused version/commit tags, verify pulls, and pin the new manifest digest. Keep this branch open until that evidence is complete. Step 3.2 and cloud provisioning remain out of scope until their approvals.
+Review completed **Task 3, Step 1** on `task-03/step-01-manifests`, including the 0.2.0 publication evidence and digest-pinned Deployment. After approval, merge and start `task-03/step-02-runtime-safeguards`. Do not apply manifests or provision cloud resources before the remaining runtime safeguards and provider/access/budget approvals.

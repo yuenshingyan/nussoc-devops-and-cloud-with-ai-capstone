@@ -5,8 +5,10 @@
 - **Revision:** The commit introducing this evidence contains the verified source
   and manifests. Retrieve it with
   `git log -1 --diff-filter=A --format=%H -- evidence/task-03/step-01-manifests.md`.
-- **Status:** Local implementation and verification complete; 0.2.0 publication,
-  digest pinning, server-side validation, and step review remain pending.
+- **Historical scope:** Initial candidate verification at `ada935d`, before image publication.
+  The artifacts below retain that point-in-time state. Approved 0.2.0 publication
+  and digest pinning are now complete; see the [release follow-up](step-01-image-publication.md).
+  Server-side validation and final step review remain pending.
 
 ## Scope and configuration decision
 
@@ -119,7 +121,7 @@ successful application startup. Its captured logs contained the fixed configurat
 error, not the invalid value. All owned containers were removed. These checks prove
 Docker environment injection, **not Kubernetes ConfigMap execution**.
 
-## Preserved artifacts and next approval
+## Preserved candidate artifacts and subsequent release
 
 - [Rendered demo resources](step-01/kubernetes-demo.yaml)
 - [Manifest consistency summary](step-01/kubernetes-checks.json)
@@ -131,12 +133,13 @@ Logs have repository-home paths replaced with `<repository>`, Docker Desktop lin
 removed, and trailing whitespace trimmed. Results were not fabricated or relabeled
 as cloud execution. Large generated JUnit/coverage reports remain ignored locally.
 
-The draft Deployment references 0.2.0 because 0.1.0 does not consume these settings.
-Before deployment: approve publication, build from reviewed committed source, test
-ARM64 and AMD64, publish unused release/commit tags, verify registry pulls, and pin
-the resulting multi-platform digest. No AMD64 0.2.0 test or registry push is claimed.
-Step 3.2 still needs probes/resources/pod security; provider, budget, cloud access,
-and external exposure remain undecided.
+At this initial verification, the Deployment used a draft 0.2.0 tag and only local
+ARM64 execution had been tested. Following explicit approval, both platforms were
+built from `ada935d`, tested, published, and pull-tested; the Deployment was then
+pinned to the resulting index digest. Those later results are recorded separately
+in the [release follow-up](step-01-image-publication.md), not retroactively attributed
+to these candidate artifacts. Step 3.2 still needs probes/resources/pod security;
+provider, budget, cloud access, and external exposure remain undecided.
 
 See the [settings runbook](../../docs/runbooks/application-settings.md) and
 [Kubernetes runbook](../../docs/runbooks/kubernetes-manifests.md).

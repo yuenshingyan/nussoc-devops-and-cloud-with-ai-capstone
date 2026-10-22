@@ -19,9 +19,8 @@ spec:
         kubernetes.io/os: linux
       containers:
         - name: api
-          # Draft: publish and verify 0.2.0, then pin its digest before cluster deployment.
-          # Published 0.1.0 cannot consume the ConfigMap settings below.
-          image: docker.io/yuenshingyan/finsecure-pay:0.2.0
+          # Published 0.2.0 index: verified Linux ARM64 and AMD64 variants.
+          image: docker.io/yuenshingyan/finsecure-pay@sha256:48ee0ef91737fd2ee1d2efea93cf9a94e840eec6908bde6ed3af7afede884e99
           imagePullPolicy: IfNotPresent
           ports:
             - name: http

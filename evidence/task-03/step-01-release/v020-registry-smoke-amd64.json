@@ -1,0 +1,141 @@
+{
+  "verified_at_utc": "2026-10-22T02:15:04.511038+00:00",
+  "image_reference": "yuenshingyan/finsecure-pay@sha256:66ade57348103ac7fbcd01f323f6c01469f6a1e2c441196612942c2dcfb1e245",
+  "image_id": "sha256:f0f277d911f2a12a93acb68407deb9ed023013b3b42455d5de69a20eb6ed4adb",
+  "platform": "linux/amd64",
+  "source_revision": "ada935d033cd13f85e5e4adfed2d1e9ac449f6f8",
+  "default_smoke": {
+    "verified_at_utc": "2026-10-22T02:15:00.272751+00:00",
+    "image_tag": "sha256:f0f277d911f2a12a93acb68407deb9ed023013b3b42455d5de69a20eb6ed4adb",
+    "image_id": "sha256:f0f277d911f2a12a93acb68407deb9ed023013b3b42455d5de69a20eb6ed4adb",
+    "platform": "linux/amd64",
+    "container_id": "76efa4460f0837a7eb3e228d4fa3548fa805a6284a813ab3200e1d05325eebe2",
+    "base_url": "http://127.0.0.1:62449",
+    "pid_1_identity": {
+      "Uid": [
+        "10001",
+        "10001",
+        "10001",
+        "10001"
+      ],
+      "Gid": [
+        "10001",
+        "10001",
+        "10001",
+        "10001"
+      ]
+    },
+    "read_only_root_filesystem": true,
+    "dropped_capabilities": [
+      "ALL"
+    ],
+    "security_options": [
+      "no-new-privileges:true"
+    ],
+    "tmpfs": {
+      "/tmp": "rw,noexec,nosuid,size=16m"
+    },
+    "http_checks": [
+      {
+        "case": "health",
+        "status": 200,
+        "body": {
+          "status": "healthy"
+        }
+      },
+      {
+        "case": "accepted",
+        "status": 200,
+        "body": {
+          "valid": true,
+          "errors": []
+        }
+      },
+      {
+        "case": "business_rejection",
+        "status": 200,
+        "body": {
+          "valid": false,
+          "errors": [
+            "AMOUNT_NOT_POSITIVE"
+          ]
+        }
+      },
+      {
+        "case": "malformed_amount",
+        "status": 422,
+        "body": {
+          "detail": [
+            {
+              "loc": [
+                "body",
+                "amount"
+              ],
+              "type": "string_type",
+              "msg": "Invalid request value. Check the API contract."
+            }
+          ]
+        }
+      }
+    ],
+    "shutdown_exit_code": 0,
+    "oom_killed": false,
+    "container_removed": true
+  },
+  "configured_smoke": {
+    "container_id": "975101258df32a6bdc93130023ba9c39443c23fe6c1b944bbfcb05bece27983e",
+    "settings": {
+      "FINSECURE_MAX_TRANSACTION_AMOUNT": "100",
+      "FINSECURE_SUPPORTED_CURRENCIES": "USD"
+    },
+    "http_checks": [
+      {
+        "case": "inclusive_custom_limit",
+        "status": 200,
+        "body": {
+          "valid": true,
+          "errors": []
+        }
+      },
+      {
+        "case": "over_custom_limit",
+        "status": 200,
+        "body": {
+          "valid": false,
+          "errors": [
+            "AMOUNT_LIMIT_EXCEEDED"
+          ]
+        }
+      },
+      {
+        "case": "disabled_currency",
+        "status": 200,
+        "body": {
+          "valid": false,
+          "errors": [
+            "UNSUPPORTED_CURRENCY"
+          ]
+        }
+      },
+      {
+        "case": "combined_rejections",
+        "status": 200,
+        "body": {
+          "valid": false,
+          "errors": [
+            "AMOUNT_LIMIT_EXCEEDED",
+            "UNSUPPORTED_CURRENCY"
+          ]
+        }
+      }
+    ],
+    "shutdown_exit_code": 0,
+    "container_removed": true
+  },
+  "invalid_configuration": {
+    "container_id": "a9f9b58ab0b3e0b332bc4fee00df2214b9dbe6cd59a42a970df921e2a63dc0d2",
+    "exit_code": 1,
+    "invalid_value_not_logged": true,
+    "container_removed": true
+  }
+}

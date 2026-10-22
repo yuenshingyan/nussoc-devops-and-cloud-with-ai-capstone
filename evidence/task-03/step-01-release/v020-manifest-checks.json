@@ -1,0 +1,12 @@
+{
+  "verified_at_utc": "2026-10-22T02:16:05.895504+00:00",
+  "deployment_image": "docker.io/yuenshingyan/finsecure-pay@sha256:48ee0ef91737fd2ee1d2efea93cf9a94e840eec6908bde6ed3af7afede884e99",
+  "matches_verified_registry_index": true,
+  "replicas": 2,
+  "namespace_and_selectors_and_ports_match": true,
+  "configmap_reference_matches": true,
+  "service_type": "ClusterIP",
+  "cluster_contacted": false,
+  "resources_applied": false,
+  "server_side_validation": "pending approved cluster"
+}

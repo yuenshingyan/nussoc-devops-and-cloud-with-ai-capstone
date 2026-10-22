@@ -1,6 +1,39 @@
 # Container image publication
 
-## Published release
+## Current release — 0.2.0
+
+- Repository: [yuenshingyan/finsecure-pay](https://hub.docker.com/r/yuenshingyan/finsecure-pay), public.
+- Tags: `0.2.0` and `sha-ada935d`.
+- Reviewed source: [`ada935d033cd13f85e5e4adfed2d1e9ac449f6f8`](https://github.com/yuenshingyan/nussoc-devops-and-cloud-with-ai-capstone/tree/ada935d033cd13f85e5e4adfed2d1e9ac449f6f8).
+- Platforms: Linux ARM64 and AMD64; AMD64 runtime tests used emulation on ARM64.
+- Adds the [configurable validation policy](application-settings.md); defaults remain unchanged.
+
+The Deployment pins this verified multi-platform index:
+
+```text
+docker.io/yuenshingyan/finsecure-pay@sha256:48ee0ef91737fd2ee1d2efea93cf9a94e840eec6908bde6ed3af7afede884e99
+```
+
+```sh
+docker pull yuenshingyan/finsecure-pay:0.2.0
+uv run --locked python scripts/smoke_test.py --image yuenshingyan/finsecure-pay:0.2.0
+```
+
+Both platforms passed default-policy, custom-policy, and invalid-startup checks
+before pushing and after registry pulls. Anonymous registry/config access and
+public source provenance were verified. See [0.2.0 release evidence](../../evidence/task-03/step-01-image-publication.md)
+for platform digests, the recorded configuration-check harness, and actual results.
+
+When testing both architectures on one Docker host, prefer distinct platform
+digests. This host could not replace an AMD64 local index reference with ARM64
+without first removing that newly created local reference. The registry was not
+modified; the limitation and successful recovery are recorded in the evidence.
+
+Release 0.1.0 remains available and unchanged. The historical instructions below
+reproduce that original release; substitute a **new approved version and source**
+when preparing a future release. Never overwrite either published release's tags.
+
+## Initial release — 0.1.0 (historical)
 
 - Registry: [Docker Hub — yuenshingyan/finsecure-pay](https://hub.docker.com/r/yuenshingyan/finsecure-pay)
 - Visibility: public, verified without account credentials.
@@ -25,7 +58,7 @@ under emulation on the same ARM64 host, not on a native AMD64 cloud node. Both
 platforms passed HTTP, non-root identity, shutdown, and cleanup checks before
 publication and after pulling their published platform digests.
 
-## Pull and verify
+## Pull and verify the initial 0.1.0 release
 
 A normal pull chooses the matching host architecture:
 

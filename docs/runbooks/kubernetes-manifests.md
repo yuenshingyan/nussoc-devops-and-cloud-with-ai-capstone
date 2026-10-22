@@ -3,10 +3,11 @@
 ## Scope and readiness
 
 This step defines and locally renders resources; **it does not deploy them**.
-The draft Deployment references `yuenshingyan/finsecure-pay:0.2.0`, which is not yet
-published by this step. After publication and pull-back verification, replace that
-reference with the recorded multi-platform digest. Do not substitute 0.1.0: it does
-not consume the new validation settings.
+The Deployment pins published version 0.2.0 by its verified multi-platform index:
+`sha256:48ee0ef91737fd2ee1d2efea93cf9a94e840eec6908bde6ed3af7afede884e99`.
+Both platform images passed registry pull-back checks. Do not substitute 0.1.0: it
+does not consume the new validation settings. See the
+[publication evidence](../../evidence/task-03/step-01-image-publication.md).
 
 Probes, resource requests/limits, rolling-update policy, and the restricted pod
 security context belong to Step 3.2. Provider/region, cluster access, costs, external
@@ -49,7 +50,8 @@ These commands only use local files; they do not contact a cluster. Verify:
 - All three namespaced resources target `finsecure-pay` in the demo output.
 - Deployment and Service selectors match the pod labels.
 - Service port 80 targets `http`, which maps to container port 8000.
-- The Deployment requests two replicas and references version 0.2.0, not `latest`.
+- The Deployment requests two replicas and pins the verified 0.2.0 index digest above,
+  rather than `latest` or a mutable version-only tag.
 - The generated ConfigMap name has a content hash and matches `envFrom.configMapRef`.
 - The generated data contains string settings matching the
   [application settings contract](application-settings.md).
@@ -92,4 +94,5 @@ ConfigMaps are not secret storage. Do not put tokens, passwords, private keys,
 request bodies, or personal data in these files. The API currently needs no secrets.
 
 See [Step 3.1 evidence](../../evidence/task-03/step-01-manifests.md) for actual checks
-and remaining release/deployment prerequisites.
+and [release follow-up](../../evidence/task-03/step-01-image-publication.md) for digest
+pinning and remaining deployment prerequisites.

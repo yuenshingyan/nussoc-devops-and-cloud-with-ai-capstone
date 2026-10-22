@@ -4,11 +4,10 @@ A Python/FastAPI transaction-validation API and cloud-native DevOps capstone.
 
 ## Status
 
-Tasks 1–2 are reviewed and merged locally: application endpoints, test/package
-verification, public source, and public ARM64/AMD64 release 0.1.0.
-Step 3.1 adds configurable validation policy and draft Kubernetes resources;
-210 tests pass. Version 0.2.0 image publication, server-side manifest validation,
-runtime safeguards, and all cloud deployment remain pending.
+Tasks 1–2 are reviewed, merged, and published. Step 3.1 adds configurable validation
+policy and locally verified Kubernetes resources pinned to public ARM64/AMD64
+release 0.2.0; 210 tests pass. Step 3.1 awaits final review. Server-side manifest
+validation, runtime safeguards, and all cloud deployment remain pending.
 
 **Evaluator source link:** [reviewed application on main](https://github.com/yuenshingyan/nussoc-devops-and-cloud-with-ai-capstone/tree/main).
 GitHub now defaults to `main`. See the
@@ -94,20 +93,20 @@ published by this script.
 **[Docker Hub: yuenshingyan/finsecure-pay](https://hub.docker.com/r/yuenshingyan/finsecure-pay)**
 
 ```sh
-docker pull yuenshingyan/finsecure-pay:0.1.0
-uv run --locked python scripts/smoke_test.py --image yuenshingyan/finsecure-pay:0.1.0
+docker pull yuenshingyan/finsecure-pay:0.2.0
+uv run --locked python scripts/smoke_test.py --image yuenshingyan/finsecure-pay:0.2.0
 ```
 
-Version `0.1.0` and commit tag `sha-dec0da0` point to the same multi-platform release.
-ARM64 and AMD64 passed smoke tests before publication and after pulling their
+Version `0.2.0` and commit tag `sha-ada935d` point to the same multi-platform release.
+ARM64 and AMD64 passed default/custom-policy and invalid-startup checks before publication
+and after pulling their
 registry digests; AMD64 was tested under emulation, not on a native cloud node.
 See the [image publication runbook](docs/runbooks/image-publication.md) for the
 immutable deployment digest, source revision, and exact evidence. This demo release
 has not yet passed the security scans planned for Task 5; use synthetic data only.
 
-The published 0.1.0 release has fixed rules and does not consume the new environment
-settings. Version 0.2.0 must be separately published and verified; it is not available
-from the registry as part of this step yet.
+The earlier 0.1.0 release remains unchanged: its fixed rules do not consume these
+environment settings. Use 0.2.0 for configurable validation.
 
 ## Kubernetes configuration
 
@@ -116,8 +115,8 @@ kubectl kustomize deploy/kubernetes/overlays/demo
 ```
 
 This renders a namespace, two-replica Deployment, internal ClusterIP Service, and
-content-hashed ConfigMap without contacting a cluster. The draft image reference
-is 0.2.0, pending publication and digest pinning. **Do not apply these manifests yet:**
+content-hashed ConfigMap without contacting a cluster. The image is pinned to the
+verified 0.2.0 multi-platform digest. **Do not apply these manifests yet:**
 probes, resource limits, and pod security settings remain Step 3.2. See the
 [Kubernetes runbook](docs/runbooks/kubernetes-manifests.md).
 
@@ -161,7 +160,7 @@ Remove a placeholder when its directory receives real content.
 ## Files to add during implementation
 
 - Tasks 1–2: complete; published image 0.1.0 remains unchanged.
-- Task 3.1: configuration/manifests implemented; 0.2.0 publication and review pending.
+- Task 3.1: configuration/manifests and 0.2.0 publication verified; final review pending.
 - Remaining Task 3: runtime safeguards, provider-specific infrastructure, deployment, and recovery.
 - Task 4: `Jenkinsfile` and pipeline setup instructions.
 - Tasks 5–6: Security policies, monitoring/logging configuration, and demo scripts.

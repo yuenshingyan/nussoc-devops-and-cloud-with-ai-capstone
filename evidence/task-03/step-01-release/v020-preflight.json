@@ -1,0 +1,13 @@
+{
+  "checked_at_utc": "2026-10-22T02:12:11.571787+00:00",
+  "source_commit": "ada935d033cd13f85e5e4adfed2d1e9ac449f6f8",
+  "repository": "docker.io/yuenshingyan/finsecure-pay",
+  "public": true,
+  "credential_username_confirmed": "yuenshingyan",
+  "unused_tags": [
+    "0.2.0",
+    "sha-ada935d",
+    "sha-ada935d-arm64",
+    "sha-ada935d-amd64"
+  ]
+}
