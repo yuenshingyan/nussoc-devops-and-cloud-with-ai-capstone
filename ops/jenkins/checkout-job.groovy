@@ -3,6 +3,14 @@ pipelineJob('finsecure-checkout') {
     parameters {
         stringParam('EXPECTED_REVISION', '', 'Optional exact Git SHA for a manually verified checkout.')
     }
+    // Preserve setup-job polling/concurrency even before its next Pipeline execution.
+    configure { job ->
+        job / 'properties' / 'org.jenkinsci.plugins.workflow.job.properties.DisableConcurrentBuildsJobProperty'
+        job / 'properties' / 'org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty' / 'triggers' / 'hudson.triggers.SCMTrigger' {
+            spec('H/5 * * * *')
+            ignorePostCommitHooks(false)
+        }
+    }
     definition {
         cps {
             sandbox()

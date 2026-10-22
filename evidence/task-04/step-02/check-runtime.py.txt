@@ -1,0 +1,46 @@
+"""Record actual running CI setup, plugin pins, review-job retention and host results."""
+
+from datetime import UTC, datetime
+from json import dumps, loads
+from pathlib import Path
+from xml.etree.ElementTree import fromstring, parse
+
+from bootstrap import COMPOSE, Jenkins, admin_password, command
+
+client = Jenkins(admin_password())
+plugins = loads(client.request("/pluginManager/api/json?tree=plugins[shortName,version,active,enabled]"))["plugins"]
+expected = dict(line.split(":", 1) for line in Path("ops/jenkins/plugins.txt").read_text().splitlines())
+assert {item["shortName"]: item["version"] for item in plugins} == expected
+assert all(item["active"] and item["enabled"] for item in plugins)
+root = loads(client.request("/api/json"))
+agent = loads(client.request("/computer/finsecure-python/api/json"))
+assert root["numExecutors"] == 0 and not agent["offline"] and len(agent["executors"]) == 1
+config = fromstring(client.request("/job/finsecure-ci/config.xml"))
+assert config.find("definition").attrib["class"] == "org.jenkinsci.plugins.workflow.cps.CpsScmFlowDefinition"
+assert config.findtext("definition/scriptPath") == "Jenkinsfile"
+assert config.findtext("definition/scm/branches/hudson.plugins.git.BranchSpec/name") == "*/main"
+assert loads(client.request("/job/finsecure-ci/api/json"))["lastBuild"] is None
+checkout = fromstring(client.request("/job/finsecure-checkout/config.xml"))
+assert checkout.findtext(".//hudson.triggers.SCMTrigger/spec") == "H/5 * * * *"
+runtime = {}
+for service in ["controller", "agent"]:
+    info = loads(command(["docker", "inspect", command([*COMPOSE, "ps", "--quiet", service])]))[0]
+    assert info["State"]["Running"] and not info["State"]["OOMKilled"]
+    assert not info["HostConfig"]["Privileged"]
+    assert info["HostConfig"]["CapDrop"] == ["ALL"]
+    assert "no-new-privileges:true" in info["HostConfig"]["SecurityOpt"]
+    assert all(mount["Type"] == "volume" for mount in info["Mounts"])
+    runtime[service] = {"image_id": info["Image"], "running": True, "oom_killed": False,
+                        "memory_limit": info["HostConfig"]["Memory"], "privileged": False}
+for name in ["finsecure-ci-review-success-20261022090940", "finsecure-ci-review-failure-20261022091005"]:
+    assert fromstring(client.request("/job/" + name + "/config.xml")).findtext("disabled") == "true"
+tests = parse("reports/junit.xml").getroot().find("testsuite")
+assert tests.attrib["tests"] == "230" and tests.attrib["failures"] == "0" and tests.attrib["errors"] == "0"
+record = {"verified_at_utc": datetime.now(UTC).isoformat(), "installed_plugins": len(plugins),
+          "all_pins_match_and_active": True, "controller_executors": 0, "agent_executors": 1,
+          "agent_online": True, "production_scm_job_configured": True,
+          "production_scm_job_has_run": False, "checkout_polling_present_after_restart": True,
+          "final_review_jobs_disabled": True, "host_tests": 230, "runtime": runtime}
+Path("reports/step42-runtime.json").write_text(dumps(record, indent=2) + "\n")
+Path("reports/step42-installed-plugins.json").write_text(dumps(sorted(plugins, key=lambda item: item["shortName"]), indent=2) + "\n")
+print(dumps(record, indent=2))

@@ -1,0 +1,29 @@
+{
+  "verified_at_utc": "2026-10-22T09:13:54.382761+00:00",
+  "installed_plugins": 73,
+  "all_pins_match_and_active": true,
+  "controller_executors": 0,
+  "agent_executors": 1,
+  "agent_online": true,
+  "production_scm_job_configured": true,
+  "production_scm_job_has_run": false,
+  "checkout_polling_present_after_restart": true,
+  "final_review_jobs_disabled": true,
+  "host_tests": 230,
+  "runtime": {
+    "controller": {
+      "image_id": "sha256:ca8fcd71b20493a8bce991d61d25aea603c78be9ca73b999064f01d28cda6e3c",
+      "running": true,
+      "oom_killed": false,
+      "memory_limit": 1073741824,
+      "privileged": false
+    },
+    "agent": {
+      "image_id": "sha256:b9b74be7149028770bd7e137aa8397d48416ba7bf52c5d36f05f52d64ba87883",
+      "running": true,
+      "oom_killed": false,
+      "memory_limit": 1073741824,
+      "privileged": false
+    }
+  }
+}

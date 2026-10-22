@@ -1,0 +1,82 @@
+"""Verify first-start job registration with a disposable controller and fresh home."""
+
+from datetime import UTC, datetime
+from json import dumps, loads
+from pathlib import Path
+from re import sub
+from subprocess import run
+from time import monotonic, sleep
+from urllib.error import HTTPError, URLError
+from urllib.request import ProxyHandler, Request, build_opener
+from xml.etree.ElementTree import fromstring
+
+from bootstrap import Jenkins, NoRedirect, admin_password, command
+
+client = Jenkins(admin_password())
+identifier = command([
+    "docker", "run", "--detach", "--rm", "--pull=never",
+    "--name", "finsecure-ci-seed-check", "--network", "finsecure-jenkins_default",
+    "--publish", "127.0.0.1::8080", "--cpus=1", "--memory=1g",
+    "--cap-drop=ALL", "--security-opt=no-new-privileges:true",
+    "--env", "JENKINS_JAVA_OPTS=-Xmx512m -Djenkins.install.runSetupWizard=false",
+    "--volume", "finsecure-jenkins-controller-secrets:/run/secrets:ro",
+    "finsecure-jenkins-controller:step-04-02",
+])
+record = {}
+try:
+    container = loads(command(["docker", "inspect", identifier]))[0]
+    binding = container["NetworkSettings"]["Ports"]["8080/tcp"][0]
+    assert binding["HostIp"] == "127.0.0.1"
+    home = next(mount for mount in container["Mounts"] if mount["Destination"] == "/var/jenkins_home")
+    assert home["Name"] != "finsecure-jenkins_controller-home"
+    base = "http://127.0.0.1:" + binding["HostPort"]
+    opener = build_opener(ProxyHandler({}), NoRedirect())
+    deadline = monotonic() + 180
+    while monotonic() < deadline:
+        assert command(["docker", "inspect", "--format", "{{.State.Running}}", identifier]) == "true"
+        try:
+            with opener.open(Request(base + "/api/json", headers={"Authorization": client.authorization}), timeout=5) as response:
+                state = loads(response.read())
+            if {job["name"] for job in state["jobs"]} == {"finsecure-checkout", "finsecure-ci"}:
+                break
+            logs = command(["docker", "logs", identifier])
+            # Docker logs sends Java logging to stderr; collect it without printing secrets.
+            log_result = run(["docker", "logs", identifier], capture_output=True, text=True, timeout=15)
+            if "Jenkins is fully up and running" in log_result.stderr + log_result.stdout:
+                raise RuntimeError("Fresh controller completed initialization without both jobs")
+        except HTTPError as error:
+            error.close()
+            if error.code not in {401, 403, 404, 500, 503}:
+                raise
+        except (URLError, TimeoutError, ConnectionError):
+            pass
+        sleep(2)
+    else:
+        raise TimeoutError("Fresh controller did not register both jobs on first startup")
+    assert state["numExecutors"] == 0
+    with opener.open(Request(base + "/job/finsecure-checkout/config.xml", headers={"Authorization": client.authorization}), timeout=5) as response:
+        checkout = fromstring(response.read())
+    assert checkout.findtext(".//hudson.triggers.SCMTrigger/spec") == "H/5 * * * *"
+    with opener.open(Request(base + "/job/finsecure-ci/config.xml", headers={"Authorization": client.authorization}), timeout=5) as response:
+        ci = fromstring(response.read())
+    assert ci.find("definition").attrib["class"] == "org.jenkinsci.plugins.workflow.cps.CpsScmFlowDefinition"
+    assert ci.findtext("definition/scriptPath") == "Jenkinsfile"
+    record = {"verified_at_utc": datetime.now(UTC).isoformat(), "fresh_home": True,
+              "first_start_registered_jobs": sorted(job["name"] for job in state["jobs"]),
+              "checkout_polling_configured_before_first_build": True,
+              "ci_scm_definition_configured": True, "controller_executors": 0,
+              "image_id": container["Image"]}
+except BaseException:
+    logs = run(["docker", "logs", identifier], capture_output=True, text=True, timeout=15)
+    safe = sub(r"[a-f0-9]{64}", "<hex-redacted>", (logs.stdout + logs.stderr).replace(admin_password(), "<redacted>"))
+    Path("reports/step42-fresh-startup-diagnostic.txt").write_text(safe)
+    raise
+finally:
+    command(["docker", "stop", "--time=60", identifier], timeout=90)
+    gone = run(["docker", "inspect", identifier], capture_output=True, text=True, timeout=15)
+    assert gone.returncode != 0 and "no such object" in gone.stderr.lower()
+    gone_home = run(["docker", "volume", "inspect", home["Name"]], capture_output=True, text=True, timeout=15)
+    assert gone_home.returncode != 0 and "no such volume" in gone_home.stderr.lower()
+    record["temporary_container_and_anonymous_home_removed"] = True
+Path("reports/step42-fresh-controller.json").write_text(dumps(record, indent=2) + "\n")
+print(dumps(record, indent=2))

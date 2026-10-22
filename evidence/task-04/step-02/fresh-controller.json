@@ -1,0 +1,13 @@
+{
+  "verified_at_utc": "2026-10-22T09:07:53.507319+00:00",
+  "fresh_home": true,
+  "first_start_registered_jobs": [
+    "finsecure-checkout",
+    "finsecure-ci"
+  ],
+  "checkout_polling_configured_before_first_build": true,
+  "ci_scm_definition_configured": true,
+  "controller_executors": 0,
+  "image_id": "sha256:ca8fcd71b20493a8bce991d61d25aea603c78be9ca73b999064f01d28cda6e3c",
+  "temporary_container_and_anonymous_home_removed": true
+}

@@ -1,0 +1,75 @@
+{
+  "verified_at_utc": "2026-10-22T09:10:05.141879+00:00",
+  "job": "finsecure-ci-review-success-20261022090940",
+  "build": 1,
+  "result": "SUCCESS",
+  "source_revision": "683706803dd011c1b90e74ac67d1c691898194df",
+  "candidate_jenkinsfile_sha256": "bc125564989157f36ca7e1a4ef258a61200c627283a7e0caf8bc4512b4f3ba56",
+  "executed_script_sha256": "0bb4329894c1aa364061e4c7966286e09123dccb09408d17c7f3d3121b1e6824",
+  "review_mode": "success",
+  "pipeline_from_scm_verified": false,
+  "test_count": 221,
+  "coverage_ui": {
+    "branch": "100.00%",
+    "class": "66.67%",
+    "cyclomatic-complexity": "0",
+    "file": "66.67%",
+    "line": "100.00%",
+    "loc": "125",
+    "module": "100.00%",
+    "package": "80.00%"
+  },
+  "test_failures": 0,
+  "coverage_xml": {
+    "lines-covered": "125",
+    "lines-valid": "125",
+    "branches-covered": "28",
+    "branches-valid": "28"
+  },
+  "artifacts": {
+    "dist/finsecure_pay-0.2.0-py3-none-any.whl": {
+      "bytes": 11822,
+      "sha256": "b0435f95b6bb09e9280d1d9ee8c852a95f4f69df2eaf78fc49cddbf60711fcd9"
+    },
+    "dist/finsecure_pay-0.2.0.tar.gz": {
+      "bytes": 134311,
+      "sha256": "99e6b537a04945b8515eb583a8be01e014a63101924ccebc651c845e36bbe88f"
+    },
+    "reports/build-metadata.txt": {
+      "bytes": 174,
+      "sha256": "9ab3221b4e5ca86952e7f59cfeeaacaa645de3e5c83fdb01bab38599e869963a"
+    },
+    "reports/coverage.xml": {
+      "bytes": 8695,
+      "sha256": "b9a336653862c0d758327acaefa6eecf2528755b3c673d7b212c613a70f5493e"
+    },
+    "reports/dependencies.txt": {
+      "bytes": 1030,
+      "sha256": "26b8f5635bf90dfd859febdc9ceac6fc342c85d7cc913d27d76a94b34177c311"
+    },
+    "reports/format.txt": {
+      "bytes": 27,
+      "sha256": "eb27c90aa064a61ea9229c3acedb339696979cc4f1b6d1e8e8dd6eab0c1292a7"
+    },
+    "reports/junit.xml": {
+      "bytes": 31704,
+      "sha256": "61dde27b8516c182e36154ff58b6bf0f75db6f3257c1a129081d17e49c88d550"
+    },
+    "reports/lint.txt": {
+      "bytes": 19,
+      "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+    },
+    "reports/package.txt": {
+      "bytes": 187,
+      "sha256": "7dd09086c60e4b6cdde16a54eaadc2f70941d0722d1609bbad931f98946a11bb"
+    },
+    "reports/packages.sha256": {
+      "bytes": 206,
+      "sha256": "0ef943539cd27a00a4042c0cc29079ddf15b6b7b9ed1a01d0d80ca08f9b11a9b"
+    },
+    "reports/tests.txt": {
+      "bytes": 3771,
+      "sha256": "f5752dafbf8a09f0c340abe147e94c6bd9482d3ff94a03e5365a937b82d6145e"
+    }
+  }
+}

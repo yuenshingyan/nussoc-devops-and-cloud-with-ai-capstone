@@ -1,12 +1,13 @@
-# Local Jenkins — Step 4.1
+# Local Jenkins — controller and agent setup
 
 ## Scope and boundaries
 
-This is a **checkout-only setup**, not the finished CI/CD pipeline. It creates a local
-Jenkins controller and one Python agent. The job fetches the public repository's
-`main`, optionally checks an expected commit, and prints tool versions. It does not
-run application tests, scanners, packaging, image publication, or Kubernetes deployment.
-A green `finsecure-checkout` result proves only those setup checks.
+Step 4.1 created a local Jenkins controller and one Python agent. Its retained
+`finsecure-checkout` job fetches public `main` and prints tool versions; a green result
+there still proves **checkout only**, not application CI or deployment.
+Step 4.2 adds a separate `finsecure-ci` Pipeline-from-SCM definition and verified local
+candidate runs. See the [application CI runbook](application-ci.md) for reports and the
+post-merge first run. No job publishes images or deploys to Kubernetes yet.
 
 - Controller: Jenkins **2.580.1 LTS**, Java 21, **zero executors**.
 - Agent: one executor labelled `python`, Python **3.14.7**, uv **0.9.21**, Git, Java 21.
@@ -22,7 +23,8 @@ A green `finsecure-checkout` result proves only those setup checks.
   The local URL is not an externally accessible submission link.
 
 Images are digest-pinned in `ops/jenkins/*.Dockerfile`. `plugins.txt` pins the complete
-63-plugin resolution, including transitive dependencies, using `--latest=false`.
+73-plugin resolution, including transitive dependencies, using `--latest=false`
+(Step 4.1 originally verified 63; Step 4.2 adds JUnit/Coverage and their dependencies).
 This is not a bit-for-bit rebuild guarantee: Debian package repositories/build metadata
 can change. Actual local image IDs and installed plugin versions are recorded as evidence.
 No Jenkins image was published to a registry. Only Linux ARM64 execution was verified.
@@ -68,7 +70,9 @@ if private credential material is missing or inconsistent, recover it deliberate
 than deleting volumes or creating replacement accounts blindly. JCasC controls this admin
 account, so do not treat a UI password change as a durable rotation procedure.
 
-Startup polling allows 180 seconds for the controller and 120 for the agent; individual
+Startup polling allows 180 seconds for the controller and 120 for the agent, followed
+by up to 60 seconds per configured job to verify registration. Job DSL runs from the
+trusted post-initialization hook rather than early JCasC adaptation. Individual
 HTTP/Docker calls are also bounded. An exited container fails startup promptly. Failure
 leaves the owned persistent state available for diagnosis; the bootstrap does not prune,
 reset credentials, or silently destroy the controller home.
@@ -98,7 +102,7 @@ In the UI, open **finsecure-checkout → build number → Console Output**. Expe
 - `Finished: SUCCESS`.
 
 The sandboxed Pipeline definition is intentionally embedded in the trusted image's
-Job DSL for this setup step; a repository Jenkinsfile is added in Step 4.2.
+Job DSL for this setup job; the separate application job uses the Step 4.2 Jenkinsfile.
 Builds are serialized. The five-minute Pipeline timeout includes agent allocation;
 Git clone/fetch has a two-minute timeout and controller SCM checkout retries are zero.
 The verifier's queue/build polling allowance is six minutes. A verification-client failure
@@ -107,7 +111,9 @@ explicitly if necessary.
 
 ## Source-change triggering
 
-The first run installs `H/5 * * * *` SCM polling (hashed five-minute schedule). This avoids
+The setup job's seed and Pipeline both configure `H/5 * * * *` SCM polling
+(hashed five-minute schedule), so restarting does not depend on another manual build
+before polling is restored. This avoids
 opening an Internet-facing webhook/tunnel. Polling only works while Docker, Jenkins, and
 the laptop are running. A successful manual checkout and a configured poll schedule are
 **not** proof of a source-change-triggered application pipeline; that demonstration is
@@ -164,7 +170,8 @@ reconciles every manually upgraded plugin in Jenkins home. Avoid UI plugin upgra
 
 ## What remains pending
 
-Step 4.2 adds real application tests, reports, packaging, and a Jenkinsfile. Container
+Step 4.2's candidate tests/reports/packages are verified; review and the post-merge
+Pipeline-from-SCM run remain pending. Container
 build/push requires a separately agreed isolated builder; the current agent has neither
 Docker CLI nor daemon access. Do not attach the host Docker socket as a shortcut.
 Security gates, real source-change/failure demonstrations, notifications, and all managed

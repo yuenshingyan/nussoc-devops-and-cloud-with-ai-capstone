@@ -1,0 +1,2 @@
+Selected actual diagnostic from the rejected dynamic trigger DSL, before its correction:
+groovy.lang.MissingMethodException: No signature of method: javaposse.jobdsl.plugin.structs.DescribableListContext.scm() is applicable for argument types: (script$_run_closure1$_closure3$_closure5$_closure6$_closure7) values: [script$_run_closure1$_closure3$_closure5$_closure6$_closure7@3324a3b2]

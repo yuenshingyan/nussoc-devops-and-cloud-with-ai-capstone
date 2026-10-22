@@ -1,0 +1,198 @@
+Started by user admin
+[Pipeline] Start of Pipeline
+[Pipeline] node
+Running on finsecure-python in /home/jenkins/agent/workspace/finsecure-ci-review-success-20261022090940
+[Pipeline] {
+[Pipeline] timeout
+Timeout set to expire in 15 min
+[Pipeline] {
+[Pipeline] stage
+[Pipeline] { (Checkout)
+[Pipeline] deleteDir
+[Pipeline] checkout
+The recommended git tool is: NONE
+No credentials specified
+Cloning the remote Git repository
+Cloning repository https://github.com/yuenshingyan/nussoc-devops-and-cloud-with-ai-capstone.git
+ > git init /home/jenkins/agent/workspace/finsecure-ci-review-success-20261022090940 # timeout=10
+Fetching upstream changes from https://github.com/yuenshingyan/nussoc-devops-and-cloud-with-ai-capstone.git
+ > git --version # timeout=10
+ > git --version # 'git version 2.39.5'
+ > git fetch --tags --force --progress -- https://github.com/yuenshingyan/nussoc-devops-and-cloud-with-ai-capstone.git +refs/heads/*:refs/remotes/origin/* # timeout=2
+Avoid second fetch
+Checking out Revision 683706803dd011c1b90e74ac67d1c691898194df (detached)
+Commit message: "ci: add local Jenkins controller and checkout agent"
+First time build. Skipping changelog.
+[Pipeline] sh
+ > git config remote.origin.url https://github.com/yuenshingyan/nussoc-devops-and-cloud-with-ai-capstone.git # timeout=10
+ > git config --add remote.origin.fetch +refs/heads/*:refs/remotes/origin/* # timeout=10
+ > git rev-parse 683706803dd011c1b90e74ac67d1c691898194df^{commit} # timeout=10
+ > git config core.sparsecheckout # timeout=10
+ > git checkout -f 683706803dd011c1b90e74ac67d1c691898194df # timeout=10
+SOURCE_REVISION=683706803dd011c1b90e74ac67d1c691898194df
+Python 3.14.7
+uv 0.9.21
+git version 2.39.5
+343a2784581474f882841d7c4955d7d9456f7dd31d83e5064e7fc3052ab0778e  uv.lock
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Locked dependencies)
+[Pipeline] sh
+Using CPython 3.14.7 interpreter at: /usr/local/bin/python3.14
+Creating virtual environment at: .venv
+Resolved 27 packages in 0.99ms
+   Building finsecure-pay @ file:///home/jenkins/agent/workspace/finsecure-ci-review-success-20261022090940
+      Built finsecure-pay @ file:///home/jenkins/agent/workspace/finsecure-ci-review-success-20261022090940
+Prepared 1 package in 778ms
+Installed 26 packages in 121ms
+ + annotated-doc==0.0.5
+ + annotated-types==0.8.0
+ + anyio==4.15.1
+ + certifi==2026.10.19
+ + click==8.5.0
+ + coverage==7.16.2
+ + fastapi==0.156.8
+ + finsecure-pay==0.2.0 (from file:///home/jenkins/agent/workspace/finsecure-ci-review-success-20261022090940)
+ + h11==0.16.0
+ + httpcore==1.0.9
+ + httpx==0.28.1
+ + idna==3.20
+ + iniconfig==2.3.1
+ + opentelemetry-api==1.45.1
+ + packaging==26.3
+ + pluggy==1.7.0
+ + pydantic==2.14.1
+ + pydantic-core==2.50.1
+ + pygments==2.21.0
+ + pytest==9.1.1
+ + pytest-cov==7.1.0
+ + ruff==0.17.1
+ + starlette==1.9.0
+ + typing-extensions==4.16.0
+ + typing-inspection==0.4.4
+ + uvicorn==0.54.0
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Code checks)
+[Pipeline] sh
+All checks passed!
+54 files already formatted
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Tests)
+[Pipeline] sh
+============================= test session starts ==============================
+platform linux -- Python 3.14.7, pytest-9.1.1, pluggy-1.7.0
+rootdir: /home/jenkins/agent/workspace/finsecure-ci-review-success-20261022090940
+configfile: pyproject.toml
+testpaths: tests
+plugins: anyio-4.15.1, cov-7.1.0
+collected 221 items
+
+tests/integration/test_application.py ..                                 [  0%]
+tests/integration/test_configuration_api.py ........                     [  4%]
+tests/integration/test_health_api.py ...                                 [  5%]
+tests/integration/test_validation_api.py ............................... [ 19%]
+...                                                                      [ 21%]
+tests/integration/test_validation_boundaries.py ........................ [ 32%]
+..................................                                       [ 47%]
+tests/unit/test_config.py ...................................            [ 63%]
+tests/unit/test_jenkins_bootstrap.py ...........                         [ 68%]
+tests/unit/test_transaction_schema.py .................................. [ 83%]
+............                                                             [ 89%]
+tests/unit/test_validation.py ........................                   [100%]
+
+=============================== warnings summary ===============================
+.venv/lib/python3.14/site-packages/fastapi/testclient.py:1
+  /home/jenkins/agent/workspace/finsecure-ci-review-success-20261022090940/.venv/lib/python3.14/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+- generated xml file: /home/jenkins/agent/workspace/finsecure-ci-review-success-20261022090940/reports/junit.xml -
+================================ tests coverage ================================
+_______________ coverage: platform linux, python 3.14.7-final-0 ________________
+
+Name                                          Stmts   Miss Branch BrPart  Cover   Missing
+-----------------------------------------------------------------------------------------
+src/finsecure_pay/__init__.py                     0      0      0      0   100%
+src/finsecure_pay/api/__init__.py                 0      0      0      0   100%
+src/finsecure_pay/api/dependencies.py             4      0      0      0   100%
+src/finsecure_pay/api/errors.py                  15      0      4      0   100%
+src/finsecure_pay/api/health.py                   6      0      0      0   100%
+src/finsecure_pay/api/validation.py              11      0      0      0   100%
+src/finsecure_pay/config.py                      44      0     14      0   100%
+src/finsecure_pay/main.py                        14      0      0      0   100%
+src/finsecure_pay/observability/__init__.py       0      0      0      0   100%
+src/finsecure_pay/schemas/__init__.py             0      0      0      0   100%
+src/finsecure_pay/schemas/errors.py               3      0      0      0   100%
+src/finsecure_pay/schemas/health.py               3      0      0      0   100%
+src/finsecure_pay/schemas/transaction.py          7      0      0      0   100%
+src/finsecure_pay/services/__init__.py            0      0      0      0   100%
+src/finsecure_pay/services/validation.py         18      0     10      0   100%
+-----------------------------------------------------------------------------------------
+TOTAL                                           125      0     28      0   100%
+Coverage XML written to file reports/coverage.xml
+======================== 221 passed, 1 warning in 0.69s ========================
+Post stage
+[Pipeline] script
+[Pipeline] {
+[Pipeline] junit
+Recording test results
+[Pipeline] recordCoverage
+[Coverage] Recording coverage results
+[Coverage] Creating parser for Cobertura Coverage Reports
+[Coverage] Searching for all files in '/home/jenkins/agent/workspace/finsecure-ci-review-success-20261022090940' that match the pattern 'reports/coverage.xml'
+[Coverage] Traversing of symbolic links: enabled
+[Coverage] -> found 1 file
+[Coverage] Successfully parsed file '/home/jenkins/agent/workspace/finsecure-ci-review-success-20261022090940/reports/coverage.xml'
+[Coverage] Module Coverage: 100.00% (1/1)
+[Coverage] Package Coverage: 80.00% (4/5)
+[Coverage] File Coverage: 66.67% (10/15)
+[Coverage] Class Coverage: 66.67% (10/15)
+[Coverage] Line Coverage: 100.00% (125/125)
+[Coverage] Branch Coverage: 100.00% (28/28)
+[Coverage] Lines of Code: 125
+[Coverage] Cyclomatic Complexity: 0
+[Coverage] Successfully processed file 'reports/coverage.xml'
+[Coverage] Resolving source code files...
+[Coverage] Searching for source code files in:
+[Coverage] -> /home/jenkins/agent/workspace/finsecure-ci-review-success-20261022090940/src/main/java
+[Coverage] -> /home/jenkins/agent/workspace/finsecure-ci-review-success-20261022090940/src/finsecure_pay
+[Coverage] -> resolved absolute paths for all 15 source files
+[Coverage] Obtaining result action of reference build
+[Coverage] Reference build recorder is not configured
+[Coverage] -> Found no reference build
+[Coverage] No quality gates have been set - skipping
+[Coverage] Executing source code painting...
+[Coverage] Finished coverage processing - adding the action to the build...
+[Pipeline] }
+[Pipeline] // script
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Package)
+[Pipeline] sh
+Building source distribution...
+Building wheel from source distribution...
+Successfully built dist/finsecure_pay-0.2.0.tar.gz
+Successfully built dist/finsecure_pay-0.2.0-py3-none-any.whl
+[Pipeline] archiveArtifacts
+Archiving artifacts
+Recording fingerprints
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Declarative: Post Actions)
+[Pipeline] archiveArtifacts
+Archiving artifacts
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] }
+[Pipeline] // timeout
+[Pipeline] }
+[Pipeline] // node
+[Pipeline] End of Pipeline
+Finished: SUCCESS

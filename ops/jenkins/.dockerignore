@@ -4,3 +4,5 @@
 !plugins.txt
 !jenkins.yaml
 !checkout-job.groovy
+!ci-job.groovy
+!seed-jobs.groovy

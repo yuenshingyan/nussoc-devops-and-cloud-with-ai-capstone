@@ -6,8 +6,10 @@ A Python/FastAPI transaction-validation API and cloud-native DevOps capstone.
 
 Tasks 1–2 and Steps 3.1–3.2 are reviewed, merged, and published. Kubernetes resources
 pin public ARM64/AMD64 release 0.2.0; 210 application tests pass. Local Jenkins setup
-and a real repository checkout are verified in Step 4.1, awaiting review.
-Jenkins application test/build stages are not implemented yet. Cloud work is deferred
+and repository checkout are reviewed and merged in Step 4.1. Step 4.2's candidate
+Jenkinsfile passed a real agent run with 221 tests, test/coverage publication, and package
+archiving against published source. It is awaiting review; the normal SCM-loaded run
+follows approved merge. Cloud work is deferred
 for budget approval while feasible local work proceeds toward **4 November** submission.
 Kubernetes execution and all dependent cloud verification remain pending.
 
@@ -125,7 +127,7 @@ non-root/read-only security settings, and rolling-update policy are configured.
 are still required. See the [Kubernetes runbook](docs/runbooks/kubernetes-manifests.md)
 and [runtime policy](docs/runbooks/runtime-safeguards.md) for values and verification limits.
 
-## Local Jenkins (checkout-only)
+## Local Jenkins
 
 ```sh
 docker compose -f ops/jenkins/compose.yaml build
@@ -137,6 +139,13 @@ password-file **path**, never its value. Do not paste credentials into chat or G
 The controller runs no builds; a separate non-root Python agent checks out trusted
 `main`. SCM polling is configured without exposing a public webhook or Docker socket.
 This URL is local only, not an evaluator-accessible hosted service.
+
+Step 4.2 adds `finsecure-ci`: checkout, locked installation, Ruff, pytest/JUnit,
+application coverage, and wheel/source-distribution artifacts. The candidate was
+executed in isolated review jobs before publishing this branch; the normal job needs
+`Jenkinsfile` on `main` before its first run. See the
+[application CI runbook](docs/runbooks/application-ci.md) for verified runs, reports,
+manual triggering, and the post-merge check. No image/cloud delivery stages exist yet.
 
 See the [Jenkins runbook](docs/runbooks/local-jenkins.md) for credential handling,
 verification, troubleshooting, resource limits, and non-destructive shutdown.
@@ -184,8 +193,9 @@ Remove a placeholder when its directory receives real content.
 - Task 3.1: configuration/manifests and 0.2.0 publication reviewed and merged.
 - Task 3.2: runtime settings reviewed and merged; Kubernetes execution pending.
 - Remaining Task 3: provider-specific infrastructure, deployment, and recovery (deferred).
-- Task 4.1: local Jenkins and checkout verified; review pending.
-- Remaining Task 4: `Jenkinsfile` test/package stages, delivery, failure gating, rollout/rollback.
+- Task 4.1: local Jenkins and checkout reviewed, merged, and published.
+- Task 4.2: candidate application pipeline verified; review and post-merge SCM run pending.
+- Remaining Task 4: container delivery, source-change/failed-test proof, rollout/rollback.
 - Tasks 5–6: Security policies, monitoring/logging configuration, and demo scripts.
 - Task 7: Design document, architecture diagram, AI use case, and presentation.
 

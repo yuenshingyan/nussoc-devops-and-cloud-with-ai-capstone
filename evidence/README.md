@@ -5,15 +5,16 @@ application, test, package-installation, and public source-access evidence.
 Task 2 has image-build, execution, versioned registry publication, and anonymous
 pull/access evidence for ARM64 and AMD64. Task 3 has locally verified configuration,
 0.2.0 registry publication, digest-pinned manifests, and constrained-container runtime
-checks, not cloud-deployment or kubelet-probe evidence. Task 4 now includes a real
-local Jenkins checkout-only run, not application CI or cloud delivery.
+checks, not cloud-deployment or kubelet-probe evidence. Task 4 includes local Jenkins
+checkout and candidate application CI, published test/coverage reports, package downloads,
+and report retention on an isolated failure. Cloud delivery remains unverified.
 
 | Task | Directory | Status |
 | --- | --- | --- |
 | 1 — Application and Git | [task-01](task-01/) | Complete and merged |
 | 2 — Containerisation | [task-02](task-02/) | Complete, reviewed, merged, and published |
 | 3 — Kubernetes and cloud | [task-03](task-03/) | Steps 3.1–3.2 merged; cloud execution deferred |
-| 4 — CI/CD | [task-04](task-04/) | Step 4.1 local setup/checkout verified, review pending; application stages and cloud delivery pending |
+| 4 — CI/CD | [task-04](task-04/) | Step 4.1 merged; Step 4.2 candidate pipeline verified, review/SCM follow-up pending; delivery pending |
 | 5 — DevSecOps | [task-05](task-05/) | Pending |
 | 6 — Observability | [task-06](task-06/) | Pending |
 | 7 — Documentation and demonstration | [task-07](task-07/) | Pending |
@@ -55,6 +56,12 @@ local Jenkins checkout-only run, not application CI or cloud delivery.
   loopback-only controller, separate non-root Python agent, real public `main` checkout,
   runtime/plugin checks, and preserved restart state. No application tests ran in Jenkins;
   SCM polling configuration is not yet a source-change-trigger demonstration.
+
+- [Step 4.2 — Application CI and reports](task-04/step-02-build-test-package.md): the
+  candidate Jenkinsfile ran on the real agent against reviewed source; 221 tests passed,
+  JUnit/coverage results were published, and package downloads matched their checksums.
+  An isolated post-test shell failure retained reports and skipped packaging. The normal
+  SCM-loaded pipeline run awaits approved merge; no release/deployment gate is claimed.
 
 For each artifact, record the requirement demonstrated, timestamp, command or
 procedure, actual result, commit, applicable image digest, and artifact path or

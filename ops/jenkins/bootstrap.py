@@ -230,11 +230,14 @@ def start() -> dict[str, object]:
     seed_secret("finsecure-jenkins-agent-secrets", "agent_secret", secret)
     command([*COMPOSE, "up", "--detach", "--no-build", "agent"])
     agent = client.wait("/computer/finsecure-python/api/json", "offline", False, 120, "agent")
+    for name in ["finsecure-checkout", "finsecure-ci"]:
+        client.wait(f"/job/{name}/api/json", "name", name, 60, "controller")
     return {
         "url": BASE_URL,
         "controller_executors": root["numExecutors"],
         "agent_online": not agent["offline"],
         "anonymous_api_access": "denied",
+        "configured_jobs_visible": ["finsecure-checkout", "finsecure-ci"],
         "password_file": str(SECRET_DIRECTORY / "admin-password"),
     }
 
