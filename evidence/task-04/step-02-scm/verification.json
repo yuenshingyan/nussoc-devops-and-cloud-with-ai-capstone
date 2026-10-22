@@ -1,0 +1,68 @@
+{
+  "verified_at_utc": "2026-10-22T09:26:21.653108+00:00",
+  "job": "finsecure-ci",
+  "build": 1,
+  "trigger": "manual authenticated API",
+  "result": "SUCCESS",
+  "pipeline_from_scm_verified": true,
+  "source_revision": "8deececf496ceb817f8965782e4481c37ea9531b",
+  "jenkinsfile_sha256_at_verified_revision": "bc125564989157f36ca7e1a4ef258a61200c627283a7e0caf8bc4512b4f3ba56",
+  "agent": "finsecure-python",
+  "tests_passed": 230,
+  "tests_failed": 0,
+  "tests_skipped": 0,
+  "coverage_xml": {
+    "lines-covered": "125",
+    "lines-valid": "125",
+    "branches-covered": "28",
+    "branches-valid": "28"
+  },
+  "coverage_quality_gate": "INACTIVE",
+  "artifacts": {
+    "dist/finsecure_pay-0.2.0-py3-none-any.whl": {
+      "bytes": 12080,
+      "sha256": "13353d93c1c3ca1df7400485e6271d85ada17a0d44e423ecced405147aa9bd7a"
+    },
+    "dist/finsecure_pay-0.2.0.tar.gz": {
+      "bytes": 160837,
+      "sha256": "189aa431b67fdd79457d24d6f9853073d9ac4722a5811f75198493b9664e437c"
+    },
+    "reports/build-metadata.txt": {
+      "bytes": 174,
+      "sha256": "087929e8882097b1fdc5b7338362f7ef82bbbabe64894af18f1c42e66477191e"
+    },
+    "reports/coverage.xml": {
+      "bytes": 8695,
+      "sha256": "3e6a3e0bf96de189fcea4ac22be316245ef820fef421602e6ff36d46e91bd0c0"
+    },
+    "reports/dependencies.txt": {
+      "bytes": 936,
+      "sha256": "f7bd142b964439cd76d9f0fd80693f5fb698ae5af61e227332cdb62b7fe21636"
+    },
+    "reports/format.txt": {
+      "bytes": 27,
+      "sha256": "c3c36fcff1e28b14cae0ee73be45b9f119bbadb20f7d5eb8ab829feeabf5769d"
+    },
+    "reports/junit.xml": {
+      "bytes": 32921,
+      "sha256": "170deaa8aaa0ae258090525f70d3651d091b582369a4f69298decd19b0feed30"
+    },
+    "reports/lint.txt": {
+      "bytes": 19,
+      "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+    },
+    "reports/package.txt": {
+      "bytes": 187,
+      "sha256": "7dd09086c60e4b6cdde16a54eaadc2f70941d0722d1609bbad931f98946a11bb"
+    },
+    "reports/packages.sha256": {
+      "bytes": 206,
+      "sha256": "4752d5a7209ed11508beedd562ff8d96dd32c01eb0ba432d953075cc581a825d"
+    },
+    "reports/tests.txt": {
+      "bytes": 3761,
+      "sha256": "d80578024531a02fba9a2c5c774fc1e0d271b0fa176cf5fdb5dd7f2569ebecdb"
+    }
+  },
+  "image_publishing_and_cloud_deployment": "not implemented"
+}

@@ -148,13 +148,19 @@ hosted evaluator links. Curated console/API summaries and package hashes are pre
 in the [evidence record](../../evidence/task-04/step-02-build-test-package.md); binaries
 and large generated reports stay in Jenkins/local ignored storage.
 
-## Required post-merge follow-up
+## Verified SCM-loaded job and future runs
 
-After approval and source publication, open **finsecure-ci → Build Now**. Confirm its
+Following approved merge/publication, **finsecure-ci build #1** loaded the Jenkinsfile
+from Git at `8deececf496ceb817f8965782e4481c37ea9531b` and passed all 230 tests. Test/coverage
+APIs and downloaded package hashes were verified. See the
+[post-merge evidence](../../evidence/task-04/step-02-scm-verification.md) and the local
+[build page](http://127.0.0.1:8080/job/finsecure-ci/1/).
+
+For a later manual run, open **finsecure-ci → Build Now**. Confirm its
 console says the Jenkinsfile was obtained from Git, the checkout matches published
 `main`, all 230 currently expected tests run, reports are accessible, and both packages
-are downloadable with matching hashes. Record this as a separate SCM-loaded run; the
-pre-merge review result is not evidence that this loading path has already succeeded.
+are downloadable with matching hashes. Record the actual revision/build separately;
+pre-merge review jobs alone do not prove the SCM loading path.
 If source changes again, use that revision's actual expected count rather than treating
 230 as a permanent pipeline threshold.
 

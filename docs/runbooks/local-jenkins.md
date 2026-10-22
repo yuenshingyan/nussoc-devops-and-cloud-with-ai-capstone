@@ -5,9 +5,9 @@
 Step 4.1 created a local Jenkins controller and one Python agent. Its retained
 `finsecure-checkout` job fetches public `main` and prints tool versions; a green result
 there still proves **checkout only**, not application CI or deployment.
-Step 4.2 adds a separate `finsecure-ci` Pipeline-from-SCM definition and verified local
-candidate runs. See the [application CI runbook](application-ci.md) for reports and the
-post-merge first run. No job publishes images or deploys to Kubernetes yet.
+Step 4.2 adds the separate `finsecure-ci` job, verified in both pre-merge review runs
+and normal SCM-loaded build #1 (230 tests). See the
+[application CI runbook](application-ci.md) for reports and operation. No job publishes images or deploys to Kubernetes yet.
 
 - Controller: Jenkins **2.580.1 LTS**, Java 21, **zero executors**.
 - Agent: one executor labelled `python`, Python **3.14.7**, uv **0.9.21**, Git, Java 21.
@@ -170,8 +170,7 @@ reconciles every manually upgraded plugin in Jenkins home. Avoid UI plugin upgra
 
 ## What remains pending
 
-Step 4.2's candidate tests/reports/packages are verified; review and the post-merge
-Pipeline-from-SCM run remain pending. Container
+Step 4.2 is reviewed, merged, and verified through its normal SCM-loaded job. Container
 build/push requires a separately agreed isolated builder; the current agent has neither
 Docker CLI nor daemon access. Do not attach the host Docker socket as a shortcut.
 Security gates, real source-change/failure demonstrations, notifications, and all managed

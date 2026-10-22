@@ -8,7 +8,7 @@
 - Explain and verify each step, then pause for review before merging and continuing.
 - Do not claim external deployment, notifications, security scans, or recovery succeeded without real execution evidence.
 
-Tasks 1–2 and Steps 3.1–3.2 are reviewed, merged into `main`, and published. The Deployment still pins verified release 0.2.0. Step 4.1 is reviewed, merged, and published. Step 4.2 on `task-04/step-02-build-test-package` adds a Jenkinsfile, published test/coverage reports, and archived packages; local review jobs verified the candidate against published source, pending user review. The normal Pipeline-from-SCM first run remains pending until the Jenkinsfile is merged. No cluster has been contacted; server-side validation and actual probe/rollout behavior remain pending. See the [evidence index](evidence/README.md), [runtime policy](docs/runbooks/runtime-safeguards.md), and [Jenkins runbook](docs/runbooks/local-jenkins.md).
+Tasks 1–2 and Steps 3.1–3.2 are reviewed, merged into `main`, and published. The Deployment still pins verified release 0.2.0. Step 4.1 is reviewed, merged, and published. Step 4.2 is reviewed, merged, and published as `8deecec`. The normal `finsecure-ci` Pipeline-from-SCM build #1 succeeded at that revision with 230 tests, accessible JUnit/coverage reports, and verified package downloads. See the [post-merge evidence](evidence/task-04/step-02-scm-verification.md). No cluster has been contacted; server-side validation and actual probe/rollout behavior remain pending. See the [evidence index](evidence/README.md), [runtime policy](docs/runbooks/runtime-safeguards.md), and [Jenkins runbook](docs/runbooks/local-jenkins.md).
 
 ## Approved budget-aware sequence
 
@@ -164,7 +164,7 @@ The assignment allows equivalent application, build, and unit-testing tools with
 - Publish test/coverage reports and archive relevant artifacts, including on failure.
 - **Verify:** A real Jenkins run passes and its reports are accessible.
 - Pre-merge verification uses the candidate Jenkinsfile in a sandboxed local review job with an explicit reviewed Git revision. A separate exit-37 probe checks report retention on failure without adding a failing test to the baseline. This is not the Step 4.4 failed-test/release-blocking demonstration.
-- After approved merge/publication, run the normal `finsecure-ci` job from SCM and record its result before continuing. Application CI is manual in this step; the old checkout-only job retains polling until source-change CI triggering is addressed.
+- Post-merge verification completed: `finsecure-ci` build #1 loaded the Jenkinsfile from Git at `8deecec`, passed 230 tests, published reports, and archived verified packages. Application CI remains manual; source-change CI triggering is still separate work.
 
 ### Step 4.3 — Automate container delivery
 - **Branch:** `task-04/step-03-container-delivery`
@@ -291,10 +291,10 @@ The assignment allows equivalent application, build, and unit-testing tools with
 - **Task 1:** Complete; Python 3.14 and transaction contract confirmed. Public source access verified, and GitHub defaults to `main` following approval.
 - **Task 2:** Public Docker Hub repository `yuenshingyan/finsecure-pay` confirmed. Version 0.1.0 published for ARM64/AMD64 and verified after registry pulls; AMD64 was tested under emulation. Cluster node architecture remains a cloud-deployment decision.
 - **Task 3:** Steps 3.1–3.2 reviewed and merged. Initial preference was AWS/Singapore (`ap-southeast-1`); cost/free-tier questions remain unresolved and no switch is approved. Confirm provider, account/credits, budget, access/exposure, evaluator retention, and teardown before provisioning or cluster access.
-- **Task 4:** Local Docker Jenkins/agent and checkout polling are reviewed and merged. Step 4.2 application CI is locally verified using a candidate Jenkinsfile, pending review and the post-merge SCM run. A safe isolated image builder and scoped registry/cloud credentials remain later delivery decisions; the agent has no Docker daemon access.
+- **Task 4:** Local Docker Jenkins/agent and checkout polling are reviewed and merged. Step 4.2 is merged and its normal SCM-loaded pipeline is verified, including 230 passing tests and downloaded artifacts. A safe isolated image builder and scoped registry/cloud credentials remain later delivery decisions; the agent has no Docker daemon access.
 - **Task 6:** SMTP/notification receiver and cloud logging configuration.
 - **Task 7:** PowerPoint or PDF preference and evaluator access arrangements.
 
 ## Immediate next action
 
-Review **Task 4, Step 2** on `task-04/step-02-build-test-package`: Jenkinsfile, real application test/coverage results, package downloads/checksums, and report preservation on an isolated failure. After approval, merge/publish and verify the normal Pipeline-from-SCM job before continuing. Cloud Steps 3.3–3.4 and dependent delivery/recovery remain deferred; this step authorizes no image publishing or cloud resources.
+Step 4.2 and its post-merge SCM verification are complete. Before implementing the local portion of Step 4.3, agree the isolated image builder and registry-credential/publication scope; do not mount the host Docker socket as a shortcut. Cloud Steps 3.3–3.4 and dependent delivery/recovery remain deferred. No next-step implementation, image publication, or cloud provisioning has started.

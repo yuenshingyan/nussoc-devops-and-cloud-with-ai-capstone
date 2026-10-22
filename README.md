@@ -6,10 +6,10 @@ A Python/FastAPI transaction-validation API and cloud-native DevOps capstone.
 
 Tasks 1–2 and Steps 3.1–3.2 are reviewed, merged, and published. Kubernetes resources
 pin public ARM64/AMD64 release 0.2.0; 210 application tests pass. Local Jenkins setup
-and repository checkout are reviewed and merged in Step 4.1. Step 4.2's candidate
-Jenkinsfile passed a real agent run with 221 tests, test/coverage publication, and package
-archiving against published source. It is awaiting review; the normal SCM-loaded run
-follows approved merge. Cloud work is deferred
+and repository checkout are reviewed and merged in Step 4.1. Step 4.2 is merged:
+`finsecure-ci` build #1 loaded its Jenkinsfile from Git at `8deecec`, passed **230 tests**,
+published test/coverage reports, and archived verified wheel/source packages.
+Cloud work is deferred
 for budget approval while feasible local work proceeds toward **4 November** submission.
 Kubernetes execution and all dependent cloud verification remain pending.
 
@@ -141,9 +141,8 @@ The controller runs no builds; a separate non-root Python agent checks out trust
 This URL is local only, not an evaluator-accessible hosted service.
 
 Step 4.2 adds `finsecure-ci`: checkout, locked installation, Ruff, pytest/JUnit,
-application coverage, and wheel/source-distribution artifacts. The candidate was
-executed in isolated review jobs before publishing this branch; the normal job needs
-`Jenkinsfile` on `main` before its first run. See the
+application coverage, and wheel/source-distribution artifacts. Both pre-merge review
+runs and the normal post-merge SCM-loaded job have been verified. See the
 [application CI runbook](docs/runbooks/application-ci.md) for verified runs, reports,
 manual triggering, and the post-merge check. No image/cloud delivery stages exist yet.
 
@@ -194,7 +193,7 @@ Remove a placeholder when its directory receives real content.
 - Task 3.2: runtime settings reviewed and merged; Kubernetes execution pending.
 - Remaining Task 3: provider-specific infrastructure, deployment, and recovery (deferred).
 - Task 4.1: local Jenkins and checkout reviewed, merged, and published.
-- Task 4.2: candidate application pipeline verified; review and post-merge SCM run pending.
+- Task 4.2: reviewed, merged, published, and verified through the normal SCM-loaded job.
 - Remaining Task 4: container delivery, source-change/failed-test proof, rollout/rollback.
 - Tasks 5–6: Security policies, monitoring/logging configuration, and demo scripts.
 - Task 7: Design document, architecture diagram, AI use case, and presentation.

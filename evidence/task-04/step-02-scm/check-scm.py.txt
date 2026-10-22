@@ -1,0 +1,88 @@
+"""Run and verify the approved Pipeline-from-SCM job after publication."""
+
+from datetime import UTC, datetime
+from hashlib import sha256
+from json import dumps, loads
+from pathlib import Path
+from re import fullmatch
+from tarfile import TarFile
+from xml.etree.ElementTree import fromstring
+from zipfile import ZipFile
+
+from bootstrap import Jenkins, admin_password
+from verify_ci import require_passing_tests, run_build
+
+revision = "8deececf496ceb817f8965782e4481c37ea9531b"
+password = admin_password()
+client = Jenkins(password)
+config = fromstring(client.request("/job/finsecure-ci/config.xml"))
+assert config.find("definition").attrib["class"] == "org.jenkinsci.plugins.workflow.cps.CpsScmFlowDefinition"
+assert config.findtext("definition/scriptPath") == "Jenkinsfile"
+assert config.findtext("definition/scm/branches/hudson.plugins.git.BranchSpec/name") == "*/main"
+secret = fromstring(client.request("/computer/finsecure-python/jenkins-agent.jnlp")).find(".//argument").text
+sensitive = [password, secret, client.authorization, client.authorization.removeprefix("Basic ")]
+print("Triggering the normal finsecure-ci job from published main", flush=True)
+number = run_build(client, "/job/finsecure-ci/")
+print("Inspecting finsecure-ci build", number, flush=True)
+base = f"/job/finsecure-ci/{number}/"
+out = Path(f"reports/step42-scm-{number}")
+out.mkdir(parents=True, exist_ok=True)
+build = loads(client.request(base + "api/json"))
+console = client.request(base + "consoleText").decode()
+for value in sensitive:
+    if value:
+        console = console.replace(value, "<redacted>")
+(out / "console.txt").write_text(console)
+assert build["result"] == "SUCCESS", "Inspect the sanitized console; no build retries"
+assert "Obtained Jenkinsfile from git" in console
+assert "SOURCE_REVISION=" + revision in console
+assert "Running on finsecure-python" in console
+allowed = {
+    "reports/build-metadata.txt", "reports/dependencies.txt", "reports/lint.txt",
+    "reports/format.txt", "reports/tests.txt", "reports/junit.xml", "reports/coverage.xml",
+    "reports/package.txt", "reports/packages.sha256",
+}
+artifacts = {}
+for artifact in build["artifacts"]:
+    name = artifact["relativePath"]
+    assert name in allowed or fullmatch(r"dist/finsecure_pay-[A-Za-z0-9_.+-]+\.(whl|tar\.gz)", name)
+    content = client.request(base + "artifact/" + name)
+    assert not any(value and value.encode() in content for value in sensitive), "Credential found; not saving"
+    target = out / name
+    target.parent.mkdir(parents=True, exist_ok=True)
+    target.write_bytes(content)
+    artifacts[name] = {"bytes": len(content), "sha256": sha256(content).hexdigest()}
+tests = loads(client.request(base + "testReport/api/json"))
+assert require_passing_tests(tests, 230) == 230
+coverage = loads(client.request(base + "coverage/api/json"))
+assert coverage["qualityGates"]["overallResult"] == "INACTIVE"
+xml = fromstring((out / "reports/coverage.xml").read_bytes())
+assert xml.attrib["lines-covered"] == xml.attrib["lines-valid"] == "125"
+assert xml.attrib["branches-covered"] == xml.attrib["branches-valid"] == "28"
+packages = {name: metadata["sha256"] for name, metadata in artifacts.items() if name.startswith("dist/")}
+checksums = {}
+for line in (out / "reports/packages.sha256").read_text().splitlines():
+    digest, name = line.split("  ", 1)
+    assert name not in checksums
+    checksums[name] = digest
+assert len(packages) == 2 and packages == checksums
+wheel = next(name for name in packages if name.endswith(".whl"))
+source = next(name for name in packages if name.endswith(".tar.gz"))
+with ZipFile(out / wheel) as archive:
+    assert "finsecure_pay/main.py" in archive.namelist()
+with TarFile.open(out / source, "r:gz") as archive:
+    assert any(name.endswith("/src/finsecure_pay/main.py") for name in archive.getnames())
+(out / "junit-api-summary.json").write_text(dumps({key: tests[key] for key in ["_class", "duration", "empty", "passCount", "failCount", "skipCount"]}, indent=2) + "\n")
+(out / "coverage-api.json").write_text(dumps(coverage, indent=2) + "\n")
+record = {
+    "verified_at_utc": datetime.now(UTC).isoformat(), "job": "finsecure-ci", "build": number,
+    "trigger": "manual authenticated API", "result": build["result"],
+    "pipeline_from_scm_verified": True, "source_revision": revision,
+    "jenkinsfile_sha256_at_verified_revision": sha256(Path("Jenkinsfile").read_bytes()).hexdigest(),
+    "agent": "finsecure-python", "tests_passed": 230, "tests_failed": 0, "tests_skipped": 0,
+    "coverage_xml": {key: xml.attrib[key] for key in ["lines-covered", "lines-valid", "branches-covered", "branches-valid"]},
+    "coverage_quality_gate": "INACTIVE", "artifacts": artifacts,
+    "image_publishing_and_cloud_deployment": "not implemented",
+}
+(out / "verification.json").write_text(dumps(record, indent=2) + "\n")
+print(dumps(record, indent=2))

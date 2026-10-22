@@ -1,5 +1,10 @@
 # Step 4.2 — Application CI, published reports, and packages
 
+This is the historical pre-merge verification record. Step 4.2 was subsequently approved,
+merged/published as `8deecec`, and verified through the normal SCM-loaded job with 230 tests;
+see the [post-merge follow-up](step-02-scm-verification.md). Statements below about pending
+SCM execution describe the pre-merge checkpoint, not the current project status.
+
 ## Scope and provenance
 
 - Branch: `task-04/step-02-build-test-package`, based on reviewed/published `6837068`.
@@ -124,5 +129,5 @@ verification. Generated binaries/full JUnit exports remain in Jenkins and ignore
 storage. Curated text replaces host repository prefixes with `<repository>` and normalizes
 trailing build-log whitespace; credentials and raw Jenkins home are not evidence.
 
-**Review gate:** approve before merging/pushing. Then run and record the normal
-Pipeline-from-SCM job before continuing to another implementation step.
+**Review gate fulfilled:** approved merge/publication and the normal Pipeline-from-SCM
+verification are recorded in the follow-up above. No later implementation step has started.
