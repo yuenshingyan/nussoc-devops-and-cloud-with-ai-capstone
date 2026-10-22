@@ -3,9 +3,16 @@
 from collections.abc import Iterator
 
 from fastapi.testclient import TestClient
-from pytest import fixture
+from pytest import MonkeyPatch, fixture
 
 from finsecure_pay.main import create_app
+
+
+@fixture(autouse=True)
+def isolate_settings(monkeypatch: MonkeyPatch) -> None:
+    """Keep developer environment overrides from changing unrelated test behavior."""
+    monkeypatch.delenv("FINSECURE_MAX_TRANSACTION_AMOUNT", raising=False)
+    monkeypatch.delenv("FINSECURE_SUPPORTED_CURRENCIES", raising=False)
 
 
 @fixture

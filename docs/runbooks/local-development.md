@@ -27,7 +27,7 @@ Open `http://127.0.0.1:8000/docs` for Swagger UI or inspect the schema:
 curl --fail --silent --show-error http://127.0.0.1:8000/openapi.json
 ```
 
-The schema's `info` contains the title `FinSecure Pay` and version `0.1.0`.
+The schema's `info` contains the title `FinSecure Pay` and version `0.2.0`.
 Stop the server with Ctrl-C. Local development binds only to loopback by default.
 
 Check application liveness:
@@ -39,7 +39,10 @@ curl --fail --silent --show-error http://127.0.0.1:8000/health
 Expect HTTP 200 with `{"status":"healthy"}`. This checks the application itself,
 not external dependencies. See the [API contract](../api-contract.md).
 The root `/` still returns 404. No environment variables or credentials are
-required yet, so there is no `.env.example`.
+required. Optional startup overrides for the amount limit and currency subset are
+documented in the [settings runbook](application-settings.md) and `.env.example`.
+The application does not automatically load `.env` files; examples here assume
+the default policy.
 
 ## Validate a transaction
 
@@ -65,7 +68,8 @@ uv run --locked pytest
 
 The tests cover application construction, health responses, pure transaction rules,
 strict request schemas, identifier/amount boundaries, malformed JSON bodies, safe
-errors, decimal precision, and repeated requests without side effects.
+errors, decimal precision, repeated requests without side effects, startup-setting
+validation, immutable per-application policy snapshots, and configured HTTP behavior.
 
 ### Generate test and coverage reports
 

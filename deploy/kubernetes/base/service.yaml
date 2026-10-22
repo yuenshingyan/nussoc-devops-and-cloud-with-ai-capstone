@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: finsecure-pay
+  labels:
+    app.kubernetes.io/name: finsecure-pay
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: finsecure-pay
+  ports:
+    - name: http
+      port: 80
+      targetPort: http
+      protocol: TCP

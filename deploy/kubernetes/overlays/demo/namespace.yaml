@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: finsecure-pay
+  labels:
+    app.kubernetes.io/name: finsecure-pay
+    environment: demo

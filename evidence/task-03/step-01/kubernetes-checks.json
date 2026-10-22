@@ -1,0 +1,23 @@
+{
+  "verified_at_utc": "2026-10-22T02:03:46.714055+00:00",
+  "validation_scope": "Local Kustomize rendering and parsed-resource consistency checks only",
+  "cluster_contacted": false,
+  "resources_applied": false,
+  "resource_kinds": [
+    "ConfigMap",
+    "Deployment",
+    "Namespace",
+    "Service"
+  ],
+  "namespace": "finsecure-pay",
+  "replicas": 2,
+  "service_type": "ClusterIP",
+  "service_port": 80,
+  "container_port": 8000,
+  "draft_image": "docker.io/yuenshingyan/finsecure-pay:0.2.0",
+  "generated_configmap": "finsecure-pay-config-fg4th549cg",
+  "config_change_updates_pod_template_reference": true,
+  "selectors_and_port_references_match": true,
+  "image_publication_pending": true,
+  "server_side_validation_pending": true
+}

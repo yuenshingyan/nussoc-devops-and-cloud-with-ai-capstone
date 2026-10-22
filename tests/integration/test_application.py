@@ -1,4 +1,4 @@
-"""Verify the application scaffold without implementing business endpoints."""
+"""Verify application construction and public metadata."""
 
 from fastapi.testclient import TestClient
 
@@ -10,7 +10,7 @@ def test_openapi_metadata(client: TestClient) -> None:
 
     assert response.status_code == 200
     assert response.json()["info"]["title"] == "FinSecure Pay"
-    assert response.json()["info"]["version"] == "0.1.0"
+    assert response.json()["info"]["version"] == "0.2.0"
 
 
 def test_factory_creates_independent_instances() -> None:

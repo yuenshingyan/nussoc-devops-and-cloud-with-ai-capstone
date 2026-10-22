@@ -1,0 +1,25 @@
+{
+  "image_id": "sha256:dc52147d5bce56c036086b69a1da155cfcefe1340a251bc39fb82f5a6fe7a912",
+  "sha256_by_build_input": {
+    "Dockerfile": "93bbbb40b7e5cf2cb90366a53224526dae3d4bff1c6c8b7bba8b5cf0d5a47639",
+    ".dockerignore": "95edda262efeffa4ab4428c3cc2511a682873751e0efc5fb33a20a2d43f37171",
+    "pyproject.toml": "7ed801cdc7acc85ab4bb78c9db49e95959f337d1cb36058ba09d57dec3dbe987",
+    "uv.lock": "343a2784581474f882841d7c4955d7d9456f7dd31d83e5064e7fc3052ab0778e",
+    "README.md": "eafdd59001dc225c617b9ef27df9c8bb8f82920c88005fb290bede400d324105",
+    "src/finsecure_pay/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "src/finsecure_pay/api/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "src/finsecure_pay/api/dependencies.py": "1c64ae9ad90ec301894df8228b67108ab8fed2091f92979f7cc430219f6c8fe4",
+    "src/finsecure_pay/api/errors.py": "0592b3435647a3aa8995afa20e35a2dba090c00b0b7e0fd5b6f737a4a792546c",
+    "src/finsecure_pay/api/health.py": "44b177ed30442db2d5abcd532223ddc078f6b8539515b5e6d91d32d01424aebe",
+    "src/finsecure_pay/api/validation.py": "2c77d7a914cffbad2887504ec578501e3e7f52748b6cdf2332d7b9b0f67e2253",
+    "src/finsecure_pay/config.py": "490f18f21c86e2775f701e4ddd20a41799ad1b92d0d7116656535c6fe032a065",
+    "src/finsecure_pay/main.py": "fff1092e3b5ad547983a6c98217ba0f9c778e0a5f894ec8a058b7dbea36f87ad",
+    "src/finsecure_pay/observability/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "src/finsecure_pay/schemas/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "src/finsecure_pay/schemas/errors.py": "ad689c0fb2960b53b4dbbce12c321e0b6b250b2fb4e7ee28c0e5ee53ddfe33d1",
+    "src/finsecure_pay/schemas/health.py": "7ccd0f73cb93a5ec8ecba748b4e67eeb43b77275cfce637b6300691f55957951",
+    "src/finsecure_pay/schemas/transaction.py": "2e5959dfadeb39a2722b7b658236ec717c2cfefe40fa24fcb83865f7ecd31bac",
+    "src/finsecure_pay/services/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "src/finsecure_pay/services/validation.py": "789f87b07baf82ad5fde4b95f2a3486ec4e306c24c5bae9a0df0c2411b7b3b66"
+  }
+}

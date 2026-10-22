@@ -4,11 +4,11 @@ A Python/FastAPI transaction-validation API and cloud-native DevOps capstone.
 
 ## Status
 
-Task 1 is complete and merged: application endpoints, 167 passing tests,
-JUnit/coverage reports, clean package-installation checks, and public GitHub access.
-Task 2 includes a multi-stage, non-root Docker image, verified local execution,
-and public versioned ARM64/AMD64 images on Docker Hub. Step 2.3 publication notes
-await review; Kubernetes, pipeline, and cloud work remain pending.
+Tasks 1–2 are reviewed and merged locally: application endpoints, test/package
+verification, public source, and public ARM64/AMD64 release 0.1.0.
+Step 3.1 adds configurable validation policy and draft Kubernetes resources;
+210 tests pass. Version 0.2.0 image publication, server-side manifest validation,
+runtime safeguards, and all cloud deployment remain pending.
 
 **Evaluator source link:** [reviewed application on main](https://github.com/yuenshingyan/nussoc-devops-and-cloud-with-ai-capstone/tree/main).
 GitHub now defaults to `main`. See the
@@ -62,10 +62,16 @@ JUnit XML is a report format; all tests run in Python with pytest.
 See the [local development runbook](docs/runbooks/local-development.md) and
 [Python stack decision](docs/decisions/001-python-stack.md).
 
+Version 0.2.0 supports optional `FINSECURE_MAX_TRANSACTION_AMOUNT` and
+`FINSECURE_SUPPORTED_CURRENCIES` environment settings. Defaults remain `10000` and
+`SGD,USD,HKD`; currency configuration selects a nonempty subset of those currencies.
+Invalid settings fail startup. See the [settings contract](docs/runbooks/application-settings.md)
+and [`.env.example`](.env.example). The application does not auto-load `.env` files.
+
 ## Container build
 
 ```sh
-docker build --progress=plain --tag finsecure-pay:task-02-step-01 .
+docker build --progress=plain --tag finsecure-pay:0.2.0-local .
 ```
 
 The image uses locked runtime dependencies and runs as UID/GID `10001:10001`.
@@ -75,7 +81,7 @@ local Docker Desktop credential-helper workaround.
 Run the local image smoke test:
 
 ```sh
-uv run --locked python scripts/smoke_test.py
+uv run --locked python scripts/smoke_test.py --image finsecure-pay:0.2.0-local
 ```
 
 It uses a loopback-only port, checks the actual non-root process and HTTP responses,
@@ -98,6 +104,22 @@ registry digests; AMD64 was tested under emulation, not on a native cloud node.
 See the [image publication runbook](docs/runbooks/image-publication.md) for the
 immutable deployment digest, source revision, and exact evidence. This demo release
 has not yet passed the security scans planned for Task 5; use synthetic data only.
+
+The published 0.1.0 release has fixed rules and does not consume the new environment
+settings. Version 0.2.0 must be separately published and verified; it is not available
+from the registry as part of this step yet.
+
+## Kubernetes configuration
+
+```sh
+kubectl kustomize deploy/kubernetes/overlays/demo
+```
+
+This renders a namespace, two-replica Deployment, internal ClusterIP Service, and
+content-hashed ConfigMap without contacting a cluster. The draft image reference
+is 0.2.0, pending publication and digest pinning. **Do not apply these manifests yet:**
+probes, resource limits, and pod security settings remain Step 3.2. See the
+[Kubernetes runbook](docs/runbooks/kubernetes-manifests.md).
 
 ## Repository structure
 
@@ -138,9 +160,9 @@ Remove a placeholder when its directory receives real content.
 
 ## Files to add during implementation
 
-- Task 1: complete. No application environment settings or secrets are needed yet.
-- Task 2: builds, execution, and registry publication verified; publication notes await review.
-- Task 3: Kubernetes manifests and provider-specific infrastructure setup.
+- Tasks 1–2: complete; published image 0.1.0 remains unchanged.
+- Task 3.1: configuration/manifests implemented; 0.2.0 publication and review pending.
+- Remaining Task 3: runtime safeguards, provider-specific infrastructure, deployment, and recovery.
 - Task 4: `Jenkinsfile` and pipeline setup instructions.
 - Tasks 5–6: Security policies, monitoring/logging configuration, and demo scripts.
 - Task 7: Design document, architecture diagram, AI use case, and presentation.

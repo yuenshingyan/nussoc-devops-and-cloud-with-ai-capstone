@@ -1,0 +1,78 @@
+{
+  "verified_at_utc": "2026-10-22T02:05:31.973029+00:00",
+  "image_tag": "finsecure-pay:0.2.0-local",
+  "image_id": "sha256:dc52147d5bce56c036086b69a1da155cfcefe1340a251bc39fb82f5a6fe7a912",
+  "platform": "linux/arm64",
+  "container_id": "b89bb1372656865575a5148159849985a52132cf14cb1bee9b24f154d1dc3aac",
+  "base_url": "http://127.0.0.1:61300",
+  "pid_1_identity": {
+    "Uid": [
+      "10001",
+      "10001",
+      "10001",
+      "10001"
+    ],
+    "Gid": [
+      "10001",
+      "10001",
+      "10001",
+      "10001"
+    ]
+  },
+  "read_only_root_filesystem": true,
+  "dropped_capabilities": [
+    "ALL"
+  ],
+  "security_options": [
+    "no-new-privileges:true"
+  ],
+  "tmpfs": {
+    "/tmp": "rw,noexec,nosuid,size=16m"
+  },
+  "http_checks": [
+    {
+      "case": "health",
+      "status": 200,
+      "body": {
+        "status": "healthy"
+      }
+    },
+    {
+      "case": "accepted",
+      "status": 200,
+      "body": {
+        "valid": true,
+        "errors": []
+      }
+    },
+    {
+      "case": "business_rejection",
+      "status": 200,
+      "body": {
+        "valid": false,
+        "errors": [
+          "AMOUNT_NOT_POSITIVE"
+        ]
+      }
+    },
+    {
+      "case": "malformed_amount",
+      "status": 422,
+      "body": {
+        "detail": [
+          {
+            "loc": [
+              "body",
+              "amount"
+            ],
+            "type": "string_type",
+            "msg": "Invalid request value. Check the API contract."
+          }
+        ]
+      }
+    }
+  ],
+  "shutdown_exit_code": 0,
+  "oom_killed": false,
+  "container_removed": true
+}

@@ -17,7 +17,7 @@ RUN --mount=type=cache,target=/root/.cache/uv \
 
 FROM ${PYTHON_IMAGE} AS runtime
 LABEL org.opencontainers.image.title="FinSecure Pay" \
-    org.opencontainers.image.version="0.1.0" \
+    org.opencontainers.image.version="0.2.0" \
     org.opencontainers.image.source="https://github.com/yuenshingyan/nussoc-devops-and-cloud-with-ai-capstone"
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \

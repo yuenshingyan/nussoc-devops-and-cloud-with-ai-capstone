@@ -78,8 +78,8 @@ unknown fields are rejected rather than ignored.
 | Order | Rule | Rejection code |
 | --- | --- | --- |
 | 1 | Amount must be strictly greater than zero | `AMOUNT_NOT_POSITIVE` |
-| 2 | Amount must be at most 10,000, inclusive | `AMOUNT_LIMIT_EXCEEDED` |
-| 3 | Currency must be SGD, USD, or HKD | `UNSUPPORTED_CURRENCY` |
+| 2 | Amount must be at most the configured limit, inclusive (default 10,000) | `AMOUNT_LIMIT_EXCEEDED` |
+| 3 | Currency must be enabled in the configured subset (default SGD, USD, HKD) | `UNSUPPORTED_CURRENCY` |
 | 4 | Amount must have at most two fractional digits | `AMOUNT_PRECISION_EXCEEDED` |
 | 5 | Sender and recipient identifiers must differ | `SAME_ACCOUNT` |
 
@@ -89,9 +89,12 @@ floating-point intermediate or rounding. Fractional digit counts include trailin
 zeros: `"1.00"` is accepted, but `"1.000"` is rejected. Negative zero is rejected.
 The precision check applies even when the currency is unsupported.
 
-These defaults are currently constants in `services/validation.py`. Runtime
-configuration will be introduced when needed for the Kubernetes configuration step;
-no undocumented environment overrides are implemented now.
+Starting with version 0.2.0, startup environment settings can change the amount
+limit and enable/disable currencies from the existing SGD/USD/HKD set. The default
+behavior is unchanged from 0.1.0. Settings are validated once per application and
+passed explicitly to the pure service; requests cannot override them. See the
+[settings contract](runbooks/application-settings.md) for names, syntax, defaults,
+and restart requirements. All examples below assume the default policy.
 
 ### Accepted transaction — HTTP 200
 
@@ -108,7 +111,7 @@ no undocumented environment overrides are implemented now.
 Both outcomes mean the request was successfully evaluated. Return every applicable
 error code, once each, in the order shown in the table. `valid` is true if and only
 if `errors` is empty. Errors are codes, not copied request values.
-For example, amount `"10000.001"`, currency `"EUR"`, and identical accounts yield:
+With default settings, amount `"10000.001"`, currency `"EUR"`, and identical accounts yield:
 
 ```json
 {
