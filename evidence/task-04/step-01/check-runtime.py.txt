@@ -1,0 +1,84 @@
+"""Actual local safety and restart checks; run from capstone with PYTHONPATH=ops/jenkins."""
+
+from datetime import UTC, datetime
+from json import dumps, loads
+from pathlib import Path
+from urllib.error import HTTPError
+from urllib.request import ProxyHandler, build_opener
+from xml.etree.ElementTree import fromstring
+
+from bootstrap import BASE_URL, COMPOSE, Jenkins, NoRedirect, admin_password, command
+
+password = admin_password()
+client = Jenkins(password)
+agent_secret = fromstring(client.request("/computer/finsecure-python/jenkins-agent.jnlp")).find(".//argument").text
+assert agent_secret
+job = loads(client.request("/job/finsecure-checkout/api/json"))
+assert not loads(client.request("/queue/api/json"))["items"], "Refusing restart with queued work"
+assert not loads(client.request(f'/job/finsecure-checkout/{job["lastBuild"]["number"]}/api/json'))["building"], "Refusing restart with running work"
+
+anonymous = build_opener(ProxyHandler({}), NoRedirect())
+try:
+    with anonymous.open(BASE_URL + "/api/json", timeout=5):
+        raise AssertionError("Anonymous API access was allowed")
+except HTTPError as error:
+    assert error.code == 403
+
+before_number = job["nextBuildNumber"]
+try:
+    client.request("/job/finsecure-checkout/buildWithParameters", data=b"EXPECTED_REVISION=invalid")
+    raise AssertionError("Password-authenticated POST without a crumb was allowed")
+except HTTPError as error:
+    assert error.code == 403
+assert loads(client.request("/job/finsecure-checkout/api/json"))["nextBuildNumber"] == before_number
+
+for service, secret_volume in [("controller", "finsecure-jenkins-controller-secrets"), ("agent", "finsecure-jenkins-agent-secrets")]:
+    cid = command([*COMPOSE, "ps", "--quiet", service])
+    state = loads(command(["docker", "inspect", cid]))[0]
+    encoded = dumps(state)
+    assert password not in encoded and agent_secret not in encoded
+    mounts = state["Mounts"]
+    secret_mount = next(mount for mount in mounts if mount["Destination"] == "/run/secrets")
+    assert secret_mount["Name"] == secret_volume and not secret_mount["RW"]
+command([*COMPOSE, "exec", "-T", "agent", "test", "!", "-e", "/run/secrets/admin_password"])
+
+plugins = loads(client.request("/pluginManager/api/json?tree=plugins[shortName,version,active,enabled]"))["plugins"]
+expected = dict(line.split(":", 1) for line in Path("ops/jenkins/plugins.txt").read_text().splitlines())
+assert {plugin["shortName"]: plugin["version"] for plugin in plugins} == expected
+assert all(plugin["active"] and plugin["enabled"] for plugin in plugins)
+Path("reports/jenkins-installed-plugins.json").write_text(dumps(sorted(plugins, key=lambda item: item["shortName"]), indent=2) + "\n")
+
+# Restart only these idle, owned services; retain all persistent volumes.
+command([*COMPOSE, "restart"], timeout=120)
+client = Jenkins(password)
+client.wait("/api/json", "numExecutors", 0, 180, "controller")
+agent = client.wait("/computer/finsecure-python/api/json", "offline", False, 120, "agent")
+assert admin_password() == password
+assert fromstring(client.request("/computer/finsecure-python/jenkins-agent.jnlp")).find(".//argument").text == agent_secret
+assert loads(client.request("/job/finsecure-checkout/1/api/json"))["result"] == "ABORTED"
+assert loads(client.request("/job/finsecure-checkout/2/api/json"))["result"] == "SUCCESS"
+
+for number in [1, 2]:
+    text = client.request(f"/job/finsecure-checkout/{number}/consoleText").decode()
+    for value in [password, agent_secret, client.authorization, client.authorization.removeprefix("Basic ")]:
+        text = text.replace(value, "<redacted>")
+    Path(f"reports/jenkins-checkout-{number}.txt").write_text(text)
+
+record = {
+    "verified_at_utc": datetime.now(UTC).isoformat(),
+    "anonymous_api_status": 403,
+    "password_authenticated_post_without_crumb_status": 403,
+    "rejected_post_created_build": False,
+    "secrets_absent_from_container_inspect": True,
+    "separate_secret_volumes_read_only": True,
+    "controller_password_not_mounted_in_agent": True,
+    "installed_plugins_match_all_pins": len(expected),
+    "all_plugins_active_and_enabled": True,
+    "owned_idle_services_restarted": True,
+    "admin_password_preserved": True,
+    "agent_secret_preserved": True,
+    "build_history_preserved": {"1": "ABORTED before checkout", "2": "SUCCESS"},
+    "agent_online_after_restart": not agent["offline"],
+}
+Path("reports/jenkins-runtime-checks.json").write_text(dumps(record, indent=2) + "\n")
+print(dumps(record, indent=2))

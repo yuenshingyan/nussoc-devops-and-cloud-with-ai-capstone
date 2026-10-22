@@ -1,0 +1,52 @@
+Started by user admin
+[Pipeline] Start of Pipeline
+[Pipeline] properties
+[Pipeline] timeout
+Timeout set to expire in 5 min 0 sec
+[Pipeline] {
+[Pipeline] node
+Running on finsecure-python in /home/jenkins/agent/workspace/finsecure-checkout
+[Pipeline] {
+[Pipeline] stage
+[Pipeline] { (Checkout)
+[Pipeline] deleteDir
+[Pipeline] checkout
+The recommended git tool is: NONE
+No credentials specified
+Cloning the remote Git repository
+Cloning repository https://github.com/yuenshingyan/nussoc-devops-and-cloud-with-ai-capstone.git
+ > git init /home/jenkins/agent/workspace/finsecure-checkout # timeout=10
+Fetching upstream changes from https://github.com/yuenshingyan/nussoc-devops-and-cloud-with-ai-capstone.git
+ > git --version # timeout=10
+ > git --version # 'git version 2.39.5'
+ > git fetch --tags --force --progress -- https://github.com/yuenshingyan/nussoc-devops-and-cloud-with-ai-capstone.git +refs/heads/*:refs/remotes/origin/* # timeout=2
+ > git config remote.origin.url https://github.com/yuenshingyan/nussoc-devops-and-cloud-with-ai-capstone.git # timeout=10
+ > git config --add remote.origin.fetch +refs/heads/*:refs/remotes/origin/* # timeout=10
+Avoid second fetch
+Checking out Revision b70c5769c95f28ba543844d3bca7ab8b853c7163 (refs/remotes/origin/main)
+Commit message: "feat: configure Kubernetes probes and runtime safeguards"
+First time build. Skipping changelog.
+[Pipeline] echo
+SOURCE_REVISION=b70c5769c95f28ba543844d3bca7ab8b853c7163
+[Pipeline] sh
++ set -eu
++ git --version
+git version 2.39.5
++ uv --version
+uv 0.9.21
++ python --version
+Python 3.14.7
++ java -version
+openjdk version "21.0.12.1" 2026-08-18 LTS
+OpenJDK Runtime Environment Temurin-21.0.12.1+1 (build 21.0.12.1+1-LTS)
+OpenJDK 64-Bit Server VM Temurin-21.0.12.1+1 (build 21.0.12.1+1-LTS, mixed mode)
+[Pipeline] echo
+CHECKOUT_ONLY: application tests, scans, image delivery, and deployment have NOT run.
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] }
+[Pipeline] // node
+[Pipeline] }
+[Pipeline] // timeout
+[Pipeline] End of Pipeline
+Finished: SUCCESS

@@ -1,0 +1,53 @@
+name: finsecure-jenkins
+services:
+  controller:
+    build:
+      context: .
+      dockerfile: controller.Dockerfile
+    image: finsecure-jenkins-controller:step-04-01
+    ports:
+      - "127.0.0.1:8080:8080"
+    environment:
+      JENKINS_JAVA_OPTS: "-Xms256m -Xmx512m -Djenkins.install.runSetupWizard=false"
+    volumes:
+      - controller-home:/var/jenkins_home
+      - controller-secrets:/run/secrets:ro
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    cpus: 1.0
+    mem_limit: 1g
+    stop_grace_period: 60s
+  agent:
+    build:
+      context: .
+      dockerfile: agent.Dockerfile
+    image: finsecure-jenkins-agent:step-04-01
+    init: true
+    command:
+      - -url
+      - http://controller:8080/
+      - -name
+      - finsecure-python
+      - -secret
+      - "@/run/secrets/agent_secret"
+      - -webSocket
+    environment:
+      JENKINS_JAVA_OPTS: "-Xms64m -Xmx256m"
+      JENKINS_AGENT_WORKDIR: /home/jenkins/agent
+    volumes:
+      - agent-workspace:/home/jenkins/agent
+      - agent-secrets:/run/secrets:ro
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    cpus: 1.0
+    mem_limit: 1g
+    stop_grace_period: 30s
+volumes:
+  controller-home:
+  agent-workspace:
+  controller-secrets:
+    external: true
+    name: finsecure-jenkins-controller-secrets
+  agent-secrets:
+    external: true
+    name: finsecure-jenkins-agent-secrets

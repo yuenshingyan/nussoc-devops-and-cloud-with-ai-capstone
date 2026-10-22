@@ -1,0 +1,11 @@
+Started by user admin
+[Pipeline] Start of Pipeline
+[Pipeline] properties
+[Pipeline] node
+Still waiting to schedule task
+‘finsecure-python’ is offline
+Aborted by admin
+[Pipeline] // node
+[Pipeline] End of Pipeline
+org.jenkinsci.plugins.workflow.actions.ErrorAction$ErrorId: 2b02f617-d14c-42f3-ac71-b71a0c8d5a95
+Finished: ABORTED

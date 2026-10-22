@@ -4,15 +4,18 @@ A Python/FastAPI transaction-validation API and cloud-native DevOps capstone.
 
 ## Status
 
-Tasks 1–2 and Step 3.1 are reviewed, merged, and published. Kubernetes resources
-pin public ARM64/AMD64 release 0.2.0; 210 application tests pass. Step 3.2 adds probes,
-resource limits, runtime security, and rolling-update settings, verified locally and
-awaiting review. Kubernetes admission/probe behavior and all cloud deployment remain pending.
+Tasks 1–2 and Steps 3.1–3.2 are reviewed, merged, and published. Kubernetes resources
+pin public ARM64/AMD64 release 0.2.0; 210 application tests pass. Local Jenkins setup
+and a real repository checkout are verified in Step 4.1, awaiting review.
+Jenkins application test/build stages are not implemented yet. Cloud work is deferred
+for budget approval while feasible local work proceeds toward **4 November** submission.
+Kubernetes execution and all dependent cloud verification remain pending.
 
 **Evaluator source link:** [reviewed application on main](https://github.com/yuenshingyan/nussoc-devops-and-cloud-with-ai-capstone/tree/main).
 GitHub now defaults to `main`. See the
 [publication runbook](docs/runbooks/source-publication.md) for verified links and details.
-See [PLAN.md](PLAN.md) for ordered steps and branch names.
+See [PLAN.md](PLAN.md) for the approved budget-aware sequence, deferred requirements,
+and branch names.
 
 ## Quick start
 
@@ -122,6 +125,22 @@ non-root/read-only security settings, and rolling-update policy are configured.
 are still required. See the [Kubernetes runbook](docs/runbooks/kubernetes-manifests.md)
 and [runtime policy](docs/runbooks/runtime-safeguards.md) for values and verification limits.
 
+## Local Jenkins (checkout-only)
+
+```sh
+docker compose -f ops/jenkins/compose.yaml build
+uv run --locked python ops/jenkins/bootstrap.py
+```
+
+Open `http://127.0.0.1:8080/` as `admin`. The bootstrap prints the protected local
+password-file **path**, never its value. Do not paste credentials into chat or Git.
+The controller runs no builds; a separate non-root Python agent checks out trusted
+`main`. SCM polling is configured without exposing a public webhook or Docker socket.
+This URL is local only, not an evaluator-accessible hosted service.
+
+See the [Jenkins runbook](docs/runbooks/local-jenkins.md) for credential handling,
+verification, troubleshooting, resource limits, and non-destructive shutdown.
+
 ## Repository structure
 
 ```text
@@ -138,7 +157,7 @@ deploy/
   kubernetes/overlays/demo/  Demo-specific Kubernetes configuration
   infrastructure/       Managed-cloud provisioning configuration
 ops/
-  jenkins/              Jenkins setup documentation
+  jenkins/              Local controller/agent images, Compose, JCasC, bootstrap and verification
   monitoring/prometheus/    Metrics collection and alert rules
   monitoring/grafana/dashboards/  Dashboard definitions
   monitoring/alertmanager/  Alert routing configuration
@@ -163,9 +182,10 @@ Remove a placeholder when its directory receives real content.
 
 - Tasks 1–2: complete; published image 0.1.0 remains unchanged.
 - Task 3.1: configuration/manifests and 0.2.0 publication reviewed and merged.
-- Task 3.2: runtime settings locally verified; review and Kubernetes execution pending.
-- Remaining Task 3: provider-specific infrastructure, deployment, and recovery.
-- Task 4: `Jenkinsfile` and pipeline setup instructions.
+- Task 3.2: runtime settings reviewed and merged; Kubernetes execution pending.
+- Remaining Task 3: provider-specific infrastructure, deployment, and recovery (deferred).
+- Task 4.1: local Jenkins and checkout verified; review pending.
+- Remaining Task 4: `Jenkinsfile` test/package stages, delivery, failure gating, rollout/rollback.
 - Tasks 5–6: Security policies, monitoring/logging configuration, and demo scripts.
 - Task 7: Design document, architecture diagram, AI use case, and presentation.
 

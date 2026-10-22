@@ -5,14 +5,15 @@ application, test, package-installation, and public source-access evidence.
 Task 2 has image-build, execution, versioned registry publication, and anonymous
 pull/access evidence for ARM64 and AMD64. Task 3 has locally verified configuration,
 0.2.0 registry publication, digest-pinned manifests, and constrained-container runtime
-checks, not cloud-deployment or kubelet-probe evidence.
+checks, not cloud-deployment or kubelet-probe evidence. Task 4 now includes a real
+local Jenkins checkout-only run, not application CI or cloud delivery.
 
 | Task | Directory | Status |
 | --- | --- | --- |
 | 1 — Application and Git | [task-01](task-01/) | Complete and merged |
 | 2 — Containerisation | [task-02](task-02/) | Complete, reviewed, merged, and published |
-| 3 — Kubernetes and cloud | [task-03](task-03/) | Step 3.1 merged; Step 3.2 locally verified, review pending |
-| 4 — CI/CD | [task-04](task-04/) | Pending |
+| 3 — Kubernetes and cloud | [task-03](task-03/) | Steps 3.1–3.2 merged; cloud execution deferred |
+| 4 — CI/CD | [task-04](task-04/) | Step 4.1 local setup/checkout verified, review pending; application stages and cloud delivery pending |
 | 5 — DevSecOps | [task-05](task-05/) | Pending |
 | 6 — Observability | [task-06](task-06/) | Pending |
 | 7 — Documentation and demonstration | [task-07](task-07/) | Pending |
@@ -49,6 +50,11 @@ checks, not cloud-deployment or kubelet-probe evidence.
   probe/resource/security/rollout checks; ARM64 and emulated AMD64 execution with
   CPU/memory caps, verified process restrictions, writable bounded temporary storage,
   and clean shutdown/removal. Kubernetes execution remains unverified.
+
+- [Step 4.1 — Local Jenkins and checkout](task-04/step-01-jenkins-setup.md): authenticated
+  loopback-only controller, separate non-root Python agent, real public `main` checkout,
+  runtime/plugin checks, and preserved restart state. No application tests ran in Jenkins;
+  SCM polling configuration is not yet a source-change-trigger demonstration.
 
 For each artifact, record the requirement demonstrated, timestamp, command or
 procedure, actual result, commit, applicable image digest, and artifact path or

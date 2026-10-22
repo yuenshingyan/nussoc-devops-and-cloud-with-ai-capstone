@@ -1,0 +1,6 @@
+**
+!controller.Dockerfile
+!agent.Dockerfile
+!plugins.txt
+!jenkins.yaml
+!checkout-job.groovy

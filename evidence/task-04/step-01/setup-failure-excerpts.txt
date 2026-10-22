@@ -1,0 +1,8 @@
+Selected actual setup-failure excerpts (not successful verification):
+
+Initial agent build — missing interpreter in old uv catalogue:
+#17 0.201 error: No download found for request: cpython-3.14.7-linux-aarch64-gnu
+0.201 error: No download found for request: cpython-3.14.7-linux-aarch64-gnu
+
+Initial JCasC startup — unsupported attribute:
+controller-1  | io.jenkins.plugins.casc.UnknownAttributesException: standard: Invalid configuration elements for type: class hudson.security.csrf.DefaultCrumbIssuer : excludeClientIPFromCrumb.

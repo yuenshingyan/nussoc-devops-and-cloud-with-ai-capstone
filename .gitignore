@@ -17,6 +17,10 @@ htmlcov/
 /reports/
 
 # Local credentials and configuration
+# Jenkins bootstrap normally stores these outside the repository/in Docker volumes.
+admin-password
+admin_password
+agent_secret
 .env
 .env.*
 !.env.example

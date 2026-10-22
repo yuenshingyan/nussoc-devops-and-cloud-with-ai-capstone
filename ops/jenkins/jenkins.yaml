@@ -1,0 +1,34 @@
+jenkins:
+  systemMessage: "FinSecure Pay — local checkout-only CI setup; no cloud deployment configured."
+  numExecutors: 0
+  scmCheckoutRetryCount: 0
+  slaveAgentPort: -1
+  securityRealm:
+    local:
+      allowsSignup: false
+      users:
+        - id: admin
+          password: "${admin_password}"
+  authorizationStrategy:
+    loggedInUsersCanDoAnything:
+      allowAnonymousRead: false
+  crumbIssuer:
+    standard: {}
+  nodes:
+    - permanent:
+        name: finsecure-python
+        remoteFS: /home/jenkins/agent
+        numExecutors: 1
+        labelString: python
+        mode: EXCLUSIVE
+        launcher:
+          inbound:
+            workDirSettings:
+              disabled: false
+              internalDir: remoting
+              failIfWorkDirIsMissing: false
+unclassified:
+  location:
+    url: http://127.0.0.1:8080/
+jobs:
+  - file: /usr/share/jenkins/checkout-job.groovy

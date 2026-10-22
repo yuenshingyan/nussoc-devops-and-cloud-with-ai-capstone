@@ -1,0 +1,33 @@
+{
+  "verified_at_utc": "2026-10-22T07:49:46.392231+00:00",
+  "jenkins_url_local_only": "http://127.0.0.1:8080",
+  "job": "finsecure-checkout",
+  "build_number": 3,
+  "result": "SUCCESS",
+  "source_commit": "b70c5769c95f28ba543844d3bca7ab8b853c7163",
+  "controller_executors": 0,
+  "agent_executors": 1,
+  "agent_online": true,
+  "source_trigger": "H/5 * * * * SCM polling configured; this build was manually triggered",
+  "runtime": {
+    "controller": {
+      "image_id": "sha256:0b0306758435fcdd9959d3e37273137ea1078f45a11f58c3217d50d0e72cc936",
+      "uid": "1000",
+      "memory_limit_bytes": 1073741824,
+      "nano_cpus": 1000000000,
+      "host_bind_mounts": false,
+      "docker_socket_mounted": false
+    },
+    "agent": {
+      "image_id": "sha256:b9b74be7149028770bd7e137aa8397d48416ba7bf52c5d36f05f52d64ba87883",
+      "uid": "1000",
+      "memory_limit_bytes": 1073741824,
+      "nano_cpus": 1000000000,
+      "host_bind_mounts": false,
+      "docker_socket_mounted": false
+    }
+  },
+  "application_tests_in_jenkins": "not implemented until Step 4.2",
+  "security_and_delivery_stages": "pending",
+  "cloud_resources_created": false
+}

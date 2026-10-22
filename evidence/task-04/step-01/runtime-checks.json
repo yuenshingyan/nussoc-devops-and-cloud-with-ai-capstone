@@ -1,0 +1,19 @@
+{
+  "verified_at_utc": "2026-10-22T07:49:31.371180+00:00",
+  "anonymous_api_status": 403,
+  "password_authenticated_post_without_crumb_status": 403,
+  "rejected_post_created_build": false,
+  "secrets_absent_from_container_inspect": true,
+  "separate_secret_volumes_read_only": true,
+  "controller_password_not_mounted_in_agent": true,
+  "installed_plugins_match_all_pins": 63,
+  "all_plugins_active_and_enabled": true,
+  "owned_idle_services_restarted": true,
+  "admin_password_preserved": true,
+  "agent_secret_preserved": true,
+  "build_history_preserved": {
+    "1": "ABORTED before checkout",
+    "2": "SUCCESS"
+  },
+  "agent_online_after_restart": true
+}

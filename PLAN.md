@@ -2,13 +2,25 @@
 
 ## Agreed structure
 
-- Complete all seven assignment tasks in order.
+- Complete all seven assignment tasks; use the approved budget-aware sequence below.
 - Break each task into small, independently verifiable steps.
 - Work on one step at a time, on a dedicated Git branch.
 - Explain and verify each step, then pause for review before merging and continuing.
 - Do not claim external deployment, notifications, security scans, or recovery succeeded without real execution evidence.
 
-Tasks 1–2 and Step 3.1 are reviewed, merged into `main`, and published. The Deployment still pins verified release 0.2.0. Step 3.2 adds locally checked probes, resource/security settings, temporary storage, and rolling-update policy on `task-03/step-02-runtime-safeguards`, pending review. No cluster has been contacted; server-side validation and actual probe/rollout behavior await approved cluster access. See the [evidence index](evidence/README.md) and [runtime policy](docs/runbooks/runtime-safeguards.md).
+Tasks 1–2 and Steps 3.1–3.2 are reviewed, merged into `main`, and published. The Deployment still pins verified release 0.2.0. Step 4.1 now provides locally verified Jenkins and repository checkout on `task-04/step-01-jenkins-setup`, pending review. No cluster has been contacted; server-side validation and actual probe/rollout behavior remain pending. See the [evidence index](evidence/README.md), [runtime policy](docs/runbooks/runtime-safeguards.md), and [Jenkins runbook](docs/runbooks/local-jenkins.md).
+
+## Approved budget-aware sequence
+
+Submission is **4 November**. The user approved deferring budget-dependent cloud work and completing feasible local work first; this does not waive any assignment requirement.
+
+1. Complete local Jenkins setup and checkout (4.1), then build/test/package and reports (4.2), reviewing each separately.
+2. Work through locally feasible container delivery, source triggering, failure blocking, and security scans/gates. Keep cloud-dependent parts of 4.3–4.5 pending; do not call a local-only pipeline an end-to-end deployment pipeline. Publishing still requires approval.
+3. Implement local application metrics, Prometheus/Grafana, alerts/notification delivery, and structured logs. Managed-cluster pod/node monitoring and cloud-native centralized logging remain pending until real cloud integration is verified.
+4. Draft design/AI material, slides, and the demo script against actual evidence. Finalize them after the remaining cloud checks; do not replace required managed Kubernetes with local Docker or claim unrun integrations.
+5. Return to 3.3–3.4, cloud delivery/rollout/rollback, and managed observability when provider/account eligibility, budget, access, and retention are approved. Advance any still-empty deferred branch to the latest reviewed `main` before work resumes.
+
+**Planning target, not an approved provisioning appointment:** reserve 1–2 November for cloud verification and troubleshooting before submission. Investigate course credits/trial eligibility and quotas earlier without provisioning. Confirm evaluator access duration and whether recordings are accepted; do not assume immediate teardown on submission day. Budgets/alerts are not hard spending caps. No provider change, paid-plan upgrade, or spending has been authorized.
 
 ## Technology choices
 
@@ -122,6 +134,7 @@ The assignment allows equivalent application, build, and unit-testing tools with
 - **Verify:** Validate configuration; verify actual probe behavior after deployment in Step 3.3.
 
 ### Step 3.3 — Deploy to managed cloud Kubernetes
+- **Status:** Deferred for budget/account approval; no provisioning or cluster access yet.
 - **Branch:** `task-03/step-03-cloud-deployment`
 - Confirm provider, region, account, cost budget, exposure controls, and teardown plan before provisioning.
 - Provision or connect to EKS, AKS, or GKE using reproducible configuration where feasible.
@@ -141,8 +154,9 @@ The assignment allows equivalent application, build, and unit-testing tools with
 - **Branch:** `task-04/step-01-jenkins-setup`
 - Set up Jenkins, required plugins, and an agent with the required build tools.
 - Configure repository access, credential references, and webhook or equivalent source-change triggering.
-- Limit deployment credentials and trusted release branches.
-- **Verify:** Jenkins checks out the expected repository revision without exposing secrets.
+- Local implementation uses a loopback-only controller, separate Python agent, public anonymous `main` checkout, and five-minute SCM polling instead of an Internet-facing webhook. No registry/cloud credentials are installed; there is no host Docker socket mount.
+- Limit deployment credentials and trusted release branches. Later release credentials must not be available to untrusted branch/PR code.
+- **Verify:** Jenkins checks out the expected repository revision without exposing secrets. Step 4.1 is checkout-only; Jenkinsfile application stages and source-change-trigger demonstration follow in later steps.
 
 ### Step 4.2 — Build, test, and package
 - **Branch:** `task-04/step-02-build-test-package`
@@ -274,11 +288,11 @@ The assignment allows equivalent application, build, and unit-testing tools with
 
 - **Task 1:** Complete; Python 3.14 and transaction contract confirmed. Public source access verified, and GitHub defaults to `main` following approval.
 - **Task 2:** Public Docker Hub repository `yuenshingyan/finsecure-pay` confirmed. Version 0.1.0 published for ARM64/AMD64 and verified after registry pulls; AMD64 was tested under emulation. Cluster node architecture remains a cloud-deployment decision.
-- **Task 3:** Step 3.1 reviewed and merged; Step 3.2 local verification complete, pending review. Cloud provider, region, credentials configured locally, budget, exposure policy, and teardown timing remain undecided. Approve these before provisioning or cluster access.
-- **Task 4:** Jenkins hosting and agent setup; webhook reachability.
+- **Task 3:** Steps 3.1–3.2 reviewed and merged. Initial preference was AWS/Singapore (`ap-southeast-1`); cost/free-tier questions remain unresolved and no switch is approved. Confirm provider, account/credits, budget, access/exposure, evaluator retention, and teardown before provisioning or cluster access.
+- **Task 4:** Local Docker Jenkins/agent and SCM polling implemented in Step 4.1, pending review. A safe isolated image builder and scoped registry/cloud credentials are later delivery decisions; the current agent has no Docker daemon access.
 - **Task 6:** SMTP/notification receiver and cloud logging configuration.
 - **Task 7:** PowerPoint or PDF preference and evaluator access arrangements.
 
 ## Immediate next action
 
-Review **Task 3, Step 2** on `task-03/step-02-runtime-safeguards`, including the documented demo limits/probe policy and local compatibility evidence. After approval, merge it. Before starting Step 3.3 infrastructure work, agree provider, region, account access, budget, exposure controls, and teardown timing; do not create resources or contact a cluster without that approval.
+Review **Task 4, Step 1** on `task-04/step-01-jenkins-setup`: local Jenkins setup, protected credentials, isolated agent, and real checkout evidence. Merge only after approval, then start Step 4.2 from reviewed `main`. Cloud Steps 3.3–3.4 remain deferred; no resources or cluster access are authorized by this local-work approval.
