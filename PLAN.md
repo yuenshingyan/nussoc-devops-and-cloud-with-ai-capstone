@@ -194,6 +194,7 @@ The assignment allows equivalent application, build, and unit-testing tools with
 
 ### Step 5.1 — Add code and dependency scans
 - **Branch:** `task-05/step-01-source-dependency-scans`
+- **Verified locally, pending review:** approved Bandit/pip-audit/defusedxml development dependencies, exact runtime-pin audit, five-minute fail-closed scan gate before packaging/image export, and archived reports. Fixed 12 MEDIUM XML-parser findings without suppression; 17 LOW findings remain reported. 316 host and candidate Jenkins tests passed. A separate candidate restoration of the original parsers produced a real scan failure with packages/image export skipped and reports retained. See the [policy/runbook](docs/runbooks/source-security.md) and [evidence](evidence/task-05/step-01-source-scans.md). Implementation `893e764` is not merged/published; normal SCM verification remains pending approval.
 - Integrate Ruff/Bandit and pip-audit into Jenkins using the locked runtime dependencies.
 - Archive scan reports and document tool choices, severity interpretation, and remediation workflow.
 - **Verify:** Real scans run and report actual findings; scanner failures are not silently treated as passes.
@@ -299,4 +300,4 @@ The assignment allows equivalent application, build, and unit-testing tools with
 
 ## Immediate next action
 
-The approved local Step 4.4 subset is merged, published, and verified through SCM-triggered normal build #4 at `2f30e7e` (260 tests, verified packages/image export). Next, agree Step 5.1's Bandit/pip-audit installation, scan scope, failure policy, and report handling before adding dependencies or implementation. Cloud rollout/rollback and full release/deployment gates remain deferred; no later implementation step has started.
+Review Step 5.1 on `task-05/step-01-source-dependency-scans`: real source/runtime dependency scans, XML parser remediation, fail-closed report handling, 316 tests and successful/blocked candidate Jenkins runs. No implementation source has been published; main is unchanged at `dfa0cc0`. After approval, merge/publish and verify normal SCM loading and all 25 artifacts. Image scanning and full release/deployment gates remain pending; no Step 5.2 implementation has started.

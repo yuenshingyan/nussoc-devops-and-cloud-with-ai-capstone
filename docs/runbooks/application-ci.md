@@ -1,4 +1,11 @@
-# Application CI — Step 4.2 and local Step 4.3
+# Application CI
+
+Step 5.1's local candidate adds a Security scans stage between Tests and Package, with
+8 additional allowlisted reports (25 artifacts on success). See the
+[source-security policy and verification](source-security.md). That change is verified
+on isolated candidate jobs but not yet merged/published; the normal main job still runs
+the Step 4.4 pipeline. Historical results below retain their original revisions/counts.
+ — Step 4.2 and local Step 4.3
 
 Step 4.2's normal SCM-loaded run is complete. Step 4.3's local image-export addition is
 also merged and verified: normal build #2 at `ab538a2` passed 245 tests and produced a

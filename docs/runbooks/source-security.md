@@ -74,7 +74,7 @@ and scan for secrets before curating it into Git. Do not archive caches or entir
 
 ## Actual findings and remediation
 
-The initial real scan found **12 MEDIUM/HIGH-confidence B314 findings** at XML parser
+The initial real scan found **12 MEDIUM-severity, HIGH-confidence B314 findings** at XML parser
 calls in four Jenkins tools, plus 17 LOW findings. No transaction API source was changed.
 The user approved directly declaring `defusedxml` (already a pip-audit transitive dependency)
 and replacing these parsers rather than suppressing findings. XML construction still uses
@@ -85,8 +85,8 @@ through the public demo-configuration helper; normal job XML remains supported.
 After remediation: **0 MEDIUM/HIGH, 17 LOW findings**, **14 audited runtime dependencies,
 0 known advisories**, and **316 passing host tests**. These are dated observations, not a
 permanent vulnerability-free guarantee. LOW findings remain reported; they include
-subprocess usage, operational assertions, controlled startup exception handling, and
-standard-library XML construction imports. They were not silently suppressed.
+subprocess imports/calls (B404/B603), executable lookup through the trusted operator/agent
+PATH (B607), operational assertions (B101), and XML construction imports (B405). They were not silently suppressed.
 
 Known unsuppressed warnings: Starlette's existing HTTPX deprecation, plus pip-audit's
 recommendation to hash requirement exports. The advisory-only export is intentionally
@@ -113,8 +113,23 @@ block on the genuine original findings while JUnit/coverage and scan reports rem
 available. This is not the later HIGH/CRITICAL vulnerable-image demonstration or a claim
 about registry/deployment/credential gates, which do not exist here.
 
-Live candidate success/failure checks and cleanup are pending. Preserve/disable review
-jobs, remove only the owned temporary agent bundle after both runs, keep main's CI and
-the Step 4.4 demo unchanged, then commit evidence and pause for review. After merge/publication
-approval, separately verify a normal SCM-triggered run of the new source. Trivy/image scans,
-release credentials, registry/cloud delivery, and full Step 5.4 demonstrations remain pending.
+Both live candidate runs completed on 25 October 2026:
+
+- `finsecure-ci-scan-review-success-20261025074032` #1: **SUCCESS**, 316 tests, 0 blocking
+  findings, 25 downloaded artifacts and verified package/image hashes/configuration.
+- `finsecure-ci-scan-review-blocked-20261025074130` #1: **FAILURE**, 316 tests passed before
+  restoration; the scanner found 12 MEDIUM and 19 LOW findings, exiting 1. Package and
+  Local image export were skipped; all 15 pre-package/report artifacts remained available.
+  Dependency auditing still passed. No old helper was executed or packaged.
+
+Both jobs are disabled with history preserved. The exact owned agent bundle was removed
+only after checking its hash and agent idleness; main's polling/job and the disabled Step
+4.4 demo are unchanged. See the [evidence](../../evidence/task-05/step-01-source-scans.md).
+Synthetic process-boundary tests cover scanner errors/timeouts, malformed/partial reports,
+missing dependencies and stale outputs; no live advisory-service outage was induced.
+
+Implementation `893e764` and its evidence follow-up remain local to the step branch,
+pending review. After merge/publication approval, separately verify a normal SCM-triggered
+run of the new source. Trivy/image scans, release credentials, registry/cloud delivery,
+and full Step 5.4 demonstrations remain pending. No exported image was loaded/smoke-tested
+in this step; earlier runtime evidence belongs to its own exact image.

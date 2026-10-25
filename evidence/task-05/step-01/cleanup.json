@@ -1,0 +1,53 @@
+{
+  "success": {
+    "job": "finsecure-ci-scan-review-success-20261025074032",
+    "result": "SUCCESS",
+    "tests": 316,
+    "gate": "passed",
+    "bandit": {
+      "status": "passed",
+      "exit_code": 1,
+      "LOW": 17,
+      "MEDIUM": 0,
+      "HIGH": 0,
+      "blocking_findings": 0
+    },
+    "dependencies": {
+      "status": "passed",
+      "exit_code": 0,
+      "dependencies_audited": 14,
+      "blocking_findings": 0
+    },
+    "artifacts": 25
+  },
+  "blocked": {
+    "job": "finsecure-ci-scan-review-blocked-20261025074130",
+    "result": "FAILURE",
+    "tests": 316,
+    "gate": "blocked",
+    "bandit": {
+      "status": "blocked",
+      "exit_code": 1,
+      "LOW": 19,
+      "MEDIUM": 12,
+      "HIGH": 0,
+      "blocking_findings": 12
+    },
+    "dependencies": {
+      "status": "passed",
+      "exit_code": 0,
+      "dependencies_audited": 14,
+      "blocking_findings": 0
+    },
+    "artifacts": 15
+  },
+  "verified_at_utc": "2026-10-25T07:42:47.002774+00:00",
+  "temporary_agent_bundle_removed": true,
+  "review_jobs_disabled": true,
+  "main_unchanged": "dfa0cc010744baafe3f8d7cf601b608e643faf37",
+  "implementation_branch_published": false,
+  "normal_main_latest_build": 5,
+  "main_polling": "H/5 * * * *",
+  "step44_demo_still_disabled_with_four_builds": true,
+  "no_registry_or_cloud_commands": true
+}
