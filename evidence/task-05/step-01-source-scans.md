@@ -1,5 +1,11 @@
 # Step 5.1 — Source/runtime dependency scans and gate
 
+> Historical pre-merge checkpoint. Implementation `893e764` and follow-up `76b0f7d`
+> were subsequently approved, merged/published, and verified through automatic main
+> build #6 (316 tests, passing scans, 25 artifacts). The
+> [post-merge evidence](step-01-scm-verification.md) supersedes pending-review statements
+> below without changing these candidate runs' provenance.
+
 ## Scope and actual implementation
 
 Verified **25 October 2026 UTC** on `task-05/step-01-source-dependency-scans`.

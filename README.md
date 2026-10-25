@@ -21,11 +21,12 @@ Cloud work is deferred
 for budget approval while feasible local work proceeds toward **4 November** submission.
 Kubernetes execution and all dependent cloud verification remain pending.
 
-Step 5.1 is implemented and verified on its local review branch, **not yet merged or
-published**: 316 tests, Bandit source gates, and pip-audit of locked runtime dependencies.
+Step 5.1 is reviewed, merged, and published. Normal SCM-triggered build #6 at `76b0f7d`
+passed **316 tests**, Bandit source gates, and pip-audit of 14 locked runtime dependencies.
 XML parser remediation cleared 12 MEDIUM findings; 17 LOW findings remain reported.
-Separate candidate Jenkins runs verified both successful exports and real scan blocking.
-See the [source-security runbook](docs/runbooks/source-security.md).
+Separate candidate runs verified real scan blocking; normal CI exported 25 verified artifacts.
+See the [source-security runbook](docs/runbooks/source-security.md) and
+[post-merge evidence](evidence/task-05/step-01-scm-verification.md).
 
 **Evaluator source link:** [reviewed application on main](https://github.com/yuenshingyan/nussoc-devops-and-cloud-with-ai-capstone/tree/main).
 GitHub now defaults to `main`. See the
@@ -217,8 +218,8 @@ Remove a placeholder when its directory receives real content.
 - Task 4.4: local source-trigger/test-gate subset reviewed, merged, published, and SCM-verified.
   Demo branch reverted/passing and job disabled; publishing/deployment gates remain pending.
 - Remaining Task 4: registry/cloud delivery, full release-gate proof, rollout/rollback.
-- Task 5.1: source/runtime dependency scans and gate verified locally/on candidate Jenkins jobs;
-  review and normal post-publication SCM verification pending.
+- Task 5.1: reviewed, merged, published, and verified through normal SCM build #6
+  (316 tests, passing scans, 25 artifacts); 17 LOW Bandit findings remain reported.
 - Remaining Tasks 5–6: image security/secret-management work, monitoring/logging, demonstrations.
 - Task 7: Design document, architecture diagram, AI use case, and presentation.
 

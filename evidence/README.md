@@ -15,7 +15,7 @@ and report retention on an isolated failure. Cloud delivery remains unverified.
 | 2 — Containerisation | [task-02](task-02/) | Complete, reviewed, merged, and published |
 | 3 — Kubernetes and cloud | [task-03](task-03/) | Steps 3.1–3.2 merged; cloud execution deferred |
 | 4 — CI/CD | [task-04](task-04/) | Steps 4.1–4.2 merged; Step 4.3 local build/export merged and SCM-verified (245 tests/image smoke); Step 4.4 local SCM/test-gate merged and SCM-verified (260 tests); publishing/deployment pending |
-| 5 — DevSecOps | [task-05](task-05/) | Step 5.1 source/runtime scan gate candidate-verified (316 tests); review/SCM verification pending; remaining steps pending |
+| 5 — DevSecOps | [task-05](task-05/) | Step 5.1 source/runtime scan gate merged and SCM-verified (316 tests, 25 artifacts); remaining steps pending |
 | 6 — Observability | [task-06](task-06/) | Pending |
 | 7 — Documentation and demonstration | [task-07](task-07/) | Pending |
 
@@ -93,7 +93,12 @@ and report retention on an isolated failure. Cloud delivery remains unverified.
   14 runtime dependencies audited with no known advisories. 316 host/candidate tests passed;
   restoring the original parsers before scanning blocked packaging/image export and retained
   reports. Candidate source used a local Git bundle, not publication or SCM Jenkinsfile loading.
-  Implementation review and normal post-merge verification remain pending.
+  Historical pre-merge record; approval and normal verification are recorded below.
+
+- [Step 5.1 — post-merge SCM verification](task-05/step-01-scm-verification.md): normal
+  build #6 automatically detected `76b0f7d`, passed 316 tests and real security scans,
+  and exported 25 verified artifacts. 17 LOW findings remain visible; 14 dependencies
+  had no known advisories. Image scanning and delivery remain pending.
 
 For each artifact, record the requirement demonstrated, timestamp, command or
 procedure, actual result, commit, applicable image digest, and artifact path or

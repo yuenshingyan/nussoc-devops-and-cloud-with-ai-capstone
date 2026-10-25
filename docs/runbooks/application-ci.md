@@ -1,11 +1,10 @@
 # Application CI
 
-Step 5.1's local candidate adds a Security scans stage between Tests and Package, with
-8 additional allowlisted reports (25 artifacts on success). See the
-[source-security policy and verification](source-security.md). That change is verified
-on isolated candidate jobs but not yet merged/published; the normal main job still runs
-the Step 4.4 pipeline. Historical results below retain their original revisions/counts.
- — Step 4.2 and local Step 4.3
+Step 5.1 adds a Security scans stage between Tests and Package, with 8 additional
+allowlisted reports (25 artifacts on success). It is reviewed, merged, published, and
+verified through normal SCM-triggered build #6 at `76b0f7d` (316 tests, passing scans).
+See the [source-security policy and verification](source-security.md).
+Historical Step 4.2/4.3 results below retain their original revisions/counts.
 
 Step 4.2's normal SCM-loaded run is complete. Step 4.3's local image-export addition is
 also merged and verified: normal build #2 at `ab538a2` passed 245 tests and produced a
@@ -21,9 +20,12 @@ smoke-tested image. See the [builder runbook](local-image-builder.md) for operat
 3. **Code checks:** locked Ruff lint and formatting checks.
 4. **Tests:** `./scripts/test.sh`, then publish pytest's JUnit XML and Cobertura-format
    coverage XML using Jenkins JUnit/Coverage plugins.
-5. **Package:** `uv build`; require one nonempty wheel and source distribution; record
+5. **Security scans:** run locked Bandit and runtime dependency auditing; block on
+   MEDIUM/HIGH source findings, any known dependency advisory, or scanner/report errors.
+   Retain all available scan reports, including LOW findings, under the five-minute limit.
+6. **Package:** `uv build`; require one nonempty wheel and source distribution; record
    SHA-256 checksums and archive/fingerprint both packages.
-6. **Local image export (Step 4.3 local subset):** BuildKit builds Linux ARM64, exports a
+7. **Local image export (Step 4.3 local subset):** BuildKit builds Linux ARM64, exports a
    compressed Docker archive, and records source/image metadata and SHA-256. No push/load
    or deployment occurs in the pipeline. Only successful exports are archived.
 

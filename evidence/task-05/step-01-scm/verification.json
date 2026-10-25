@@ -1,0 +1,209 @@
+{
+  "verified_at_utc": "2026-10-25T07:56:13.495756+00:00",
+  "job": "finsecure-ci",
+  "build": 6,
+  "source_revision": "76b0f7dd02e835ed69469dcfa208b8d85f1101ed",
+  "result": "SUCCESS",
+  "causes": [
+    {
+      "_class": "hudson.triggers.SCMTrigger$SCMTriggerCause",
+      "shortDescription": "Started by an SCM change"
+    }
+  ],
+  "scm_trigger_verified": true,
+  "pipeline_from_scm_verified": true,
+  "jenkinsfile_sha256": "06e324d4fd3e2b300ff7173b2bc8a939db74eb8998f051198f2c53d125c0b96b",
+  "security_scans": {
+    "started_at_utc": "2026-10-25T07:55:34.571536+00:00",
+    "status": "passed",
+    "budget_seconds": 300,
+    "advisory_request_timeout_seconds": 15,
+    "bandit": {
+      "status": "passed",
+      "exit_code": 1,
+      "LOW": 17,
+      "MEDIUM": 0,
+      "HIGH": 0,
+      "blocking_findings": 0
+    },
+    "dependencies": {
+      "status": "passed",
+      "exit_code": 0,
+      "dependencies_audited": 14,
+      "blocking_findings": 0
+    },
+    "source_files": [
+      "ops/jenkins/bootstrap.py",
+      "ops/jenkins/image_archive.py",
+      "ops/jenkins/verify.py",
+      "ops/jenkins/verify_ci.py",
+      "ops/jenkins/verify_trigger.py",
+      "scripts/security_scan.py",
+      "scripts/smoke_test.py",
+      "src/finsecure_pay/__init__.py",
+      "src/finsecure_pay/api/__init__.py",
+      "src/finsecure_pay/api/dependencies.py",
+      "src/finsecure_pay/api/errors.py",
+      "src/finsecure_pay/api/health.py",
+      "src/finsecure_pay/api/validation.py",
+      "src/finsecure_pay/config.py",
+      "src/finsecure_pay/main.py",
+      "src/finsecure_pay/observability/__init__.py",
+      "src/finsecure_pay/schemas/__init__.py",
+      "src/finsecure_pay/schemas/errors.py",
+      "src/finsecure_pay/schemas/health.py",
+      "src/finsecure_pay/schemas/transaction.py",
+      "src/finsecure_pay/services/__init__.py",
+      "src/finsecure_pay/services/validation.py"
+    ],
+    "source_sha256": {
+      "ops/jenkins/bootstrap.py": "759d3f97e26d2f1df2b4438e8125c66c84ab2f0424a966d7b5182ce8ef158e07",
+      "ops/jenkins/image_archive.py": "f08abc608f94f2b4187296d648613122fd30a2e2064966af921d654f4ddb9f7b",
+      "ops/jenkins/verify.py": "7b2184fecddb97b5d19d18de21a749a20e99b6c5ba0c3f58073ab837e47421ff",
+      "ops/jenkins/verify_ci.py": "8da8fb71f4c3eab04aba5f3740686177e2fcf44d85f037a27b987bd757ae29e2",
+      "ops/jenkins/verify_trigger.py": "f16eae8bc764fa54fabf90bf147f57032b3873e77dabc5c6f5e11bdceba0d95c",
+      "scripts/security_scan.py": "63f90895c74a0599d43e0d6cef5b5872295ae816fc7930c7c94c09dcfe2f352f",
+      "scripts/smoke_test.py": "73b88a6b0d531a5e7cc0b3c681e34192d39a77808c30ada2384527a2f7865135",
+      "src/finsecure_pay/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "src/finsecure_pay/api/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "src/finsecure_pay/api/dependencies.py": "1c64ae9ad90ec301894df8228b67108ab8fed2091f92979f7cc430219f6c8fe4",
+      "src/finsecure_pay/api/errors.py": "0592b3435647a3aa8995afa20e35a2dba090c00b0b7e0fd5b6f737a4a792546c",
+      "src/finsecure_pay/api/health.py": "44b177ed30442db2d5abcd532223ddc078f6b8539515b5e6d91d32d01424aebe",
+      "src/finsecure_pay/api/validation.py": "2c77d7a914cffbad2887504ec578501e3e7f52748b6cdf2332d7b9b0f67e2253",
+      "src/finsecure_pay/config.py": "490f18f21c86e2775f701e4ddd20a41799ad1b92d0d7116656535c6fe032a065",
+      "src/finsecure_pay/main.py": "fff1092e3b5ad547983a6c98217ba0f9c778e0a5f894ec8a058b7dbea36f87ad",
+      "src/finsecure_pay/observability/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "src/finsecure_pay/schemas/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "src/finsecure_pay/schemas/errors.py": "ad689c0fb2960b53b4dbbce12c321e0b6b250b2fb4e7ee28c0e5ee53ddfe33d1",
+      "src/finsecure_pay/schemas/health.py": "7ccd0f73cb93a5ec8ecba748b4e67eeb43b77275cfce637b6300691f55957951",
+      "src/finsecure_pay/schemas/transaction.py": "2e5959dfadeb39a2722b7b658236ec717c2cfefe40fa24fcb83865f7ecd31bac",
+      "src/finsecure_pay/services/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "src/finsecure_pay/services/validation.py": "789f87b07baf82ad5fde4b95f2a3486ec4e306c24c5bae9a0df0c2411b7b3b66"
+    },
+    "lock_sha256": "c5856200e528008160c463b0bc18284902c6bc5608aecb1f1a6e05e9a3b571c0",
+    "finished_at_utc": "2026-10-25T07:55:36.960151+00:00",
+    "elapsed_seconds": 2.3890175840006123
+  },
+  "review_jobs_still_disabled": true,
+  "passed": 316,
+  "failed": 0,
+  "skipped": 0,
+  "coverage_xml": {
+    "lines-covered": "125",
+    "lines-valid": "125",
+    "branches-covered": "28",
+    "branches-valid": "28"
+  },
+  "coverage_quality_gate": "INACTIVE",
+  "artifacts": {
+    "dist/finsecure_pay-0.2.0-py3-none-any.whl": {
+      "bytes": 12704,
+      "sha256": "7146c27dd3ed94375e5c2b1347797fa38eafb8f986939ac8ec07cc1c7b9e43d2"
+    },
+    "dist/finsecure_pay-0.2.0.tar.gz": {
+      "bytes": 292612,
+      "sha256": "85b5f3d2724e47f0a530962b385101c5deda81a477e59bbea12e61c0061db3de"
+    },
+    "images/finsecure-pay.tar.gz": {
+      "bytes": 47141398,
+      "sha256": "8cd52de7fa121f41e589d01f6b9238d2efbfa7537c0ce9f299390857ad87cb11"
+    },
+    "reports/bandit.json": {
+      "bytes": 23408,
+      "sha256": "81cd1a33ec4029fb7b34328ea9155e68bb94648d014eba0a5fa0fff446721059"
+    },
+    "reports/bandit.txt": {
+      "bytes": 213,
+      "sha256": "cbdcb21f996bbcee086d84b3866c7ee7ae261a506de510360aef715a8e09c33f"
+    },
+    "reports/build-metadata.txt": {
+      "bytes": 174,
+      "sha256": "233e89812a98982b88d0138fe34afa2b334f6e1cc08649ceddb2673a7e67b42c"
+    },
+    "reports/buildkit-image.json": {
+      "bytes": 666,
+      "sha256": "38431ffdefd6a0918bc941d7e19c10ce88be58af91f57d10f8561e7f99dfd122"
+    },
+    "reports/buildkit-workers.txt": {
+      "bytes": 674,
+      "sha256": "b9f2f581939891369c0a9c9f824c40f6fe2033fa9b8d870d5047bac2e0788764"
+    },
+    "reports/coverage.xml": {
+      "bytes": 8695,
+      "sha256": "5d3c02b58539eeb3b23bd0ed7c228cc158084b2bc0da222b817dadc93e6c1fe4"
+    },
+    "reports/dependencies.txt": {
+      "bytes": 1532,
+      "sha256": "24dc8173fde08536b3f18b2f496b35edd0fef8e9e7b91d5dac3d66b1b1490598"
+    },
+    "reports/format.txt": {
+      "bytes": 27,
+      "sha256": "9d67c799638d3a83a6700213f2611aca574ca19163ae4a9c3700b14d4e002c85"
+    },
+    "reports/image-build.txt": {
+      "bytes": 2931,
+      "sha256": "65bc1799827551063fcbf72e3abc199e6d317d5b43a73717860c86251524dc85"
+    },
+    "reports/image-metadata.txt": {
+      "bytes": 128,
+      "sha256": "399dc8bff152601a401833a16f1768bda649a04bba3f800305f630c31857735a"
+    },
+    "reports/image.sha256": {
+      "bytes": 94,
+      "sha256": "15d3f547134550968556871b01ee4c075a3894cf13495ddcd32fa871d1889160"
+    },
+    "reports/junit.xml": {
+      "bytes": 45116,
+      "sha256": "4cb0a52e79aaf56ae09d6ff1c9b9b559cc15f2e2aac753ad5c611878a2044e6d"
+    },
+    "reports/lint.txt": {
+      "bytes": 19,
+      "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+    },
+    "reports/package.txt": {
+      "bytes": 187,
+      "sha256": "7dd09086c60e4b6cdde16a54eaadc2f70941d0722d1609bbad931f98946a11bb"
+    },
+    "reports/packages.sha256": {
+      "bytes": 206,
+      "sha256": "ec45da51a3de74251ffbdf42079b78106d1ac65c40402b9dd9706ed42a8e4f77"
+    },
+    "reports/pip-audit.json": {
+      "bytes": 838,
+      "sha256": "b0bcb91132d8becee3d7cafee2e8eb797fbb75834c8d08ef147bfe921fc98937"
+    },
+    "reports/pip-audit.txt": {
+      "bytes": 265,
+      "sha256": "79d30422388543b2563e1dde76bb7e7857d7ef0c6fdf05c8c71598633ca07e1e"
+    },
+    "reports/runtime-requirements.txt": {
+      "bytes": 260,
+      "sha256": "ac46a68afa9b7bb4fe1d7beca4c7c27d90198e19af735a52210307dc7af69fba"
+    },
+    "reports/security-export.txt": {
+      "bytes": 291,
+      "sha256": "0d3d5c1db7ce48c98fe0895dc638483f888538e50306ca8edc0b4844043bbe92"
+    },
+    "reports/security-summary.json": {
+      "bytes": 3867,
+      "sha256": "c6b2dc97f98e2adfb49f86de1938f33a22b3712065304ce7fe99b7065b98b18e"
+    },
+    "reports/security-tools.txt": {
+      "bytes": 50,
+      "sha256": "44a60294bb4e259844ac5e29a7fc37051d18a55e9c972ecc09604e374fa1b2b2"
+    },
+    "reports/tests.txt": {
+      "bytes": 4102,
+      "sha256": "ae97f7e9feeabde4e8d1c2231ce8cf6dc11e2c662ca492f0ee462bffe1efccfa"
+    }
+  },
+  "image_export": {
+    "image_id": "sha256:c397c6dfb6f18c7f263004b44e7eafa45fbeb6152a96242322f7a0e1a34070a3",
+    "platform": "linux/arm64",
+    "local_tag": "finsecure-pay-ci:jenkins-finsecure-ci-6"
+  },
+  "demo_job_still_disabled": true,
+  "demo_build_count": 4,
+  "image_loaded_or_smoke_tested_in_this_followup": false,
+  "publishing_or_deployment": "not implemented"
+}

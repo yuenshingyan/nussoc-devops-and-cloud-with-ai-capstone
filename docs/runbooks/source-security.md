@@ -128,8 +128,13 @@ only after checking its hash and agent idleness; main's polling/job and the disa
 Synthetic process-boundary tests cover scanner errors/timeouts, malformed/partial reports,
 missing dependencies and stale outputs; no live advisory-service outage was induced.
 
-Implementation `893e764` and its evidence follow-up remain local to the step branch,
-pending review. After merge/publication approval, separately verify a normal SCM-triggered
-run of the new source. Trivy/image scans, release credentials, registry/cloud delivery,
-and full Step 5.4 demonstrations remain pending. No exported image was loaded/smoke-tested
-in this step; earlier runtime evidence belongs to its own exact image.
+After approval, implementation `893e764` and evidence follow-up `76b0f7d` were merged
+and atomically published to main/the step branch. Normal **finsecure-ci #6** then ran
+with an SCM cause, loaded Jenkinsfile from Git at `76b0f7d`, passed all **316 tests**,
+and passed the real scan gate (17 LOW, no MEDIUM/HIGH; 14 dependencies, no known advisories).
+All **25** artifacts were downloaded; scan inventory/source/lock hashes, package checksums,
+and exported image identity were verified. See the
+[post-merge evidence](../../evidence/task-05/step-01-scm-verification.md).
+Trivy/image scans, release credentials, registry/cloud delivery, and full Step 5.4
+demonstrations remain pending. No exported image was loaded/smoke-tested in this step;
+earlier runtime evidence belongs to its own exact image.

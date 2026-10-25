@@ -1,0 +1,137 @@
+"""GET-only observation of the next automatic main build and its archived outputs."""
+
+from argparse import ArgumentParser
+from datetime import UTC, datetime
+from hashlib import sha256
+from json import dumps, loads
+from pathlib import Path
+from tarfile import TarFile
+from time import monotonic, sleep
+from subprocess import run
+from runpy import run_path
+
+from defusedxml.ElementTree import fromstring
+from zipfile import ZipFile
+
+from bootstrap import Jenkins, admin_password
+from image_archive import inspect_image_archive
+from verify_trigger import require_scm_cause, require_test_counts
+from verify_ci import SECURITY_ARTIFACTS, require_security_reports
+
+parser = ArgumentParser(description=__doc__)
+parser.add_argument('--before', default='reports/step51-main-before.json')
+args = parser.parse_args()
+before = loads(Path(args.before).read_text())
+revision = before['expected_revision']
+client = Jenkins(admin_password())
+config = fromstring(client.request('/job/finsecure-ci/config.xml'))
+assert config.find('definition').get('class') == 'org.jenkinsci.plugins.workflow.cps.CpsScmFlowDefinition'
+assert config.findtext('definition/scriptPath') == 'Jenkinsfile'
+assert config.findtext('.//branches/hudson.plugins.git.BranchSpec/name') == '*/main'
+assert config.findtext('.//hudson.triggers.SCMTrigger/spec') == 'H/5 * * * *'
+print('Observing main SCM polling; no build/poll POST requests', flush=True)
+deadline = monotonic() + 1200
+while monotonic() < deadline:
+    builds = loads(client.request('/job/finsecure-ci/api/json'))['builds']
+    candidates = [item for item in builds if item['number'] > before['after_build']]
+    assert len(candidates) <= 1, 'Unexpected extra builds; do not select a passing retry'
+    if candidates:
+        number = candidates[0]['number']
+        base = f'/job/finsecure-ci/{number}/'
+        build = loads(client.request(base+'api/json'))
+        if not build['building']:
+            break
+    sleep(3)
+else:
+    raise TimeoutError('No completed automatic main build within 20 minutes; inspect queue/build')
+causes = require_scm_cause(build)
+secret = fromstring(client.request('/computer/finsecure-python/jenkins-agent.jnlp')).find('.//argument').text
+sensitive = [admin_password(), secret, client.authorization, client.authorization[6:]]
+console = client.request(base+'consoleText').decode()
+for value in sensitive:
+    console = console.replace(value, '<redacted>')
+out = Path(f'reports/step51-main-{number}')
+out.mkdir(parents=True, exist_ok=True)
+(out/'console.txt').write_text(console)
+assert build['result'] == 'SUCCESS', 'Inspect sanitized console; no retry'
+assert 'Obtained Jenkinsfile from git' in console
+assert 'SOURCE_REVISION='+revision in console
+assert 'Running on finsecure-python' in console
+allowed = {
+    'reports/build-metadata.txt', 'reports/dependencies.txt', 'reports/lint.txt',
+    'reports/format.txt', 'reports/tests.txt', 'reports/junit.xml', 'reports/coverage.xml',
+    'reports/package.txt', 'reports/packages.sha256', 'dist/finsecure_pay-0.2.0-py3-none-any.whl',
+    'dist/finsecure_pay-0.2.0.tar.gz', 'reports/buildkit-workers.txt', 'reports/image-metadata.txt',
+    'reports/image-build.txt', 'reports/buildkit-image.json', 'reports/image.sha256',
+    'images/finsecure-pay.tar.gz',
+}
+allowed |= SECURITY_ARTIFACTS
+assert {item['relativePath'] for item in build['artifacts']} == allowed
+artifacts = {}
+for artifact in build['artifacts']:
+    name = artifact['relativePath']
+    content = client.request(base+'artifact/'+name)
+    assert not any(value.encode() in content for value in sensitive), 'Live credential found; refusing save'
+    target = out/name
+    target.parent.mkdir(parents=True, exist_ok=True)
+    target.write_bytes(content)
+    artifacts[name] = {'bytes': len(content), 'sha256': sha256(content).hexdigest()}
+tests = loads(client.request(base+'testReport/api/json'))
+require_test_counts(tests, 316, 0)
+coverage = loads(client.request(base+'coverage/api/json'))
+assert coverage['qualityGates']['overallResult'] == 'INACTIVE'
+xml = fromstring((out/'reports/coverage.xml').read_bytes())
+assert xml.attrib['lines-covered'] == xml.attrib['lines-valid'] == '125'
+assert xml.attrib['branches-covered'] == xml.attrib['branches-valid'] == '28'
+for manifest,prefix in [('packages.sha256','dist/'),('image.sha256','images/')]:
+    hashes = {}
+    for line in (out/'reports'/manifest).read_text().splitlines():
+        digest,name = line.split('  ',1)
+        assert name not in hashes
+        hashes[name] = digest
+    assert hashes == {name:data['sha256'] for name,data in artifacts.items() if name.startswith(prefix)}
+with ZipFile(out/'dist/finsecure_pay-0.2.0-py3-none-any.whl') as archive:
+    assert 'finsecure_pay/main.py' in archive.namelist()
+with TarFile.open(out/'dist/finsecure_pay-0.2.0.tar.gz','r:gz') as archive:
+    assert any(name.endswith('/src/finsecure_pay/main.py') for name in archive.getnames())
+tag = f'finsecure-pay-ci:jenkins-finsecure-ci-{number}'
+assert (out/'reports/image-metadata.txt').read_text() == f'SOURCE_REVISION={revision}\nLOCAL_TAG={tag}\nPLATFORM=linux/arm64\n'
+metadata = loads((out/'reports/buildkit-image.json').read_text())
+image = inspect_image_archive(out/'images/finsecure-pay.tar.gz',revision,tag,metadata['containerimage.config.digest'])
+assert fromstring(client.request('/job/finsecure-ci-gate-demo/config.xml')).findtext('disabled') == 'true'
+assert len(loads(client.request('/job/finsecure-ci-gate-demo/api/json'))['builds']) == 4
+for mode in ['success', 'blocked']:
+    name = Path('reports/step51-'+mode+'-job.txt').read_text().strip()
+    assert fromstring(client.request('/job/'+name+'/config.xml')).findtext('disabled') == 'true'
+gate = require_security_reports(out,set(artifacts),False)
+helpers = run_path('scripts/security_scan.py')
+inventory = set(gate['source_files'])
+tracked = run(['git','ls-tree','-r','--name-only',revision],capture_output=True,text=True,check=True).stdout.splitlines()
+expected_files = {name for name in tracked if name.endswith('.py') and name.startswith(('src/finsecure_pay/','scripts/','ops/jenkins/'))}
+assert inventory == expected_files and len(gate['source_files']) == len(inventory)
+assert set(gate['source_sha256']) == inventory
+for name,digest in gate['source_sha256'].items():
+    assert digest == sha256(run(['git','show',revision+':'+name],capture_output=True,check=True).stdout).hexdigest()
+assert gate['lock_sha256'] == sha256(run(['git','show',revision+':uv.lock'],capture_output=True,check=True).stdout).hexdigest()
+bandit = helpers['bandit_result'](loads((out/'reports/bandit.json').read_text()),gate['bandit']['exit_code'],inventory)
+pins = helpers['runtime_pins']((out/'reports/runtime-requirements.txt').read_text())
+audit = helpers['dependency_result'](loads((out/'reports/pip-audit.json').read_text()),gate['dependencies']['exit_code'],pins)
+assert all(gate['bandit'][key] == value for key,value in bandit.items())
+assert all(gate['dependencies'][key] == value for key,value in audit.items())
+(out/'junit-api-summary.json').write_text(dumps({key:tests[key] for key in ['passCount','failCount','skipCount','duration','empty']},indent=2)+'\n')
+(out/'coverage-api.json').write_text(dumps(coverage,indent=2)+'\n')
+record = {
+    'verified_at_utc':datetime.now(UTC).isoformat(), 'job':'finsecure-ci', 'build':number,
+    'source_revision':revision, 'result':build['result'], 'causes':causes,
+    'scm_trigger_verified':True, 'pipeline_from_scm_verified':True,
+    'jenkinsfile_sha256':sha256(run(['git','show',revision+':Jenkinsfile'],capture_output=True,check=True).stdout).hexdigest(),
+    'security_scans':gate, 'review_jobs_still_disabled':True,
+    'passed':316, 'failed':0, 'skipped':0,
+    'coverage_xml':{key:xml.attrib[key] for key in ['lines-covered','lines-valid','branches-covered','branches-valid']},
+    'coverage_quality_gate':'INACTIVE', 'artifacts':artifacts, 'image_export':image,
+    'demo_job_still_disabled':True, 'demo_build_count':4,
+    'image_loaded_or_smoke_tested_in_this_followup':False,
+    'publishing_or_deployment':'not implemented',
+}
+(out/'verification.json').write_text(dumps(record,indent=2)+'\n')
+print(dumps(record,indent=2))
