@@ -1,0 +1,11 @@
+{
+  "verified_at_utc": "2026-10-25T14:34:18.133301+00:00",
+  "agent_image_id": "sha256:f51d2a954718ca4b6948e8bde555d77fdf326b3715d08cff28531c8714fe2fe9",
+  "trivy_version": "Version: 0.76.1",
+  "trivy_binary_sha256": "b422130ea54e53e142e65c838662e48919ce9c3f23f17d80066b43e70550cb85",
+  "credentials_preserved": true,
+  "agent_reconnected": true,
+  "main_latest_build_unchanged": 7,
+  "no_host_binds_or_socket": true,
+  "non_root_restrictions_preserved": true
+}

@@ -21,7 +21,7 @@ services:
     build:
       context: .
       dockerfile: agent.Dockerfile
-    image: finsecure-jenkins-agent:step-04-03
+    image: finsecure-jenkins-agent:step-05-02
     depends_on:
       builder:
         condition: service_healthy

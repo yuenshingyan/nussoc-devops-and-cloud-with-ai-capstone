@@ -201,6 +201,7 @@ The assignment allows equivalent application, build, and unit-testing tools with
 
 ### Step 5.2 — Scan images and enforce gates
 - **Branch:** `task-05/step-02-image-security-gates`
+- **In progress; remediation decision required:** the approved Trivy 0.76.1/Cosign 3.1.4 verification and ARM64 agent installation are complete. An operator preflight of normal build #7's exact image reported 70 HIGH and 6 CRITICAL occurrences (29 distinct advisory IDs; 63 blocking occurrences without listed fixes). The approved policy would block it. No base change, exception, image publication, or deployment was made. Jenkins image gating/archival changes are not implemented yet. See the [policy/checkpoint](docs/runbooks/image-security.md) and [actual preflight evidence](evidence/task-05/step-02-preflight.md).
 - Scan the built image with Trivy before publishing/deployment.
 - Block at least HIGH and CRITICAL image vulnerabilities; define the dependency/static-analysis failure policies explicitly.
 - Document how exceptions, if any, require justification and review.
@@ -300,4 +301,4 @@ The assignment allows equivalent application, build, and unit-testing tools with
 
 ## Immediate next action
 
-Step 5.1 is reviewed, merged, published, and verified through normal SCM-triggered build #6 at `76b0f7d`: 316 tests, passing source/runtime dependency gates, and 25 verified artifacts. Next, agree Step 5.2's Trivy installation/pin, image input, database handling, timeouts, and failure/report policy before implementing image scans. The planned minimum block is HIGH/CRITICAL. Registry/cloud delivery remains deferred; no Step 5.2 implementation has started.
+Step 5.2's tool/policy proposal was approved. Verified scanner tooling is installed on the local agent, but the current image's real preflight has 76 HIGH/CRITICAL occurrences, including unfixed findings and embedded-SBOM caveats. Agree remediation scope before changing the application base/runtime contents or introducing exceptions. Pipeline image-gate integration and its verification remain pending; main/public releases are unchanged and no later step has started.

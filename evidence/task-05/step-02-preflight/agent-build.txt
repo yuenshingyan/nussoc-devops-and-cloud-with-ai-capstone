@@ -1,0 +1,106 @@
+ Image finsecure-jenkins-agent:step-05-02 Building
+#1 [internal] load local bake definitions
+#1 reading from stdin 1.13kB done
+#1 DONE 0.0s
+
+#2 [internal] load build definition from agent.Dockerfile
+#2 transferring dockerfile: 2.32kB done
+#2 DONE 0.0s
+
+#3 [internal] load metadata for docker.io/moby/buildkit:v0.34.1-rootless@sha256:f68752a5a94acfcdad2d07867b7075601a421638e17fc5f28efc1c814d0c4f89
+#3 DONE 0.0s
+
+#4 [internal] load metadata for docker.io/jenkins/inbound-agent:jdk21@sha256:64a27e807d216d527a7f5224e6ff9733b5cbd8650db3b5dfd0aea3b94949460f
+#4 ...
+
+#5 [auth] library/python:pull token for registry-1.docker.io
+#5 DONE 0.0s
+
+#6 [auth] jenkins/inbound-agent:pull token for registry-1.docker.io
+#6 DONE 0.0s
+
+#7 [internal] load metadata for ghcr.io/astral-sh/uv:0.9.21@sha256:15f68a476b768083505fe1dbfcc998344d0135f0ca1b8465c4760b323904f05a
+#7 DONE 6.6s
+
+#8 [internal] load metadata for docker.io/library/python:3.14.7-slim-bookworm@sha256:82bc3c539b8813ada9d68c63b40158fa002f7f33de9bf3312a3dfdc0620dff56
+#8 DONE 6.8s
+
+#4 [internal] load metadata for docker.io/jenkins/inbound-agent:jdk21@sha256:64a27e807d216d527a7f5224e6ff9733b5cbd8650db3b5dfd0aea3b94949460f
+#4 DONE 6.7s
+
+#9 [internal] load .dockerignore
+#9 transferring context: 187B done
+#9 DONE 0.0s
+
+#10 [remoting 1/1] FROM docker.io/jenkins/inbound-agent:jdk21@sha256:64a27e807d216d527a7f5224e6ff9733b5cbd8650db3b5dfd0aea3b94949460f
+#10 DONE 0.0s
+
+#11 [uv 1/1] FROM ghcr.io/astral-sh/uv:0.9.21@sha256:15f68a476b768083505fe1dbfcc998344d0135f0ca1b8465c4760b323904f05a
+#11 DONE 0.0s
+
+#12 [scanner 1/4] FROM docker.io/library/python:3.14.7-slim-bookworm@sha256:82bc3c539b8813ada9d68c63b40158fa002f7f33de9bf3312a3dfdc0620dff56
+#12 CACHED
+
+#13 [buildkit 1/1] FROM docker.io/moby/buildkit:v0.34.1-rootless@sha256:f68752a5a94acfcdad2d07867b7075601a421638e17fc5f28efc1c814d0c4f89
+#13 DONE 0.0s
+
+#14 [stage-4  3/10] COPY --from=remoting /opt/java/openjdk /opt/java/openjdk
+#14 CACHED
+
+#15 [stage-4  5/10] COPY --from=remoting /usr/local/bin/jenkins-agent /usr/local/bin/jenkins-agent
+#15 CACHED
+
+#16 [stage-4  6/10] COPY --from=uv /uv /uvx /usr/local/bin/
+#16 CACHED
+
+#17 [stage-4  4/10] COPY --from=remoting /usr/share/jenkins/agent.jar /usr/share/jenkins/agent.jar
+#17 CACHED
+
+#18 [stage-4  2/10] RUN apt-get update     && apt-get install --yes --no-install-recommends git libstdc++6     && rm -rf /var/lib/apt/lists/*     && groupadd --gid 1000 jenkins     && useradd --uid 1000 --gid 1000 --create-home --shell /bin/bash jenkins     && mkdir -p /home/jenkins/agent     && chown jenkins:jenkins /home/jenkins/agent
+#18 CACHED
+
+#19 [stage-4  7/10] COPY --from=buildkit /usr/bin/buildctl /usr/local/bin/buildctl
+#19 CACHED
+
+#20 [scanner 3/4] ADD --checksum=sha256:e174dff2a6dba5e3ae41f8d0537a6324405bd08132497340304c6b20e0f16a1f https://github.com/aquasecurity/trivy/releases/download/v0.76.1/trivy_0.76.1_Linux-ARM64.tar.gz /tmp/trivy.tar.gz
+#20 ...
+
+#21 [scanner 2/4] RUN test "arm64" = "arm64"
+#21 DONE 0.2s
+
+#20 [scanner 3/4] ADD --checksum=sha256:e174dff2a6dba5e3ae41f8d0537a6324405bd08132497340304c6b20e0f16a1f https://github.com/aquasecurity/trivy/releases/download/v0.76.1/trivy_0.76.1_Linux-ARM64.tar.gz /tmp/trivy.tar.gz
+#20 DONE 8.4s
+
+#22 [scanner 3/4] ADD --checksum=sha256:e174dff2a6dba5e3ae41f8d0537a6324405bd08132497340304c6b20e0f16a1f https://github.com/aquasecurity/trivy/releases/download/v0.76.1/trivy_0.76.1_Linux-ARM64.tar.gz /tmp/trivy.tar.gz
+#22 DONE 0.2s
+
+#23 [scanner 4/4] RUN tar -xzf /tmp/trivy.tar.gz -C /usr/local/bin trivy && chmod 0755 /usr/local/bin/trivy
+#23 DONE 1.1s
+
+#24 [stage-4  8/10] COPY --from=scanner /usr/local/bin/trivy /usr/local/bin/trivy
+#24 DONE 0.2s
+
+#25 [stage-4  9/10] RUN python --version && uv --version && git --version && java -version && buildctl --version && trivy --version
+#25 0.131 Python 3.14.7
+#25 0.152 uv 0.9.21
+#25 0.162 git version 2.39.5
+#25 0.274 openjdk version "21.0.12.1" 2026-08-18 LTS
+#25 0.274 OpenJDK Runtime Environment Temurin-21.0.12.1+1 (build 21.0.12.1+1-LTS)
+#25 0.274 OpenJDK 64-Bit Server VM Temurin-21.0.12.1+1 (build 21.0.12.1+1-LTS, mixed mode)
+#25 0.327 buildctl github.com/moby/buildkit v0.34.1 f5b59a1f2fb25a0cb7072c398cab9aed7835da4e
+#25 0.389 Version: 0.76.1
+#25 DONE 0.4s
+
+#26 [stage-4 10/10] WORKDIR /home/jenkins/agent
+#26 DONE 0.0s
+
+#27 exporting to image
+#27 exporting layers
+#27 exporting layers 0.2s done
+#27 writing image sha256:f51d2a954718ca4b6948e8bde555d77fdf326b3715d08cff28531c8714fe2fe9 done
+#27 naming to docker.io/library/finsecure-jenkins-agent:step-05-02 done
+#27 DONE 0.2s
+
+#28 resolving provenance for metadata file
+#28 DONE 0.0s
+ Image finsecure-jenkins-agent:step-05-02 Built

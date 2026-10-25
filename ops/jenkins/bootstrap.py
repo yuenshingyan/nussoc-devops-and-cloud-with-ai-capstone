@@ -27,7 +27,7 @@ COMPOSE = ["docker", "compose", "-f", str(ROOT / "ops/jenkins/compose.yaml")]
 BASE_URL = "http://127.0.0.1:8080"
 SECRET_DIRECTORY = Path.home() / ".config/finsecure-pay/jenkins"
 PURPOSE = "finsecure-pay-local-jenkins"
-AGENT_IMAGE = "finsecure-jenkins-agent:step-04-03"
+AGENT_IMAGE = "finsecure-jenkins-agent:step-05-02"
 
 
 class NoRedirect(HTTPRedirectHandler):

@@ -15,7 +15,7 @@ and report retention on an isolated failure. Cloud delivery remains unverified.
 | 2 — Containerisation | [task-02](task-02/) | Complete, reviewed, merged, and published |
 | 3 — Kubernetes and cloud | [task-03](task-03/) | Steps 3.1–3.2 merged; cloud execution deferred |
 | 4 — CI/CD | [task-04](task-04/) | Steps 4.1–4.2 merged; Step 4.3 local build/export merged and SCM-verified (245 tests/image smoke); Step 4.4 local SCM/test-gate merged and SCM-verified (260 tests); publishing/deployment pending |
-| 5 — DevSecOps | [task-05](task-05/) | Step 5.1 source/runtime scan gate merged and SCM-verified (316 tests, 25 artifacts); remaining steps pending |
+| 5 — DevSecOps | [task-05](task-05/) | Step 5.1 merged/SCM-verified; Step 5.2 tool/preflight checkpoint has blocking findings, remediation/gate integration pending |
 | 6 — Observability | [task-06](task-06/) | Pending |
 | 7 — Documentation and demonstration | [task-07](task-07/) | Pending |
 
@@ -99,6 +99,11 @@ and report retention on an isolated failure. Cloud delivery remains unverified.
   build #6 automatically detected `76b0f7d`, passed 316 tests and real security scans,
   and exported 25 verified artifacts. 17 LOW findings remain visible; 14 dependencies
   had no known advisories. Image scanning and delivery remain pending.
+
+- [Step 5.2 — verified tools and initial image findings](task-05/step-02-preflight.md):
+  immutable release attestations/Sigstore verification, preserved non-root agent boundaries,
+  and a real operator archive scan with 70 HIGH/6 CRITICAL occurrences. The approved policy
+  would block; this is not an implemented Jenkins gate or a passing-image demonstration.
 
 For each artifact, record the requirement demonstrated, timestamp, command or
 procedure, actual result, commit, applicable image digest, and artifact path or

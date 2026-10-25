@@ -176,6 +176,14 @@ reconciles every manually upgraded plugin in Jenkins home. Avoid UI plugin upgra
   observations, not failed builds. Regression tests cover transient initialization,
   credential preservation, ownership guards, and blocked/closed redirects.
 
+## Step 5.2 local agent checkpoint
+
+On the active Step 5.2 branch, `finsecure-jenkins-agent:step-05-02` adds the verified
+Trivy 0.76.1 ARM64 binary without new mounts, ports, privileges or application dependencies.
+The normal main pipeline is still Step 5.1: image gating has not been integrated.
+See [image-security status and findings](image-security.md). This local configuration is
+not yet merged/published; do not assume the old main Compose file selects the new agent.
+
 ## What remains pending
 
 Step 4.2 is reviewed, merged, and verified through its normal SCM-loaded job. Step 4.3's

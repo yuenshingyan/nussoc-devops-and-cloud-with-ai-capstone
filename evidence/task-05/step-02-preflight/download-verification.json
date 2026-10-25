@@ -1,0 +1,26 @@
+{
+  "cosign-darwin-arm64": {
+    "url": "https://github.com/sigstore/cosign/releases/download/v3.1.4/cosign-darwin-arm64",
+    "sha256": "sha256:9f9b8cd557cf2e5b3df3373a00baa005a86b02391e3e06dd0ce37b3a1533d3a4",
+    "bytes": 99023586,
+    "immutable_release": "v3.1.4"
+  },
+  "trivy_0.76.1_Linux-ARM64.tar.gz": {
+    "url": "https://github.com/aquasecurity/trivy/releases/download/v0.76.1/trivy_0.76.1_Linux-ARM64.tar.gz",
+    "sha256": "sha256:e174dff2a6dba5e3ae41f8d0537a6324405bd08132497340304c6b20e0f16a1f",
+    "bytes": 47434511,
+    "immutable_release": "v0.76.1"
+  },
+  "trivy_0.76.1_Linux-ARM64.tar.gz.sigstore.json": {
+    "url": "https://github.com/aquasecurity/trivy/releases/download/v0.76.1/trivy_0.76.1_Linux-ARM64.tar.gz.sigstore.json",
+    "sha256": "sha256:b7379045d83e825fd7c5ff2527393e6ecd53bbd1f940d42456ad3ce25222708f",
+    "bytes": 10127,
+    "immutable_release": "v0.76.1"
+  },
+  "trivy_0.76.1_checksums.txt": {
+    "url": "https://github.com/aquasecurity/trivy/releases/download/v0.76.1/trivy_0.76.1_checksums.txt",
+    "sha256": "sha256:885debc41b570179e81af560e5f393a66be29b9ff8c52915674f3eb2304c535d",
+    "bytes": 2121,
+    "immutable_release": "v0.76.1"
+  }
+}

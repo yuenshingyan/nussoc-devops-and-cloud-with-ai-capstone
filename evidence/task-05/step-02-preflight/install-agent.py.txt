@@ -1,0 +1,50 @@
+"""Install the verified scanner only on the idle owned agent; preserve credentials/history."""
+from pathlib import Path
+from json import loads, dumps
+from hashlib import sha256
+from tarfile import TarFile
+from subprocess import run
+from datetime import UTC, datetime
+from defusedxml.ElementTree import fromstring
+from bootstrap import Jenkins, admin_password, COMPOSE
+
+client = Jenkins(admin_password())
+password_before = admin_password()
+secret_before = fromstring(client.request('/computer/finsecure-python/jenkins-agent.jnlp')).find('.//argument').text
+main_before = loads(client.request('/job/finsecure-ci/api/json'))['lastBuild']['number']
+assert not loads(client.request('/queue/api/json'))['items']
+assert loads(client.request('/computer/finsecure-python/api/json?tree=idle'))['idle']
+with TarFile.open('reports/step52-tools/trivy_0.76.1_Linux-ARM64.tar.gz', 'r:gz') as archive:
+    members = [item for item in archive.getmembers() if item.name == 'trivy']
+    assert len(members) == 1 and members[0].isfile()
+    with archive.extractfile(members[0]) as binary:
+        binary_digest = sha256(binary.read()).hexdigest()
+with Path('reports/step52-agent-build.txt').open('w') as log:
+    run([*COMPOSE, 'build', 'agent'], stdout=log, stderr=-2, check=True, timeout=600)
+assert not loads(client.request('/queue/api/json'))['items']
+assert loads(client.request('/computer/finsecure-python/api/json?tree=idle'))['idle']
+with Path('reports/step52-agent-start.txt').open('w') as log:
+    run([*COMPOSE, 'up', '--detach', '--no-build', '--no-deps', 'agent'], stdout=log, stderr=-2, check=True, timeout=120)
+client.wait('/computer/finsecure-python/api/json', 'offline', False, 120, 'agent')
+assert password_before == admin_password()
+assert secret_before == fromstring(client.request('/computer/finsecure-python/jenkins-agent.jnlp')).find('.//argument').text
+actual = run([*COMPOSE, 'exec', '-T', 'agent', 'sha256sum', '/usr/local/bin/trivy'], capture_output=True, text=True, check=True, timeout=30).stdout.split()[0]
+assert actual == binary_digest
+version = run([*COMPOSE, 'exec', '-T', 'agent', 'trivy', '--version'], capture_output=True, text=True, check=True, timeout=30).stdout.strip()
+assert version == 'Version: 0.76.1'
+identifier = run([*COMPOSE, 'ps', '--quiet', 'agent'], capture_output=True, text=True, check=True, timeout=30).stdout.strip()
+container = loads(run(['docker', 'inspect', identifier], capture_output=True, text=True, check=True, timeout=30).stdout)[0]
+assert container['State']['Running'] and not container['State']['OOMKilled']
+assert container['Config']['User'] == 'jenkins' and container['HostConfig']['CapDrop'] == ['ALL']
+assert 'no-new-privileges:true' in container['HostConfig']['SecurityOpt']
+assert not container['HostConfig']['Privileged'] and not container['HostConfig']['PortBindings']
+assert all(m['Type'] == 'volume' for m in container['Mounts'])
+assert loads(client.request('/job/finsecure-ci/api/json'))['lastBuild']['number'] == main_before
+record = {
+    'verified_at_utc': datetime.now(UTC).isoformat(), 'agent_image_id': container['Image'],
+    'trivy_version': version, 'trivy_binary_sha256': actual, 'credentials_preserved': True,
+    'agent_reconnected': True, 'main_latest_build_unchanged': main_before,
+    'no_host_binds_or_socket': True, 'non_root_restrictions_preserved': True,
+}
+Path('reports/step52-agent-verification.json').write_text(dumps(record, indent=2) + '\n')
+print(dumps(record, indent=2))

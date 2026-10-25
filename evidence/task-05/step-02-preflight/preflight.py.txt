@@ -1,0 +1,81 @@
+"""Operator-side scan of the existing #7 archive on the verified non-root agent."""
+from pathlib import Path
+from json import loads, dumps
+from subprocess import run
+from hashlib import sha256
+from datetime import UTC, datetime
+from bootstrap import Jenkins, admin_password, COMPOSE
+
+client=Jenkins(admin_password())
+assert not loads(client.request('/queue/api/json'))['items']
+assert loads(client.request('/computer/finsecure-python/api/json?tree=idle'))['idle']
+record=loads(Path('reports/step51-main-7/verification.json').read_text())
+archive=Path('reports/step51-main-7/images/finsecure-pay.tar.gz')
+digest=sha256(archive.read_bytes()).hexdigest()
+assert digest==record['artifacts']['images/finsecure-pay.tar.gz']['sha256']
+code=r'''
+from pathlib import Path
+from tempfile import TemporaryDirectory
+from subprocess import run, STDOUT
+from json import loads,dumps
+from hashlib import sha256
+from datetime import UTC,datetime
+from shutil import copyfileobj
+from sys import stdin,argv
+from os import environ
+from time import monotonic
+result={'started_at_utc':datetime.now(UTC).isoformat(),'expected_archive_sha256':argv[1]}
+with TemporaryDirectory(prefix='finsecure-step52-preflight-') as directory:
+ root=Path(directory); image=root/'image.tar.gz'; cache=root/'cache'
+ with image.open('wb') as target: copyfileobj(stdin.buffer,target)
+ assert sha256(image.read_bytes()).hexdigest()==argv[1]
+ (root/'trivy.yaml').write_text('{}\n')
+ (root/'ignore').write_text('')
+ (root/'docker').mkdir()
+ env={key:value for key,value in environ.items() if not key.startswith('TRIVY_')}
+ env['DOCKER_CONFIG']=str(root/'docker')
+ common=['trivy','--config',str(root/'trivy.yaml'),'image','--cache-dir',str(cache),'--db-repository','ghcr.io/aquasecurity/trivy-db:2','--no-progress','--timeout','5m','--skip-version-check']
+ started=monotonic()
+ with (root/'database.log').open('w') as log:
+  completed=run([*common,'--download-db-only'],cwd=root,env=env,stdout=log,stderr=STDOUT,timeout=300)
+ result['database_exit_code']=completed.returncode
+ result['database_elapsed_seconds']=monotonic()-started
+ result['database_log']=(root/'database.log').read_text()
+ if completed.returncode==0:
+  metadata=loads((cache/'db/metadata.json').read_text()); result['database_metadata']=metadata
+  updated=datetime.fromisoformat(metadata['UpdatedAt'])
+  assert updated.tzinfo is not None
+  age=(datetime.now(UTC)-updated).total_seconds()
+  result['database_age_seconds']=age
+  assert metadata['Version']==2 and 0<=age<=86400
+  started=monotonic()
+  with (root/'scan.log').open('w') as log:
+   completed=run([*common,'--input',str(image),'--skip-db-update','--skip-java-db-update','--offline-scan','--scanners','vuln','--pkg-types','os,library','--parallel','1','--list-all-pkgs','--ignorefile',str(root/'ignore'),'--format','json','--output',str(root/'scan.json'),'--exit-on-eol','2'],cwd=root,env=env,stdout=log,stderr=STDOUT,timeout=300)
+  result['scan_exit_code']=completed.returncode
+  result['scan_elapsed_seconds']=monotonic()-started
+  result['scan_log']=(root/'scan.log').read_text()
+  if (root/'scan.json').exists(): result['report']=loads((root/'scan.json').read_text())
+result['temporary_image_database_cache_removed']=True
+result['finished_at_utc']=datetime.now(UTC).isoformat()
+print(dumps(result))
+'''
+with archive.open('rb') as source:
+ result=run([*COMPOSE,'exec','-T','agent','python','-c',code,digest],stdin=source,capture_output=True,check=True,timeout=630)
+output=loads(result.stdout)
+output['input_source_revision']=record['source_revision']
+output['expected_image_id']=record['image_export']['image_id']
+output['operator_scan_not_jenkins_pipeline']=True
+Path('reports/step52-preflight.json').write_text(dumps(output,indent=2)+'\n')
+print('Database exit:',output['database_exit_code'],'; scan exit:',output.get('scan_exit_code'))
+if 'report' in output:
+ report=output['report']; print('OS:',report.get('Metadata',{}).get('OS'))
+ print('Image:',report.get('Metadata',{}).get('ImageID'))
+ from collections import Counter
+ findings=[v for result in report.get('Results',[]) for v in result.get('Vulnerabilities',[])]
+ print('Findings:',dict(Counter(v.get('Severity') for v in findings)))
+ print('Targets:',[(r.get('Type'),r.get('Class'),len(r.get('Packages',[]))) for r in report.get('Results',[])])
+ for vulnerability in findings:
+  if vulnerability.get('Severity') in ['HIGH','CRITICAL']:
+   print(vulnerability['VulnerabilityID'],vulnerability['PkgName'],vulnerability['InstalledVersion'],vulnerability['Severity'],'fixed:',vulnerability.get('FixedVersion','not available'))
+else:
+ print('No scan result produced; inspect database diagnostic. No retry or fallback was attempted.')

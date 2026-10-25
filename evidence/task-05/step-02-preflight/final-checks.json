@@ -1,0 +1,24 @@
+{
+  "host_tests": 316,
+  "ruff_lint_format_build_compose": "passed",
+  "source_scan": {
+    "status": "passed",
+    "exit_code": 1,
+    "LOW": 17,
+    "MEDIUM": 0,
+    "HIGH": 0,
+    "blocking_findings": 0
+  },
+  "runtime_audit": {
+    "status": "passed",
+    "exit_code": 0,
+    "dependencies_audited": 14,
+    "blocking_findings": 0
+  },
+  "application_dockerfile_pipeline_and_dependencies_unchanged": true,
+  "normal_main_build_unchanged": 7,
+  "review_demo_jobs_still_disabled": true,
+  "agent_uid": "1000",
+  "known_live_credential_scan_files": 336,
+  "image_gate_implemented": false
+}
