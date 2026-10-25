@@ -1,5 +1,10 @@
 # Step 4.3 — Local rootless image builds (partial delivery step)
 
+Historical pre-merge checkpoint: the local subset was subsequently approved, merged,
+and published as `ab538a2`. Normal SCM build #2 passed 245 tests and produced a separately
+smoke-tested image; see the [post-merge follow-up](step-03-scm-verification.md).
+Pending-SCM statements below describe the earlier checkpoint, not current status.
+
 ## Approved scope and provenance
 
 - Branch: `task-04/step-03-container-delivery`, based on reviewed/published `d492a79`.
@@ -157,6 +162,6 @@ configuration hashes, Markdown links, and whitespace are checked before commit.
 Curated host logs replace the repository prefix with `<repository>` and trim trailing
 whitespace. No image/package binaries, credentials, or raw Jenkins home are committed.
 
-**Review gate:** commit and pause; do not merge/push without approval. Then run the normal
-SCM-loaded job at the new published revision and verify its new image artifact/runtime.
+**Local-subset review gate fulfilled:** approved merge/publication and the normal
+SCM-loaded image/runtime verification are recorded in the follow-up above.
 Registry publication and managed-cluster delivery remain separately pending.

@@ -1,8 +1,8 @@
-# Application CI — Step 4.2 and local Step 4.3 candidate
+# Application CI — Step 4.2 and local Step 4.3
 
-Step 4.2's normal SCM-loaded run is complete. This branch extends its pipeline with
-local image export; that addition has candidate-run evidence, not yet a post-merge
-SCM run. See the [builder runbook](local-image-builder.md) for current commands/counts.
+Step 4.2's normal SCM-loaded run is complete. Step 4.3's local image-export addition is
+also merged and verified: normal build #2 at `ab538a2` passed 245 tests and produced a
+smoke-tested image. See the [builder runbook](local-image-builder.md) for operation.
 
 ## What runs
 
@@ -16,7 +16,7 @@ SCM run. See the [builder runbook](local-image-builder.md) for current commands/
    coverage XML using Jenkins JUnit/Coverage plugins.
 5. **Package:** `uv build`; require one nonempty wheel and source distribution; record
    SHA-256 checksums and archive/fingerprint both packages.
-6. **Local image export (Step 4.3 candidate):** BuildKit builds Linux ARM64, exports a
+6. **Local image export (Step 4.3 local subset):** BuildKit builds Linux ARM64, exports a
    compressed Docker archive, and records source/image metadata and SHA-256. No push/load
    or deployment occurs in the pipeline. Only successful exports are archived.
 
@@ -66,8 +66,8 @@ next Pipeline run. A dynamic Job DSL `scm` trigger alias proved unsupported; the
 seed uses the persisted trigger XML structure and was checked on fresh state.
 
 `ops/jenkins/ci-job.groovy` creates **finsecure-ci**, a Pipeline-from-SCM job reading
-`Jenkinsfile` from public, trusted `main`. It runs only published code; until this branch
-is approved and merged, the normal job does not contain the new image-export stage.
+`Jenkinsfile` from public, trusted `main`. It runs only published code and now includes
+the approved local image-export stage.
 
 Application CI is manually triggered in this step. The old `finsecure-checkout` job
 still polls and remains a checkout-only setup check; it does not prove application CI.
@@ -99,8 +99,8 @@ uv run --locked python ops/jenkins/verify_ci.py \
 
 That recorded base revision had 221 tests; nine then-unmerged verifier regressions
 brought the Step 4.2 local suite to 230. The subsequent normal SCM run passed all 230.
-Pre-merge agent checkouts do not include unmerged tests. Step 4.3 currently has 245 local
-tests versus 230 in its published-source review checkout.
+Pre-merge agent checkouts do not include unmerged tests. Step 4.3 had 245 local tests
+versus 230 in its review checkout; its post-merge normal SCM run passed all 245.
 
 The verifier follows its own queue item, checks the exact source/agent, reads actual
 JUnit and Coverage APIs, downloads all listed artifacts, verifies package hashes and
@@ -166,13 +166,15 @@ APIs and downloaded package hashes were verified. See the
 
 For a later manual run, open **finsecure-ci → Build Now**. Confirm its
 console says the Jenkinsfile was obtained from Git, the checkout matches published
-`main`, all 230 currently expected tests run, reports are accessible, and both packages
+`main`, all 245 currently expected tests run, reports are accessible, and both packages
 are downloadable with matching hashes. Record the actual revision/build separately;
 pre-merge review jobs alone do not prove the SCM loading path.
 If source changes again, use that revision's actual expected count rather than treating
-230 as a permanent pipeline threshold.
+245 as a permanent pipeline threshold. Step 4.3's completed
+[SCM build #2](../../evidence/task-04/step-03-scm-verification.md) additionally verified
+the image artifact and its host-side smoke results.
 
-The Step 4.3 candidate adds local container build/export only. Registry push,
+The merged Step 4.3 subset adds local container build/export only. Registry push,
 vulnerability scans, notifications, and managed-cluster stages remain unimplemented.
 Cloud-dependent work remains deferred under `PLAN.md`.
 

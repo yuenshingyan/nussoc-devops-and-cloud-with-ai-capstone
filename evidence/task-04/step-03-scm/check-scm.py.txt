@@ -1,0 +1,105 @@
+"""Verify one approved SCM-loaded image build and its exact local runtime artifact."""
+
+from datetime import UTC, datetime
+from hashlib import sha256
+from json import dumps, loads
+from pathlib import Path
+from subprocess import run
+from tarfile import TarFile
+from xml.etree.ElementTree import fromstring
+from zipfile import ZipFile
+
+from bootstrap import Jenkins, admin_password
+from image_archive import inspect_image_archive
+from smoke_test import validate_image
+from verify_ci import require_passing_tests, run_build
+
+revision = "ab538a2d67b9bd6fa5525fdf72c2236eb3cfd763"
+client = Jenkins(admin_password())
+config = fromstring(client.request('/job/finsecure-ci/config.xml'))
+assert config.find('definition').attrib['class'] == 'org.jenkinsci.plugins.workflow.cps.CpsScmFlowDefinition'
+assert config.findtext('definition/scriptPath') == 'Jenkinsfile'
+assert config.findtext('definition/scm/branches/hudson.plugins.git.BranchSpec/name') == '*/main'
+secret = fromstring(client.request('/computer/finsecure-python/jenkins-agent.jnlp')).find('.//argument').text
+sensitive = [admin_password(), secret, client.authorization, client.authorization.removeprefix('Basic ')]
+print('Triggering finsecure-ci from approved published main', flush=True)
+number = run_build(client, '/job/finsecure-ci/')
+print('Inspecting completed build', number, flush=True)
+base = f'/job/finsecure-ci/{number}/'
+out = Path(f'reports/step43-scm-{number}')
+out.mkdir(parents=True, exist_ok=True)
+build = loads(client.request(base + 'api/json'))
+console = client.request(base + 'consoleText').decode()
+for value in sensitive:
+    console = console.replace(value, '<redacted>')
+(out / 'console.txt').write_text(console)
+assert build['result'] == 'SUCCESS', 'Inspect sanitized console; no automatic retries'
+assert 'Obtained Jenkinsfile from git' in console
+assert 'SOURCE_REVISION=' + revision in console
+assert 'Running on finsecure-python' in console
+allowed = {
+    'reports/build-metadata.txt', 'reports/dependencies.txt', 'reports/lint.txt',
+    'reports/format.txt', 'reports/tests.txt', 'reports/junit.xml', 'reports/coverage.xml',
+    'reports/package.txt', 'reports/packages.sha256', 'dist/finsecure_pay-0.2.0-py3-none-any.whl',
+    'dist/finsecure_pay-0.2.0.tar.gz', 'reports/buildkit-workers.txt', 'reports/image-metadata.txt',
+    'reports/image-build.txt', 'reports/buildkit-image.json', 'reports/image.sha256',
+    'images/finsecure-pay.tar.gz',
+}
+assert {item['relativePath'] for item in build['artifacts']} == allowed
+artifacts = {}
+for artifact in build['artifacts']:
+    name = artifact['relativePath']
+    content = client.request(base + 'artifact/' + name)
+    assert not any(value.encode() in content for value in sensitive), 'Credential found; refusing save'
+    target = out / name
+    target.parent.mkdir(parents=True, exist_ok=True)
+    target.write_bytes(content)
+    artifacts[name] = {'bytes': len(content), 'sha256': sha256(content).hexdigest()}
+tests = loads(client.request(base + 'testReport/api/json'))
+assert require_passing_tests(tests, 245) == 245
+coverage = loads(client.request(base + 'coverage/api/json'))
+assert coverage['qualityGates']['overallResult'] == 'INACTIVE'
+xml = fromstring((out / 'reports/coverage.xml').read_bytes())
+assert xml.attrib['lines-covered'] == xml.attrib['lines-valid'] == '125'
+assert xml.attrib['branches-covered'] == xml.attrib['branches-valid'] == '28'
+package_hashes = {}
+for line in (out / 'reports/packages.sha256').read_text().splitlines():
+    digest, name = line.split('  ', 1)
+    assert name not in package_hashes
+    package_hashes[name] = digest
+assert package_hashes == {name: data['sha256'] for name, data in artifacts.items() if name.startswith('dist/')}
+with ZipFile(out / 'dist/finsecure_pay-0.2.0-py3-none-any.whl') as archive:
+    assert 'finsecure_pay/main.py' in archive.namelist()
+with TarFile.open(out / 'dist/finsecure_pay-0.2.0.tar.gz', 'r:gz') as archive:
+    assert any(name.endswith('/src/finsecure_pay/main.py') for name in archive.getnames())
+archive_name = 'images/finsecure-pay.tar.gz'
+assert (out / 'reports/image.sha256').read_text() == artifacts[archive_name]['sha256'] + '  ' + archive_name + '\n'
+tag = f'finsecure-pay-ci:jenkins-finsecure-ci-{number}'
+assert (out / 'reports/image-metadata.txt').read_text() == f'SOURCE_REVISION={revision}\nLOCAL_TAG={tag}\nPLATFORM=linux/arm64\n'
+metadata = loads((out / 'reports/buildkit-image.json').read_bytes())
+image = inspect_image_archive(out / archive_name, revision, tag, metadata['containerimage.config.digest'])
+existing = run(['docker', 'image', 'inspect', tag], capture_output=True, text=True, timeout=15)
+assert existing.returncode != 0 and 'no such image' in existing.stderr.lower(), 'Refusing to overwrite a local tag'
+loaded = run(['docker', 'load', '--input', str(out / archive_name)], capture_output=True, text=True, check=True, timeout=120)
+(out / 'image-load.txt').write_text(loaded.stdout)
+info = loads(run(['docker', 'image', 'inspect', tag], capture_output=True, text=True, check=True, timeout=15).stdout)[0]
+assert info['Id'] == image['image_id']
+assert info['Config']['Labels']['org.opencontainers.image.revision'] == revision
+assert info['Os'] + '/' + info['Architecture'] == image['platform']
+smoke = validate_image(image['image_id'])
+assert smoke['container_removed'] and smoke['shutdown_exit_code'] == 0
+(out / 'image-smoke.json').write_text(dumps(smoke, indent=2) + '\n')
+(out / 'junit-api-summary.json').write_text(dumps({key: tests[key] for key in ['_class','duration','empty','passCount','failCount','skipCount']}, indent=2) + '\n')
+(out / 'coverage-api.json').write_text(dumps(coverage, indent=2) + '\n')
+record = {
+    'verified_at_utc': datetime.now(UTC).isoformat(), 'job': 'finsecure-ci', 'build': number,
+    'trigger': 'manual authenticated API', 'result': build['result'], 'source_revision': revision,
+    'pipeline_from_scm_verified': True, 'jenkinsfile_sha256': sha256(Path('Jenkinsfile').read_bytes()).hexdigest(),
+    'agent': 'finsecure-python', 'tests_passed': 245, 'tests_failed': 0, 'tests_skipped': 0,
+    'coverage_xml': {key: xml.attrib[key] for key in ['lines-covered','lines-valid','branches-covered','branches-valid']},
+    'coverage_quality_gate': 'INACTIVE', 'artifacts': artifacts, 'image_export': image,
+    'operator_loaded_exact_archive': True, 'operator_smoke_passed': True,
+    'smoke_container_removed': True, 'registry_publishing': False, 'cloud_deployment': False,
+}
+(out / 'verification.json').write_text(dumps(record, indent=2) + '\n')
+print(dumps(record, indent=2))

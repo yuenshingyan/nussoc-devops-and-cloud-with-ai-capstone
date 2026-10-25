@@ -8,7 +8,7 @@ there still proves **checkout only**, not application CI or deployment.
 Step 4.2 adds the separate `finsecure-ci` job, verified in both pre-merge review runs
 and normal SCM-loaded build #1 (230 tests). See the
 [application CI runbook](application-ci.md) for reports and operation. Step 4.3's local
-builder/image-export candidate is now verified, pending review and merge; see the
+builder/image-export subset is merged and verified through SCM build #2 (245 tests); see the
 [builder runbook](local-image-builder.md). No job publishes images or deploys to Kubernetes.
 
 - Controller: Jenkins **2.580.1 LTS**, Java 21, **zero executors**.
@@ -178,7 +178,7 @@ reconciles every manually upgraded plugin in Jenkins home. Avoid UI plugin upgra
 ## What remains pending
 
 Step 4.2 is reviewed, merged, and verified through its normal SCM-loaded job. Step 4.3's
-approved local builder/export portion is implemented and candidate-tested, pending review.
+approved local builder/export portion is merged and verified through normal SCM execution.
 The agent has BuildKit access, but neither Docker CLI nor host Docker daemon access.
 Registry credentials, publication, and deployment remain unimplemented. Never attach the
 host Docker socket as a shortcut.

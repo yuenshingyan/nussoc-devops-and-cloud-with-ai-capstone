@@ -14,7 +14,7 @@ and report retention on an isolated failure. Cloud delivery remains unverified.
 | 1 — Application and Git | [task-01](task-01/) | Complete and merged |
 | 2 — Containerisation | [task-02](task-02/) | Complete, reviewed, merged, and published |
 | 3 — Kubernetes and cloud | [task-03](task-03/) | Steps 3.1–3.2 merged; cloud execution deferred |
-| 4 — CI/CD | [task-04](task-04/) | Steps 4.1–4.2 merged; Step 4.3 local build/export candidate verified, pending review; publishing/deployment pending |
+| 4 — CI/CD | [task-04](task-04/) | Steps 4.1–4.2 merged; Step 4.3 local build/export merged and SCM-verified (245 tests/image smoke); publishing/deployment pending |
 | 5 — DevSecOps | [task-05](task-05/) | Pending |
 | 6 — Observability | [task-06](task-06/) | Pending |
 | 7 — Documentation and demonstration | [task-07](task-07/) | Pending |
@@ -71,6 +71,11 @@ and report retention on an isolated failure. Cloud delivery remains unverified.
   matched, and the loaded image passed local non-root/HTTP/shutdown checks. Failure
   blocking and worker cancellation/restart were verified. 245 host tests passed versus
   230 from published source in Jenkins. No image publication, scan gate, or cloud deployment.
+
+- [Step 4.3 — Post-merge SCM/image verification](task-04/step-03-scm-verification.md):
+  normal build #2 loaded the Jenkinsfile from Git at `ab538a2`, passed 245 tests, and
+  exported an image whose downloaded checksum/configuration and real local runtime
+  checks passed. This was a manual trigger and operator-side smoke test, not deployment.
 
 For each artifact, record the requirement demonstrated, timestamp, command or
 procedure, actual result, commit, applicable image digest, and artifact path or

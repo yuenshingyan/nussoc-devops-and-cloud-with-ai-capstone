@@ -9,9 +9,9 @@ pin public ARM64/AMD64 release 0.2.0; 210 application tests pass. Local Jenkins 
 and repository checkout are reviewed and merged in Step 4.1. Step 4.2 is merged:
 `finsecure-ci` build #1 loaded its Jenkinsfile from Git at `8deecec`, passed **230 tests**,
 published test/coverage reports, and archived verified wheel/source packages.
-Step 4.3's approved local subset adds rootless image builds/exports: its candidate
-pipeline and downloaded image smoke checks pass, pending review/merge. The current
-local suite has 245 tests; the candidate checked out published source containing 230.
+Step 4.3's approved local subset is merged as `ab538a2`: normal SCM-loaded build #2
+passed **245 tests** and exported a rootless-built ARM64 image. Its downloaded archive
+passed checksum, identity, HTTP, shutdown, and cleanup checks.
 Cloud work is deferred
 for budget approval while feasible local work proceeds toward **4 November** submission.
 Kubernetes execution and all dependent cloud verification remain pending.
@@ -147,7 +147,7 @@ Step 4.2 adds `finsecure-ci`: checkout, locked installation, Ruff, pytest/JUnit,
 application coverage, and wheel/source-distribution artifacts. Both pre-merge review
 runs and the normal post-merge SCM-loaded job have been verified. See the
 [application CI runbook](docs/runbooks/application-ci.md) for verified runs, reports,
-manual triggering, and the post-merge check. The Step 4.3 candidate adds a separate
+manual triggering, and the post-merge check. Step 4.3's verified local subset adds a separate
 rootless builder and local image archive; see [local image building](docs/runbooks/local-image-builder.md).
 Registry publishing and cloud deployment remain unimplemented.
 
@@ -199,7 +199,7 @@ Remove a placeholder when its directory receives real content.
 - Remaining Task 3: provider-specific infrastructure, deployment, and recovery (deferred).
 - Task 4.1: local Jenkins and checkout reviewed, merged, and published.
 - Task 4.2: reviewed, merged, published, and verified through the normal SCM-loaded job.
-- Task 4.3: local builder/export subset candidate-verified; review/SCM follow-up pending.
+- Task 4.3: local builder/export subset reviewed, merged, and verified through SCM build #2.
   Registry publication and Kubernetes delivery remain deferred; the full step is incomplete.
 - Remaining Task 4: container delivery, source-change/failed-test proof, rollout/rollback.
 - Tasks 5–6: Security policies, monitoring/logging configuration, and demo scripts.

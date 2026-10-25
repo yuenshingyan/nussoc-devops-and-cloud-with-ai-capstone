@@ -48,9 +48,10 @@ proof of security-scan compliance. See the upstream
 
 ## Setup and verification
 
-The local subset is implemented and candidate-verified on
-`task-04/step-03-container-delivery`, pending review/merge. The normal SCM-loaded job
-still uses published Step 4.2 code until this branch is approved and published.
+The local subset was reviewed, merged, and published as `ab538a2`. Normal SCM-loaded
+**finsecure-ci build #2** passed all **245 tests**, exported an image, and its downloaded
+archive passed host-side runtime smoke checks. See the
+[post-merge evidence](../../evidence/task-04/step-03-scm-verification.md).
 
 Build the agent/builder locally before bootstrap, with existing jobs/queue idle:
 
@@ -125,7 +126,7 @@ BuildKit reported cancellation and no probe process survived. The builder restar
 the same cache/worker identity, the agent reconnected to its socket, and repeated
 bootstrap preserved credentials and existing Jenkins build history.
 
-## Diagnostics, cleanup, and review gate
+## Diagnostics, cleanup, and remaining scope
 
 - Docker requires `systempaths=unconfined`, not the colon spelling accepted by some
   other security options. An initial container creation failed until this was corrected.
@@ -142,8 +143,10 @@ bootstrap preserved credentials and existing Jenkins build history.
 - Stop the whole owned project with `docker compose -f ops/jenkins/compose.yaml stop`
   when idle. Do not add `--volumes` or run global prune. Cache/artifact cleanup is manual.
 
-See [actual evidence](../../evidence/task-04/step-03-local-image-builder.md). After review,
-merge/publish the source and verify the normal SCM-loaded pipeline against that new
-revision (currently 245 expected tests), then inspect/load/smoke its newly exported image.
+See the [historical pre-merge evidence](../../evidence/task-04/step-03-local-image-builder.md)
+and completed [SCM follow-up](../../evidence/task-04/step-03-scm-verification.md). The new
+SCM-built image is `sha256:eaca7256fb8b9d72896c8fba7a26bf0b57dbb2ae506f139201f7cc251004d45f`,
+with local tag `finsecure-pay-ci:jenkins-finsecure-ci-2`; it was loaded and smoke-tested
+separately from the earlier review image described above.
 Step 4.3 remains partial until separately approved publishing and cloud delivery are
 implemented and exercised. No later implementation step has started.
