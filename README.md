@@ -12,9 +12,11 @@ published test/coverage reports, and archived verified wheel/source packages.
 Step 4.3's approved local subset is merged as `ab538a2`: normal SCM-loaded build #2
 passed **245 tests** and exported a rootless-built ARM64 image. Its downloaded archive
 passed checksum, identity, HTTP, shutdown, and cleanup checks.
-Step 4.4's local polling/test-gate changes are verified and awaiting review: the isolated
+Step 4.4's local polling/test-gate subset is reviewed, merged, and published: the isolated
 public demo produced automatic passing, real failing-test, and recovered builds. Its job
-is disabled and branch head passing. The implementation branch passes 260 local tests.
+is disabled and branch head passing. Normal SCM-triggered build #4 at `2f30e7e` passed
+**260 tests** with verified packages/image export; see the
+[post-merge evidence](evidence/task-04/step-04-scm-verification.md).
 Cloud work is deferred
 for budget approval while feasible local work proceeds toward **4 November** submission.
 Kubernetes execution and all dependent cloud verification remain pending.
@@ -206,7 +208,7 @@ Remove a placeholder when its directory receives real content.
 - Task 4.2: reviewed, merged, published, and verified through the normal SCM-loaded job.
 - Task 4.3: local builder/export subset reviewed, merged, and verified through SCM build #2.
   Registry publication and Kubernetes delivery remain deferred; the full step is incomplete.
-- Task 4.4: local source-trigger/test-gate demonstration verified; implementation review pending.
+- Task 4.4: local source-trigger/test-gate subset reviewed, merged, published, and SCM-verified.
   Demo branch reverted/passing and job disabled; publishing/deployment gates remain pending.
 - Remaining Task 4: registry/cloud delivery, full release-gate proof, rollout/rollback.
 - Tasks 5–6: Security policies, monitoring/logging configuration, and demo scripts.

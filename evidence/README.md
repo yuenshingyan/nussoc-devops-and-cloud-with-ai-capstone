@@ -14,7 +14,7 @@ and report retention on an isolated failure. Cloud delivery remains unverified.
 | 1 — Application and Git | [task-01](task-01/) | Complete and merged |
 | 2 — Containerisation | [task-02](task-02/) | Complete, reviewed, merged, and published |
 | 3 — Kubernetes and cloud | [task-03](task-03/) | Steps 3.1–3.2 merged; cloud execution deferred |
-| 4 — CI/CD | [task-04](task-04/) | Steps 4.1–4.2 merged; Step 4.3 local build/export merged and SCM-verified (245 tests/image smoke); Step 4.4 local SCM/test-gate verified, review pending; publishing/deployment pending |
+| 4 — CI/CD | [task-04](task-04/) | Steps 4.1–4.2 merged; Step 4.3 local build/export merged and SCM-verified (245 tests/image smoke); Step 4.4 local SCM/test-gate merged and SCM-verified (260 tests); publishing/deployment pending |
 | 5 — DevSecOps | [task-05](task-05/) | Pending |
 | 6 — Observability | [task-06](task-06/) | Pending |
 | 7 — Documentation and demonstration | [task-07](task-07/) | Pending |
@@ -82,6 +82,11 @@ and report retention on an isolated failure. Cloud delivery remains unverified.
   package/image export), and recovered after revert. Demo job disabled, branch restored,
   prior artifact unchanged, polling persisted after restart. 260 host tests passed;
   no deployed-service or credential-isolation gate is claimed.
+
+- [Step 4.4 — post-merge automatic main verification](task-04/step-04-scm-verification.md):
+  normal build #4 automatically detected published `2f30e7e`, passed 260 tests, and
+  exported 17 verified artifacts. Demo remains disabled. No new image load/smoke or
+  registry/cloud delivery is claimed for this follow-up.
 
 For each artifact, record the requirement demonstrated, timestamp, command or
 procedure, actual result, commit, applicable image digest, and artifact path or

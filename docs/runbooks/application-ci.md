@@ -47,7 +47,7 @@ checked against SHA-256, not treated as signed attestations.
 ## Job setup and triggering
 
 Follow [local Jenkins setup](local-jenkins.md) to build/start the controller and agent.
-The Step 4.4 candidate uses `finsecure-jenkins-controller:step-04-04` with the same
+The reviewed Step 4.4 configuration uses `finsecure-jenkins-controller:step-04-04` with the same
 **73 pinned plugins**, moving polling to application CI. Step 4.3 updates the agent to `step-04-03` and adds a separate rootless builder;
 Step 4.2 originally ran with the Step 4.1 agent. No plugin change is required here.
 

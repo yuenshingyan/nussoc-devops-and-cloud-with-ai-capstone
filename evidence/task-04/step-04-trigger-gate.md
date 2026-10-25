@@ -1,5 +1,10 @@
 # Step 4.4 — SCM-triggered real pytest failure and recovery (local subset)
 
+> Historical pre-merge checkpoint. Implementation `2f30e7e` was subsequently approved,
+> merged/published, and verified through automatic main build #4 (260 tests).
+> The [post-merge evidence](step-04-scm-verification.md) supersedes the pending-review
+> statements below, without changing this demo's recorded revisions or results.
+
 ## Scope and provenance
 
 Verified **25 October 2026 UTC**. Implementation branch:

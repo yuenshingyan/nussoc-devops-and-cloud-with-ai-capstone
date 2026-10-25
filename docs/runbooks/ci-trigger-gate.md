@@ -84,10 +84,13 @@ SCM definition, changed selection to the fixed demo branch, and installed no cre
 or initial trigger. After its successful seed, an authenticated job-config update added
 `SCMTrigger` with `H/5 * * * *`. Builds 2–4 used no manual build or forced-poll requests.
 
-See [curated evidence](../../evidence/task-04/step-04-trigger-gate.md). The implementation
-is committed for review on `task-04/step-04-failure-demonstration`, not merged/published;
-only the explicitly authorized isolated demo commits were published. After approval,
-merge/publish and observe the automatic main build (currently 260 expected tests).
+See [curated demo evidence](../../evidence/task-04/step-04-trigger-gate.md). After approval,
+implementation `2f30e7e` was merged and atomically published to main and the step branch.
+Normal **finsecure-ci #4** then ran automatically with an SCM cause and passed all
+**260 tests**. Its 17 artifacts were downloaded and package/image hashes/configuration
+verified. The demo job remained disabled. This follow-up did not load or smoke-test the
+new exported image; Step 4.3 retains its separate runtime proof. See
+[post-merge evidence](../../evidence/task-04/step-04-scm-verification.md).
 Full release/deployment blocking and unchanged deployed-image proof remain pending:
 this local pipeline exports artifacts but does not deploy a service. No release
 credentials exist here; future credential isolation still needs its own design.
