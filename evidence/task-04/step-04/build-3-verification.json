@@ -1,0 +1,50 @@
+{
+  "verified_at_utc": "2026-10-25T02:55:18.217409+00:00",
+  "job": "finsecure-ci-gate-demo",
+  "build": 3,
+  "source_revision": "7151c5bf22217c7d2c8c4c91ced047002ccc78fb",
+  "result": "FAILURE",
+  "causes": [
+    {
+      "_class": "hudson.triggers.SCMTrigger$SCMTriggerCause",
+      "shortDescription": "Started by an SCM change"
+    }
+  ],
+  "scm_trigger_verified": true,
+  "pipeline_from_scm_verified": true,
+  "passed": 245,
+  "failed": 1,
+  "skipped": 0,
+  "artifacts": {
+    "reports/build-metadata.txt": {
+      "bytes": 174,
+      "sha256": "074c7b1f434dad0ed020dcb355302228944be9214022505d5640bd9db9019dbf"
+    },
+    "reports/coverage.xml": {
+      "bytes": 8695,
+      "sha256": "0c08eb9d735067aa8babac095847a07baa93ea016505c5f98be1944a77595ca5"
+    },
+    "reports/dependencies.txt": {
+      "bytes": 969,
+      "sha256": "b2279dc4dc27c0a9e9fa3d19bd687d0feafc7407d9d83f7db63d0f404008278b"
+    },
+    "reports/format.txt": {
+      "bytes": 27,
+      "sha256": "60b1abe1dfdcd741df7a1fc710e64e44c702e4ab4e4529c9c4a0ff7a0063f067"
+    },
+    "reports/junit.xml": {
+      "bytes": 35949,
+      "sha256": "6c5a9f6e20d77a4a7bfd8c34b96ad3526e7010b1909eed31491b510eec69a440"
+    },
+    "reports/lint.txt": {
+      "bytes": 19,
+      "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+    },
+    "reports/tests.txt": {
+      "bytes": 5198,
+      "sha256": "da30088add619170d3f7e7c6efe22902daad232f589870b10c063ebcd4b72cd2"
+    }
+  },
+  "image_export": null,
+  "publishing_or_deployment": "not implemented"
+}

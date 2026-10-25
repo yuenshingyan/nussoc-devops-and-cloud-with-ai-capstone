@@ -1,0 +1,96 @@
+{
+  "verified_at_utc": "2026-10-25T02:46:48.036126+00:00",
+  "job": "finsecure-ci-gate-demo",
+  "build": 1,
+  "source_revision": "2e0d9cd405e21955cd163db342cfcb4679963635",
+  "result": "SUCCESS",
+  "causes": [
+    {
+      "_class": "hudson.model.Cause$UserIdCause",
+      "shortDescription": "Started by user admin",
+      "userId": "admin",
+      "userName": "admin"
+    }
+  ],
+  "scm_trigger_verified": false,
+  "pipeline_from_scm_verified": true,
+  "passed": 245,
+  "failed": 0,
+  "skipped": 0,
+  "artifacts": {
+    "dist/finsecure_pay-0.2.0-py3-none-any.whl": {
+      "bytes": 12229,
+      "sha256": "4fad5740b23275fda730148cf89c6f7d556d3643e88a4f5bcf16df9533c5b2bd"
+    },
+    "dist/finsecure_pay-0.2.0.tar.gz": {
+      "bytes": 203665,
+      "sha256": "ac7e775aad8af70b14287bc063a09ad382cc164904a7703943ce91b2e6d479fe"
+    },
+    "images/finsecure-pay.tar.gz": {
+      "bytes": 47141223,
+      "sha256": "c39d626c7320249a1f534f0a52483bf8cfb2d237b87c6b466ce3f128b4980ceb"
+    },
+    "reports/build-metadata.txt": {
+      "bytes": 174,
+      "sha256": "d16d8d9b2038e1e1ed23f62971409c00e4fbbd3613969ed16e2518a13a815f4a"
+    },
+    "reports/buildkit-image.json": {
+      "bytes": 676,
+      "sha256": "19b5300ce0e9fef41ac2b9a87af2b661b792f25ae4b726055e6af65e6c70d0b0"
+    },
+    "reports/buildkit-workers.txt": {
+      "bytes": 674,
+      "sha256": "b9f2f581939891369c0a9c9f824c40f6fe2033fa9b8d870d5047bac2e0788764"
+    },
+    "reports/coverage.xml": {
+      "bytes": 8695,
+      "sha256": "c0335056ee7bbbe92595512020312ccd4885ab756a091a2a1a2fcc24ea5ab219"
+    },
+    "reports/dependencies.txt": {
+      "bytes": 967,
+      "sha256": "097488e8cbfc5788f00717f53e4e950960286bb13218196d6f85848193723aba"
+    },
+    "reports/format.txt": {
+      "bytes": 27,
+      "sha256": "253ee69cbcd5ea357340793e3de69d89df4b98d4298d8b3ab4056dcfbcf0cbdb"
+    },
+    "reports/image-build.txt": {
+      "bytes": 3083,
+      "sha256": "b7d5ca3d60f9abb9c51482f2da32997a9e2ce3d9de27b6ff4439d9c189d519d3"
+    },
+    "reports/image-metadata.txt": {
+      "bytes": 138,
+      "sha256": "01b1a6872ceb86a1907907cd55ece36fe569ebe5e81e558ea3c593f90e1a9af6"
+    },
+    "reports/image.sha256": {
+      "bytes": 94,
+      "sha256": "f2a61293daf3bb7af6aacc49c85ae41e2f17fd2eb04fe04ba05ef7986a8354ed"
+    },
+    "reports/junit.xml": {
+      "bytes": 34833,
+      "sha256": "388ae08d9d30c9377e25690616f239381444056aa7e7c988ca25270350f78f78"
+    },
+    "reports/lint.txt": {
+      "bytes": 19,
+      "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+    },
+    "reports/package.txt": {
+      "bytes": 187,
+      "sha256": "7dd09086c60e4b6cdde16a54eaadc2f70941d0722d1609bbad931f98946a11bb"
+    },
+    "reports/packages.sha256": {
+      "bytes": 206,
+      "sha256": "3574a1e951e55fc2cc8cd003df1b10dc20aa0f499008f6e9a1dbd8ae074e95d9"
+    },
+    "reports/tests.txt": {
+      "bytes": 3871,
+      "sha256": "515c32cb12d4246a85f31ce737714f58bcd59304768d51a5c9e6c72026641f71"
+    }
+  },
+  "image_export": {
+    "image_id": "sha256:f8a5e0605a01e43307ff466ca2ae94ee508b9c9a542e49f4ea27b09b2bca6274",
+    "platform": "linux/arm64",
+    "local_tag": "finsecure-pay-ci:jenkins-finsecure-ci-gate-demo-1"
+  },
+  "publishing_or_deployment": "not implemented"
+}

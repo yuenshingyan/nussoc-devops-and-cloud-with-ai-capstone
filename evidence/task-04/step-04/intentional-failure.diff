@@ -1,0 +1,10 @@
+diff --git a/tests/integration/test_ci_gate_demo.py b/tests/integration/test_ci_gate_demo.py
+index f8e3358..4ef7897 100644
+--- a/tests/integration/test_ci_gate_demo.py
++++ b/tests/integration/test_ci_gate_demo.py
+@@ -4,4 +4,4 @@
+ def test_ci_demo_health_contract(client):
+     response = client.get("/health")
+     assert response.status_code == 200
+-    assert response.json() == {"status": "healthy"}
++    assert response.json() == {"status": "intentional-failure"}

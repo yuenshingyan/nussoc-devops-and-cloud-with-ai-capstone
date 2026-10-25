@@ -47,8 +47,8 @@ checked against SHA-256, not treated as signed attestations.
 ## Job setup and triggering
 
 Follow [local Jenkins setup](local-jenkins.md) to build/start the controller and agent.
-Controller image remains `finsecure-jenkins-controller:step-04-02` with **73 pinned
-plugins**. Step 4.3 updates the agent to `step-04-03` and adds a separate rootless builder;
+The Step 4.4 candidate uses `finsecure-jenkins-controller:step-04-04` with the same
+**73 pinned plugins**, moving polling to application CI. Step 4.3 updates the agent to `step-04-03` and adds a separate rootless builder;
 Step 4.2 originally ran with the Step 4.1 agent. No plugin change is required here.
 
 The trusted image's `seed-jobs.groovy` runs Job DSL after Jenkins has loaded its job
@@ -69,10 +69,12 @@ seed uses the persisted trigger XML structure and was checked on fresh state.
 `Jenkinsfile` from public, trusted `main`. It runs only published code and now includes
 the approved local image-export stage.
 
-Application CI is manually triggered in this step. The old `finsecure-checkout` job
-still polls and remains a checkout-only setup check; it does not prove application CI.
-Moving/enabling source-change triggering for the application job and demonstrating a
-real failing test blocking delivery are subsequent work. No untrusted PR builds are enabled.
+Step 4.4 configures `H/5 * * * *` application SCM polling in trusted Job DSL, not in
+Jenkinsfile. The checkout-only job is now manual; inline candidate jobs remain manual.
+A separately approved demo branch/job demonstrated three SCM-triggered builds, including
+one real pytest failure that skipped packages/image export and recovery after its revert.
+See the [trigger/gate runbook](ci-trigger-gate.md). Publishing/deployment gates remain
+pending. No untrusted PR/fork builds are enabled.
 
 Builds of each job are serialized. The top-level 15-minute timeout begins after its
 agent is allocated (it does not bound that initial queue wait). Git clone/fetch is
@@ -130,7 +132,8 @@ inserts `exit 37` immediately after the real test command. The committed Jenkins
 application source, and tests remain passing. Verification requires the intended exit
 37, published passing test/coverage reports, and no package artifacts. This demonstrates
 failure-path report retention and package blocking, **not** a real failing test, a security
-gate, or blocked image/cloud delivery. Step 4.4 still needs its separate demonstration.
+gate, or blocked image/cloud delivery. Step 4.4's separate real pytest demonstration
+now verifies local package/image-export blocking, not publishing or deployment.
 
 ## Inspect actual reports
 

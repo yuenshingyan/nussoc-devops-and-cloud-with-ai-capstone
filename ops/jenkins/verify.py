@@ -85,8 +85,11 @@ def verify(revision: str) -> dict[str, object]:
             )
     job = fromstring(client.request("/job/finsecure-checkout/config.xml"))
     poll = job.find(".//hudson.triggers.SCMTrigger/spec")
-    if poll is None or poll.text != "H/5 * * * *":
-        raise RuntimeError("SCM polling was not configured as expected")
+    if poll is not None:
+        raise RuntimeError("Checkout-only job must remain manual")
+    application_job = fromstring(client.request("/job/finsecure-ci/config.xml"))
+    if application_job.findtext(".//hudson.triggers.SCMTrigger/spec") != "H/5 * * * *":
+        raise RuntimeError("Application SCM polling was not configured as expected")
     controller = loads(client.request("/api/json"))
     agent = loads(client.request("/computer/finsecure-python/api/json"))
     if controller["numExecutors"] != 0 or agent["offline"] or len(agent["executors"]) != 1:
@@ -131,9 +134,9 @@ def verify(revision: str) -> dict[str, object]:
         "controller_executors": 0,
         "agent_executors": 1,
         "agent_online": True,
-        "source_trigger": "H/5 * * * * SCM polling configured; this build was manually triggered",
+        "source_trigger": "Checkout diagnostic is manual; finsecure-ci owns H/5 SCM polling",
         "runtime": runtime,
-        "application_tests_in_jenkins": "not implemented until Step 4.2",
+        "application_tests_in_jenkins": "Not run by this diagnostic; use finsecure-ci",
         "security_and_delivery_stages": "pending",
         "cloud_resources_created": False,
     }

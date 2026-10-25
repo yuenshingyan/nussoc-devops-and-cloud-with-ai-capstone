@@ -1,0 +1,4 @@
+ce60427af470c2a1bef0e71776ca3ee9bfe09d83 Revert "test: demonstrate isolated real pytest failure"
+7151c5bf22217c7d2c8c4c91ced047002ccc78fb test: demonstrate isolated real pytest failure
+847a19d167a072577a044b3d28f6468bcf698b9f test: add passing isolated health gate demonstration
+2e0d9cd405e21955cd163db342cfcb4679963635 docs: seed isolated CI trigger demonstration

@@ -1,0 +1,93 @@
+"""Check polling ownership, demo restoration, preserved artifacts, and actual idle restart."""
+
+from datetime import UTC, datetime
+from hashlib import sha256
+from json import dumps, loads
+from pathlib import Path
+from subprocess import run
+from xml.etree.ElementTree import fromstring
+
+from bootstrap import COMPOSE, Jenkins, admin_password, command, start
+from verify_trigger import DEMO_BRANCH, DEMO_JOB, JOB_PATH, require_scm_cause, require_test_counts
+
+client = Jenkins(admin_password())
+assert not loads(client.request('/queue/api/json'))['items']
+for job in loads(client.request('/api/json'))['jobs']:
+    info = loads(client.request('/job/' + job['name'] + '/api/json'))
+    if info['lastBuild']:
+        assert not loads(client.request('/job/' + job['name'] + '/' + str(info['lastBuild']['number']) + '/api/json'))['building']
+previous_password = admin_password()
+previous_secret = fromstring(client.request('/computer/finsecure-python/jenkins-agent.jnlp')).find('.//argument').text
+main_revision = command(['git','rev-parse','main'])
+remote = command(['git','ls-remote','origin','refs/heads/main','refs/heads/'+DEMO_BRANCH])
+recovery = Path('reports/step44-recovery-revision.txt').read_text().strip()
+assert main_revision + '\trefs/heads/main' in remote
+assert recovery + '\trefs/heads/' + DEMO_BRANCH in remote
+assert command(['git','diff','847a19d',recovery]) == ''
+assert command(['git','ls-tree','main','--','tests/integration/test_ci_gate_demo.py']) == ''
+assert command(['git','ls-tree','HEAD','--','tests/integration/test_ci_gate_demo.py']) == ''
+assert not Path('reports/step44-demo').exists()
+jenkinsfile_hash = sha256(Path('Jenkinsfile').read_bytes()).hexdigest()
+for filename in ['baseline','passing','failing','recovery']:
+    revision = Path(f'reports/step44-{filename}-revision.txt').read_text().strip()
+    content = run(['git','show',revision+':Jenkinsfile'],capture_output=True,check=True,timeout=15).stdout
+    assert sha256(content).hexdigest() == jenkinsfile_hash
+passing = loads(Path('reports/step44-demo-2/verification.json').read_text())
+previous_archive = client.request(JOB_PATH+'2/artifact/images/finsecure-pay.tar.gz')
+assert sha256(previous_archive).hexdigest() == passing['artifacts']['images/finsecure-pay.tar.gz']['sha256']
+assert loads(client.request(JOB_PATH+'3/api/json'))['result'] == 'FAILURE'
+assert loads(client.request(JOB_PATH+'4/api/json'))['result'] == 'SUCCESS'
+# Production main polling detected its already-published documentation advance; this
+# is separate from the three explicitly sequenced demo pushes.
+main_build = loads(client.request('/job/finsecure-ci/3/api/json'))
+assert main_build['result'] == 'SUCCESS'
+main_causes = require_scm_cause(main_build)
+main_tests = loads(client.request('/job/finsecure-ci/3/testReport/api/json'))
+require_test_counts(main_tests,245,0)
+main_console = client.request('/job/finsecure-ci/3/consoleText').decode()
+assert 'SOURCE_REVISION='+main_revision in main_console
+for value in [previous_password,previous_secret,client.authorization,client.authorization[6:]]:
+    main_console = main_console.replace(value,'<redacted>')
+Path('reports/step44-main-auto-console.txt').write_text(main_console)
+command([*COMPOSE,'restart','controller'],timeout=90)
+result = start()
+assert result['agent_online']
+assert admin_password() == previous_password
+assert fromstring(client.request('/computer/finsecure-python/jenkins-agent.jnlp')).find('.//argument').text == previous_secret
+for job,expected in [('finsecure-ci','H/5 * * * *'),('finsecure-checkout',None)]:
+    config = fromstring(client.request('/job/'+job+'/config.xml'))
+    assert config.findtext('.//hudson.triggers.SCMTrigger/spec') == expected
+    assert not any(item.text for item in config.findall('.//credentialsId'))
+demo_config = fromstring(client.request(JOB_PATH+'config.xml'))
+assert demo_config.findtext('disabled') == 'true'
+assert demo_config.findtext('.//branches/hudson.plugins.git.BranchSpec/name') == '*/'+DEMO_BRANCH
+assert not any(item.text for item in demo_config.findall('.//credentialsId'))
+assert len(loads(client.request(JOB_PATH+'api/json'))['builds']) == 4
+assert loads(client.request('/api/json'))['numExecutors'] == 0
+agent = loads(client.request('/computer/finsecure-python/api/json'))
+assert not agent['offline'] and len(agent['executors']) == 1
+plugins = loads(client.request('/pluginManager/api/json?tree=plugins[shortName,version,active,enabled]'))['plugins']
+expected_plugins = dict(line.split(':',1) for line in Path('ops/jenkins/plugins.txt').read_text().splitlines())
+assert {item['shortName']:item['version'] for item in plugins} == expected_plugins
+assert all(item['active'] and item['enabled'] for item in plugins)
+images = {}
+for service in ['controller','agent','builder']:
+    info = loads(command(['docker','inspect',command([*COMPOSE,'ps','--quiet',service])]))[0]
+    assert info['State']['Running'] and not info['State']['OOMKilled']
+    assert not info['HostConfig']['Privileged']
+    assert all(mount['Type']=='volume' for mount in info['Mounts'])
+    images[service] = info['Image']
+record = {
+    'verified_at_utc':datetime.now(UTC).isoformat(), 'main_revision_unchanged':main_revision,
+    'demo_branch':DEMO_BRANCH, 'passing_reverted_head':recovery, 'passing_and_reverted_trees_identical':True,
+    'temporary_worktree_removed':True, 'all_demo_jenkinsfile_hashes':jenkinsfile_hash,
+    'all_demo_scripts_unchanged_from_reviewed_main':True, 'previous_success_image_artifact_unchanged':True,
+    'main_auto_build':3, 'main_auto_result':'SUCCESS', 'main_auto_causes':main_causes, 'main_auto_passed':245,
+    'controller_idle_restart_verified':True, 'credentials_and_history_preserved':True,
+    'main_polling_after_restart':'H/5 * * * *', 'checkout_job_manual_after_restart':True,
+    'demo_job_disabled_after_restart':True, 'demo_build_count':4, 'scm_credential_references_absent':True,
+    'plugin_pins_match_and_active':len(plugins), 'image_ids':images,
+    'deployment_and_release_credential_gate':'not implemented; no deployed-service claim',
+}
+Path('reports/step44-runtime.json').write_text(dumps(record,indent=2)+'\n')
+print(dumps(record,indent=2))

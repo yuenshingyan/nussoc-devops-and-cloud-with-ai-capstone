@@ -12,6 +12,9 @@ published test/coverage reports, and archived verified wheel/source packages.
 Step 4.3's approved local subset is merged as `ab538a2`: normal SCM-loaded build #2
 passed **245 tests** and exported a rootless-built ARM64 image. Its downloaded archive
 passed checksum, identity, HTTP, shutdown, and cleanup checks.
+Step 4.4's local polling/test-gate changes are verified and awaiting review: the isolated
+public demo produced automatic passing, real failing-test, and recovered builds. Its job
+is disabled and branch head passing. The implementation branch passes 260 local tests.
 Cloud work is deferred
 for budget approval while feasible local work proceeds toward **4 November** submission.
 Kubernetes execution and all dependent cloud verification remain pending.
@@ -147,7 +150,9 @@ Step 4.2 adds `finsecure-ci`: checkout, locked installation, Ruff, pytest/JUnit,
 application coverage, and wheel/source-distribution artifacts. Both pre-merge review
 runs and the normal post-merge SCM-loaded job have been verified. See the
 [application CI runbook](docs/runbooks/application-ci.md) for verified runs, reports,
-manual triggering, and the post-merge check. Step 4.3's verified local subset adds a separate
+manual triggering and recorded SCM runs. Step 4.4 moves five-minute polling to
+application CI and retains checkout as a manual diagnostic; see the
+[trigger/gate demonstration](docs/runbooks/ci-trigger-gate.md). Step 4.3's verified local subset adds a separate
 rootless builder and local image archive; see [local image building](docs/runbooks/local-image-builder.md).
 Registry publishing and cloud deployment remain unimplemented.
 
@@ -201,7 +206,9 @@ Remove a placeholder when its directory receives real content.
 - Task 4.2: reviewed, merged, published, and verified through the normal SCM-loaded job.
 - Task 4.3: local builder/export subset reviewed, merged, and verified through SCM build #2.
   Registry publication and Kubernetes delivery remain deferred; the full step is incomplete.
-- Remaining Task 4: container delivery, source-change/failed-test proof, rollout/rollback.
+- Task 4.4: local source-trigger/test-gate demonstration verified; implementation review pending.
+  Demo branch reverted/passing and job disabled; publishing/deployment gates remain pending.
+- Remaining Task 4: registry/cloud delivery, full release-gate proof, rollout/rollback.
 - Tasks 5–6: Security policies, monitoring/logging configuration, and demo scripts.
 - Task 7: Design document, architecture diagram, AI use case, and presentation.
 

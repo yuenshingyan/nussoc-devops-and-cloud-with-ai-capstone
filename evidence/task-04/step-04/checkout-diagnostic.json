@@ -1,0 +1,33 @@
+{
+  "verified_at_utc": "2026-10-25T03:05:54.007548+00:00",
+  "jenkins_url_local_only": "http://127.0.0.1:8080",
+  "job": "finsecure-checkout",
+  "build_number": 8,
+  "result": "SUCCESS",
+  "source_commit": "f167a76582bcad3b0ed116dc0099968494f5ccf5",
+  "controller_executors": 0,
+  "agent_executors": 1,
+  "agent_online": true,
+  "source_trigger": "Checkout diagnostic is manual; finsecure-ci owns H/5 SCM polling",
+  "runtime": {
+    "controller": {
+      "image_id": "sha256:2ad1f02e551217828aa245c96367c7c7bc7847f9ae56a97b1c9d6cd56aabb93f",
+      "uid": "1000",
+      "memory_limit_bytes": 1073741824,
+      "nano_cpus": 1000000000,
+      "host_bind_mounts": false,
+      "docker_socket_mounted": false
+    },
+    "agent": {
+      "image_id": "sha256:6f9da801bbef40599ed1b14316f7d4835c22b9270a98199639eee88a0de62be2",
+      "uid": "1000",
+      "memory_limit_bytes": 1073741824,
+      "nano_cpus": 1000000000,
+      "host_bind_mounts": false,
+      "docker_socket_mounted": false
+    }
+  },
+  "application_tests_in_jenkins": "Not run by this diagnostic; use finsecure-ci",
+  "security_and_delivery_stages": "pending",
+  "cloud_resources_created": false
+}

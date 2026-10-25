@@ -1,15 +1,11 @@
 pipelineJob('finsecure-checkout') {
-    description('Step 4.1: trusted main checkout and tool checks only. No tests, scans, publishing, or deployment yet.')
+    description('Manual setup diagnostic: trusted main checkout/tool checks only. Automatic application CI now belongs to finsecure-ci.')
     parameters {
         stringParam('EXPECTED_REVISION', '', 'Optional exact Git SHA for a manually verified checkout.')
     }
-    // Preserve setup-job polling/concurrency even before its next Pipeline execution.
+    // Retain the diagnostic job without duplicating application CI polling.
     configure { job ->
         job / 'properties' / 'org.jenkinsci.plugins.workflow.job.properties.DisableConcurrentBuildsJobProperty'
-        job / 'properties' / 'org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty' / 'triggers' / 'hudson.triggers.SCMTrigger' {
-            spec('H/5 * * * *')
-            ignorePostCommitHooks(false)
-        }
     }
     definition {
         cps {
@@ -17,8 +13,7 @@ pipelineJob('finsecure-checkout') {
             script('''
 properties([
     parameters([string(name: 'EXPECTED_REVISION', defaultValue: '', description: 'Optional exact Git SHA')]),
-    disableConcurrentBuilds(),
-    pipelineTriggers([pollSCM('H/5 * * * *')])
+    disableConcurrentBuilds()
 ])
 timeout(time: 5, unit: 'MINUTES') {
     node('python') {

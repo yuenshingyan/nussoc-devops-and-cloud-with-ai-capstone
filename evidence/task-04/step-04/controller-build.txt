@@ -1,0 +1,56 @@
+ Image finsecure-jenkins-controller:step-04-04 Building
+#1 [internal] load local bake definitions
+#1 reading from stdin 636B done
+#1 DONE 0.0s
+
+#2 [internal] load build definition from controller.Dockerfile
+#2 transferring dockerfile: 729B done
+#2 DONE 0.0s
+
+#3 [internal] load metadata for docker.io/jenkins/jenkins:lts-jdk21@sha256:a660310e39ade10631f774bacd5219de767dfd08947ea5c32a739b5e5bb382c1
+#3 ...
+
+#4 [auth] jenkins/jenkins:pull token for registry-1.docker.io
+#4 DONE 0.0s
+
+#3 [internal] load metadata for docker.io/jenkins/jenkins:lts-jdk21@sha256:a660310e39ade10631f774bacd5219de767dfd08947ea5c32a739b5e5bb382c1
+#3 DONE 1.8s
+
+#5 [internal] load .dockerignore
+#5 transferring context: 187B done
+#5 DONE 0.0s
+
+#6 [1/7] FROM docker.io/jenkins/jenkins:lts-jdk21@sha256:a660310e39ade10631f774bacd5219de767dfd08947ea5c32a739b5e5bb382c1
+#6 DONE 0.0s
+
+#7 [internal] load build context
+#7 transferring context: 7.28kB done
+#7 DONE 0.0s
+
+#8 [3/7] RUN jenkins-plugin-cli --latest=false --plugin-file /usr/share/jenkins/ref/plugins.txt
+#8 CACHED
+
+#9 [2/7] COPY --chown=jenkins:jenkins plugins.txt /usr/share/jenkins/ref/plugins.txt
+#9 CACHED
+
+#10 [4/7] COPY --chown=jenkins:jenkins jenkins.yaml /usr/share/jenkins/jenkins.yaml
+#10 CACHED
+
+#11 [5/7] COPY --chown=jenkins:jenkins checkout-job.groovy /usr/share/jenkins/checkout-job.groovy
+#11 DONE 0.0s
+
+#12 [6/7] COPY --chown=jenkins:jenkins ci-job.groovy /usr/share/jenkins/ci-job.groovy
+#12 DONE 0.0s
+
+#13 [7/7] COPY --chown=jenkins:jenkins seed-jobs.groovy /usr/share/jenkins/ref/init.groovy.d/finsecure-seed-jobs.groovy.override
+#13 DONE 0.0s
+
+#14 exporting to image
+#14 exporting layers 0.0s done
+#14 writing image sha256:2ad1f02e551217828aa245c96367c7c7bc7847f9ae56a97b1c9d6cd56aabb93f done
+#14 naming to docker.io/library/finsecure-jenkins-controller:step-04-04 done
+#14 DONE 0.0s
+
+#15 resolving provenance for metadata file
+#15 DONE 0.0s
+ Image finsecure-jenkins-controller:step-04-04 Built

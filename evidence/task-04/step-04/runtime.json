@@ -1,0 +1,34 @@
+{
+  "verified_at_utc": "2026-10-25T03:06:40.972666+00:00",
+  "main_revision_unchanged": "f167a76582bcad3b0ed116dc0099968494f5ccf5",
+  "demo_branch": "demo/step-04-04-ci-gate",
+  "passing_reverted_head": "ce60427af470c2a1bef0e71776ca3ee9bfe09d83",
+  "passing_and_reverted_trees_identical": true,
+  "temporary_worktree_removed": true,
+  "all_demo_jenkinsfile_hashes": "ed0aa69e66d031096b08bd092a6368214e469100d8e5280333af0eebcd4a0576",
+  "all_demo_scripts_unchanged_from_reviewed_main": true,
+  "previous_success_image_artifact_unchanged": true,
+  "main_auto_build": 3,
+  "main_auto_result": "SUCCESS",
+  "main_auto_causes": [
+    {
+      "_class": "hudson.triggers.SCMTrigger$SCMTriggerCause",
+      "shortDescription": "Started by an SCM change"
+    }
+  ],
+  "main_auto_passed": 245,
+  "controller_idle_restart_verified": true,
+  "credentials_and_history_preserved": true,
+  "main_polling_after_restart": "H/5 * * * *",
+  "checkout_job_manual_after_restart": true,
+  "demo_job_disabled_after_restart": true,
+  "demo_build_count": 4,
+  "scm_credential_references_absent": true,
+  "plugin_pins_match_and_active": 73,
+  "image_ids": {
+    "controller": "sha256:2ad1f02e551217828aa245c96367c7c7bc7847f9ae56a97b1c9d6cd56aabb93f",
+    "agent": "sha256:6f9da801bbef40599ed1b14316f7d4835c22b9270a98199639eee88a0de62be2",
+    "builder": "sha256:126890c1d9e4a80cc14a2b9c9257d0e65aacde6b30a80886b4270fb87d3f960f"
+  },
+  "deployment_and_release_credential_gate": "not implemented; no deployed-service claim"
+}

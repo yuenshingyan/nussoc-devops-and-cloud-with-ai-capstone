@@ -1,5 +1,14 @@
 pipelineJob('finsecure-ci') {
-    description('Application CI: locked dependencies, Ruff, pytest reports, coverage, and packages. No image publishing or cloud deployment. First run requires Jenkinsfile on main; manual triggering in Step 4.2.')
+    description('Trusted main CI: five-minute SCM polling, tests/reports, packages, and local image export. No registry publishing or cloud deployment.')
+    // Keep scheduling outside Jenkinsfile so inline review jobs remain manual.
+    // Seeding restores polling on restart, without needing another manual build.
+    configure { job ->
+        job / 'properties' / 'org.jenkinsci.plugins.workflow.job.properties.DisableConcurrentBuildsJobProperty'
+        job / 'properties' / 'org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty' / 'triggers' / 'hudson.triggers.SCMTrigger' {
+            spec('H/5 * * * *')
+            ignorePostCommitHooks(false)
+        }
+    }
     definition {
         cpsScm {
             scm {

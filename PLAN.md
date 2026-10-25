@@ -8,7 +8,7 @@
 - Explain and verify each step, then pause for review before merging and continuing.
 - Do not claim external deployment, notifications, security scans, or recovery succeeded without real execution evidence.
 
-Tasks 1–2 and Steps 3.1–3.2 are reviewed, merged into `main`, and published. The Deployment still pins verified release 0.2.0. Step 4.1 is reviewed, merged, and published. Step 4.2 is reviewed, merged, and published as `8deecec`. The normal `finsecure-ci` Pipeline-from-SCM build #1 succeeded at that revision with 230 tests, accessible JUnit/coverage reports, and verified package downloads. See the [post-merge evidence](evidence/task-04/step-02-scm-verification.md). Step 4.3's approved local builder/export subset is merged as `ab538a2` and verified through normal SCM-loaded build #2 (245 tests and a smoke-tested image); publishing/deployment remain deferred. No cluster has been contacted; server-side validation and actual probe/rollout behavior remain pending. See the [evidence index](evidence/README.md), [runtime policy](docs/runbooks/runtime-safeguards.md), and [Jenkins runbook](docs/runbooks/local-jenkins.md).
+Tasks 1–2 and Steps 3.1–3.2 are reviewed, merged into `main`, and published. The Deployment still pins verified release 0.2.0. Step 4.1 is reviewed, merged, and published. Step 4.2 is reviewed, merged, and published as `8deecec`. The normal `finsecure-ci` Pipeline-from-SCM build #1 succeeded at that revision with 230 tests, accessible JUnit/coverage reports, and verified package downloads. See the [post-merge evidence](evidence/task-04/step-02-scm-verification.md). Step 4.3's approved local builder/export subset is merged as `ab538a2` and verified through normal SCM-loaded build #2 (245 tests and a smoke-tested image); publishing/deployment remain deferred. Step 4.4's approved local triggering/pytest-gate demonstration is verified and awaiting implementation review; its isolated public demo branch is reverted and its job disabled. No cluster has been contacted; server-side validation and actual probe/rollout behavior remain pending. See the [evidence index](evidence/README.md), [runtime policy](docs/runbooks/runtime-safeguards.md), and [Jenkins runbook](docs/runbooks/local-jenkins.md).
 
 ## Approved budget-aware sequence
 
@@ -164,7 +164,7 @@ The assignment allows equivalent application, build, and unit-testing tools with
 - Publish test/coverage reports and archive relevant artifacts, including on failure.
 - **Verify:** A real Jenkins run passes and its reports are accessible.
 - Pre-merge verification uses the candidate Jenkinsfile in a sandboxed local review job with an explicit reviewed Git revision. A separate exit-37 probe checks report retention on failure without adding a failing test to the baseline. This is not the Step 4.4 failed-test/release-blocking demonstration.
-- Post-merge verification completed: `finsecure-ci` build #1 loaded the Jenkinsfile from Git at `8deecec`, passed 230 tests, published reports, and archived verified packages. Application CI remains manual; source-change CI triggering is still separate work.
+- Post-merge verification completed: `finsecure-ci` build #1 loaded the Jenkinsfile from Git at `8deecec`, passed 230 tests, published reports, and archived verified packages. That Step 4.2 run was manual; automatic application polling and source-change proof are added in Step 4.4.
 
 ### Step 4.3 — Automate container delivery
 - **Branch:** `task-04/step-03-container-delivery`
@@ -177,6 +177,7 @@ The assignment allows equivalent application, build, and unit-testing tools with
 
 ### Step 4.4 — Prove triggering and failed-test blocking
 - **Branch:** `task-04/step-04-failure-demonstration`
+- **Approved local subset, verified pending review:** move five-minute SCM polling to application CI; use the separately authorized `demo/step-04-04-ci-gate` branch/job to prove a passing source change, real pytest failure, and revert recovery. Builds 2–4 have SCMTriggerCause; the failed test blocked packaging/image export. The demo branch is restored, its job disabled, and no deliberate failure is in main/the implementation branch. See the [runbook](docs/runbooks/ci-trigger-gate.md) and [evidence](evidence/task-04/step-04-trigger-gate.md). Publishing/deployment gates remain unverified because those stages are not implemented.
 - Make a source change that triggers a pipeline run.
 - Introduce a controlled failing test in an isolated demonstration commit, capture the failed run, then revert it.
 - Ensure release credentials are not exposed to untrusted branches.
@@ -298,4 +299,4 @@ The assignment allows equivalent application, build, and unit-testing tools with
 
 ## Immediate next action
 
-The approved local portion of Step 4.3 and its post-merge SCM/image verification are complete. Next, agree the local portion of Step 4.4: source-change triggering and a controlled real failing-test demonstration that blocks package/image export. No Step 4.4 implementation has started. Step 4.3 as a whole remains incomplete: registry credentials, image publication, and cloud provisioning/deployment are not authorized or implemented by the local subset.
+Review the local Step 4.4 implementation on `task-04/step-04-failure-demonstration`: application polling, manual checkout diagnostic, read-only observer/regressions, and real automatic passing/failing/recovery evidence. Only the explicitly approved demo commits were published; main and the implementation branch contain no deliberate failing test. After approval, merge/publish and observe the automatic main build with the new 260-test suite. Cloud rollout/rollback and full release/deployment gates remain deferred; no later implementation step has started.

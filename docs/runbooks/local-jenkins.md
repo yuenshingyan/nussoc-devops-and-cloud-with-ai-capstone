@@ -11,7 +11,8 @@ and normal SCM-loaded build #1 (230 tests). See the
 builder/image-export subset is merged and verified through SCM build #2 (245 tests); see the
 [builder runbook](local-image-builder.md). No job publishes images or deploys to Kubernetes.
 
-- Controller: Jenkins **2.580.1 LTS**, Java 21, **zero executors**.
+- Controller: Jenkins **2.580.1 LTS**, Java 21, **zero executors**; Step 4.4's local
+  candidate image `step-04-04` updates scheduling only, without plugin changes.
 - Agent: one executor labelled `python`, Python **3.14.7**, uv **0.9.21**, Git, Java 21,
   and the BuildKit **0.34.1** client.
 - Both run as UID 1000, drop all Linux capabilities, prohibit privilege escalation,
@@ -118,13 +119,13 @@ explicitly if necessary.
 
 ## Source-change triggering
 
-The setup job's seed and Pipeline both configure `H/5 * * * *` SCM polling
-(hashed five-minute schedule), so restarting does not depend on another manual build
-before polling is restored. This avoids
-opening an Internet-facing webhook/tunnel. Polling only works while Docker, Jenkins, and
-the laptop are running. A successful manual checkout and a configured poll schedule are
-**not** proof of a source-change-triggered application pipeline; that demonstration is
-reserved for Step 4.4. No source-change commit is published just to manufacture evidence here.
+Step 4.4 moves `H/5 * * * *` polling to `finsecure-ci` through trusted startup Job DSL.
+The setup job's seed and Pipeline no longer install polling: it remains a manual
+checkout diagnostic. Restarting restores application polling without another manual run.
+No Internet-facing webhook/tunnel is opened. Polling requires Docker, Jenkins, and the
+laptop to be running. The [isolated demonstration](ci-trigger-gate.md) records actual
+SCM causes, passing/failing/recovered results, and its restored branch/disabled job;
+configuration or a manual checkout alone is not that proof.
 
 ## Restart and stop without data loss
 
@@ -182,8 +183,9 @@ approved local builder/export portion is merged and verified through normal SCM 
 The agent has BuildKit access, but neither Docker CLI nor host Docker daemon access.
 Registry credentials, publication, and deployment remain unimplemented. Never attach the
 host Docker socket as a shortcut.
-Security gates, real source-change/failure demonstrations, notifications, and all managed
-Kubernetes/cloud delivery and observability evidence remain pending under the budget-aware plan.
+The Step 4.4 local source-trigger/real-test-failure demonstration is verified, pending
+implementation review. Security gates, release/deployment-blocking demonstrations,
+notifications, and managed Kubernetes/cloud delivery/observability remain pending.
 
 References: [Jenkins Docker image](https://github.com/jenkinsci/docker),
 [inbound agents](https://github.com/jenkinsci/docker-inbound-agent),

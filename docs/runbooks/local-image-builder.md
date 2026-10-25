@@ -149,4 +149,5 @@ SCM-built image is `sha256:eaca7256fb8b9d72896c8fba7a26bf0b57dbb2ae506f139201f7c
 with local tag `finsecure-pay-ci:jenkins-finsecure-ci-2`; it was loaded and smoke-tested
 separately from the earlier review image described above.
 Step 4.3 remains partial until separately approved publishing and cloud delivery are
-implemented and exercised. No later implementation step has started.
+implemented and exercised. Step 4.4's separate local trigger/test-gate work is documented
+in the [trigger/gate runbook](ci-trigger-gate.md); it adds no publishing or cloud access.
