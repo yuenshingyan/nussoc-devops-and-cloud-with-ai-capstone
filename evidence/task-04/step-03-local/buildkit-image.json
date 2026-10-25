@@ -1,0 +1,17 @@
+{
+  "containerimage.config.digest": "sha256:26a06f2c8e5d217bf00579b94d7b6811a4e420930da7aeeafb03da46ef7c549d",
+  "containerimage.descriptor": {
+    "mediaType": "application/vnd.oci.image.manifest.v1+json",
+    "digest": "sha256:4f685632c206b9eeaa7895375614fb91fd324f6d7fd7f5ecb8738fc4e7d0bc37",
+    "size": 1623,
+    "annotations": {
+      "org.opencontainers.image.created": "2026-10-25T01:58:18Z"
+    },
+    "platform": {
+      "architecture": "arm64",
+      "os": "linux"
+    }
+  },
+  "containerimage.digest": "sha256:4f685632c206b9eeaa7895375614fb91fd324f6d7fd7f5ecb8738fc4e7d0bc37",
+  "image.name": "docker.io/library/finsecure-pay-ci:jenkins-finsecure-ci-review-success-20261025015653-1"
+}

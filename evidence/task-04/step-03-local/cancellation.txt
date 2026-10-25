@@ -1,0 +1,20 @@
+CLIENT_EXIT=124
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 247B done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/library/python:3.14.7-slim-bookworm@sha256:82bc3c539b8813ada9d68c63b40158fa002f7f33de9bf3312a3dfdc0620dff56
+#2 DONE 0.0s
+
+#3 [internal] load .dockerignore
+#3 transferring context: 2B done
+#3 DONE 0.0s
+
+#4 [1/2] FROM docker.io/library/python:3.14.7-slim-bookworm@sha256:82bc3c539b8813ada9d68c63b40158fa002f7f33de9bf3312a3dfdc0620dff56
+#4 resolve docker.io/library/python:3.14.7-slim-bookworm@sha256:82bc3c539b8813ada9d68c63b40158fa002f7f33de9bf3312a3dfdc0620dff56 done
+#4 CACHED
+
+#5 [2/2] RUN python -c "from time import sleep; print(\"STEP43_CANCEL_PROBE_STARTED\", flush=True); sleep(120)"
+#5 3.333 STEP43_CANCEL_PROBE_STARTED
+#5 CANCELED
+error: failed to solve: Canceled: context canceled

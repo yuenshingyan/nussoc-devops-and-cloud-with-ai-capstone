@@ -1,0 +1,6 @@
+ Container finsecure-jenkins-builder-1 Recreate
+ Container finsecure-jenkins-builder-1 Recreated
+ Container finsecure-jenkins-builder-1 Starting
+ Container finsecure-jenkins-builder-1 Started
+ Container finsecure-jenkins-builder-1 Waiting
+ Container finsecure-jenkins-builder-1 Healthy

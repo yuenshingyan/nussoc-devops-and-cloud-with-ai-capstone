@@ -11,7 +11,7 @@ from unittest.mock import Mock
 from urllib.error import HTTPError
 from urllib.request import Request
 
-from pytest import MonkeyPatch, fixture, raises
+from pytest import MonkeyPatch, fixture, mark, raises
 
 
 @fixture
@@ -95,6 +95,27 @@ def test_unrelated_data_volume_is_not_reconfigured(bootstrap_helpers):
     assert docker.call_count == 1
 
 
+@mark.parametrize("suffix", ["builder-socket", "builder-state"])
+def test_unrelated_builder_volume_is_not_reused(bootstrap_helpers, suffix):
+    helpers, docker, password_file = bootstrap_helpers
+
+    def inspect_volume(arguments: list[str], **kwargs: Any) -> CompletedProcess:
+        labels = (
+            {}
+            if arguments[-1].endswith(suffix)
+            else {"com.docker.compose.project": "finsecure-jenkins"}
+        )
+        return CompletedProcess([], 0, helpers["dumps"]([{"Labels": labels}]), "")
+
+    docker.side_effect = inspect_volume
+    with raises(RuntimeError, match="expected project label"):
+        helpers["start"]()
+    assert not password_file.exists()
+    assert all(
+        call.args[0][:3] == ["docker", "volume", "inspect"] for call in docker.call_args_list
+    )
+
+
 def test_existing_controller_home_requires_credential_recovery(bootstrap_helpers):
     helpers, docker, password_file = bootstrap_helpers
     docker.return_value = CompletedProcess(
@@ -103,7 +124,7 @@ def test_existing_controller_home_requires_credential_recovery(bootstrap_helpers
     with raises(RuntimeError, match="password is missing"):
         helpers["start"]()
     assert not password_file.exists()
-    assert docker.call_count == 2
+    assert docker.call_count == 4
 
 
 def test_docker_inspection_failure_does_not_create_a_password(bootstrap_helpers):

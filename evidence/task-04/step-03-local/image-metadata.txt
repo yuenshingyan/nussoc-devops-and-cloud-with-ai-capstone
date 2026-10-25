@@ -1,0 +1,3 @@
+SOURCE_REVISION=d492a7902ad58891859911e8416befb50bd2cb64
+LOCAL_TAG=finsecure-pay-ci:jenkins-finsecure-ci-review-success-20261025015653-1
+PLATFORM=linux/arm64

@@ -14,6 +14,7 @@ from xml.etree.ElementTree import Element, SubElement, fromstring, tostring
 from zipfile import ZipFile
 
 from bootstrap import BASE_URL, ROOT, Jenkins, admin_password
+from image_archive import inspect_image_archive
 
 
 def post(client: Jenkins, path: str, body: bytes, content_type: str) -> bytes:
@@ -112,6 +113,7 @@ def verify(
         "extensions: [[$class: 'CloneOption', timeout: 2]]]\n"
     )
     script = prefix + script
+    expects_image = "stage('Local image export')" in candidate
     mode = "failure" if fail_after_tests else "success"
     stamp = datetime.now(UTC).strftime("%Y%m%d%H%M%S")
     job_name = existing_job or f"finsecure-ci-review-{mode}-{stamp}"
@@ -132,7 +134,7 @@ def verify(
         client.authorization.removeprefix("Basic "),
     ]
     description = (
-        f"Owned Step 4.2 review; candidate {candidate_hash}; source {source_revision}; "
+        f"Owned local pipeline review; candidate {candidate_hash}; source {source_revision}; "
         f"mode {mode}. No release stages."
     )
     if existing_job:
@@ -183,6 +185,16 @@ def verify(
             "reports/package.txt",
             "reports/packages.sha256",
         }
+        image_files = {
+            "images/finsecure-pay.tar.gz",
+            "reports/buildkit-workers.txt",
+            "reports/image-metadata.txt",
+            "reports/image-build.txt",
+            "reports/buildkit-image.json",
+            "reports/image.sha256",
+        }
+        if expects_image:
+            allowed.update(image_files)
         for artifact in build["artifacts"]:
             name = artifact["relativePath"]
             package = fullmatch(r"dist/finsecure_pay-[A-Za-z0-9_.+-]+\.(whl|tar\.gz)", name)
@@ -231,6 +243,31 @@ def verify(
                 assert any(
                     name.endswith("/src/finsecure_pay/main.py") for name in archive.getnames()
                 )
+        image = None
+        if expects_image:
+            if fail_after_tests:
+                if image_files.intersection(artifacts):
+                    raise RuntimeError("Image export ran after the injected test-stage failure")
+            else:
+                if not image_files.issubset(artifacts):
+                    raise RuntimeError("Missing image export artifacts")
+                archive_name = "images/finsecure-pay.tar.gz"
+                expected_checksum = artifacts[archive_name]["sha256"] + "  " + archive_name + "\n"
+                if (output / "reports/image.sha256").read_text() != expected_checksum:
+                    raise RuntimeError("Downloaded image archive checksum mismatch")
+                tag = f"finsecure-pay-ci:jenkins-{job_name}-{number}"
+                expected_metadata = (
+                    f"SOURCE_REVISION={source_revision}\nLOCAL_TAG={tag}\nPLATFORM=linux/arm64\n"
+                )
+                if (output / "reports/image-metadata.txt").read_text() != expected_metadata:
+                    raise RuntimeError("Image export provenance does not match this build")
+                metadata = loads((output / "reports/buildkit-image.json").read_bytes())
+                image = inspect_image_archive(
+                    output / archive_name,
+                    source_revision,
+                    tag,
+                    metadata["containerimage.config.digest"],
+                )
         record = {
             "verified_at_utc": datetime.now(UTC).isoformat(),
             "job": job_name,
@@ -249,6 +286,7 @@ def verify(
                 for key in ["lines-covered", "lines-valid", "branches-covered", "branches-valid"]
             },
             "artifacts": artifacts,
+            "image_export": image,
         }
         (output / "verification.json").write_text(dumps(record, indent=2) + "\n")
         return record

@@ -1,0 +1,11 @@
+DAEMON_STATUS
+Uid:	1000	1000	1000	1000
+Gid:	1000	1000	1000	1000
+CapEff:	000001ffffffffff
+NoNewPrivs:	0
+UID_MAP
+         0       1000          1
+         1     100000      65536
+GID_MAP
+         0       1000          1
+         1     100000      65536

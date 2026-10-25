@@ -85,11 +85,42 @@ sha256sum dist/*.whl dist/*.tar.gz > reports/packages.sha256
                                  allowEmptyArchive: false, fingerprint: true
             }
         }
+        stage('Local image export') {
+            options { timeout(time: 10, unit: 'MINUTES') }
+            steps {
+                sh '''#!/usr/bin/env bash
+set -euo pipefail
+mkdir -p images
+revision=$(git rev-parse HEAD)
+[[ "$BUILD_TAG" =~ ^[A-Za-z0-9_][A-Za-z0-9_.-]{0,127}$ ]]
+image_name="finsecure-pay-ci:${BUILD_TAG}"
+# Never borrow registry credentials from a persistent agent home.
+export DOCKER_CONFIG
+DOCKER_CONFIG=$(mktemp -d)
+trap 'rm -rf -- "$DOCKER_CONFIG"' EXIT
+buildctl --version > reports/buildkit-workers.txt
+buildctl --addr=unix:///run/buildkit/buildkitd.sock --timeout=5 debug workers --verbose >> reports/buildkit-workers.txt
+printf 'SOURCE_REVISION=%s\\nLOCAL_TAG=%s\\nPLATFORM=linux/arm64\\n' "$revision" "$image_name" > reports/image-metadata.txt
+timeout --signal=TERM --kill-after=15s 9m \
+    buildctl --addr=unix:///run/buildkit/buildkitd.sock --timeout=5 build \
+    --frontend=dockerfile.v0 --local context=. --local dockerfile=. \
+    --opt platform=linux/arm64 --opt "label:org.opencontainers.image.revision=$revision" \
+    --output "type=docker,name=$image_name,dest=images/finsecure-pay.tar" \
+    --metadata-file reports/buildkit-image.json --progress=plain \
+    2>&1 | tee reports/image-build.txt
+test -s images/finsecure-pay.tar
+gzip -n -1 images/finsecure-pay.tar
+sha256sum images/finsecure-pay.tar.gz > reports/image.sha256
+'''
+                archiveArtifacts artifacts: 'images/finsecure-pay.tar.gz',
+                                 allowEmptyArchive: false, fingerprint: true
+            }
+        }
     }
     post {
         always {
             // Exact allowlist: never archive environments, credentials, caches, or the workspace.
-            archiveArtifacts artifacts: 'reports/build-metadata.txt,reports/dependencies.txt,reports/lint.txt,reports/format.txt,reports/tests.txt,reports/junit.xml,reports/coverage.xml,reports/package.txt,reports/packages.sha256',
+            archiveArtifacts artifacts: 'reports/build-metadata.txt,reports/dependencies.txt,reports/lint.txt,reports/format.txt,reports/tests.txt,reports/junit.xml,reports/coverage.xml,reports/package.txt,reports/packages.sha256,reports/buildkit-workers.txt,reports/image-metadata.txt,reports/image-build.txt,reports/buildkit-image.json,reports/image.sha256',
                              allowEmptyArchive: true
         }
     }

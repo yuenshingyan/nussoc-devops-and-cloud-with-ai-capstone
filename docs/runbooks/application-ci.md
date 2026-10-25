@@ -1,4 +1,8 @@
-# Application CI — Step 4.2
+# Application CI — Step 4.2 and local Step 4.3 candidate
+
+Step 4.2's normal SCM-loaded run is complete. This branch extends its pipeline with
+local image export; that addition has candidate-run evidence, not yet a post-merge
+SCM run. See the [builder runbook](local-image-builder.md) for current commands/counts.
 
 ## What runs
 
@@ -12,6 +16,9 @@
    coverage XML using Jenkins JUnit/Coverage plugins.
 5. **Package:** `uv build`; require one nonempty wheel and source distribution; record
    SHA-256 checksums and archive/fingerprint both packages.
+6. **Local image export (Step 4.3 candidate):** BuildKit builds Linux ARM64, exports a
+   compressed Docker archive, and records source/image metadata and SHA-256. No push/load
+   or deployment occurs in the pipeline. Only successful exports are archived.
 
 Bash `pipefail` preserves command failures when output is captured with `tee`.
 Missing/malformed reports fail publication; the two publishers are attempted independently
@@ -19,7 +26,8 @@ via `try/finally`. Coverage recording is explicitly enabled for failed builds. T
 **no coverage threshold**, no automatic failed-test retry, and no warning suppression.
 JUnit instability also skips later stages. Application coverage excludes operational scripts.
 
-Only named report files and the two package patterns are archived, not `.venv`, caches,
+Only named reports, the two package patterns, and the exact successful image archive
+are archived, not `.venv`, caches,
 credentials, Git internals, or the complete workspace. The global `always` post action
 archives available diagnostic reports even when an earlier stage fails; allowing an empty
 archive there accommodates failures before reports exist, not a successful missing-report
@@ -39,9 +47,9 @@ checked against SHA-256, not treated as signed attestations.
 ## Job setup and triggering
 
 Follow [local Jenkins setup](local-jenkins.md) to build/start the controller and agent.
-Step 4.2 uses controller image `finsecure-jenkins-controller:step-04-02`, the unchanged
-Step 4.1 agent, and **73 pinned plugins**. JUnit and Coverage are newly installed, with
-all transitive resolutions recorded in `plugins.txt`.
+Controller image remains `finsecure-jenkins-controller:step-04-02` with **73 pinned
+plugins**. Step 4.3 updates the agent to `step-04-03` and adds a separate rootless builder;
+Step 4.2 originally ran with the Step 4.1 agent. No plugin change is required here.
 
 The trusted image's `seed-jobs.groovy` runs Job DSL after Jenkins has loaded its job
 registry. JCasC still configures security/controller/agent settings, but does not create
@@ -58,8 +66,8 @@ next Pipeline run. A dynamic Job DSL `scm` trigger alias proved unsupported; the
 seed uses the persisted trigger XML structure and was checked on fresh state.
 
 `ops/jenkins/ci-job.groovy` creates **finsecure-ci**, a Pipeline-from-SCM job reading
-`Jenkinsfile` from public, trusted `main`. **Do not start that job before the Jenkinsfile
-is merged/published:** the earlier main revision has no such file.
+`Jenkinsfile` from public, trusted `main`. It runs only published code; until this branch
+is approved and merged, the normal job does not contain the new image-export stage.
 
 Application CI is manually triggered in this step. The old `finsecure-checkout` job
 still polls and remains a checkout-only setup check; it does not prove application CI.
@@ -81,7 +89,7 @@ Git `scm` definition pinned to an explicitly selected published commit, followed
 unchanged candidate Jenkinsfile. The production job instead receives `scm` from Jenkins.
 Both candidate-file and executed-script hashes are recorded, so these are not conflated.
 
-From the repository root, with the local Jenkins stack running:
+Historical Step 4.2 example (use the builder runbook for the current candidate):
 
 ```sh
 uv run --locked python ops/jenkins/verify_ci.py \
@@ -89,10 +97,10 @@ uv run --locked python ops/jenkins/verify_ci.py \
   --expected-tests 221
 ```
 
-This recorded base revision has 221 tests. The Step 4.2 working branch adds nine verifier
-regressions, so its local suite has 230. The pre-merge agent checkout **does not include
-those unmerged files**; they were checked locally instead. After merge, the normal SCM
-job should run all tests in the new source revision.
+That recorded base revision had 221 tests; nine then-unmerged verifier regressions
+brought the Step 4.2 local suite to 230. The subsequent normal SCM run passed all 230.
+Pre-merge agent checkouts do not include unmerged tests. Step 4.3 currently has 245 local
+tests versus 230 in its published-source review checkout.
 
 The verifier follows its own queue item, checks the exact source/agent, reads actual
 JUnit and Coverage APIs, downloads all listed artifacts, verifies package hashes and
@@ -164,8 +172,9 @@ pre-merge review jobs alone do not prove the SCM loading path.
 If source changes again, use that revision's actual expected count rather than treating
 230 as a permanent pipeline threshold.
 
-No container build, registry push, vulnerability scan, notification, or managed-cluster
-stage is implemented here. Cloud-dependent work remains deferred under `PLAN.md`.
+The Step 4.3 candidate adds local container build/export only. Registry push,
+vulnerability scans, notifications, and managed-cluster stages remain unimplemented.
+Cloud-dependent work remains deferred under `PLAN.md`.
 
 References: [JUnit step](https://www.jenkins.io/doc/pipeline/steps/junit/),
 [Coverage step](https://www.jenkins.io/doc/pipeline/steps/coverage/),

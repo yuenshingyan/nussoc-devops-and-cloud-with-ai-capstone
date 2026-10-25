@@ -14,7 +14,7 @@ and report retention on an isolated failure. Cloud delivery remains unverified.
 | 1 — Application and Git | [task-01](task-01/) | Complete and merged |
 | 2 — Containerisation | [task-02](task-02/) | Complete, reviewed, merged, and published |
 | 3 — Kubernetes and cloud | [task-03](task-03/) | Steps 3.1–3.2 merged; cloud execution deferred |
-| 4 — CI/CD | [task-04](task-04/) | Steps 4.1–4.2 merged; normal SCM pipeline verified with 230 tests; delivery pending |
+| 4 — CI/CD | [task-04](task-04/) | Steps 4.1–4.2 merged; Step 4.3 local build/export candidate verified, pending review; publishing/deployment pending |
 | 5 — DevSecOps | [task-05](task-05/) | Pending |
 | 6 — Observability | [task-06](task-06/) | Pending |
 | 7 — Documentation and demonstration | [task-07](task-07/) | Pending |
@@ -65,6 +65,12 @@ and report retention on an isolated failure. Cloud delivery remains unverified.
   `finsecure-ci` build #1 loaded the Jenkinsfile from Git at `8deecec`, passed 230 tests,
   published accessible reports, and provided packages with verified download hashes.
   The build was manually triggered; no source-trigger, release, or deployment gate is claimed.
+
+- [Step 4.3 — Local rootless image building (partial)](task-04/step-03-local-image-builder.md):
+  candidate Jenkins build exported an ARM64 image, downloaded checksum/configuration
+  matched, and the loaded image passed local non-root/HTTP/shutdown checks. Failure
+  blocking and worker cancellation/restart were verified. 245 host tests passed versus
+  230 from published source in Jenkins. No image publication, scan gate, or cloud deployment.
 
 For each artifact, record the requirement demonstrated, timestamp, command or
 procedure, actual result, commit, applicable image digest, and artifact path or

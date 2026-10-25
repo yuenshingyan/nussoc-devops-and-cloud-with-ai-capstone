@@ -26,6 +26,7 @@ COMPOSE = ["docker", "compose", "-f", str(ROOT / "ops/jenkins/compose.yaml")]
 BASE_URL = "http://127.0.0.1:8080"
 SECRET_DIRECTORY = Path.home() / ".config/finsecure-pay/jenkins"
 PURPOSE = "finsecure-pay-local-jenkins"
+AGENT_IMAGE = "finsecure-jenkins-agent:step-04-03"
 
 
 class NoRedirect(HTTPRedirectHandler):
@@ -121,7 +122,7 @@ def seed_secret(volume: str, filename: str, value: str) -> None:
             volume + ":/out",
             "--interactive",
             "--entrypoint=python",
-            "finsecure-jenkins-agent:step-04-01",
+            AGENT_IMAGE,
             "-c",
             code,
             filename,
@@ -187,7 +188,7 @@ class Jenkins:
 def check_data_volume_ownership() -> bool:
     """Reject unrelated volumes and report whether controller state already exists."""
     controller_exists = False
-    for suffix in ["controller-home", "agent-workspace"]:
+    for suffix in ["controller-home", "agent-workspace", "builder-socket", "builder-state"]:
         result = run(
             ["docker", "volume", "inspect", "finsecure-jenkins_" + suffix],
             capture_output=True,
@@ -228,6 +229,10 @@ def start() -> dict[str, object]:
     if not secret or not fullmatch(r"[a-f0-9]{64}", secret):
         raise RuntimeError("Agent secret response did not match the expected format")
     seed_secret("finsecure-jenkins-agent-secrets", "agent_secret", secret)
+    command(
+        [*COMPOSE, "up", "--detach", "--no-build", "--wait", "--wait-timeout", "90", "builder"],
+        timeout=120,
+    )
     command([*COMPOSE, "up", "--detach", "--no-build", "agent"])
     agent = client.wait("/computer/finsecure-python/api/json", "offline", False, 120, "agent")
     for name in ["finsecure-checkout", "finsecure-ci"]:

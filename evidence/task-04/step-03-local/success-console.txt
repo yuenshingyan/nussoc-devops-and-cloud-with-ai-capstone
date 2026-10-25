@@ -1,0 +1,336 @@
+Started by user admin
+[Pipeline] Start of Pipeline
+[Pipeline] node
+Running on finsecure-python in /home/jenkins/agent/workspace/finsecure-ci-review-success-20261025015653
+[Pipeline] {
+[Pipeline] timeout
+Timeout set to expire in 15 min
+[Pipeline] {
+[Pipeline] stage
+[Pipeline] { (Checkout)
+[Pipeline] deleteDir
+[Pipeline] checkout
+The recommended git tool is: NONE
+No credentials specified
+Cloning the remote Git repository
+Cloning repository https://github.com/yuenshingyan/nussoc-devops-and-cloud-with-ai-capstone.git
+ > git init /home/jenkins/agent/workspace/finsecure-ci-review-success-20261025015653 # timeout=10
+Fetching upstream changes from https://github.com/yuenshingyan/nussoc-devops-and-cloud-with-ai-capstone.git
+ > git --version # timeout=10
+ > git --version # 'git version 2.39.5'
+ > git fetch --tags --force --progress -- https://github.com/yuenshingyan/nussoc-devops-and-cloud-with-ai-capstone.git +refs/heads/*:refs/remotes/origin/* # timeout=2
+Avoid second fetch
+Checking out Revision d492a7902ad58891859911e8416befb50bd2cb64 (detached)
+Commit message: "docs: record successful SCM-loaded Jenkins pipeline"
+First time build. Skipping changelog.
+[Pipeline] sh
+ > git config remote.origin.url https://github.com/yuenshingyan/nussoc-devops-and-cloud-with-ai-capstone.git # timeout=10
+ > git config --add remote.origin.fetch +refs/heads/*:refs/remotes/origin/* # timeout=10
+ > git rev-parse d492a7902ad58891859911e8416befb50bd2cb64^{commit} # timeout=10
+ > git config core.sparsecheckout # timeout=10
+ > git checkout -f d492a7902ad58891859911e8416befb50bd2cb64 # timeout=10
+SOURCE_REVISION=d492a7902ad58891859911e8416befb50bd2cb64
+Python 3.14.7
+uv 0.9.21
+git version 2.39.5
+343a2784581474f882841d7c4955d7d9456f7dd31d83e5064e7fc3052ab0778e  uv.lock
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Locked dependencies)
+[Pipeline] sh
+Using CPython 3.14.7 interpreter at: /usr/local/bin/python3.14
+Creating virtual environment at: .venv
+Resolved 27 packages in 7ms
+   Building finsecure-pay @ file:///home/jenkins/agent/workspace/finsecure-ci-review-success-20261025015653
+Downloading ruff (9.5MiB)
+Downloading pygments (1.2MiB)
+Downloading pydantic-core (2.0MiB)
+ Downloaded pygments
+ Downloaded pydantic-core
+      Built finsecure-pay @ file:///home/jenkins/agent/workspace/finsecure-ci-review-success-20261025015653
+ Downloaded ruff
+Prepared 26 packages in 2.25s
+Installed 26 packages in 67ms
+ + annotated-doc==0.0.5
+ + annotated-types==0.8.0
+ + anyio==4.15.1
+ + certifi==2026.10.19
+ + click==8.5.0
+ + coverage==7.16.2
+ + fastapi==0.156.8
+ + finsecure-pay==0.2.0 (from file:///home/jenkins/agent/workspace/finsecure-ci-review-success-20261025015653)
+ + h11==0.16.0
+ + httpcore==1.0.9
+ + httpx==0.28.1
+ + idna==3.20
+ + iniconfig==2.3.1
+ + opentelemetry-api==1.45.1
+ + packaging==26.3
+ + pluggy==1.7.0
+ + pydantic==2.14.1
+ + pydantic-core==2.50.1
+ + pygments==2.21.0
+ + pytest==9.1.1
+ + pytest-cov==7.1.0
+ + ruff==0.17.1
+ + starlette==1.9.0
+ + typing-extensions==4.16.0
+ + typing-inspection==0.4.4
+ + uvicorn==0.54.0
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Code checks)
+[Pipeline] sh
+All checks passed!
+59 files already formatted
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Tests)
+[Pipeline] sh
+============================= test session starts ==============================
+platform linux -- Python 3.14.7, pytest-9.1.1, pluggy-1.7.0
+rootdir: /home/jenkins/agent/workspace/finsecure-ci-review-success-20261025015653
+configfile: pyproject.toml
+testpaths: tests
+plugins: anyio-4.15.1, cov-7.1.0
+collected 230 items
+
+tests/integration/test_application.py ..                                 [  0%]
+tests/integration/test_configuration_api.py ........                     [  4%]
+tests/integration/test_health_api.py ...                                 [  5%]
+tests/integration/test_validation_api.py ............................... [ 19%]
+...                                                                      [ 20%]
+tests/integration/test_validation_boundaries.py ........................ [ 30%]
+..................................                                       [ 45%]
+tests/unit/test_config.py ...................................            [ 60%]
+tests/unit/test_jenkins_bootstrap.py ...........                         [ 65%]
+tests/unit/test_jenkins_ci_verification.py .........                     [ 69%]
+tests/unit/test_transaction_schema.py .................................. [ 84%]
+............                                                             [ 89%]
+tests/unit/test_validation.py ........................                   [100%]
+
+=============================== warnings summary ===============================
+.venv/lib/python3.14/site-packages/fastapi/testclient.py:1
+  /home/jenkins/agent/workspace/finsecure-ci-review-success-20261025015653/.venv/lib/python3.14/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+- generated xml file: /home/jenkins/agent/workspace/finsecure-ci-review-success-20261025015653/reports/junit.xml -
+================================ tests coverage ================================
+_______________ coverage: platform linux, python 3.14.7-final-0 ________________
+
+Name                                          Stmts   Miss Branch BrPart  Cover   Missing
+-----------------------------------------------------------------------------------------
+src/finsecure_pay/__init__.py                     0      0      0      0   100%
+src/finsecure_pay/api/__init__.py                 0      0      0      0   100%
+src/finsecure_pay/api/dependencies.py             4      0      0      0   100%
+src/finsecure_pay/api/errors.py                  15      0      4      0   100%
+src/finsecure_pay/api/health.py                   6      0      0      0   100%
+src/finsecure_pay/api/validation.py              11      0      0      0   100%
+src/finsecure_pay/config.py                      44      0     14      0   100%
+src/finsecure_pay/main.py                        14      0      0      0   100%
+src/finsecure_pay/observability/__init__.py       0      0      0      0   100%
+src/finsecure_pay/schemas/__init__.py             0      0      0      0   100%
+src/finsecure_pay/schemas/errors.py               3      0      0      0   100%
+src/finsecure_pay/schemas/health.py               3      0      0      0   100%
+src/finsecure_pay/schemas/transaction.py          7      0      0      0   100%
+src/finsecure_pay/services/__init__.py            0      0      0      0   100%
+src/finsecure_pay/services/validation.py         18      0     10      0   100%
+-----------------------------------------------------------------------------------------
+TOTAL                                           125      0     28      0   100%
+Coverage XML written to file reports/coverage.xml
+======================== 230 passed, 1 warning in 0.74s ========================
+Post stage
+[Pipeline] script
+[Pipeline] {
+[Pipeline] junit
+Recording test results
+[Pipeline] recordCoverage
+[Coverage] Recording coverage results
+[Coverage] Creating parser for Cobertura Coverage Reports
+[Coverage] Searching for all files in '/home/jenkins/agent/workspace/finsecure-ci-review-success-20261025015653' that match the pattern 'reports/coverage.xml'
+[Coverage] Traversing of symbolic links: enabled
+[Coverage] -> found 1 file
+[Coverage] Successfully parsed file '/home/jenkins/agent/workspace/finsecure-ci-review-success-20261025015653/reports/coverage.xml'
+[Coverage] Module Coverage: 100.00% (1/1)
+[Coverage] Package Coverage: 80.00% (4/5)
+[Coverage] File Coverage: 66.67% (10/15)
+[Coverage] Class Coverage: 66.67% (10/15)
+[Coverage] Line Coverage: 100.00% (125/125)
+[Coverage] Branch Coverage: 100.00% (28/28)
+[Coverage] Lines of Code: 125
+[Coverage] Cyclomatic Complexity: 0
+[Coverage] Successfully processed file 'reports/coverage.xml'
+[Coverage] Resolving source code files...
+[Coverage] Searching for source code files in:
+[Coverage] -> /home/jenkins/agent/workspace/finsecure-ci-review-success-20261025015653/src/main/java
+[Coverage] -> /home/jenkins/agent/workspace/finsecure-ci-review-success-20261025015653/src/finsecure_pay
+[Coverage] -> resolved absolute paths for all 15 source files
+[Coverage] Obtaining result action of reference build
+[Coverage] Reference build recorder is not configured
+[Coverage] -> Found no reference build
+[Coverage] No quality gates have been set - skipping
+[Coverage] Executing source code painting...
+[Coverage] Finished coverage processing - adding the action to the build...
+[Pipeline] }
+[Pipeline] // script
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Package)
+[Pipeline] sh
+Building source distribution...
+Building wheel from source distribution...
+Successfully built dist/finsecure_pay-0.2.0.tar.gz
+Successfully built dist/finsecure_pay-0.2.0-py3-none-any.whl
+[Pipeline] archiveArtifacts
+Archiving artifacts
+Recording fingerprints
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Local image export)
+[Pipeline] timeout
+Timeout set to expire in 10 min
+[Pipeline] {
+[Pipeline] sh
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 1.43kB done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for ghcr.io/astral-sh/uv:0.9.21@sha256:15f68a476b768083505fe1dbfcc998344d0135f0ca1b8465c4760b323904f05a
+#2 DONE 2.7s
+
+#3 [internal] load metadata for docker.io/library/python:3.14.7-slim-bookworm@sha256:82bc3c539b8813ada9d68c63b40158fa002f7f33de9bf3312a3dfdc0620dff56
+#3 DONE 2.9s
+
+#4 [internal] load .dockerignore
+#4 transferring context: 391B done
+#4 DONE 0.0s
+
+#5 [internal] load build context
+#5 transferring context: 66.61kB done
+#5 DONE 0.0s
+
+#6 [uv 1/1] FROM ghcr.io/astral-sh/uv:0.9.21@sha256:15f68a476b768083505fe1dbfcc998344d0135f0ca1b8465c4760b323904f05a
+#6 resolve ghcr.io/astral-sh/uv:0.9.21@sha256:15f68a476b768083505fe1dbfcc998344d0135f0ca1b8465c4760b323904f05a done
+#6 sha256:9d4647e6e64eb485a08d4b2a49d9a843b841dd3d0be908b7915b1908e98dd3e3 0B / 98B 0.2s
+#6 sha256:a337191931dd321c8d09d7c3d7a55b621a84f849bcb21a20b4f1575bf805489f 0B / 21.20MB 0.2s
+#6 sha256:9d4647e6e64eb485a08d4b2a49d9a843b841dd3d0be908b7915b1908e98dd3e3 98B / 98B 0.5s done
+#6 sha256:a337191931dd321c8d09d7c3d7a55b621a84f849bcb21a20b4f1575bf805489f 2.10MB / 21.20MB 4.5s
+#6 sha256:a337191931dd321c8d09d7c3d7a55b621a84f849bcb21a20b4f1575bf805489f 4.19MB / 21.20MB 5.9s
+#6 sha256:a337191931dd321c8d09d7c3d7a55b621a84f849bcb21a20b4f1575bf805489f 6.29MB / 21.20MB 7.5s
+#6 ...
+
+#7 [builder 1/6] FROM docker.io/library/python:3.14.7-slim-bookworm@sha256:82bc3c539b8813ada9d68c63b40158fa002f7f33de9bf3312a3dfdc0620dff56
+#7 resolve docker.io/library/python:3.14.7-slim-bookworm@sha256:82bc3c539b8813ada9d68c63b40158fa002f7f33de9bf3312a3dfdc0620dff56 done
+#7 sha256:cf532b88ab5135a618911d6b11610ffeb602c89c6f5cffcd75bc5604b085ddd9 249B / 249B 0.3s done
+#7 sha256:ea40a15691b2243492a5912949e25d29f0a618a1226faa0e17861b237df27bfc 12.93MB / 12.93MB 3.3s done
+#7 sha256:333125b5cee9fb6718bdcb523fc93b4adc71b7c37ada6146a20c193430e549b9 16.78MB / 28.12MB 7.7s
+#7 sha256:fe6cc2324fa446aa273085f06ad03a4afcd3084d02406991ebd8babea0d19f54 3.37MB / 3.37MB 4.3s done
+#7 ...
+
+#6 [uv 1/1] FROM ghcr.io/astral-sh/uv:0.9.21@sha256:15f68a476b768083505fe1dbfcc998344d0135f0ca1b8465c4760b323904f05a
+#6 sha256:a337191931dd321c8d09d7c3d7a55b621a84f849bcb21a20b4f1575bf805489f 8.39MB / 21.20MB 10.7s
+#6 sha256:a337191931dd321c8d09d7c3d7a55b621a84f849bcb21a20b4f1575bf805489f 10.49MB / 21.20MB 11.4s
+#6 sha256:a337191931dd321c8d09d7c3d7a55b621a84f849bcb21a20b4f1575bf805489f 12.58MB / 21.20MB 12.2s
+#6 sha256:a337191931dd321c8d09d7c3d7a55b621a84f849bcb21a20b4f1575bf805489f 14.68MB / 21.20MB 12.6s
+#6 sha256:a337191931dd321c8d09d7c3d7a55b621a84f849bcb21a20b4f1575bf805489f 16.78MB / 21.20MB 12.9s
+#6 sha256:a337191931dd321c8d09d7c3d7a55b621a84f849bcb21a20b4f1575bf805489f 18.87MB / 21.20MB 13.2s
+#6 sha256:a337191931dd321c8d09d7c3d7a55b621a84f849bcb21a20b4f1575bf805489f 21.20MB / 21.20MB 13.6s done
+#6 extracting sha256:a337191931dd321c8d09d7c3d7a55b621a84f849bcb21a20b4f1575bf805489f
+#6 extracting sha256:a337191931dd321c8d09d7c3d7a55b621a84f849bcb21a20b4f1575bf805489f 2.5s done
+#6 extracting sha256:9d4647e6e64eb485a08d4b2a49d9a843b841dd3d0be908b7915b1908e98dd3e3
+#6 ...
+
+#7 [builder 1/6] FROM docker.io/library/python:3.14.7-slim-bookworm@sha256:82bc3c539b8813ada9d68c63b40158fa002f7f33de9bf3312a3dfdc0620dff56
+#7 sha256:333125b5cee9fb6718bdcb523fc93b4adc71b7c37ada6146a20c193430e549b9 28.12MB / 28.12MB 9.6s done
+#7 extracting sha256:333125b5cee9fb6718bdcb523fc93b4adc71b7c37ada6146a20c193430e549b9 0.9s done
+#7 extracting sha256:fe6cc2324fa446aa273085f06ad03a4afcd3084d02406991ebd8babea0d19f54 2.3s done
+#7 extracting sha256:ea40a15691b2243492a5912949e25d29f0a618a1226faa0e17861b237df27bfc 3.4s done
+#7 extracting sha256:cf532b88ab5135a618911d6b11610ffeb602c89c6f5cffcd75bc5604b085ddd9
+#7 extracting sha256:cf532b88ab5135a618911d6b11610ffeb602c89c6f5cffcd75bc5604b085ddd9 3.4s done
+#7 DONE 19.6s
+
+#6 [uv 1/1] FROM ghcr.io/astral-sh/uv:0.9.21@sha256:15f68a476b768083505fe1dbfcc998344d0135f0ca1b8465c4760b323904f05a
+#6 extracting sha256:9d4647e6e64eb485a08d4b2a49d9a843b841dd3d0be908b7915b1908e98dd3e3 3.4s done
+#6 DONE 19.6s
+
+#8 [runtime 2/4] RUN groupadd --gid 10001 app     && useradd --uid 10001 --gid 10001 --no-create-home --shell /usr/sbin/nologin app
+#8 DONE 3.4s
+
+#9 [builder 2/6] COPY --from=uv /uv /usr/local/bin/uv
+#9 DONE 3.4s
+
+#10 [runtime 3/4] WORKDIR /app
+#10 DONE 3.2s
+
+#11 [builder 3/6] WORKDIR /build
+#11 DONE 4.7s
+
+#12 [builder 4/6] COPY pyproject.toml uv.lock README.md ./
+#12 DONE 4.0s
+
+#13 [builder 5/6] COPY src/ ./src/
+#13 DONE 4.1s
+
+#14 [builder 6/6] RUN --mount=type=cache,target=/root/.cache/uv     uv sync --locked --no-dev --no-editable
+#14 5.384 Using CPython 3.14.7 interpreter at: /usr/local/bin/python3
+#14 5.384 Creating virtual environment at: /opt/venv
+#14 5.389 Resolved 27 packages in 2ms
+#14 5.396    Building finsecure-pay @ file:///build
+#14 5.514 Downloading pydantic-core (2.0MiB)
+#14 5.973  Downloaded pydantic-core
+#14 6.526       Built finsecure-pay @ file:///build
+#14 6.537 Prepared 15 packages in 1.14s
+#14 6.551 Installed 15 packages in 13ms
+#14 6.551  + annotated-doc==0.0.5
+#14 6.551  + annotated-types==0.8.0
+#14 6.551  + anyio==4.15.1
+#14 6.551  + click==8.5.0
+#14 6.551  + fastapi==0.156.8
+#14 6.551  + finsecure-pay==0.2.0 (from file:///build)
+#14 6.551  + h11==0.16.0
+#14 6.551  + idna==3.20
+#14 6.551  + opentelemetry-api==1.45.1
+#14 6.551  + pydantic==2.14.1
+#14 6.551  + pydantic-core==2.50.1
+#14 6.551  + starlette==1.9.0
+#14 6.551  + typing-extensions==4.16.0
+#14 6.551  + typing-inspection==0.4.4
+#14 6.551  + uvicorn==0.54.0
+#14 DONE 6.6s
+
+#15 [runtime 4/4] COPY --from=builder /opt/venv /opt/venv
+#15 DONE 5.8s
+
+#16 exporting to docker image format
+#16 exporting layers
+#16 exporting layers 2.2s done
+#16 exporting manifest sha256:4f685632c206b9eeaa7895375614fb91fd324f6d7fd7f5ecb8738fc4e7d0bc37 done
+#16 exporting config sha256:26a06f2c8e5d217bf00579b94d7b6811a4e420930da7aeeafb03da46ef7c549d done
+#16 sending tarball
+#16 sending tarball 0.2s done
+#16 DONE 2.4s
+[Pipeline] archiveArtifacts
+Archiving artifacts
+Recording fingerprints
+[Pipeline] }
+[Pipeline] // timeout
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Declarative: Post Actions)
+[Pipeline] archiveArtifacts
+Archiving artifacts
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] }
+[Pipeline] // timeout
+[Pipeline] }
+[Pipeline] // node
+[Pipeline] End of Pipeline
+Finished: SUCCESS

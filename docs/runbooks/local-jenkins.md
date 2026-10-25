@@ -7,12 +7,18 @@ Step 4.1 created a local Jenkins controller and one Python agent. Its retained
 there still proves **checkout only**, not application CI or deployment.
 Step 4.2 adds the separate `finsecure-ci` job, verified in both pre-merge review runs
 and normal SCM-loaded build #1 (230 tests). See the
-[application CI runbook](application-ci.md) for reports and operation. No job publishes images or deploys to Kubernetes yet.
+[application CI runbook](application-ci.md) for reports and operation. Step 4.3's local
+builder/image-export candidate is now verified, pending review and merge; see the
+[builder runbook](local-image-builder.md). No job publishes images or deploys to Kubernetes.
 
 - Controller: Jenkins **2.580.1 LTS**, Java 21, **zero executors**.
-- Agent: one executor labelled `python`, Python **3.14.7**, uv **0.9.21**, Git, Java 21.
+- Agent: one executor labelled `python`, Python **3.14.7**, uv **0.9.21**, Git, Java 21,
+  and the BuildKit **0.34.1** client.
 - Both run as UID 1000, drop all Linux capabilities, prohibit privilege escalation,
   and are limited to one CPU and 1 GiB memory each. These are local demo limits.
+- A third, separately configured rootless builder has one CPU/1 GiB and builder-only
+  security exceptions. It shares only its named socket volume with the agent; it does
+  not receive Jenkins credentials/workspace. See the builder runbook before starting it.
 - The only published port is **127.0.0.1:8080**. Agent transport is WebSocket over the
   private Compose network; inbound TCP agent port 50000 is disabled.
 - No host directories or Docker socket are mounted into either service. No registry,
@@ -31,7 +37,7 @@ No Jenkins image was published to a registry. Only Linux ARM64 execution was ver
 
 ## Start and sign in
 
-Prerequisites: Docker with Compose, Git, uv, and local Python 3.14. Allow roughly 2 GiB
+Prerequisites: Docker with Compose, Git, uv, and local Python 3.14. Allow roughly 3 GiB
 for the service memory limits plus Docker/host overhead; verification used a Docker VM
 with approximately 4 GiB. Internet access is needed for initial image/plugin/package
 builds and public Git checkout. All commands below run from the repository root.
@@ -70,7 +76,8 @@ if private credential material is missing or inconsistent, recover it deliberate
 than deleting volumes or creating replacement accounts blindly. JCasC controls this admin
 account, so do not treat a UI password change as a durable rotation procedure.
 
-Startup polling allows 180 seconds for the controller and 120 for the agent, followed
+Startup polling allows 180 seconds for the controller, 90 seconds for builder health
+(with a 120-second outer Docker call), and 120 seconds for the agent, followed
 by up to 60 seconds per configured job to verify registration. Job DSL runs from the
 trusted post-initialization hook rather than early JCasC adaptation. Individual
 HTTP/Docker calls are also bounded. An exited container fails startup promptly. Failure
@@ -170,9 +177,11 @@ reconciles every manually upgraded plugin in Jenkins home. Avoid UI plugin upgra
 
 ## What remains pending
 
-Step 4.2 is reviewed, merged, and verified through its normal SCM-loaded job. Container
-build/push requires a separately agreed isolated builder; the current agent has neither
-Docker CLI nor daemon access. Do not attach the host Docker socket as a shortcut.
+Step 4.2 is reviewed, merged, and verified through its normal SCM-loaded job. Step 4.3's
+approved local builder/export portion is implemented and candidate-tested, pending review.
+The agent has BuildKit access, but neither Docker CLI nor host Docker daemon access.
+Registry credentials, publication, and deployment remain unimplemented. Never attach the
+host Docker socket as a shortcut.
 Security gates, real source-change/failure demonstrations, notifications, and all managed
 Kubernetes/cloud delivery and observability evidence remain pending under the budget-aware plan.
 

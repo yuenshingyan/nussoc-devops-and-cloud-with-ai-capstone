@@ -8,7 +8,7 @@
 - Explain and verify each step, then pause for review before merging and continuing.
 - Do not claim external deployment, notifications, security scans, or recovery succeeded without real execution evidence.
 
-Tasks 1–2 and Steps 3.1–3.2 are reviewed, merged into `main`, and published. The Deployment still pins verified release 0.2.0. Step 4.1 is reviewed, merged, and published. Step 4.2 is reviewed, merged, and published as `8deecec`. The normal `finsecure-ci` Pipeline-from-SCM build #1 succeeded at that revision with 230 tests, accessible JUnit/coverage reports, and verified package downloads. See the [post-merge evidence](evidence/task-04/step-02-scm-verification.md). No cluster has been contacted; server-side validation and actual probe/rollout behavior remain pending. See the [evidence index](evidence/README.md), [runtime policy](docs/runbooks/runtime-safeguards.md), and [Jenkins runbook](docs/runbooks/local-jenkins.md).
+Tasks 1–2 and Steps 3.1–3.2 are reviewed, merged into `main`, and published. The Deployment still pins verified release 0.2.0. Step 4.1 is reviewed, merged, and published. Step 4.2 is reviewed, merged, and published as `8deecec`. The normal `finsecure-ci` Pipeline-from-SCM build #1 succeeded at that revision with 230 tests, accessible JUnit/coverage reports, and verified package downloads. See the [post-merge evidence](evidence/task-04/step-02-scm-verification.md). Step 4.3's approved local builder/export subset is candidate-verified and awaiting review; publishing/deployment remain deferred. No cluster has been contacted; server-side validation and actual probe/rollout behavior remain pending. See the [evidence index](evidence/README.md), [runtime policy](docs/runbooks/runtime-safeguards.md), and [Jenkins runbook](docs/runbooks/local-jenkins.md).
 
 ## Approved budget-aware sequence
 
@@ -168,7 +168,8 @@ The assignment allows equivalent application, build, and unit-testing tools with
 
 ### Step 4.3 — Automate container delivery
 - **Branch:** `task-04/step-03-container-delivery`
-- Add container build, versioned push, and Kubernetes deployment stages.
+- **Approved local subset:** separate rootless BuildKit with builder-only security exceptions, local ARM64 build/export, and operator-side artifact smoke verification. Candidate checks now pass; review/merge and the normal SCM follow-up remain pending. No registry credentials, publishing, or cloud work is authorized by this subset. See the [builder runbook](docs/runbooks/local-image-builder.md) and [evidence](evidence/task-04/step-03-local-image-builder.md).
+- Full step still requires container build, versioned push, and Kubernetes deployment stages.
 - Deploy the exact built image, wait for rollout completion, and perform a smoke test.
 - Serialize deployments to the shared demo environment to prevent overlapping releases.
 - This is an intermediate pipeline; Task 5 adds the final security gates before release.
@@ -291,10 +292,10 @@ The assignment allows equivalent application, build, and unit-testing tools with
 - **Task 1:** Complete; Python 3.14 and transaction contract confirmed. Public source access verified, and GitHub defaults to `main` following approval.
 - **Task 2:** Public Docker Hub repository `yuenshingyan/finsecure-pay` confirmed. Version 0.1.0 published for ARM64/AMD64 and verified after registry pulls; AMD64 was tested under emulation. Cluster node architecture remains a cloud-deployment decision.
 - **Task 3:** Steps 3.1–3.2 reviewed and merged. Initial preference was AWS/Singapore (`ap-southeast-1`); cost/free-tier questions remain unresolved and no switch is approved. Confirm provider, account/credits, budget, access/exposure, evaluator retention, and teardown before provisioning or cluster access.
-- **Task 4:** Local Docker Jenkins/agent and checkout polling are reviewed and merged. Step 4.2 is merged and its normal SCM-loaded pipeline is verified, including 230 passing tests and downloaded artifacts. A safe isolated image builder and scoped registry/cloud credentials remain later delivery decisions; the agent has no Docker daemon access.
+- **Task 4:** Local Docker Jenkins/agent and checkout polling are reviewed and merged. Step 4.2 is merged and its normal SCM-loaded pipeline is verified, including 230 passing tests and downloaded artifacts. The approved local portion of Step 4.3 now has candidate-verified rootless image builds/exports and local smoke checks, pending review. The agent can use the separate BuildKit socket but has no host Docker daemon access. Registry/cloud credentials and publishing/deployment remain deferred decisions.
 - **Task 6:** SMTP/notification receiver and cloud logging configuration.
 - **Task 7:** PowerPoint or PDF preference and evaluator access arrangements.
 
 ## Immediate next action
 
-Step 4.2 and its post-merge SCM verification are complete. Before implementing the local portion of Step 4.3, agree the isolated image builder and registry-credential/publication scope; do not mount the host Docker socket as a shortcut. Cloud Steps 3.3–3.4 and dependent delivery/recovery remain deferred. No next-step implementation, image publication, or cloud provisioning has started.
+Review the local portion of **Step 4.3** on `task-04/step-03-container-delivery`: builder isolation/exceptions, Jenkins image export, downloaded checksum/configuration checks, real local API smoke test, failure blocking, and cancellation/restart behavior. After approval, merge/publish the source and verify the normal SCM-loaded job. Step 4.3 as a whole remains incomplete: registry credentials, image publication, and cloud provisioning/deployment are not authorized or implemented by this subset.

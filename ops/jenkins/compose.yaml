@@ -21,7 +21,10 @@ services:
     build:
       context: .
       dockerfile: agent.Dockerfile
-    image: finsecure-jenkins-agent:step-04-01
+    image: finsecure-jenkins-agent:step-04-03
+    depends_on:
+      builder:
+        condition: service_healthy
     init: true
     command:
       - -url
@@ -37,12 +40,48 @@ services:
     volumes:
       - agent-workspace:/home/jenkins/agent
       - agent-secrets:/run/secrets:ro
+      - builder-socket:/run/buildkit:ro
     cap_drop: [ALL]
     security_opt: [no-new-privileges:true]
     cpus: 1.0
     mem_limit: 1g
     stop_grace_period: 30s
+  builder:
+    build:
+      context: .
+      dockerfile: builder.Dockerfile
+    image: finsecure-jenkins-builder:step-04-03
+    # Only this non-root builder permits nested user-namespace setup. The setuid
+    # mapping helpers need SETUID/SETGID and cannot use no-new-privileges.
+    cap_drop: [ALL]
+    cap_add: [SETUID, SETGID]
+    security_opt:
+      - seccomp=unconfined
+      - apparmor=unconfined
+      - systempaths=unconfined
+    command:
+      - --addr=unix:///run/user/1000/buildkit/buildkitd.sock
+      - --oci-worker-snapshotter=native
+      - --oci-max-parallelism=1
+      - --oci-worker-gc=false
+    volumes:
+      - builder-socket:/run/user/1000/buildkit
+      - builder-state:/home/user/.local/share/buildkit
+    networks: [builder-egress]
+    cpus: 1.0
+    mem_limit: 1g
+    stop_grace_period: 30s
+    healthcheck:
+      test: [CMD, buildctl, --timeout=5, debug, workers]
+      interval: 2s
+      timeout: 6s
+      retries: 30
+      start_period: 5s
+networks:
+  builder-egress:
 volumes:
+  builder-socket:
+  builder-state:
   controller-home:
   agent-workspace:
   controller-secrets:

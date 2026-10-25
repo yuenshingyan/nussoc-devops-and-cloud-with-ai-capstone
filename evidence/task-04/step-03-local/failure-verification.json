@@ -1,0 +1,60 @@
+{
+  "verified_at_utc": "2026-10-25T02:00:41.346568+00:00",
+  "job": "finsecure-ci-review-failure-20261025020023",
+  "build": 1,
+  "result": "FAILURE",
+  "source_revision": "d492a7902ad58891859911e8416befb50bd2cb64",
+  "candidate_jenkinsfile_sha256": "ed0aa69e66d031096b08bd092a6368214e469100d8e5280333af0eebcd4a0576",
+  "executed_script_sha256": "b9aeba0552bd08251fd321fbaa1c5fa369c6b8aeb1626ac4d8c66d8d483c1ad1",
+  "review_mode": "failure",
+  "pipeline_from_scm_verified": false,
+  "test_count": 230,
+  "coverage_ui": {
+    "branch": "100.00%",
+    "class": "66.67%",
+    "cyclomatic-complexity": "0",
+    "file": "66.67%",
+    "line": "100.00%",
+    "loc": "125",
+    "module": "100.00%",
+    "package": "80.00%"
+  },
+  "test_failures": 0,
+  "coverage_xml": {
+    "lines-covered": "125",
+    "lines-valid": "125",
+    "branches-covered": "28",
+    "branches-valid": "28"
+  },
+  "artifacts": {
+    "reports/build-metadata.txt": {
+      "bytes": 174,
+      "sha256": "f5144713b94070ec5a223d71ff3dfa191775ae1755a353019bfb8b5061c422ab"
+    },
+    "reports/coverage.xml": {
+      "bytes": 8695,
+      "sha256": "8a50b42870723ba3e9e03052b6297f8015544003b847a86fa658d89dcd22f944"
+    },
+    "reports/dependencies.txt": {
+      "bytes": 1026,
+      "sha256": "b51bee8ddf99c13a0fc44bdca9a1022068b3c5654affb5ebaff7d83579c5d409"
+    },
+    "reports/format.txt": {
+      "bytes": 27,
+      "sha256": "dde06e21cf5db6168f920332c9667435d5fd2ab41bccc4a890a89e4e5610926a"
+    },
+    "reports/junit.xml": {
+      "bytes": 32921,
+      "sha256": "793a829ec5f93011f6d850b0f60e7026f965c26633343ef162d76f07e62f8aa6"
+    },
+    "reports/lint.txt": {
+      "bytes": 19,
+      "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+    },
+    "reports/tests.txt": {
+      "bytes": 3851,
+      "sha256": "913e252872d5f7209002cb916d92d7fe263e5a7e0cd78893630260ef9a4ededd"
+    }
+  },
+  "image_export": null
+}

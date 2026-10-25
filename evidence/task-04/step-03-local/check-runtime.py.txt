@@ -1,0 +1,103 @@
+"""Verify owned builder isolation, cancellation, restart, and existing Jenkins history."""
+
+from datetime import UTC, datetime
+from json import dumps, loads
+from pathlib import Path
+from subprocess import run
+from time import monotonic, sleep
+from xml.etree.ElementTree import fromstring
+
+from bootstrap import COMPOSE, Jenkins, admin_password, command, start
+
+client = Jenkins(admin_password())
+assert not loads(client.request('/queue/api/json'))['items']
+for job in loads(client.request('/api/json'))['jobs']:
+    info = loads(client.request('/job/' + job['name'] + '/api/json'))
+    if info['lastBuild']:
+        assert not loads(client.request('/job/' + job['name'] + '/' + str(info['lastBuild']['number']) + '/api/json'))['building']
+previous_secret = fromstring(client.request('/computer/finsecure-python/jenkins-agent.jnlp')).find('.//argument').text
+previous_password = admin_password()
+history = loads(client.request('/job/finsecure-ci/1/api/json'))
+assert history['result'] == 'SUCCESS'
+runtime = {}
+for service in ['controller', 'agent', 'builder']:
+    identifier = command([*COMPOSE, 'ps', '--quiet', service])
+    info = loads(command(['docker', 'inspect', identifier]))[0]
+    assert info['State']['Running'] and not info['State']['OOMKilled']
+    assert not info['HostConfig']['Privileged']
+    assert info['HostConfig']['CapDrop'] == ['ALL']
+    assert info['HostConfig']['Memory'] == 1073741824
+    assert info['HostConfig']['NanoCpus'] == 1000000000
+    assert all(mount['Type'] == 'volume' for mount in info['Mounts'])
+    assert command(['docker','exec', identifier, 'id', '-u']) == '1000'
+    if service == 'builder':
+        assert sorted(info['HostConfig']['CapAdd']) == ['CAP_SETGID', 'CAP_SETUID']
+        # Engine realizes systempaths=unconfined as empty masks/read-only paths.
+        assert set(info['HostConfig']['SecurityOpt']) == {'seccomp=unconfined', 'apparmor=unconfined'}
+        assert not info['HostConfig']['MaskedPaths'] and not info['HostConfig']['ReadonlyPaths']
+        assert not info['HostConfig']['PortBindings']
+        assert not info['HostConfig']['PidMode']
+        assert set(info['NetworkSettings']['Networks']) == {'finsecure-jenkins_builder-egress'}
+        assert {mount['Name'] for mount in info['Mounts']} == {'finsecure-jenkins_builder-socket', 'finsecure-jenkins_builder-state'}
+        assert command(['docker','exec',identifier,'stat','-c','%u:%g %a','/run/user/1000/buildkit']) == '1000:1000 1700'
+        assert '--oci-worker-no-process-sandbox' not in info['Config']['Cmd']
+    else:
+        assert 'no-new-privileges:true' in info['HostConfig']['SecurityOpt']
+        assert not info['HostConfig']['CapAdd']
+    if service == 'agent':
+        socket = next(mount for mount in info['Mounts'] if mount['Destination'] == '/run/buildkit')
+        assert not socket['RW']
+        assert command(['docker','exec',identifier,'sh','-c','command -v docker || true']) == ''
+        assert command(['docker','exec',identifier,'sh','-c','test ! -e /var/run/docker.sock && echo absent']) == 'absent'
+    runtime[service] = {'image_id': info['Image'], 'uid': 1000, 'memory_limit_bytes': info['HostConfig']['Memory'],
+                        'nano_cpus': info['HostConfig']['NanoCpus'], 'privileged': False,
+                        'cap_drop': info['HostConfig']['CapDrop'], 'cap_add': info['HostConfig']['CapAdd'],
+                        'security_options': info['HostConfig']['SecurityOpt'], 'oom_killed': False,
+                        'mounts': [{'volume': mount['Name'], 'target': mount['Destination'], 'writable': mount['RW']} for mount in info['Mounts']]}
+workers_before = command([*COMPOSE, 'exec', '-T', 'agent', 'buildctl', '--addr=unix:///run/buildkit/buildkitd.sock', 'debug', 'workers', '--verbose'])
+assert 'process-mode:\tsandbox' in workers_before and 'snapshotter:\t\tnative' in workers_before
+probe = '''set -eu
+context=$(mktemp -d)
+trap 'rm -rf -- "$context"' EXIT
+export DOCKER_CONFIG="$context/auth"
+mkdir "$DOCKER_CONFIG"
+printf '%s\\n' 'FROM python:3.14.7-slim-bookworm@sha256:82bc3c539b8813ada9d68c63b40158fa002f7f33de9bf3312a3dfdc0620dff56' 'RUN python -c "from time import sleep; print(\\"STEP43_CANCEL_PROBE_STARTED\\", flush=True); sleep(120)"' > "$context/Dockerfile"
+set +e
+timeout --signal=TERM --kill-after=15s 10s buildctl --addr=unix:///run/buildkit/buildkitd.sock --timeout=5 build --frontend=dockerfile.v0 --local context="$context" --local dockerfile="$context" --opt platform=linux/arm64 --progress=plain --output type=docker,name=finsecure-pay-ci:cancellation-probe,dest="$context/probe.tar"
+status=$?
+set -e
+printf 'CLIENT_EXIT=%s\\n' "$status"
+test "$status" -eq 124
+'''
+result = run([*COMPOSE,'exec','-T','agent','sh','-s'],input=probe,capture_output=True,text=True,timeout=50)
+probe_log = result.stdout + result.stderr
+Path('reports/step43-cancellation.txt').write_text(probe_log)
+assert result.returncode == 0, 'Cancellation probe did not reach expected timeout; inspect log'
+assert 'STEP43_CANCEL_PROBE_STARTED\n' in probe_log
+assert 'CANCELED' in probe_log or 'context canceled' in probe_log
+# The marker appears only in the controlled probe process, not in these inspection commands.
+deadline = monotonic() + 15
+while monotonic() < deadline:
+    processes = command([*COMPOSE,'exec','-T','builder','ps','-eo','pid,ppid,user,args'])
+    if 'STEP43_CANCEL_PROBE' not in processes:
+        break
+    sleep(1)
+else:
+    raise RuntimeError('Cancelled build left a probe process alive; do not continue')
+command([*COMPOSE, 'restart', 'builder'], timeout=60)
+command([*COMPOSE, 'up', '--detach', '--no-build', '--wait', '--wait-timeout', '90', 'builder'], timeout=120)
+workers_after = command([*COMPOSE, 'exec', '-T', 'agent', 'buildctl', '--addr=unix:///run/buildkit/buildkitd.sock', 'debug', 'workers', '--verbose'])
+assert workers_before.splitlines()[0] == workers_after.splitlines()[0]
+bootstrap = start()
+assert bootstrap['agent_online']
+assert admin_password() == previous_password
+assert fromstring(client.request('/computer/finsecure-python/jenkins-agent.jnlp')).find('.//argument').text == previous_secret
+assert loads(client.request('/job/finsecure-ci/1/api/json'))['result'] == history['result']
+record = {'verified_at_utc': datetime.now(UTC).isoformat(), 'runtime': runtime,
+          'builder_socket_directory': 'uid=1000 gid=1000 mode=01700', 'process_sandbox': True,
+          'snapshotter': 'native', 'probe_client_exit': 124, 'probe_processes_gone': True,
+          'builder_restart_worker_identity_preserved': True, 'agent_reconnected_to_builder_socket': True,
+          'repeat_bootstrap_passed': True, 'credentials_preserved': True,
+          'existing_scm_build_history_preserved': True}
+Path('reports/step43-runtime.json').write_text(dumps(record,indent=2)+'\n')
+print(dumps(record,indent=2))

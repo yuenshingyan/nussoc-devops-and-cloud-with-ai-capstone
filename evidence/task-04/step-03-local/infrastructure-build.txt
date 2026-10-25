@@ -1,0 +1,116 @@
+ Image finsecure-jenkins-builder:step-04-03 Building
+ Image finsecure-jenkins-agent:step-04-03 Building
+#1 [internal] load local bake definitions
+#1 reading from stdin 1.15kB done
+#1 DONE 0.0s
+
+#2 [agent internal] load build definition from agent.Dockerfile
+#2 transferring dockerfile: 1.59kB done
+#2 DONE 0.0s
+
+#3 [builder internal] load build definition from builder.Dockerfile
+#3 transferring dockerfile: 406B done
+#3 DONE 0.0s
+
+#4 [agent internal] load metadata for docker.io/moby/buildkit:v0.34.1-rootless@sha256:f68752a5a94acfcdad2d07867b7075601a421638e17fc5f28efc1c814d0c4f89
+#4 DONE 0.0s
+
+#5 [builder internal] load .dockerignore
+#5 transferring context: 187B done
+#5 DONE 0.0s
+
+#6 [builder 1/2] FROM docker.io/moby/buildkit:v0.34.1-rootless@sha256:f68752a5a94acfcdad2d07867b7075601a421638e17fc5f28efc1c814d0c4f89
+#6 DONE 0.0s
+
+#7 [builder 2/2] RUN mkdir -p /run/user/1000/buildkit && chmod 0700 /run/user/1000/buildkit
+#7 DONE 0.1s
+
+#8 [agent internal] load metadata for ghcr.io/astral-sh/uv:0.9.21@sha256:15f68a476b768083505fe1dbfcc998344d0135f0ca1b8465c4760b323904f05a
+#8 ...
+
+#9 [builder] exporting to image
+#9 exporting layers done
+#9 writing image sha256:126890c1d9e4a80cc14a2b9c9257d0e65aacde6b30a80886b4270fb87d3f960f done
+#9 naming to docker.io/library/finsecure-jenkins-builder:step-04-03 done
+#9 DONE 0.0s
+
+#10 [builder] resolving provenance for metadata file
+#10 DONE 0.0s
+
+#11 [agent internal] load metadata for docker.io/jenkins/inbound-agent:jdk21@sha256:64a27e807d216d527a7f5224e6ff9733b5cbd8650db3b5dfd0aea3b94949460f
+#11 ...
+
+#8 [agent internal] load metadata for ghcr.io/astral-sh/uv:0.9.21@sha256:15f68a476b768083505fe1dbfcc998344d0135f0ca1b8465c4760b323904f05a
+#8 DONE 1.3s
+
+#12 [agent internal] load metadata for docker.io/library/python:3.14.7-slim-bookworm@sha256:82bc3c539b8813ada9d68c63b40158fa002f7f33de9bf3312a3dfdc0620dff56
+#12 ...
+
+#13 [auth] library/python:pull token for registry-1.docker.io
+#13 DONE 0.0s
+
+#14 [auth] jenkins/inbound-agent:pull token for registry-1.docker.io
+#14 DONE 0.0s
+
+#12 [agent internal] load metadata for docker.io/library/python:3.14.7-slim-bookworm@sha256:82bc3c539b8813ada9d68c63b40158fa002f7f33de9bf3312a3dfdc0620dff56
+#12 DONE 2.6s
+
+#11 [agent internal] load metadata for docker.io/jenkins/inbound-agent:jdk21@sha256:64a27e807d216d527a7f5224e6ff9733b5cbd8650db3b5dfd0aea3b94949460f
+#11 DONE 2.6s
+
+#5 [agent internal] load .dockerignore
+#5 CACHED
+
+#15 [agent stage-3 1/9] FROM docker.io/library/python:3.14.7-slim-bookworm@sha256:82bc3c539b8813ada9d68c63b40158fa002f7f33de9bf3312a3dfdc0620dff56
+#15 DONE 0.0s
+
+#16 [agent uv 1/1] FROM ghcr.io/astral-sh/uv:0.9.21@sha256:15f68a476b768083505fe1dbfcc998344d0135f0ca1b8465c4760b323904f05a
+#16 DONE 0.0s
+
+#17 [agent remoting 1/1] FROM docker.io/jenkins/inbound-agent:jdk21@sha256:64a27e807d216d527a7f5224e6ff9733b5cbd8650db3b5dfd0aea3b94949460f
+#17 DONE 0.0s
+
+#18 [agent stage-3 3/9] COPY --from=remoting /opt/java/openjdk /opt/java/openjdk
+#18 CACHED
+
+#19 [agent stage-3 5/9] COPY --from=remoting /usr/local/bin/jenkins-agent /usr/local/bin/jenkins-agent
+#19 CACHED
+
+#20 [agent stage-3 2/9] RUN apt-get update     && apt-get install --yes --no-install-recommends git libstdc++6     && rm -rf /var/lib/apt/lists/*     && groupadd --gid 1000 jenkins     && useradd --uid 1000 --gid 1000 --create-home --shell /bin/bash jenkins     && mkdir -p /home/jenkins/agent     && chown jenkins:jenkins /home/jenkins/agent
+#20 CACHED
+
+#21 [agent stage-3 4/9] COPY --from=remoting /usr/share/jenkins/agent.jar /usr/share/jenkins/agent.jar
+#21 CACHED
+
+#6 [agent buildkit 1/1] FROM docker.io/moby/buildkit:v0.34.1-rootless@sha256:f68752a5a94acfcdad2d07867b7075601a421638e17fc5f28efc1c814d0c4f89
+#6 CACHED
+
+#22 [agent stage-3 6/9] COPY --from=uv /uv /uvx /usr/local/bin/
+#22 CACHED
+
+#23 [agent stage-3 7/9] COPY --from=buildkit /usr/bin/buildctl /usr/local/bin/buildctl
+#23 DONE 0.1s
+
+#24 [agent stage-3 8/9] RUN python --version && uv --version && git --version && java -version && buildctl --version
+#24 0.102 Python 3.14.7
+#24 0.121 uv 0.9.21
+#24 0.131 git version 2.39.5
+#24 0.241 openjdk version "21.0.12.1" 2026-08-18 LTS
+#24 0.241 OpenJDK Runtime Environment Temurin-21.0.12.1+1 (build 21.0.12.1+1-LTS)
+#24 0.241 OpenJDK 64-Bit Server VM Temurin-21.0.12.1+1 (build 21.0.12.1+1-LTS, mixed mode)
+#24 0.250 buildctl github.com/moby/buildkit v0.34.1 f5b59a1f2fb25a0cb7072c398cab9aed7835da4e
+#24 DONE 0.3s
+
+#25 [agent stage-3 9/9] WORKDIR /home/jenkins/agent
+#25 DONE 0.0s
+
+#26 [agent] exporting to image
+#26 exporting layers 0.1s done
+#26 writing image sha256:6f9da801bbef40599ed1b14316f7d4835c22b9270a98199639eee88a0de62be2 done
+#26 naming to docker.io/library/finsecure-jenkins-agent:step-04-03 done
+#26 DONE 0.1s
+
+#27 [agent] resolving provenance for metadata file
+#27 DONE 0.0s
+ Image finsecure-jenkins-builder:step-04-03 Built
+ Image finsecure-jenkins-agent:step-04-03 Built

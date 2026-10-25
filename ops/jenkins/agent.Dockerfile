@@ -1,3 +1,4 @@
+FROM moby/buildkit:v0.34.1-rootless@sha256:f68752a5a94acfcdad2d07867b7075601a421638e17fc5f28efc1c814d0c4f89 AS buildkit
 FROM jenkins/inbound-agent:jdk21@sha256:64a27e807d216d527a7f5224e6ff9733b5cbd8650db3b5dfd0aea3b94949460f AS remoting
 FROM ghcr.io/astral-sh/uv:0.9.21@sha256:15f68a476b768083505fe1dbfcc998344d0135f0ca1b8465c4760b323904f05a AS uv
 FROM python:3.14.7-slim-bookworm@sha256:82bc3c539b8813ada9d68c63b40158fa002f7f33de9bf3312a3dfdc0620dff56
@@ -14,11 +15,12 @@ COPY --from=remoting /opt/java/openjdk /opt/java/openjdk
 COPY --from=remoting /usr/share/jenkins/agent.jar /usr/share/jenkins/agent.jar
 COPY --from=remoting /usr/local/bin/jenkins-agent /usr/local/bin/jenkins-agent
 COPY --from=uv /uv /uvx /usr/local/bin/
+COPY --from=buildkit /usr/bin/buildctl /usr/local/bin/buildctl
 ENV JAVA_HOME=/opt/java/openjdk \
     PATH=/opt/java/openjdk/bin:/usr/local/bin:/usr/local/sbin:/usr/sbin:/usr/bin:/sbin:/bin \
     UV_PYTHON_DOWNLOADS=never \
     UV_LINK_MODE=copy
-RUN python --version && uv --version && git --version && java -version
+RUN python --version && uv --version && git --version && java -version && buildctl --version
 USER jenkins
 WORKDIR /home/jenkins/agent
 ENTRYPOINT ["/usr/local/bin/jenkins-agent"]

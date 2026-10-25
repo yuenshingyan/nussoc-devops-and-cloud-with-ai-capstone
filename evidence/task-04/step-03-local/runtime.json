@@ -1,0 +1,105 @@
+{
+  "verified_at_utc": "2026-10-25T02:03:28.910392+00:00",
+  "runtime": {
+    "controller": {
+      "image_id": "sha256:ca8fcd71b20493a8bce991d61d25aea603c78be9ca73b999064f01d28cda6e3c",
+      "uid": 1000,
+      "memory_limit_bytes": 1073741824,
+      "nano_cpus": 1000000000,
+      "privileged": false,
+      "cap_drop": [
+        "ALL"
+      ],
+      "cap_add": null,
+      "security_options": [
+        "no-new-privileges:true"
+      ],
+      "oom_killed": false,
+      "mounts": [
+        {
+          "volume": "finsecure-jenkins-controller-secrets",
+          "target": "/run/secrets",
+          "writable": false
+        },
+        {
+          "volume": "finsecure-jenkins_controller-home",
+          "target": "/var/jenkins_home",
+          "writable": true
+        }
+      ]
+    },
+    "agent": {
+      "image_id": "sha256:6f9da801bbef40599ed1b14316f7d4835c22b9270a98199639eee88a0de62be2",
+      "uid": 1000,
+      "memory_limit_bytes": 1073741824,
+      "nano_cpus": 1000000000,
+      "privileged": false,
+      "cap_drop": [
+        "ALL"
+      ],
+      "cap_add": null,
+      "security_options": [
+        "no-new-privileges:true"
+      ],
+      "oom_killed": false,
+      "mounts": [
+        {
+          "volume": "finsecure-jenkins_builder-socket",
+          "target": "/run/buildkit",
+          "writable": false
+        },
+        {
+          "volume": "finsecure-jenkins_agent-workspace",
+          "target": "/home/jenkins/agent",
+          "writable": true
+        },
+        {
+          "volume": "finsecure-jenkins-agent-secrets",
+          "target": "/run/secrets",
+          "writable": false
+        }
+      ]
+    },
+    "builder": {
+      "image_id": "sha256:126890c1d9e4a80cc14a2b9c9257d0e65aacde6b30a80886b4270fb87d3f960f",
+      "uid": 1000,
+      "memory_limit_bytes": 1073741824,
+      "nano_cpus": 1000000000,
+      "privileged": false,
+      "cap_drop": [
+        "ALL"
+      ],
+      "cap_add": [
+        "CAP_SETGID",
+        "CAP_SETUID"
+      ],
+      "security_options": [
+        "seccomp=unconfined",
+        "apparmor=unconfined"
+      ],
+      "oom_killed": false,
+      "mounts": [
+        {
+          "volume": "finsecure-jenkins_builder-state",
+          "target": "/home/user/.local/share/buildkit",
+          "writable": true
+        },
+        {
+          "volume": "finsecure-jenkins_builder-socket",
+          "target": "/run/user/1000/buildkit",
+          "writable": true
+        }
+      ]
+    }
+  },
+  "builder_socket_directory": "uid=1000 gid=1000 mode=01700",
+  "process_sandbox": true,
+  "snapshotter": "native",
+  "probe_client_exit": 124,
+  "probe_processes_gone": true,
+  "builder_restart_worker_identity_preserved": true,
+  "agent_reconnected_to_builder_socket": true,
+  "repeat_bootstrap_passed": true,
+  "credentials_preserved": true,
+  "existing_scm_build_history_preserved": true
+}
