@@ -1,0 +1,40 @@
+"""Scan each candidate with the same fresh-cache preflight policy; never retry or run images."""
+from argparse import ArgumentParser
+from ast import Assign, Name, literal_eval, parse
+from collections import Counter
+from datetime import UTC,datetime
+from hashlib import sha256
+from json import loads,dumps
+from pathlib import Path
+from subprocess import run
+from bootstrap import COMPOSE,Jenkins,admin_password
+
+root=Path('reports/step52-remediation')
+records=loads((root/'builds.json').read_text())
+tree=parse(Path('reports/preflight-step52.py').read_text())
+code=next(literal_eval(node.value) for node in tree.body if isinstance(node,Assign) and any(isinstance(target,Name) and target.id=='code' for target in node.targets))
+client=Jenkins(admin_password())
+assert not loads(client.request('/queue/api/json'))['items']
+assert loads(client.request('/computer/finsecure-python/api/json?tree=idle'))['idle']
+parser=ArgumentParser(description=__doc__)
+parser.add_argument('--candidates',nargs='+',required=True,choices=list(records))
+args=parser.parse_args()
+summaries=loads((root/'scan-summaries.json').read_text()) if (root/'scan-summaries.json').exists() else {}
+for suite in args.candidates:
+ assert suite not in summaries, 'Do not overwrite or retry a recorded candidate scan'
+ record=records[suite]
+ archive=Path(record['archive']); assert sha256(archive.read_bytes()).hexdigest()==record['archive_sha256']
+ with archive.open('rb') as stream:
+  result=run([*COMPOSE,'exec','-T','agent','python','-c',code,record['archive_sha256']],stdin=stream,capture_output=True,check=True,timeout=630)
+ output=loads(result.stdout)
+ output['candidate']=record
+ (root/(suite+'-scan.json')).write_text(dumps(output,indent=2)+'\n')
+ assert output['database_exit_code']==0 and output['scan_exit_code'] in [0,2]
+ report=output['report']; assert report['Metadata']['ImageID']==record['image_id']
+ vulnerabilities=[v for target in report['Results'] for v in target.get('Vulnerabilities',[])]
+ blockers=[v for v in vulnerabilities if v['Severity'] in ['HIGH','CRITICAL']]
+ summary={'verified_at_utc':datetime.now(UTC).isoformat(),'candidate':record,'database_metadata':output['database_metadata'],'database_age_seconds':output['database_age_seconds'],'scan_exit_code':output['scan_exit_code'],'os':report['Metadata']['OS'],'severity_occurrences':dict(Counter(v['Severity'] for v in vulnerabilities)),'blocking_occurrences':len(blockers),'unique_blocking_advisories':len({v['VulnerabilityID'] for v in blockers}),'packages_by_target':[{'type':target['Type'],'packages':len(target.get('Packages',[]))} for target in report['Results']],'remaining_blockers':[{key:v.get(key) for key in ['VulnerabilityID','PkgName','InstalledVersion','FixedVersion','Severity','Status','Title','PrimaryURL']} for v in blockers],'temporary_scan_directory_removed':output['temporary_image_database_cache_removed'],'no_image_execution_or_publication':True}
+ summaries[suite]=summary
+ (root/'scan-summaries.json').write_text(dumps(summaries,indent=2)+'\n')
+ print(suite,summary['severity_occurrences'],'blocking:',len(blockers),'packages:',summary['packages_by_target'],flush=True)
+ for v in blockers: print(v['VulnerabilityID'],v['PkgName'],v['Severity'],'fix:',v.get('FixedVersion','not listed'),flush=True)

@@ -1,0 +1,54 @@
+{
+  "trixie": {
+    "created_at_utc": "2026-10-25T14:59:20.670354+00:00",
+    "tag": "finsecure-pay-review:step52-py3149-trixie-arm64",
+    "image_id": "sha256:837b373708ae0774c53c4ac3a27a4dba09a6d005a1682f865fa974e80a7fe67f",
+    "platform": "linux/arm64",
+    "base_ref": "python:3.14.9-slim-trixie@sha256:35caba83af2fe6da9a5d922f9b0156f21d1246a48278c58a08bd253303ba42e8",
+    "application_tree_revision": "01cc819bcba5165ea9bdaf0c9c403d7255d8b870",
+    "candidate_dockerfile_sha256": "a2f423b07f655153ecc177da7876e6b43a101ef06e21919e9cca145553759fa8",
+    "archive": "reports/step52-remediation/trixie-arm64.tar.gz",
+    "archive_sha256": "60f50defc1d74a26d69512c17e4ed9ab2afde25b50283ebeac07a4cac5e0dbc9",
+    "bytes": 51225630,
+    "published": false
+  },
+  "bookworm": {
+    "created_at_utc": "2026-10-25T14:59:35.483830+00:00",
+    "tag": "finsecure-pay-review:step52-py3149-bookworm-arm64",
+    "image_id": "sha256:e4b2398d53502354c3c414db1748942f8b3602dd2e61f8f11f4ed3828af37dad",
+    "platform": "linux/arm64",
+    "base_ref": "python:3.14.9-slim-bookworm@sha256:945c2676dc2b18e0c1f16879244122c57c0ffede60006bf3df159c507a31bcae",
+    "application_tree_revision": "01cc819bcba5165ea9bdaf0c9c403d7255d8b870",
+    "candidate_dockerfile_sha256": "a2f423b07f655153ecc177da7876e6b43a101ef06e21919e9cca145553759fa8",
+    "archive": "reports/step52-remediation/bookworm-arm64.tar.gz",
+    "archive_sha256": "62a724f763c6db79a11e56644f5f1a9fd6cf803417cd1025874d1a49d6417ba1",
+    "bytes": 51520266,
+    "published": false
+  },
+  "alpine-arm64": {
+    "created_at_utc": "2026-10-25T15:08:41.714410+00:00",
+    "tag": "finsecure-pay-review:step52-py3149-alpine-arm64",
+    "image_id": "sha256:96a1c40ec6c3a3c01c40348545f7d3fbd4ae177613b2f785c93495d075a7f665",
+    "platform": "linux/arm64",
+    "base_ref": "python:3.14.9-alpine3.24@sha256:dbeb11d16bb95c3a7e3c25c842cb9f20cbc8c18f8be0461a4a0dcc861ad386a0",
+    "application_tree_revision": "01cc819bcba5165ea9bdaf0c9c403d7255d8b870",
+    "candidate_dockerfile_sha256": "95d0ca8314d78e53ef2b6c782464ab2cfa1b3c2a775f2c974addbe21dc92933b",
+    "archive": "reports/step52-remediation/alpine-arm64.tar.gz",
+    "archive_sha256": "50cc0857891144dd469bb73190976cf482bca7abbf94996674bba57fccc3aed4",
+    "bytes": 23408123,
+    "published": false
+  },
+  "alpine-amd64": {
+    "created_at_utc": "2026-10-25T15:08:51.753794+00:00",
+    "tag": "finsecure-pay-review:step52-py3149-alpine-amd64",
+    "image_id": "sha256:cd78126acaf49aa775bd01bdbcaafa56acb2cb6bd6c4d90264ca3a40dffdc5dd",
+    "platform": "linux/amd64",
+    "base_ref": "python:3.14.9-alpine3.24@sha256:dbeb11d16bb95c3a7e3c25c842cb9f20cbc8c18f8be0461a4a0dcc861ad386a0",
+    "application_tree_revision": "01cc819bcba5165ea9bdaf0c9c403d7255d8b870",
+    "candidate_dockerfile_sha256": "95d0ca8314d78e53ef2b6c782464ab2cfa1b3c2a775f2c974addbe21dc92933b",
+    "archive": "reports/step52-remediation/alpine-amd64.tar.gz",
+    "archive_sha256": "411241d14d87bbce7ed7c63fb747f5d41c8a8c18e2828ae45b85945fb18bf8c9",
+    "bytes": 23440164,
+    "published": false
+  }
+}

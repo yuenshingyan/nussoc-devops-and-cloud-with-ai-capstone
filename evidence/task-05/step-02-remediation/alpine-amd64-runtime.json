@@ -1,0 +1,9 @@
+{
+  "python": "3.14.9 (main, Oct 21 2026, 23:00:15) [GCC 15.2.0]",
+  "alpine_release": "3.24.3",
+  "musl_loaders": [
+    "ld-musl-x86_64.so.1"
+  ],
+  "pydantic_native_module": "/opt/venv/lib/python3.14/site-packages/pydantic_core/_pydantic_core.cpython-314-x86_64-linux-musl.so",
+  "pip_and_ensurepip_absent": true
+}

@@ -1,0 +1,30 @@
+{
+  "verified_at_utc": "2026-10-25T15:44:24.049375+00:00",
+  "host_tests": 316,
+  "alpine_tests_each_architecture": 316,
+  "ruff_format_build_compose": "passed",
+  "source_scan": {
+    "status": "passed",
+    "exit_code": 1,
+    "LOW": 17,
+    "MEDIUM": 0,
+    "HIGH": 0,
+    "blocking_findings": 0
+  },
+  "runtime_audit": {
+    "status": "passed",
+    "exit_code": 0,
+    "dependencies_audited": 14,
+    "blocking_findings": 0
+  },
+  "root_dockerfile_pipeline_dependencies_unchanged": true,
+  "main_build_unchanged": 7,
+  "agent_online_idle_queue_empty": true,
+  "demo_and_step51_review_jobs_disabled": true,
+  "candidate_and_test_containers_absent": true,
+  "candidate_archives_and_effective_dockerfiles_hash_verified": true,
+  "alpine_packages_match_14_runtime_pins_plus_project": true,
+  "known_live_credential_scan_files": 386,
+  "image_gate_implemented": false,
+  "alpine_adoption_pending": true
+}

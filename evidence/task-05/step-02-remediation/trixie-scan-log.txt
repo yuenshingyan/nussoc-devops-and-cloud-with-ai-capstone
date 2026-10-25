@@ -1,0 +1,10 @@
+2026-10-25T15:00:54Z	INFO	Loaded	file_path="/tmp/finsecure-step52-preflight-jzo5l5yo/trivy.yaml"
+2026-10-25T15:00:54Z	INFO	[vuln] Vulnerability scanning is enabled
+2026-10-25T15:00:58Z	WARN	Third-party SBOM may lead to inaccurate vulnerability detection
+2026-10-25T15:00:58Z	WARN	Recommend using Trivy to generate SBOMs
+2026-10-25T15:00:58Z	INFO	[python] Licenses acquired from one or more METADATA files may be subject to additional terms. Use `--debug` flag to see all affected packages.
+2026-10-25T15:00:58Z	INFO	Detected OS	family="debian" version="13.7"
+2026-10-25T15:00:58Z	INFO	[debian] Detecting vulnerabilities...	os_version="13" pkg_num=87
+2026-10-25T15:00:58Z	INFO	Number of language-specific files	num=1
+2026-10-25T15:00:58Z	INFO	[python-pkg] Detecting vulnerabilities...
+2026-10-25T15:00:58Z	WARN	Using severities from other vendors for some vulnerabilities. Read https://trivy.dev/docs/v0.76/guide/scanner/vulnerability#severity-selection for details.

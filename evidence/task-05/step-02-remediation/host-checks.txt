@@ -1,0 +1,75 @@
+$ uv run --locked ruff check .
+All checks passed!
+
+$ uv run --locked ruff format --check .
+77 files already formatted
+
+$ ./scripts/test.sh
+============================= test session starts ==============================
+platform darwin -- Python 3.14.7, pytest-9.1.1, pluggy-1.7.0
+rootdir: <repository>
+configfile: pyproject.toml
+testpaths: tests
+plugins: cov-7.1.0, anyio-4.15.1, platformdirs-4.13.5
+collected 316 items
+
+tests/integration/test_application.py ..                                 [  0%]
+tests/integration/test_configuration_api.py ........                     [  3%]
+tests/integration/test_health_api.py ...                                 [  4%]
+tests/integration/test_validation_api.py ............................... [ 13%]
+...                                                                      [ 14%]
+tests/integration/test_validation_boundaries.py ........................ [ 22%]
+..................................                                       [ 33%]
+tests/unit/test_config.py ...................................            [ 44%]
+tests/unit/test_image_archive.py .............                           [ 48%]
+tests/unit/test_jenkins_bootstrap.py .............                       [ 52%]
+tests/unit/test_jenkins_ci_verification.py ................              [ 57%]
+tests/unit/test_jenkins_trigger_verification.py ..................       [ 63%]
+tests/unit/test_security_scan.py ....................................... [ 75%]
+.......                                                                  [ 77%]
+tests/unit/test_transaction_schema.py .................................. [ 88%]
+............                                                             [ 92%]
+tests/unit/test_validation.py ........................                   [100%]
+
+=============================== warnings summary ===============================
+.venv/lib/python3.14/site-packages/fastapi/testclient.py:1
+  <repository>/.venv/lib/python3.14/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+- generated xml file: <repository>/reports/junit.xml -
+================================ tests coverage ================================
+_______________ coverage: platform darwin, python 3.14.7-final-0 _______________
+
+Name                                          Stmts   Miss Branch BrPart  Cover   Missing
+-----------------------------------------------------------------------------------------
+src/finsecure_pay/__init__.py                     0      0      0      0   100%
+src/finsecure_pay/api/__init__.py                 0      0      0      0   100%
+src/finsecure_pay/api/dependencies.py             4      0      0      0   100%
+src/finsecure_pay/api/errors.py                  15      0      4      0   100%
+src/finsecure_pay/api/health.py                   6      0      0      0   100%
+src/finsecure_pay/api/validation.py              11      0      0      0   100%
+src/finsecure_pay/config.py                      44      0     14      0   100%
+src/finsecure_pay/main.py                        14      0      0      0   100%
+src/finsecure_pay/observability/__init__.py       0      0      0      0   100%
+src/finsecure_pay/schemas/__init__.py             0      0      0      0   100%
+src/finsecure_pay/schemas/errors.py               3      0      0      0   100%
+src/finsecure_pay/schemas/health.py               3      0      0      0   100%
+src/finsecure_pay/schemas/transaction.py          7      0      0      0   100%
+src/finsecure_pay/services/__init__.py            0      0      0      0   100%
+src/finsecure_pay/services/validation.py         18      0     10      0   100%
+-----------------------------------------------------------------------------------------
+TOTAL                                           125      0     28      0   100%
+Coverage XML written to file reports/coverage.xml
+======================== 316 passed, 1 warning in 0.80s ========================
+
+$ uv run --locked python scripts/security_scan.py
+Security gate: passed; see reports/security-summary.json
+
+$ uv build
+Building source distribution...
+Building wheel from source distribution...
+Successfully built dist/finsecure_pay-0.2.0.tar.gz
+Successfully built dist/finsecure_pay-0.2.0-py3-none-any.whl
+
+$ docker compose -f ops/jenkins/compose.yaml config --quiet

@@ -1,0 +1,26 @@
+"""Build unpublished native candidates from a reviewed application tree plus explicit Dockerfile."""
+from pathlib import Path
+from json import loads,dumps
+from subprocess import run
+from hashlib import sha256
+from datetime import UTC,datetime
+
+root=Path('reports/step52-remediation')
+info=loads((root/'candidates.json').read_text())
+revision=run(['git','rev-parse','HEAD'],capture_output=True,text=True,check=True).stdout.strip()
+records={}
+for suite in ['trixie','bookworm']:
+ tag=f'finsecure-pay-review:step52-py3149-{suite}-arm64'
+ existing=run(['docker','image','inspect',tag],capture_output=True,timeout=15)
+ assert existing.returncode!=0,'Refuse to overwrite an existing review tag'
+ with (root/(suite+'-build.txt')).open('w') as log:
+  run(['docker','build','--platform=linux/arm64','--progress=plain','--file',str(root/'Dockerfile.runtime-candidate'),'--build-arg','PYTHON_IMAGE='+info['python_bases'][suite],'--label','org.opencontainers.image.revision='+revision,'--label','org.finsecure.review.dockerfile-sha256='+info['candidate_dockerfile_sha256'],'--tag',tag,'.'],stdout=log,stderr=-2,check=True,timeout=600)
+ image=loads(run(['docker','image','inspect',tag],capture_output=True,text=True,check=True,timeout=30).stdout)[0]
+ assert image['Architecture']=='arm64' and image['Os']=='linux' and image['Config']['User']=='10001:10001'
+ archive=root/(suite+'-arm64.tar')
+ run(['docker','image','save','--output',str(archive),image['Id']],check=True,capture_output=True,timeout=120)
+ run(['gzip','-n','-1',str(archive)],check=True,capture_output=True,timeout=120)
+ archive=archive.with_suffix('.tar.gz')
+ records[suite]={'created_at_utc':datetime.now(UTC).isoformat(),'tag':tag,'image_id':image['Id'],'platform':'linux/arm64','base_ref':info['python_bases'][suite],'application_tree_revision':revision,'candidate_dockerfile_sha256':info['candidate_dockerfile_sha256'],'archive':str(archive),'archive_sha256':sha256(archive.read_bytes()).hexdigest(),'bytes':archive.stat().st_size,'published':False}
+ (root/'builds.json').write_text(dumps(records,indent=2)+'\n')
+ print(suite,image['Id'],'built/exported locally',flush=True)

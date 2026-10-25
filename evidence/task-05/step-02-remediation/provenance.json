@@ -1,0 +1,16 @@
+{
+  "raw_scan_reports": {
+    "trixie": "f9e2c45e28e0752b223997aac093aa7878a062bb8a20ed5b0673245cf34263d4",
+    "bookworm": "24c29ed5d14765ab66b79f621ab648fcee5f8b93068794ccd5a5351ce1eb8a3f",
+    "alpine-arm64": "3d055f303de3f343bffd062f7b14047c29f9952f473d5d19dbdf395d2d53dc25",
+    "alpine-amd64": "e3ce8207784b7bdeb016257f60d3e20e4514fd80032928438068a7e9694d01b7"
+  },
+  "runtime_dockerfile_sha256": "93bbbb40b7e5cf2cb90366a53224526dae3d4bff1c6c8b7bba8b5cf0d5a47639",
+  "jenkinsfile_sha256": "06e324d4fd3e2b300ff7173b2bc8a939db74eb8998f051198f2c53d125c0b96b",
+  "lock_sha256": "c5856200e528008160c463b0bc18284902c6bc5608aecb1f1a6e05e9a3b571c0",
+  "operator_source_baseline": "01cc819bcba5165ea9bdaf0c9c403d7255d8b870",
+  "no_root_dockerfile_or_pipeline_changes": true,
+  "published": false,
+  "original_vendor_sbom_sha256": "797e200aa7fff16fad9fb2deeaece50a2b2bec623eb6c3759176eee6cee19328",
+  "original_vendor_readme_sha256": "b7b2229e36a2bb0521f35d9799502940725bf294f0df753c03d511ab2e86945e"
+}

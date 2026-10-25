@@ -1,9 +1,11 @@
-# Image security — Step 5.2 preflight checkpoint
+# Image security — Step 5.2 checkpoints
 
 **Partial implementation, not a completed Jenkins image gate.** The user approved the
 policy below and tool installation. Verified Trivy is installed on the local ARM64 agent;
-the current image's real operator-side preflight produced blocking findings. Application
-base changes and exceptions have not been made. Jenkinsfile is still unchanged from
+the current image's real operator-side preflight produced blocking findings. Approved
+candidate testing subsequently found an Alpine option with no known findings and passing
+compatibility checks on both architectures. Adoption of that musl-based option is awaiting
+review; the application Dockerfile and policy remain unchanged. Jenkinsfile is still at
 Step 5.1: its 15-minute global limit and image-archiving behavior have not yet been replaced.
 
 ## Approved policy to implement
@@ -91,15 +93,31 @@ in Step 5.1. Trivy explicitly warned that third-party SBOM data may be inaccurat
 some severities came from other vendors. Retain those caveats and investigate package
 presence/reachability and vendor status; do not silently remove SBOMs to hide findings.
 
-## Next decision
+## Approved remediation study and next decision
 
-Do not change the application Dockerfile or weaken the policy based only on a scanner count.
-First agree candidate remediation scope: updated digest-pinned Python 3.14 base images,
-possibly a newer Debian variant, and removal of genuinely unnecessary runtime packaging
-tools. Preserve the API contract and reverify runtime behavior/platforms when changed.
-A newer base is not guaranteed to clear every finding, especially those without fixes.
+The user approved testing updated digest-pinned Python 3.14 bases and removal of genuinely
+unnecessary runtime packaging tools. The operator tested Python 3.14.9 candidates with the
+entire pip installation and ensurepip module/bundled wheels removed, not just their SBOMs.
+The dependency lock and API contract were unchanged; OS package inventories were retained.
 
-Evidence: [tool verification and initial findings](../../evidence/task-05/step-02-preflight.md).
-Pipeline integration, automated error/report validation, passing-image demonstration and
-normal SCM verification remain pending. Current public release images were not individually
-rescanned, replaced or published by this preflight.
+- Debian 12.15: 61 HIGH / 2 CRITICAL occurrences remain.
+- Debian 13.7: 44 HIGH / 0 CRITICAL remain.
+- Alpine 3.24.3: no known findings at any severity on ARM64 or AMD64, with 30 OS packages
+  and 15 Python package records identified on each. Fresh DB/cache used for every scan.
+- Each Alpine architecture passed **316 tests**, using the candidate's installed
+  application/runtime packages with separate locked development tools and no test network.
+  HTTP smoke/security/shutdown and 0.5 CPU / 256 MiB local safeguard checks also passed.
+  AMD64 execution was emulated; no Kubernetes or rootless Jenkins build is implied.
+
+**Proposed adoption:** Python 3.14.9/Alpine 3.24 at index
+`sha256:dbeb11d16bb95c3a7e3c25c842cb9f20cbc8c18f8be0461a4a0dcc861ad386a0`,
+plus the tested whole-tool removal and equivalent non-root account setup. This changes
+**glibc to musl**, so approval is requested before changing the root Dockerfile. Future
+native dependencies must retain musllinux wheel/runtime compatibility. Zero reported
+findings are time-bound scanner results, not a guarantee of no vulnerabilities.
+
+Evidence: [tool verification and initial findings](../../evidence/task-05/step-02-preflight.md)
+and [candidate comparison/compatibility](../../evidence/task-05/step-02-remediation.md).
+Pipeline integration, automated error/report validation, Jenkins passing/blocked image
+archival demonstrations and normal SCM verification remain pending. Public release images
+were not individually rescanned, replaced or published by these experiments.

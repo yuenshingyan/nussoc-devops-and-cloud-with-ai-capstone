@@ -1,0 +1,118 @@
+#0 building with "desktop-linux" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile.alpine-candidate
+#1 transferring dockerfile: 1.84kB 0.0s done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for ghcr.io/astral-sh/uv:0.9.21@sha256:15f68a476b768083505fe1dbfcc998344d0135f0ca1b8465c4760b323904f05a
+#2 DONE 0.0s
+
+#3 [auth] library/python:pull token for registry-1.docker.io
+#3 DONE 0.0s
+
+#4 [internal] load metadata for docker.io/library/python:3.14.9-alpine3.24@sha256:dbeb11d16bb95c3a7e3c25c842cb9f20cbc8c18f8be0461a4a0dcc861ad386a0
+#4 DONE 2.4s
+
+#5 [internal] load .dockerignore
+#5 transferring context: 391B done
+#5 DONE 0.0s
+
+#6 [uv 1/1] FROM ghcr.io/astral-sh/uv:0.9.21@sha256:15f68a476b768083505fe1dbfcc998344d0135f0ca1b8465c4760b323904f05a
+#6 CACHED
+
+#7 [internal] load build context
+#7 transferring context: 1.14kB done
+#7 DONE 0.0s
+
+#8 [builder 1/6] FROM docker.io/library/python:3.14.9-alpine3.24@sha256:dbeb11d16bb95c3a7e3c25c842cb9f20cbc8c18f8be0461a4a0dcc861ad386a0
+#8 resolve docker.io/library/python:3.14.9-alpine3.24@sha256:dbeb11d16bb95c3a7e3c25c842cb9f20cbc8c18f8be0461a4a0dcc861ad386a0 done
+#8 sha256:4bee702058ddbbbc40d3d41fc84cd4d402097695689cab8ae5dc1d2dea4027d1 0B / 13.64MB 0.1s
+#8 sha256:dbeb11d16bb95c3a7e3c25c842cb9f20cbc8c18f8be0461a4a0dcc861ad386a0 9.02kB / 9.02kB done
+#8 sha256:4ff19c6091d2441843e881d2101b0507d26624eb1e6844e7ccf1b24df75c42ca 1.74kB / 1.74kB done
+#8 sha256:7631289cf0c2ac3bc5c21dd2d432d440eabbd42642ad77934beddb35c9415d0e 4.72kB / 4.72kB done
+#8 sha256:d3531b7a4f217bdc3426c57bcff84c170f086f456a39689d4a615c6d026c4be0 0B / 4.19MB 0.1s
+#8 sha256:a2615a8e7f36184fc27aff7f9665b6482aa83b88e6488adbbff336aca56d86cb 0B / 415.55kB 0.1s
+#8 sha256:d3531b7a4f217bdc3426c57bcff84c170f086f456a39689d4a615c6d026c4be0 2.10MB / 4.19MB 0.8s
+#8 sha256:d3531b7a4f217bdc3426c57bcff84c170f086f456a39689d4a615c6d026c4be0 3.15MB / 4.19MB 0.9s
+#8 sha256:d3531b7a4f217bdc3426c57bcff84c170f086f456a39689d4a615c6d026c4be0 4.19MB / 4.19MB 0.9s done
+#8 extracting sha256:d3531b7a4f217bdc3426c57bcff84c170f086f456a39689d4a615c6d026c4be0 0.1s done
+#8 sha256:b9f7fe6bf6f5e67bd8f4f284190c8c157b42f262c94bb4349c132b5602bdb7fe 0B / 250B 1.0s
+#8 sha256:a2615a8e7f36184fc27aff7f9665b6482aa83b88e6488adbbff336aca56d86cb 415.55kB / 415.55kB 1.2s done
+#8 extracting sha256:a2615a8e7f36184fc27aff7f9665b6482aa83b88e6488adbbff336aca56d86cb 0.1s done
+#8 sha256:4bee702058ddbbbc40d3d41fc84cd4d402097695689cab8ae5dc1d2dea4027d1 1.05MB / 13.64MB 1.6s
+#8 sha256:4bee702058ddbbbc40d3d41fc84cd4d402097695689cab8ae5dc1d2dea4027d1 3.15MB / 13.64MB 1.8s
+#8 sha256:4bee702058ddbbbc40d3d41fc84cd4d402097695689cab8ae5dc1d2dea4027d1 5.24MB / 13.64MB 2.0s
+#8 sha256:4bee702058ddbbbc40d3d41fc84cd4d402097695689cab8ae5dc1d2dea4027d1 6.29MB / 13.64MB 2.1s
+#8 sha256:4bee702058ddbbbc40d3d41fc84cd4d402097695689cab8ae5dc1d2dea4027d1 7.34MB / 13.64MB 2.3s
+#8 sha256:4bee702058ddbbbc40d3d41fc84cd4d402097695689cab8ae5dc1d2dea4027d1 8.39MB / 13.64MB 2.4s
+#8 sha256:4bee702058ddbbbc40d3d41fc84cd4d402097695689cab8ae5dc1d2dea4027d1 10.49MB / 13.64MB 2.6s
+#8 sha256:4bee702058ddbbbc40d3d41fc84cd4d402097695689cab8ae5dc1d2dea4027d1 12.58MB / 13.64MB 2.8s
+#8 sha256:b9f7fe6bf6f5e67bd8f4f284190c8c157b42f262c94bb4349c132b5602bdb7fe 250B / 250B 2.8s done
+#8 sha256:4bee702058ddbbbc40d3d41fc84cd4d402097695689cab8ae5dc1d2dea4027d1 13.64MB / 13.64MB 2.9s done
+#8 extracting sha256:4bee702058ddbbbc40d3d41fc84cd4d402097695689cab8ae5dc1d2dea4027d1 0.1s
+#8 extracting sha256:4bee702058ddbbbc40d3d41fc84cd4d402097695689cab8ae5dc1d2dea4027d1 0.5s done
+#8 extracting sha256:b9f7fe6bf6f5e67bd8f4f284190c8c157b42f262c94bb4349c132b5602bdb7fe done
+#8 DONE 3.4s
+
+#9 [builder 2/6] COPY --from=uv /uv /usr/local/bin/uv
+#9 DONE 0.2s
+
+#10 [runtime 2/5] RUN addgroup -S -g 10001 app     && adduser -S -D -H -u 10001 -G app app
+#10 DONE 0.2s
+
+#11 [builder 3/6] WORKDIR /build
+#11 DONE 0.0s
+
+#12 [builder 4/6] COPY pyproject.toml uv.lock README.md ./
+#12 DONE 0.0s
+
+#13 [builder 5/6] COPY src/ ./src/
+#13 DONE 0.0s
+
+#14 [builder 6/6] RUN --mount=type=cache,target=/root/.cache/uv     uv sync --locked --no-dev --no-editable
+#14 0.373 Using CPython 3.14.9 interpreter at: /usr/local/bin/python3
+#14 0.373 Creating virtual environment at: /opt/venv
+#14 0.380 Resolved 54 packages in 1ms
+#14 0.385    Building finsecure-pay @ file:///build
+#14 0.541 Downloading pydantic-core (2.2MiB)
+#14 0.759  Downloaded pydantic-core
+#14 1.247       Built finsecure-pay @ file:///build
+#14 1.252 Prepared 2 packages in 870ms
+#14 1.296 Installed 15 packages in 44ms
+#14 1.296  + annotated-doc==0.0.5
+#14 1.296  + annotated-types==0.8.0
+#14 1.296  + anyio==4.15.1
+#14 1.296  + click==8.5.0
+#14 1.296  + fastapi==0.156.8
+#14 1.296  + finsecure-pay==0.2.0 (from file:///build)
+#14 1.296  + h11==0.16.0
+#14 1.296  + idna==3.20
+#14 1.297  + opentelemetry-api==1.45.1
+#14 1.297  + pydantic==2.14.1
+#14 1.297  + pydantic-core==2.50.1
+#14 1.297  + starlette==1.9.0
+#14 1.299  + typing-extensions==4.16.0
+#14 1.299  + typing-inspection==0.4.4
+#14 1.299  + uvicorn==0.54.0
+#14 DONE 1.4s
+
+#15 [runtime 3/5] RUN python -m pip --disable-pip-version-check uninstall --yes pip     && rm -rf /usr/local/lib/python3.14/ensurepip     && python -c "from importlib.util import find_spec; assert find_spec('pip') is None; assert find_spec('ensurepip') is None"
+#15 1.738 Found existing installation: pip 26.2.2
+#15 1.756 Uninstalling pip-26.2.2:
+#15 1.851   Successfully uninstalled pip-26.2.2
+#15 1.857 WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
+#15 DONE 1.9s
+
+#16 [runtime 4/5] WORKDIR /app
+#16 DONE 0.0s
+
+#17 [runtime 5/5] COPY --from=builder /opt/venv /opt/venv
+#17 DONE 0.1s
+
+#18 exporting to image
+#18 exporting layers 0.1s done
+#18 writing image sha256:96a1c40ec6c3a3c01c40348545f7d3fbd4ae177613b2f785c93495d075a7f665 done
+#18 naming to docker.io/library/finsecure-pay-review:step52-py3149-alpine-arm64 done
+#18 DONE 0.1s
+
+View build details: docker-desktop://dashboard/build/desktop-linux/desktop-linux/xde1frkp4268klhd22vykgszg

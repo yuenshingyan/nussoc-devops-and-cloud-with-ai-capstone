@@ -1,0 +1,10 @@
+{
+  "python_bases": {
+    "trixie": "python:3.14.9-slim-trixie@sha256:35caba83af2fe6da9a5d922f9b0156f21d1246a48278c58a08bd253303ba42e8",
+    "bookworm": "python:3.14.9-slim-bookworm@sha256:945c2676dc2b18e0c1f16879244122c57c0ffede60006bf3df159c507a31bcae",
+    "alpine": "python:3.14.9-alpine3.24@sha256:dbeb11d16bb95c3a7e3c25c842cb9f20cbc8c18f8be0461a4a0dcc861ad386a0"
+  },
+  "candidate_dockerfile_sha256": "a2f423b07f655153ecc177da7876e6b43a101ef06e21919e9cca145553759fa8",
+  "application_runtime_dependencies_unchanged": true,
+  "alpine_dockerfile_sha256": "95d0ca8314d78e53ef2b6c782464ab2cfa1b3c2a775f2c974addbe21dc92933b"
+}

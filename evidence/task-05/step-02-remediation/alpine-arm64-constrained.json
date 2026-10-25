@@ -1,0 +1,69 @@
+{
+  "verified_at_utc": "2026-10-25T15:25:28.461459+00:00",
+  "image_reference": "sha256:96a1c40ec6c3a3c01c40348545f7d3fbd4ae177613b2f785c93495d075a7f665",
+  "image_id": "sha256:96a1c40ec6c3a3c01c40348545f7d3fbd4ae177613b2f785c93495d075a7f665",
+  "source_revision": "01cc819bcba5165ea9bdaf0c9c403d7255d8b870",
+  "platform": "linux/arm64",
+  "container_id": "b915ee14c4cc7afc1932f9115ff5658622e3438ff002630c20fce571ebf8d642",
+  "startup_seconds_local_observation": 2.859754500001145,
+  "accepted_serial_requests": 25,
+  "business_rejection_checked": true,
+  "schema_rejection_checked": true,
+  "health_after_rejections": "healthy",
+  "runtime": {
+    "pid_1": {
+      "Uid": [
+        "10001",
+        "10001",
+        "10001",
+        "10001"
+      ],
+      "Gid": [
+        "10001",
+        "10001",
+        "10001",
+        "10001"
+      ],
+      "CapPrm": [
+        "0000000000000000"
+      ],
+      "CapEff": [
+        "0000000000000000"
+      ],
+      "CapBnd": [
+        "0000000000000000"
+      ],
+      "CapAmb": [
+        "0000000000000000"
+      ],
+      "NoNewPrivs": [
+        "1"
+      ],
+      "Seccomp": [
+        "2"
+      ]
+    },
+    "root_filesystem_read_only": true,
+    "tmp_write_read_delete_passed": true,
+    "tmp_capacity_bytes": 16777216,
+    "tmp_gid": 10001,
+    "cpu_max": "50000 100000",
+    "memory_max_bytes": 268435456,
+    "memory_current_bytes_including_inspection": 51744768,
+    "memory_peak_bytes_including_inspection": 54280192,
+    "memory_events": {
+      "low": 0,
+      "high": 0,
+      "max": 0,
+      "oom": 0,
+      "oom_kill": 0,
+      "oom_group_kill": 0
+    }
+  },
+  "shutdown_seconds_local_observation": 0.43174195800020243,
+  "shutdown_exit_code": 0,
+  "oom_killed": false,
+  "container_removed": true,
+  "kubernetes_probe_execution": false,
+  "kubernetes_scheduling_or_requests_tested": false
+}

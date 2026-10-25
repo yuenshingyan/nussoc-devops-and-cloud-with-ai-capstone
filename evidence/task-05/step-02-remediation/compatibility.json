@@ -1,0 +1,28 @@
+{
+  "alpine-arm64": {
+    "verified_at_utc": "2026-10-25T15:16:02.790957+00:00",
+    "candidate_image_id": "sha256:96a1c40ec6c3a3c01c40348545f7d3fbd4ae177613b2f785c93495d075a7f665",
+    "test_only_image": "finsecure-pay-review:step52-compatibility-arm64",
+    "locked_dev_dependencies_added_to_separate_testenv": true,
+    "application_not_reinstalled": true,
+    "network_disabled": true,
+    "read_only_root": true,
+    "container_removed": true,
+    "exit_code": 0,
+    "emulated": false,
+    "test_only_image_id": "sha256:ea9ee3dd99861e7944db2532ad42ee36aab974d3a56beee3e13208ccf582880b"
+  },
+  "alpine-amd64": {
+    "verified_at_utc": "2026-10-25T15:16:16.050458+00:00",
+    "candidate_image_id": "sha256:cd78126acaf49aa775bd01bdbcaafa56acb2cb6bd6c4d90264ca3a40dffdc5dd",
+    "test_only_image": "finsecure-pay-review:step52-compatibility-amd64",
+    "locked_dev_dependencies_added_to_separate_testenv": true,
+    "application_not_reinstalled": true,
+    "network_disabled": true,
+    "read_only_root": true,
+    "container_removed": true,
+    "exit_code": 0,
+    "emulated": true,
+    "test_only_image_id": "sha256:9e3c7ff0e5d332180149ab5410b2ae6f721315976db80cefe1659f73e66f63d2"
+  }
+}

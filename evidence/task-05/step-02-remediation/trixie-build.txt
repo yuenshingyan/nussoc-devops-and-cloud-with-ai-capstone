@@ -1,0 +1,136 @@
+#0 building with "desktop-linux" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile.runtime-candidate
+#1 transferring dockerfile: 1.88kB 0.0s done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/library/python:3.14.9-slim-trixie@sha256:35caba83af2fe6da9a5d922f9b0156f21d1246a48278c58a08bd253303ba42e8
+#2 ...
+
+#3 [auth] library/python:pull token for registry-1.docker.io
+#3 DONE 0.0s
+
+#4 [internal] load metadata for ghcr.io/astral-sh/uv:0.9.21@sha256:15f68a476b768083505fe1dbfcc998344d0135f0ca1b8465c4760b323904f05a
+#4 DONE 1.2s
+
+#2 [internal] load metadata for docker.io/library/python:3.14.9-slim-trixie@sha256:35caba83af2fe6da9a5d922f9b0156f21d1246a48278c58a08bd253303ba42e8
+#2 DONE 2.6s
+
+#5 [internal] load .dockerignore
+#5 transferring context: 391B done
+#5 DONE 0.0s
+
+#6 [uv 1/1] FROM ghcr.io/astral-sh/uv:0.9.21@sha256:15f68a476b768083505fe1dbfcc998344d0135f0ca1b8465c4760b323904f05a
+#6 CACHED
+
+#7 [internal] load build context
+#7 transferring context: 122.25kB 0.0s done
+#7 DONE 0.0s
+
+#8 [builder 1/6] FROM docker.io/library/python:3.14.9-slim-trixie@sha256:35caba83af2fe6da9a5d922f9b0156f21d1246a48278c58a08bd253303ba42e8
+#8 resolve docker.io/library/python:3.14.9-slim-trixie@sha256:35caba83af2fe6da9a5d922f9b0156f21d1246a48278c58a08bd253303ba42e8 done
+#8 sha256:138836be4abaf63078fb766ea079052c80ab81bb0cf0194645225c4b4e7040d4 0B / 12.31MB 0.1s
+#8 sha256:35caba83af2fe6da9a5d922f9b0156f21d1246a48278c58a08bd253303ba42e8 10.37kB / 10.37kB done
+#8 sha256:9c91bb40b4da9deb3ca7bd28bb593a5be44bc279fe4ccf59a50a564a679b04fb 1.75kB / 1.75kB done
+#8 sha256:5916612a68632a9307c913a5a8b7ffe79d7d3eef312c5bae385d154d6edd0ad4 4.96kB / 4.96kB done
+#8 sha256:ddc0c1e36a6793411b6c8d48e1ddad2987405d377da92bcf532ed3181c2e4d62 0B / 30.20MB 0.1s
+#8 sha256:bf290701b6e265c5df4fbd7e7af45f526dd23d8fa68c6b4b2738e2b6f54041c4 0B / 1.27MB 0.1s
+#8 sha256:ddc0c1e36a6793411b6c8d48e1ddad2987405d377da92bcf532ed3181c2e4d62 2.10MB / 30.20MB 0.5s
+#8 sha256:ddc0c1e36a6793411b6c8d48e1ddad2987405d377da92bcf532ed3181c2e4d62 4.19MB / 30.20MB 0.9s
+#8 sha256:138836be4abaf63078fb766ea079052c80ab81bb0cf0194645225c4b4e7040d4 1.05MB / 12.31MB 1.1s
+#8 sha256:ddc0c1e36a6793411b6c8d48e1ddad2987405d377da92bcf532ed3181c2e4d62 6.29MB / 30.20MB 1.3s
+#8 sha256:138836be4abaf63078fb766ea079052c80ab81bb0cf0194645225c4b4e7040d4 2.10MB / 12.31MB 1.6s
+#8 sha256:ddc0c1e36a6793411b6c8d48e1ddad2987405d377da92bcf532ed3181c2e4d62 9.44MB / 30.20MB 1.6s
+#8 sha256:ddc0c1e36a6793411b6c8d48e1ddad2987405d377da92bcf532ed3181c2e4d62 11.53MB / 30.20MB 2.0s
+#8 sha256:138836be4abaf63078fb766ea079052c80ab81bb0cf0194645225c4b4e7040d4 3.15MB / 12.31MB 2.1s
+#8 sha256:bf290701b6e265c5df4fbd7e7af45f526dd23d8fa68c6b4b2738e2b6f54041c4 1.05MB / 1.27MB 2.1s
+#8 sha256:ddc0c1e36a6793411b6c8d48e1ddad2987405d377da92bcf532ed3181c2e4d62 14.68MB / 30.20MB 2.5s
+#8 sha256:bf290701b6e265c5df4fbd7e7af45f526dd23d8fa68c6b4b2738e2b6f54041c4 1.27MB / 1.27MB 2.3s done
+#8 sha256:a3e0f0e114d32fc17ed338df8f5be52b78d64dff5846840b69f75b91e6c6bef6 0B / 250B 2.5s
+#8 sha256:138836be4abaf63078fb766ea079052c80ab81bb0cf0194645225c4b4e7040d4 4.19MB / 12.31MB 2.7s
+#8 sha256:a3e0f0e114d32fc17ed338df8f5be52b78d64dff5846840b69f75b91e6c6bef6 250B / 250B 2.7s done
+#8 sha256:ddc0c1e36a6793411b6c8d48e1ddad2987405d377da92bcf532ed3181c2e4d62 16.78MB / 30.20MB 2.9s
+#8 sha256:138836be4abaf63078fb766ea079052c80ab81bb0cf0194645225c4b4e7040d4 5.24MB / 12.31MB 3.1s
+#8 sha256:ddc0c1e36a6793411b6c8d48e1ddad2987405d377da92bcf532ed3181c2e4d62 18.87MB / 30.20MB 3.1s
+#8 sha256:138836be4abaf63078fb766ea079052c80ab81bb0cf0194645225c4b4e7040d4 6.29MB / 12.31MB 3.4s
+#8 sha256:138836be4abaf63078fb766ea079052c80ab81bb0cf0194645225c4b4e7040d4 7.34MB / 12.31MB 3.6s
+#8 sha256:ddc0c1e36a6793411b6c8d48e1ddad2987405d377da92bcf532ed3181c2e4d62 22.02MB / 30.20MB 3.6s
+#8 sha256:138836be4abaf63078fb766ea079052c80ab81bb0cf0194645225c4b4e7040d4 8.39MB / 12.31MB 4.0s
+#8 sha256:ddc0c1e36a6793411b6c8d48e1ddad2987405d377da92bcf532ed3181c2e4d62 24.12MB / 30.20MB 4.0s
+#8 sha256:138836be4abaf63078fb766ea079052c80ab81bb0cf0194645225c4b4e7040d4 9.44MB / 12.31MB 4.3s
+#8 sha256:ddc0c1e36a6793411b6c8d48e1ddad2987405d377da92bcf532ed3181c2e4d62 26.21MB / 30.20MB 4.3s
+#8 sha256:138836be4abaf63078fb766ea079052c80ab81bb0cf0194645225c4b4e7040d4 10.49MB / 12.31MB 4.7s
+#8 sha256:ddc0c1e36a6793411b6c8d48e1ddad2987405d377da92bcf532ed3181c2e4d62 28.31MB / 30.20MB 4.7s
+#8 sha256:138836be4abaf63078fb766ea079052c80ab81bb0cf0194645225c4b4e7040d4 11.53MB / 12.31MB 5.0s
+#8 sha256:138836be4abaf63078fb766ea079052c80ab81bb0cf0194645225c4b4e7040d4 12.31MB / 12.31MB 5.1s done
+#8 sha256:ddc0c1e36a6793411b6c8d48e1ddad2987405d377da92bcf532ed3181c2e4d62 30.20MB / 30.20MB 5.5s
+#8 extracting sha256:ddc0c1e36a6793411b6c8d48e1ddad2987405d377da92bcf532ed3181c2e4d62
+#8 sha256:ddc0c1e36a6793411b6c8d48e1ddad2987405d377da92bcf532ed3181c2e4d62 30.20MB / 30.20MB 5.5s done
+#8 extracting sha256:ddc0c1e36a6793411b6c8d48e1ddad2987405d377da92bcf532ed3181c2e4d62 1.0s done
+#8 extracting sha256:bf290701b6e265c5df4fbd7e7af45f526dd23d8fa68c6b4b2738e2b6f54041c4
+#8 extracting sha256:bf290701b6e265c5df4fbd7e7af45f526dd23d8fa68c6b4b2738e2b6f54041c4 0.1s done
+#8 extracting sha256:138836be4abaf63078fb766ea079052c80ab81bb0cf0194645225c4b4e7040d4 0.1s
+#8 extracting sha256:138836be4abaf63078fb766ea079052c80ab81bb0cf0194645225c4b4e7040d4 0.4s done
+#8 extracting sha256:a3e0f0e114d32fc17ed338df8f5be52b78d64dff5846840b69f75b91e6c6bef6 done
+#8 DONE 7.1s
+
+#9 [builder 2/6] COPY --from=uv /uv /usr/local/bin/uv
+#9 DONE 0.4s
+
+#10 [runtime 2/5] RUN groupadd --gid 10001 app     && useradd --uid 10001 --gid 10001 --no-create-home --shell /usr/sbin/nologin app
+#10 DONE 0.5s
+
+#11 [builder 3/6] WORKDIR /build
+#11 DONE 0.0s
+
+#12 [builder 4/6] COPY pyproject.toml uv.lock README.md ./
+#12 DONE 0.0s
+
+#13 [builder 5/6] COPY src/ ./src/
+#13 DONE 0.0s
+
+#14 [builder 6/6] RUN --mount=type=cache,target=/root/.cache/uv     uv sync --locked --no-dev --no-editable
+#14 0.331 Using CPython 3.14.9 interpreter at: /usr/local/bin/python3
+#14 0.331 Creating virtual environment at: /opt/venv
+#14 0.338 Resolved 54 packages in 1ms
+#14 0.350    Building finsecure-pay @ file:///build
+#14 0.948       Built finsecure-pay @ file:///build
+#14 0.954 Prepared 1 package in 605ms
+#14 0.992 Installed 15 packages in 38ms
+#14 0.992  + annotated-doc==0.0.5
+#14 0.992  + annotated-types==0.8.0
+#14 0.992  + anyio==4.15.1
+#14 0.992  + click==8.5.0
+#14 0.992  + fastapi==0.156.8
+#14 0.992  + finsecure-pay==0.2.0 (from file:///build)
+#14 0.992  + h11==0.16.0
+#14 0.992  + idna==3.20
+#14 0.992  + opentelemetry-api==1.45.1
+#14 0.992  + pydantic==2.14.1
+#14 0.992  + pydantic-core==2.50.1
+#14 0.992  + starlette==1.9.0
+#14 0.992  + typing-extensions==4.16.0
+#14 0.992  + typing-inspection==0.4.4
+#14 0.992  + uvicorn==0.54.0
+#14 DONE 1.0s
+
+#15 [runtime 3/5] RUN python -m pip --disable-pip-version-check uninstall --yes pip     && rm -rf /usr/local/lib/python3.14/ensurepip     && python -c "from importlib.util import find_spec; assert find_spec('pip') is None; assert find_spec('ensurepip') is None"
+#15 1.028 Found existing installation: pip 26.2.2
+#15 1.048 Uninstalling pip-26.2.2:
+#15 1.140   Successfully uninstalled pip-26.2.2
+#15 1.145 WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
+#15 DONE 1.2s
+
+#16 [runtime 4/5] WORKDIR /app
+#16 DONE 0.0s
+
+#17 [runtime 5/5] COPY --from=builder /opt/venv /opt/venv
+#17 DONE 0.0s
+
+#18 exporting to image
+#18 exporting layers 0.0s done
+#18 writing image sha256:837b373708ae0774c53c4ac3a27a4dba09a6d005a1682f865fa974e80a7fe67f done
+#18 naming to docker.io/library/finsecure-pay-review:step52-py3149-trixie-arm64 done
+#18 DONE 0.1s
+
+View build details: docker-desktop://dashboard/build/desktop-linux/desktop-linux/ip1t1kq0822oq0nfqajgt4gto

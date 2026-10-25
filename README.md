@@ -30,9 +30,12 @@ See the [source-security runbook](docs/runbooks/source-security.md) and
 
 Step 5.2 is **in progress on its local branch**: verified Trivy tooling is installed,
 while an operator preflight found 70 HIGH and 6 CRITICAL image finding occurrences.
-The approved policy would block that image; remediation approval and Jenkins image-gate
-integration remain pending. No base-image change or exception was made. See the
-[image-security checkpoint](docs/runbooks/image-security.md).
+The approved policy would block that image. Approved candidate testing found that updated
+Debian bases still block, while Python 3.14.9/Alpine 3.24 candidates report no known findings
+and each pass 316 tests plus runtime checks on ARM64 and emulated AMD64. Adoption of the
+musl-based option awaits review; the root Dockerfile and pipeline remain unchanged.
+Jenkins image-gate integration is pending. See the
+[image-security checkpoints](docs/runbooks/image-security.md).
 
 **Evaluator source link:** [reviewed application on main](https://github.com/yuenshingyan/nussoc-devops-and-cloud-with-ai-capstone/tree/main).
 GitHub now defaults to `main`. See the
@@ -226,8 +229,8 @@ Remove a placeholder when its directory receives real content.
 - Remaining Task 4: registry/cloud delivery, full release-gate proof, rollout/rollback.
 - Task 5.1: reviewed, merged, published, and verified through normal SCM build #6
   (316 tests, passing scans, 25 artifacts); 17 LOW Bandit findings remain reported.
-- Task 5.2: verified tool installation and initial scan complete; blocking findings need
-  a remediation decision. Jenkins image gating is not yet implemented.
+- Task 5.2: tools installed; initial/updated Debian images block. Alpine candidates have
+  no known findings and pass both-platform checks; adoption review and Jenkins gating pending.
 - Remaining Tasks 5–6: complete image gates, secret-management work, monitoring/logging, demonstrations.
 - Task 7: Design document, architecture diagram, AI use case, and presentation.
 

@@ -1,0 +1,5 @@
+2026-10-25T15:01:00Z	INFO	Loaded	file_path="/tmp/finsecure-step52-preflight-ntr46ga3/trivy.yaml"
+2026-10-25T15:01:00Z	INFO	[vulndb] Need to update DB
+2026-10-25T15:01:00Z	INFO	[vulndb] Downloading vulnerability DB...
+2026-10-25T15:01:00Z	INFO	[vulndb] Downloading artifact...	repo="ghcr.io/aquasecurity/trivy-db:2"
+2026-10-25T15:02:22Z	INFO	[vulndb] Artifact successfully downloaded	repo="ghcr.io/aquasecurity/trivy-db:2"

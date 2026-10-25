@@ -1,0 +1,27 @@
+{
+  "archive": "normal main #7",
+  "embedded_vendor_files": [
+    {
+      "layer": "blobs/sha256/ea40a15691b2243492a5912949e25d29f0a618a1226faa0e17861b237df27bfc",
+      "path": "usr/local/lib/python3.14/site-packages/pip/_vendor/README.rst",
+      "size": 9222
+    },
+    {
+      "layer": "blobs/sha256/ea40a15691b2243492a5912949e25d29f0a618a1226faa0e17861b237df27bfc",
+      "path": "usr/local/lib/python3.14/site-packages/pip/_vendor/bom.cdx.json",
+      "size": 5319
+    },
+    {
+      "layer": "blobs/sha256/ea40a15691b2243492a5912949e25d29f0a618a1226faa0e17861b237df27bfc",
+      "path": "usr/local/lib/python3.14/site-packages/pip/_vendor/vendor.txt",
+      "size": 317
+    }
+  ],
+  "actual_vendor_file_counts": {
+    "certifi": 7,
+    "msgpack": 6,
+    "pkg_resources": 3,
+    "urllib3": 40
+  },
+  "interpretation": "Bundled tooling includes these vendor trees; SBOM package names may cover more than the shipped code. No ignore policy was changed."
+}

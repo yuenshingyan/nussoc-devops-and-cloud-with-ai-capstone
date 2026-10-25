@@ -1,0 +1,115 @@
+#0 building with "desktop-linux" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 523B done
+#1 WARN: InvalidDefaultArgInFrom: Default value for ARG ${RUNTIME_IMAGE} results in empty or invalid base image name (line 3)
+#1 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/library/finsecure-pay-review:step52-py3149-alpine-amd64
+#2 DONE 0.0s
+
+#3 [internal] load metadata for ghcr.io/astral-sh/uv:0.9.21@sha256:15f68a476b768083505fe1dbfcc998344d0135f0ca1b8465c4760b323904f05a
+#3 DONE 0.0s
+
+#4 [internal] load .dockerignore
+#4 transferring context: 2B done
+#4 DONE 0.0s
+
+#5 [uv 1/1] FROM ghcr.io/astral-sh/uv:0.9.21@sha256:15f68a476b768083505fe1dbfcc998344d0135f0ca1b8465c4760b323904f05a
+#5 CACHED
+
+#6 [internal] load build context
+#6 transferring context: 2.40kB done
+#6 DONE 0.0s
+
+#7 [stage-1 1/5] FROM docker.io/library/finsecure-pay-review:step52-py3149-alpine-amd64
+#7 DONE 0.0s
+
+#8 [stage-1 2/5] COPY --from=uv /uv /usr/local/bin/uv
+#8 DONE 0.1s
+
+#9 [stage-1 3/5] WORKDIR /test-project
+#9 DONE 0.0s
+
+#10 [stage-1 4/5] COPY . .
+#10 DONE 0.0s
+
+#11 [stage-1 5/5] RUN uv sync --locked --no-install-project
+#11 2.087 Using CPython 3.14.9 interpreter at: /usr/local/bin/python3
+#11 2.089 Creating virtual environment at: /testenv
+#11 2.144 Resolved 54 packages in 27ms
+#11 2.452 Downloading pydantic-core (2.4MiB)
+#11 2.454 Downloading pip (1.7MiB)
+#11 2.481 Downloading ruff (10.3MiB)
+#11 2.483 Downloading pygments (1.2MiB)
+#11 4.638  Downloaded pygments
+#11 4.827  Downloaded pip
+#11 5.069  Downloaded pydantic-core
+#11 6.135  Downloaded ruff
+#11 6.138 Prepared 52 packages in 3.97s
+#11 6.307 Installed 52 packages in 166ms
+#11 6.309  + annotated-doc==0.0.5
+#11 6.309  + annotated-types==0.8.0
+#11 6.309  + anyio==4.15.1
+#11 6.309  + bandit==1.9.4
+#11 6.309  + boolean-py==5.0
+#11 6.309  + cachecontrol==0.14.4
+#11 6.309  + certifi==2026.10.19
+#11 6.309  + charset-normalizer==3.5.2
+#11 6.309  + click==8.5.0
+#11 6.309  + coverage==7.16.2
+#11 6.309  + cyclonedx-python-lib==11.12.0
+#11 6.309  + defusedxml==0.7.1
+#11 6.309  + fastapi==0.156.8
+#11 6.309  + filelock==4.2.4
+#11 6.309  + h11==0.16.0
+#11 6.309  + httpcore==1.0.9
+#11 6.309  + httpx==0.28.1
+#11 6.309  + idna==3.20
+#11 6.309  + iniconfig==2.3.1
+#11 6.309  + license-expression==30.4.4
+#11 6.309  + markdown-it-py==4.2.0
+#11 6.309  + mdurl==0.1.2
+#11 6.309  + msgpack==1.2.3
+#11 6.309  + opentelemetry-api==1.45.1
+#11 6.310  + packageurl-python==0.17.6
+#11 6.310  + packaging==26.3
+#11 6.310  + pip==26.2.2
+#11 6.310  + pip-api==0.0.35
+#11 6.310  + pip-audit==2.10.1
+#11 6.310  + pip-requirements-parser==32.0.1
+#11 6.310  + platformdirs==4.13.5
+#11 6.310  + pluggy==1.7.0
+#11 6.310  + py-serializable==2.1.0
+#11 6.310  + pydantic==2.14.1
+#11 6.310  + pydantic-core==2.50.1
+#11 6.310  + pygments==2.21.0
+#11 6.310  + pyparsing==3.3.3
+#11 6.310  + pytest==9.1.1
+#11 6.310  + pytest-cov==7.1.0
+#11 6.310  + pyyaml==6.0.3
+#11 6.310  + requests==2.34.2
+#11 6.310  + rich==15.0.0
+#11 6.310  + ruff==0.17.1
+#11 6.310  + sortedcontainers==2.4.0
+#11 6.310  + starlette==1.9.0
+#11 6.310  + stevedore==5.9.1
+#11 6.310  + tomli==2.5.0
+#11 6.310  + tomli-w==1.2.0
+#11 6.310  + typing-extensions==4.16.0
+#11 6.310  + typing-inspection==0.4.4
+#11 6.310  + urllib3==2.8.0
+#11 6.310  + uvicorn==0.54.0
+#11 DONE 6.5s
+
+#12 exporting to image
+#12 exporting layers
+#12 exporting layers 0.4s done
+#12 writing image sha256:9e3c7ff0e5d332180149ab5410b2ae6f721315976db80cefe1659f73e66f63d2 done
+#12 naming to docker.io/library/finsecure-pay-review:step52-compatibility-amd64 done
+#12 DONE 0.4s
+
+ 1 warning found (use docker --debug to expand):
+ - InvalidDefaultArgInFrom: Default value for ARG ${RUNTIME_IMAGE} results in empty or invalid base image name (line 3)
+
+View build details: docker-desktop://dashboard/build/desktop-linux/desktop-linux/ilzfjwhxn8eqjaux4nogaddw7
