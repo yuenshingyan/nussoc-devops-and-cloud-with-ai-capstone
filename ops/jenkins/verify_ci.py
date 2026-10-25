@@ -5,15 +5,17 @@ from datetime import UTC, datetime
 from hashlib import sha256
 from io import BytesIO
 from json import dumps, loads
+from pathlib import Path
 from re import fullmatch
 from tarfile import TarFile
 from time import monotonic, sleep
 from urllib.parse import urlencode
 from urllib.request import Request
-from xml.etree.ElementTree import Element, SubElement, fromstring, tostring
+from xml.etree.ElementTree import Element, SubElement, tostring
 from zipfile import ZipFile
 
 from bootstrap import BASE_URL, ROOT, Jenkins, admin_password
+from defusedxml.ElementTree import fromstring
 from image_archive import inspect_image_archive
 
 
@@ -88,6 +90,43 @@ def require_passing_tests(report: dict, expected_tests: int) -> int:
     return total
 
 
+SECURITY_ARTIFACTS = {
+    "reports/" + name
+    for name in (
+        "security-summary.json",
+        "security-tools.txt",
+        "security-export.txt",
+        "runtime-requirements.txt",
+        "bandit.json",
+        "bandit.txt",
+        "pip-audit.json",
+        "pip-audit.txt",
+    )
+}
+
+
+def require_security_reports(output: Path, artifacts: set[str], skipped: bool) -> dict | None:
+    """Require a complete passing gate, or no scan outputs after an earlier test failure."""
+    if skipped:
+        if SECURITY_ARTIFACTS.intersection(artifacts):
+            raise RuntimeError("Security scans ran after the injected test failure")
+        return None
+    if not SECURITY_ARTIFACTS.issubset(artifacts):
+        raise RuntimeError("Security scan artifacts are missing")
+    report = loads((output / "reports/security-summary.json").read_text(encoding="utf-8"))
+    if report.get("status") != "passed" or any(
+        report.get(tool, {}).get("status") != "passed"
+        or type(report[tool].get("blocking_findings")) is not int
+        or report[tool]["blocking_findings"] != 0
+        for tool in ("bandit", "dependencies")
+    ):
+        raise RuntimeError("Security gate is not a complete passing result")
+    metadata = (output / "reports/build-metadata.txt").read_text(encoding="utf-8")
+    if report.get("lock_sha256", "missing") + "  uv.lock" not in metadata.splitlines():
+        raise RuntimeError("Scanned lock does not match the build metadata")
+    return report
+
+
 def verify(
     source_revision: str,
     expected_tests: int,
@@ -114,6 +153,7 @@ def verify(
     )
     script = prefix + script
     expects_image = "stage('Local image export')" in candidate
+    expects_security = "stage('Security scans')" in candidate
     mode = "failure" if fail_after_tests else "success"
     stamp = datetime.now(UTC).strftime("%Y%m%d%H%M%S")
     job_name = existing_job or f"finsecure-ci-review-{mode}-{stamp}"
@@ -195,6 +235,8 @@ def verify(
         }
         if expects_image:
             allowed.update(image_files)
+        if expects_security:
+            allowed.update(SECURITY_ARTIFACTS)
         for artifact in build["artifacts"]:
             name = artifact["relativePath"]
             package = fullmatch(r"dist/finsecure_pay-[A-Za-z0-9_.+-]+\.(whl|tar\.gz)", name)
@@ -207,6 +249,11 @@ def verify(
             target.parent.mkdir(parents=True, exist_ok=True)
             target.write_bytes(content)
             artifacts[name] = {"bytes": len(content), "sha256": sha256(content).hexdigest()}
+        security = (
+            require_security_reports(output, set(artifacts), fail_after_tests)
+            if expects_security
+            else None
+        )
         tests = loads(client.request(build_path + "testReport/api/json"))
         total = require_passing_tests(tests, expected_tests)
         coverage = loads(client.request(build_path + "coverage/api/json"))
@@ -287,6 +334,7 @@ def verify(
             },
             "artifacts": artifacts,
             "image_export": image,
+            "security_scans": security,
         }
         (output / "verification.json").write_text(dumps(record, indent=2) + "\n")
         return record

@@ -7,9 +7,9 @@ from re import fullmatch
 from time import monotonic, sleep
 from urllib.parse import urlencode
 from urllib.request import Request
-from xml.etree.ElementTree import fromstring
 
 from bootstrap import BASE_URL, COMPOSE, ROOT, Jenkins, admin_password, command
+from defusedxml.ElementTree import fromstring
 
 
 def verify(revision: str) -> dict[str, object]:

@@ -7,9 +7,10 @@ from hashlib import sha256
 from json import dumps, loads
 from re import fullmatch
 from time import monotonic, sleep
-from xml.etree.ElementTree import Element, SubElement, fromstring, tostring
+from xml.etree.ElementTree import Element, SubElement, tostring
 
 from bootstrap import ROOT, Jenkins, admin_password
+from defusedxml.ElementTree import fromstring
 from image_archive import inspect_image_archive
 
 DEMO_JOB = "finsecure-ci-gate-demo"

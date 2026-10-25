@@ -5,6 +5,7 @@ from runpy import run_path
 from typing import Any
 from xml.etree.ElementTree import fromstring
 
+from defusedxml.common import EntitiesForbidden
 from pytest import MonkeyPatch, fixture, mark, raises
 
 
@@ -78,6 +79,23 @@ def test_demo_starts_manual_and_selects_only_its_own_trusted_branch(trigger_help
     assert (
         fromstring(original).findtext(".//branches/hudson.plugins.git.BranchSpec/name") == "*/main"
     )
+
+
+@mark.parametrize(
+    "declaration",
+    [
+        '<!ENTITY payload "synthetic">',
+        '<!ENTITY payload SYSTEM "file:///nonexistent-synthetic-file">',
+        '<!ENTITY payload SYSTEM "https://example.invalid/synthetic">',
+    ],
+)
+def test_demo_configuration_rejects_xml_entities(trigger_helpers, declaration):
+    payload = (
+        f"<!DOCTYPE flow-definition [{declaration}]>"
+        "<flow-definition><description>&payload;</description></flow-definition>"
+    ).encode()
+    with raises(EntitiesForbidden):
+        trigger_helpers["demo_job_xml"](payload)
 
 
 @mark.parametrize("change", ["repository", "credential"])

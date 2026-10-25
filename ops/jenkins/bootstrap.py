@@ -19,7 +19,8 @@ from urllib.request import (
     Request,
     build_opener,
 )
-from xml.etree.ElementTree import fromstring
+
+from defusedxml.ElementTree import fromstring
 
 ROOT = Path(__file__).resolve().parents[2]
 COMPOSE = ["docker", "compose", "-f", str(ROOT / "ops/jenkins/compose.yaml")]
