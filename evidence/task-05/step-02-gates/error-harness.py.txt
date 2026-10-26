@@ -1,0 +1,51 @@
+"""A manual invalid-checksum probe verifies exit-2 image archival withholding, not scanner outage."""
+from datetime import UTC,datetime
+from hashlib import sha256
+from json import loads,dumps
+from pathlib import Path
+from urllib.parse import urlencode
+from xml.etree.ElementTree import SubElement,tostring
+from defusedxml.ElementTree import fromstring
+from bootstrap import Jenkins,admin_password
+from verify_ci import job_xml,post,run_build,require_passing_tests,SECURITY_ARTIFACTS
+
+client=Jenkins(admin_password()); info=loads(Path('reports/step52-gate-candidate.json').read_text())
+source=Path('reports/step52-gate-success-job.txt').read_text().strip()
+script=fromstring(client.request('/job/'+source+'/config.xml')).findtext('definition/script')
+needle='uv run --locked python -m scripts.image_scan '
+assert script.count(needle)==1
+script=script.replace(needle,"printf 'invalid-checksum\\n' > reports/image.sha256\n"+needle)
+assert not loads(client.request('/queue/api/json'))['items']
+assert loads(client.request('/computer/finsecure-python/api/json?tree=idle'))['idle']
+name='finsecure-ci-image-review-error-'+datetime.now(UTC).strftime('%Y%m%d%H%M%S'); job='/job/'+name+'/'
+post(client,'/createItem?'+urlencode({'name':name}),job_xml(script,'Owned Step 5.2 invalid-checksum probe; no scanner outage/vulnerability simulation, publishing or delivery.'),'application/xml')
+Path('reports/step52-gate-error-job.txt').write_text(name+'\n'); print('Created',name,flush=True)
+try:
+ number=run_build(client,job); bp=job+str(number)+'/'
+ build=loads(client.request(bp+'api/json')); assert build['result']=='FAILURE' and not build['building']
+ secret=fromstring(client.request('/computer/finsecure-python/jenkins-agent.jnlp')).find('.//argument').text
+ sensitive=[admin_password(),secret,client.authorization,client.authorization[6:]]
+ console=client.request(bp+'consoleText').decode()
+ for value in sensitive: console=console.replace(value,'<redacted>')
+ out=Path('reports')/name; out.mkdir(); (out/'console.txt').write_text(console)
+ assert 'script returned exit code 2' in console and 'Image gate: error' in console
+ expected={'reports/'+n for n in ['build-metadata.txt','dependencies.txt','lint.txt','format.txt','tests.txt','junit.xml','coverage.xml','package.txt','packages.sha256','buildkit-workers.txt','image-metadata.txt','image-build.txt','buildkit-image.json','image.sha256','image-security-summary.json']}|SECURITY_ARTIFACTS|{'dist/finsecure_pay-0.2.0-py3-none-any.whl','dist/finsecure_pay-0.2.0.tar.gz'}
+ assert {a['relativePath'] for a in build['artifacts']}==expected
+ artifacts={}
+ for item in build['artifacts']:
+  path=item['relativePath']; data=client.request(bp+'artifact/'+path)
+  assert not any(value.encode() in data for value in sensitive)
+  target=out/path; target.parent.mkdir(parents=True,exist_ok=True); target.write_bytes(data)
+  artifacts[path]={'bytes':len(data),'sha256':sha256(data).hexdigest()}
+ tests=loads(client.request(bp+'testReport/api/json')); require_passing_tests(tests,info['expected_tests'])
+ gate=loads((out/'reports/image-security-summary.json').read_text())
+ assert gate['status']=='error' and gate['phase']=='input' and gate['report_sha256']=={}
+ assert gate['source_revision']==info['candidate_revision']
+ assert (out/'reports/image.sha256').read_text()=='invalid-checksum\n'
+ record={'verified_at_utc':datetime.now(UTC).isoformat(),'job':name,'build':number,'result':'FAILURE',**info,'executed_script_sha256':sha256(script.encode()).hexdigest(),'probe':'checksum file replaced after export; actual gate rejected input with exit 2 before scanner/database','test_count':info['expected_tests'],'image_scan':gate,'artifacts':artifacts,'image_archived':False,'pipeline_from_scm_verified':False,'published_or_deployed':False}
+ (out/'verification.json').write_text(dumps(record,indent=2)+'\n')
+ print(dumps({'job':name,'result':'FAILURE','tests':info['expected_tests'],'image_gate':'error','phase':'input','artifacts':len(artifacts),'image_archived':False},indent=2))
+finally:
+ config=fromstring(client.request(job+'config.xml')); disabled=config.find('disabled')
+ if disabled is None: disabled=SubElement(config,'disabled')
+ disabled.text='true'; post(client,job+'config.xml',tostring(config),'application/xml')

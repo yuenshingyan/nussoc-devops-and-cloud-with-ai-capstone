@@ -1,0 +1,116 @@
+"""Owned unpublished Step 5.2 candidate jobs; real passing or Debian vulnerability-blocked image."""
+from argparse import ArgumentParser
+from datetime import UTC,datetime
+from hashlib import sha256
+from json import loads,dumps
+from pathlib import Path
+from re import fullmatch
+from subprocess import run
+from urllib.parse import urlencode
+from xml.etree.ElementTree import SubElement,tostring
+from defusedxml.ElementTree import fromstring
+from bootstrap import Jenkins,admin_password
+from verify_ci import job_xml,post,run_build,require_passing_tests,require_security_reports,require_image_security_reports,SECURITY_ARTIFACTS,IMAGE_SECURITY_ARTIFACTS
+from image_archive import inspect_image_archive
+
+parser=ArgumentParser(description=__doc__); parser.add_argument('mode',choices=['success','blocked']); parser.add_argument('--existing-job'); args=parser.parse_args()
+info=loads(Path('reports/step52-gate-candidate.json').read_text()); revision=info['candidate_revision']; base=info['public_base_revision']; bundle=info['agent_bundle_path']
+assert fullmatch(r'[a-f0-9]{40}',revision) and fullmatch(r'[a-f0-9]{40}',base)
+assert bundle=='/tmp/finsecure-step52-'+revision+'.bundle'
+assert fullmatch(r'[a-f0-9]{64}',info['bundle_sha256'])
+candidate=run(['git','show',revision+':Jenkinsfile'],capture_output=True,text=True,check=True).stdout
+script="def scm = [$class: 'GitSCM', branches: [[name: '"+base+"']], userRemoteConfigs: [[url: 'https://github.com/yuenshingyan/nussoc-devops-and-cloud-with-ai-capstone.git']], extensions: [[$class: 'CloneOption', timeout: 2]]]\n"+candidate
+checkout="""                checkout scm
+                sh '''#!/usr/bin/env bash
+set -euo pipefail
+printf '%s  %s\\n' '%s' '%s' | sha256sum --check -
+git fetch --no-tags '%s' refs/heads/task-05/step-02-image-security-gates
+git checkout --detach '%s'
+test "$(git rev-parse HEAD)" = '%s'
+'''
+""" % ('%s','%s',info['bundle_sha256'],bundle,bundle,revision,revision)
+assert script.count('                checkout scm\n')==1; script=script.replace('                checkout scm\n',checkout)
+override=None
+if args.mode=='blocked':
+ template=run(['git','show',revision+':evidence/task-05/step-02-remediation/Dockerfile.runtime-candidate'],capture_output=True,text=True,check=True).stdout
+ old=next(line for line in template.splitlines() if line.startswith('ARG PYTHON_IMAGE='))
+ new='ARG PYTHON_IMAGE=python:3.14.9-slim-bookworm@sha256:945c2676dc2b18e0c1f16879244122c57c0ffede60006bf3df159c507a31bcae'
+ dockerfile=template.replace(old,new); digest=sha256(dockerfile.encode()).hexdigest()
+ # Only the isolated review workspace's Dockerfile changes, after tests/source scans/package.
+ command=f"git show {revision}:evidence/task-05/step-02-remediation/Dockerfile.runtime-candidate > Dockerfile\n"
+ code="from pathlib import Path; p=Path('Dockerfile'); text=p.read_text(); assert text.count("+repr(old)+")==1; p.write_text(text.replace("+repr(old)+","+repr(new)+"))"
+ command+="python - <<'PY_IMAGE_REVIEW'\n"+code+"\nPY_IMAGE_REVIEW\n"
+ command+=f"printf '%s  Dockerfile\\n' '{digest}' | sha256sum --check -\nprintf 'REVIEW_DOCKERFILE_SHA256={digest}\\n'\n"
+ assert script.count('mkdir -p images\n')==1; script=script.replace('mkdir -p images\n',command+'mkdir -p images\n')
+ override={'scope':'Dockerfile only, after source checks/package and before image export','template':'evidence/task-05/step-02-remediation/Dockerfile.runtime-candidate','base_argument':new,'effective_dockerfile_sha256':digest}
+name=args.existing_job or 'finsecure-ci-image-review-'+args.mode+'-'+datetime.now(UTC).strftime('%Y%m%d%H%M%S')
+assert fullmatch('finsecure-ci-image-review-'+args.mode+r'-[0-9]{14}',name)
+client=Jenkins(admin_password()); job='/job/'+name+'/'
+if args.existing_job:
+ assert fromstring(client.request(job+'config.xml')).findtext('definition/script')==script
+ assert len(loads(client.request(job+'api/json'))['builds'])==1
+else:
+ assert not loads(client.request('/queue/api/json'))['items']
+ assert loads(client.request('/computer/finsecure-python/api/json?tree=idle'))['idle']
+ post(client,'/createItem?'+urlencode({'name':name}),job_xml(script,'Owned Step 5.2 inline candidate '+revision+' via local Git bundle; '+args.mode+'; no publishing/delivery.'),'application/xml')
+Path('reports/step52-gate-'+args.mode+'-job.txt').write_text(name+'\n')
+print('Inspecting' if args.existing_job else 'Created',name,flush=True)
+try:
+ number=1 if args.existing_job else run_build(client,job); bp=job+str(number)+'/'
+ build=loads(client.request(bp+'api/json')); console=client.request(bp+'consoleText').decode()
+ secret=fromstring(client.request('/computer/finsecure-python/jenkins-agent.jnlp')).find('.//argument').text
+ sensitive=[admin_password(),secret,client.authorization,client.authorization[6:]]
+ for value in sensitive: console=console.replace(value,'<redacted>')
+ output=Path('reports')/name; output.mkdir(parents=True,exist_ok=True); (output/'console.txt').write_text(console)
+ expected_result='SUCCESS' if args.mode=='success' else 'FAILURE'
+ assert not build['building'] and build['result']==expected_result,'Unexpected result; inspect retained console without retriggering'
+ assert 'SOURCE_REVISION='+revision in console and 'Running on finsecure-python' in console
+ expected={'reports/'+name for name in ['build-metadata.txt','dependencies.txt','lint.txt','format.txt','tests.txt','junit.xml','coverage.xml','package.txt','packages.sha256','buildkit-workers.txt','image-metadata.txt','image-build.txt','buildkit-image.json','image.sha256']}|SECURITY_ARTIFACTS|IMAGE_SECURITY_ARTIFACTS|{'dist/finsecure_pay-0.2.0-py3-none-any.whl','dist/finsecure_pay-0.2.0.tar.gz'}
+ if args.mode=='success': expected.add('images/finsecure-pay.tar.gz')
+ assert {a['relativePath'] for a in build['artifacts']}==expected,'Unexpected artifact inventory'
+ artifacts={}
+ for item in build['artifacts']:
+  path=item['relativePath']; data=client.request(bp+'artifact/'+path)
+  assert not any(value.encode() in data for value in sensitive),'Live credential in artifact; refusing save'
+  target=output/path; target.parent.mkdir(parents=True,exist_ok=True); target.write_bytes(data)
+  artifacts[path]={'bytes':len(data),'sha256':sha256(data).hexdigest()}
+ tests=loads(client.request(bp+'testReport/api/json')); require_passing_tests(tests,info['expected_tests'])
+ coverage=loads(client.request(bp+'coverage/api/json')); xml=fromstring((output/'reports/coverage.xml').read_bytes())
+ assert xml.attrib['lines-covered']==xml.attrib['lines-valid']=='125' and xml.attrib['branches-covered']==xml.attrib['branches-valid']=='28'
+ assert coverage['qualityGates']['overallResult']=='INACTIVE'
+ source=require_security_reports(output,set(artifacts),False)
+ for path,digest in source['source_sha256'].items(): assert sha256(run(['git','show',revision+':'+path],capture_output=True,check=True).stdout).hexdigest()==digest
+ gate=loads((output/'reports/image-security-summary.json').read_text())
+ assert gate['source_revision']==revision and gate['temporary_cache_removed']
+ for filename,digest in gate['report_sha256'].items(): assert artifacts['reports/'+filename]['sha256']==digest
+ assert gate['lock_sha256']==source['lock_sha256']
+ assert gate['archive_sha256']+'  images/finsecure-pay.tar.gz\n'==(output/'reports/image.sha256').read_text()
+ raw=loads((output/'reports/trivy.json').read_text()); metadata=loads((output/'reports/buildkit-image.json').read_text())
+ assert raw['Metadata']['ImageID']==gate['image_id']==metadata['containerimage.config.digest']
+ assert 0<=gate['database_age_seconds']<=86400 and 0<=gate['database_age_at_finish_seconds']<=86400
+ for line in (output/'reports/packages.sha256').read_text().splitlines():
+  digest,path=line.split('  ',1); assert artifacts[path]['sha256']==digest
+ for stage in ['Package','Local image export','Image security gate']:
+  assert '[Pipeline] { ('+stage+')' in console
+  assert f'Stage "{stage}" skipped due to earlier failure(s)' not in console
+ # No Stage View/REST plugin is installed. These conclusions use the console and artifacts.
+ stages={'Package':'SUCCESS','Local image export':'SUCCESS','Image security gate':'SUCCESS' if gate['status']=='passed' else 'FAILED'}
+ image=None
+ if args.mode=='success':
+  require_image_security_reports(output,set(artifacts),False,revision)
+  assert gate['status']=='passed' and sum(gate['severities'].values())==0
+  assert stages['Image security gate']=='SUCCESS'
+  image=inspect_image_archive(output/'images/finsecure-pay.tar.gz',revision,f'finsecure-pay-ci:jenkins-{name}-{number}',metadata['containerimage.config.digest'])
+ else:
+  assert gate['status']=='blocked' and gate['blocking_findings']>0 and not gate['end_of_life']
+  assert gate['scan_exit_code']==0 and 'script returned exit code 1' in console
+  assert stages['Image security gate']=='FAILED' and override['effective_dockerfile_sha256'] in console
+ record={'verified_at_utc':datetime.now(UTC).isoformat(),'job':name,'build':number,'result':build['result'],'mode':args.mode,**info,'candidate_jenkinsfile_sha256':sha256(candidate.encode()).hexdigest(),'executed_script_sha256':sha256(script.encode()).hexdigest(),'pipeline_from_scm_verified':False,'source_transport':'public base then hash-checked local Git bundle; unpublished candidate','controlled_dockerfile_override':override,'test_count':info['expected_tests'],'stages':stages,'stage_evidence':'console entry markers plus complete package/export/scan artifacts; no stage REST API','source_scan':source,'image_scan':gate,'artifacts':artifacts,'image_export':image,'published_or_deployed':False}
+ (output/'verification.json').write_text(dumps(record,indent=2)+'\n')
+ (output/'junit-api-summary.json').write_text(dumps({key:tests[key] for key in ['passCount','failCount','skipCount','duration']},indent=2)+'\n')
+ (output/'coverage-api.json').write_text(dumps(coverage,indent=2)+'\n')
+ print(dumps({'job':name,'result':build['result'],'tests':info['expected_tests'],'image_gate':gate['status'],'severity_occurrences':gate['severities'],'artifact_count':len(artifacts),'image_archived':'images/finsecure-pay.tar.gz' in artifacts},indent=2))
+finally:
+ config=fromstring(client.request(job+'config.xml')); disabled=config.find('disabled')
+ if disabled is None: disabled=SubElement(config,'disabled')
+ disabled.text='true'; post(client,job+'config.xml',tostring(config),'application/xml')

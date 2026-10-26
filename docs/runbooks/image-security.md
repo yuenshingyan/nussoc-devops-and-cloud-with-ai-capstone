@@ -5,7 +5,11 @@ The user approved the policy, verified tooling, candidate experiments, and adopt
 tested musl-based Alpine option. The root Dockerfile now uses that pinned base with whole
 pip/ensurepip removal. Jenkinsfile now has a 30-minute global limit and an image gate
 between export and image archival. This does not authorize registry/cloud delivery.
-Actual candidate Jenkins verification is recorded separately when completed.
+Implementation `e920cb5` passed local candidate Jenkins verification: 410 tests in each
+run; Alpine passed with 33 artifacts, the controlled Debian comparison blocked 61 HIGH /
+2 CRITICAL with 32 artifacts and no image, and an invalid-checksum probe returned error 2
+with reports/packages but no image. See [actual evidence](../../evidence/task-05/step-02-image-gates.md).
+These were unpublished inline candidate jobs, not normal SCM-loaded/triggered proof.
 
 ## Approved policy
 
@@ -149,7 +153,11 @@ and complete nonempty OS/Python inventories. Current supported scope is Alpine 3
 Debian 12/13 (including controlled comparison cases); other families/releases fail closed
 pending review. The pinned scanner's EOL result is enforced independently. Every locked
 runtime dependency and the project must appear at the expected version in `/opt/venv`.
-Additional packages are still scanned, not ignored. Findings must name an inventoried
+Additional identified packages are still scanned, not ignored. Inventory completeness is
+relative to the expected OS/Python targets; it does not establish detection of every
+unidentified embedded component or complete coverage of the source-built CPython
+interpreter/standard library. No exploitability or vulnerability-free claim is made.
+Findings must name an inventoried
 package; Debian epoch/release fields are reassembled without discarding version identity.
 Unknown severity names, duplicate JSON keys, modified/ignored findings, missing reports,
 scanner failures, changed inputs and stale/future databases fail closed.
@@ -162,8 +170,16 @@ exact input archive/source/lock. Early failures may have only partial diagnostic
 Package archival remains before image building; image archival occurs only after the
 wrapper exits 0. The blocked image can remain in its isolated review workspace/builder
 cache, but is not a downloadable image artifact or a deployed workload. Existing manual
-retention rules still apply. Normal success now has 33 artifacts; a complete vulnerability
+retention rules still apply. The three verified review workspace image archives were
+subsequently removed with identity/hash checks; build history and BuildKit cache remain.
+Completed calls clean their temporary scanner directory; forcible process/container
+termination may leave an owned directory under `/tmp/finsecure-image-scan-*`. Inspect it
+only while the agent is idle before explicit removal; never reuse it as a fallback cache. Normal success now has 33 artifacts; a complete vulnerability
 block retains 32 (including packages and reports, excluding the image).
+
+The exact passing Jenkins ARM64 export was also loaded by the operator and passed HTTP,
+security, shutdown and constrained-runtime checks. No scanner daemon access, public image
+release or cloud deployment was added. Normal main remains at build #7 until approval.
 
 Tests exercise severity/fix boundaries, EOL, unsupported OS, timestamps, inventory gaps,
 version identity, binary/archive integrity, scanner errors/timeouts, stale outputs and

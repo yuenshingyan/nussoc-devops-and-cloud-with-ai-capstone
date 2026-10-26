@@ -1,0 +1,15 @@
+{
+  "started_at_utc": "2026-10-26T11:49:27.177214+00:00",
+  "status": "error",
+  "source_revision": "e920cb57eeda98bbb0c222a690c27a38505e0028",
+  "local_tag": "finsecure-pay-ci:jenkins-finsecure-ci-image-review-error-20261026114904-1",
+  "database_repository": "ghcr.io/aquasecurity/trivy-db:2",
+  "operation_budget_seconds": 300,
+  "max_database_age_seconds": 86400,
+  "phase": "input",
+  "trivy_version": "0.76.1",
+  "reason": "execution_identity_or_report_invalid",
+  "finished_at_utc": "2026-10-26T11:49:27.197314+00:00",
+  "elapsed_seconds": 0.020244666000508005,
+  "report_sha256": {}
+}

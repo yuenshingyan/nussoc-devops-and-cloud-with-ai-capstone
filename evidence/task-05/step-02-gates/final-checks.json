@@ -1,0 +1,28 @@
+{
+  "verified_at_utc": "2026-10-26T12:17:50.964271+00:00",
+  "host_tests": 410,
+  "candidate_tests_each_job": 410,
+  "ruff_lint_format_build_compose": "passed",
+  "source_scans": {
+    "status": "passed",
+    "exit_code": 1,
+    "LOW": 19,
+    "MEDIUM": 0,
+    "HIGH": 0,
+    "blocking_findings": 0
+  },
+  "runtime_audit": {
+    "status": "passed",
+    "exit_code": 0,
+    "dependencies_audited": 14,
+    "blocking_findings": 0
+  },
+  "source_files": 23,
+  "implementation_unchanged_since_verified_candidate": "e920cb57eeda98bbb0c222a690c27a38505e0028",
+  "lock_unchanged_from_main": true,
+  "main_build_unchanged": 7,
+  "three_review_jobs_disabled_with_one_build_each": true,
+  "known_live_credential_scan_files": 498,
+  "normal_scm_verification_pending": true,
+  "merge_publication_pending": true
+}

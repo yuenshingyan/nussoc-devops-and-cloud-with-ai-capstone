@@ -1,0 +1,50 @@
+{
+  "success/reports/buildkit-workers.txt": {
+    "original_sha256": "b9f2f581939891369c0a9c9f824c40f6fe2033fa9b8d870d5047bac2e0788764",
+    "curated_sha256": "e617b2917d1740055358caeea6022d6ba68c0af9b268feb029ece8dfaa66dd88"
+  },
+  "success/reports/bandit.json": {
+    "original_sha256": "6248eda7d783378379d6ffe71db1a8629364314e0b3932e38ae9ce7f3fda2352",
+    "curated_sha256": "6e9eaf264fe5198a92db3e82b37a4a05cea52d23a90cfaf8cf0540ff3f7989e3"
+  },
+  "success/reports/buildkit-image.json": {
+    "original_sha256": "45984980afca2131438f9609b7bd62d8da5cbbdd1470418aead86b51158c43ca",
+    "curated_sha256": "c27afc3079995e5143a7c2e8c5d8d1f403469ddcf584b416166fb1f5d58d1c7e"
+  },
+  "success/reports/junit.xml": {
+    "original_sha256": "b56484b858292f68d4a7e1edc41dfe04f6cc49d6716a4c480e93db5a94c420df",
+    "curated_sha256": "f050111e4bd0b7fccfce13e2cd3f7fb694c084d0c0ba95dec6bfec9b548775de"
+  },
+  "blocked/reports/buildkit-workers.txt": {
+    "original_sha256": "b9f2f581939891369c0a9c9f824c40f6fe2033fa9b8d870d5047bac2e0788764",
+    "curated_sha256": "e617b2917d1740055358caeea6022d6ba68c0af9b268feb029ece8dfaa66dd88"
+  },
+  "blocked/reports/bandit.json": {
+    "original_sha256": "ed3633d16889e3cd559ad97482f2bf1e5581837bebbfc55d7ecc5d6e730bd498",
+    "curated_sha256": "7752a61358c10bbf7a8409a553584a7894a11cd38fc17921879dc85666b467e9"
+  },
+  "blocked/reports/buildkit-image.json": {
+    "original_sha256": "f1fab4c8dc583a6c6518fe4e45e0950e8f5948ae40df6435905fa2f39542b958",
+    "curated_sha256": "5fac85e9fae4db5aa50083298003feba3b0bfeed50b30c3047522e9ee07bb03d"
+  },
+  "blocked/reports/junit.xml": {
+    "original_sha256": "be67a79d646e2afe443510c79dd693cd61f8e6ee7d9f084543afab8a143adf63",
+    "curated_sha256": "c377fdc6f7ab1514153f0089dc57b1cd6612c0ce12a5a80d8994423354b95481"
+  },
+  "error/reports/buildkit-workers.txt": {
+    "original_sha256": "b9f2f581939891369c0a9c9f824c40f6fe2033fa9b8d870d5047bac2e0788764",
+    "curated_sha256": "e617b2917d1740055358caeea6022d6ba68c0af9b268feb029ece8dfaa66dd88"
+  },
+  "error/reports/bandit.json": {
+    "original_sha256": "bff8978f7716bcc4e6b93b3db8d8913332ab5fb663f85cada9e82b4428c3d131",
+    "curated_sha256": "2f5a153423c0e07711a409bc3a6bbba306c0e49d19a60eeeabbb85245b03e96a"
+  },
+  "error/reports/buildkit-image.json": {
+    "original_sha256": "ca5c2943ef2f1191a8dda7b21c29ebc2204a8e9aaf9b77d1773ff284452c4ff6",
+    "curated_sha256": "63cb7f2c499fe9ffcfa41c865492bef8a941642bab871ff19340b41218ad36db"
+  },
+  "error/reports/junit.xml": {
+    "original_sha256": "bcd34a04439d891ea371a21d09a57b3cebb49d90288b2bf8b0a1348d6aaf789d",
+    "curated_sha256": "b390a4582794ceecb0e64deb8d902c03c095777d5fcbde5b01354dc6ceaea90f"
+  }
+}

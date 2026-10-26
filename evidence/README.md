@@ -15,7 +15,7 @@ and report retention on an isolated failure. Cloud delivery remains unverified.
 | 2 — Containerisation | [task-02](task-02/) | Complete, reviewed, merged, and published |
 | 3 — Kubernetes and cloud | [task-03](task-03/) | Steps 3.1–3.2 merged; cloud execution deferred |
 | 4 — CI/CD | [task-04](task-04/) | Steps 4.1–4.2 merged; Step 4.3 local build/export merged and SCM-verified (245 tests/image smoke); Step 4.4 local SCM/test-gate merged and SCM-verified (260 tests); publishing/deployment pending |
-| 5 — DevSecOps | [task-05](task-05/) | Step 5.1 merged/SCM-verified; Step 5.2 tools/preflights and Alpine candidate checks complete, adoption/gate integration pending |
+| 5 — DevSecOps | [task-05](task-05/) | Step 5.1 merged/SCM-verified; Step 5.2 Alpine/image gate locally verified, review/publication and normal SCM proof pending |
 | 6 — Observability | [task-06](task-06/) | Pending |
 | 7 — Documentation and demonstration | [task-07](task-07/) | Pending |
 
@@ -108,7 +108,14 @@ and report retention on an isolated failure. Cloud delivery remains unverified.
 - [Step 5.2 — candidate remediation study](task-05/step-02-remediation.md): updated Debian
   candidates still block; Python 3.14.9/Alpine 3.24 has no known findings on ARM64/AMD64.
   Both pass 316 tests plus HTTP/security/constrained-runtime checks, AMD64 emulated.
-  Whole pip/ensurepip removal verified; musl-based adoption and Jenkins integration pending.
+  Whole pip/ensurepip removal verified. This historical pre-adoption checkpoint is
+  superseded by the implemented gate verification below.
+
+- [Step 5.2 — image gate implementation and Jenkins verification](task-05/step-02-image-gates.md):
+  approved Alpine adoption; 410 tests in each of three candidate runs. Passing image
+  archived, real HIGH/CRITICAL block and checksum-error paths withheld images while
+  preserving reports/packages. Exact passing export smoke/constrained checks passed.
+  Review jobs disabled; no merge/publication, normal SCM proof or cloud delivery yet.
 
 For each artifact, record the requirement demonstrated, timestamp, command or
 procedure, actual result, commit, applicable image digest, and artifact path or

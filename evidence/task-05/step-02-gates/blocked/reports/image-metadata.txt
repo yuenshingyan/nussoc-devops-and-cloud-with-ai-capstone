@@ -1,0 +1,3 @@
+SOURCE_REVISION=e920cb57eeda98bbb0c222a690c27a38505e0028
+LOCAL_TAG=finsecure-pay-ci:jenkins-finsecure-ci-image-review-blocked-20261026114149-1
+PLATFORM=linux/arm64

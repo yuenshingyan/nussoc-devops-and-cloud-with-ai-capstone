@@ -1,0 +1,66 @@
+{
+  "started_at_utc": "2026-10-26T11:43:36.563300+00:00",
+  "status": "blocked",
+  "source_revision": "e920cb57eeda98bbb0c222a690c27a38505e0028",
+  "local_tag": "finsecure-pay-ci:jenkins-finsecure-ci-image-review-blocked-20261026114149-1",
+  "database_repository": "ghcr.io/aquasecurity/trivy-db:2",
+  "operation_budget_seconds": 300,
+  "max_database_age_seconds": 86400,
+  "phase": "report",
+  "trivy_version": "0.76.1",
+  "image_id": "sha256:30403b554b38ee44600e27c911eaea3e58f26b568e1ae5bb5e1d068b99fd9db6",
+  "platform": "linux/arm64",
+  "archive_sha256": "134d814d7981bc0f1731aeb730a2e9386d3546d40a06c51a21f7045834b27f0a",
+  "lock_sha256": "c5856200e528008160c463b0bc18284902c6bc5608aecb1f1a6e05e9a3b571c0",
+  "trivy_sha256": "b422130ea54e53e142e65c838662e48919ce9c3f23f17d80066b43e70550cb85",
+  "database_exit_code": 0,
+  "database_age_seconds": 16164.813513,
+  "scan_exit_code": 0,
+  "database_age_at_finish_seconds": 16169.309692,
+  "os": {
+    "Family": "debian",
+    "Name": "12.15"
+  },
+  "end_of_life": false,
+  "packages_by_type": {
+    "debian": 97,
+    "python-pkg": 15
+  },
+  "runtime_packages": {
+    "annotated-doc": "0.0.5",
+    "annotated-types": "0.8.0",
+    "anyio": "4.15.1",
+    "click": "8.5.0",
+    "fastapi": "0.156.8",
+    "finsecure-pay": "0.2.0",
+    "h11": "0.16.0",
+    "idna": "3.20",
+    "opentelemetry-api": "1.45.1",
+    "pydantic": "2.14.1",
+    "pydantic-core": "2.50.1",
+    "starlette": "1.9.0",
+    "typing-inspection": "0.4.4",
+    "typing-extensions": "4.16.0",
+    "uvicorn": "0.54.0"
+  },
+  "severities": {
+    "UNKNOWN": 2,
+    "LOW": 91,
+    "MEDIUM": 99,
+    "HIGH": 61,
+    "CRITICAL": 2
+  },
+  "blocking_findings": 63,
+  "temporary_cache_removed": true,
+  "finished_at_utc": "2026-10-26T11:44:48.330853+00:00",
+  "elapsed_seconds": 71.7684781579992,
+  "report_sha256": {
+    "image-security-tools.txt": "84e54b2d02a5de1ad8dff546f152fb3aa252379d25a3a8d0f982d6d3a1fe4cba",
+    "image-security-export.txt": "3e4d22fc1151a9a913dc5919be4d78ac5a403d5c7412b9e00bc41098c658dbf6",
+    "image-runtime-requirements.txt": "ac46a68afa9b7bb4fe1d7beca4c7c27d90198e19af735a52210307dc7af69fba",
+    "trivy-db.json": "16be15a825d2547dfb1d4e1578471547a6ac98d372573d9c8e05768fbb6cb643",
+    "trivy-db.txt": "e894eeca2bd2a488dafcfb5c1c220d39ddb9abde383af6b725c0a7600f66bec8",
+    "trivy.json": "7eb5eeae3d210e2421f03244ac568acb77f68067be2f98b877dd4cd95bbb407a",
+    "trivy.txt": "3ddbd0582173560d01869d4248ba1052560761eb6f66db9fc3ee72c0802fb130"
+  }
+}

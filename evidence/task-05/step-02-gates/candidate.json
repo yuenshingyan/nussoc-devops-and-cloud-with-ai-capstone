@@ -1,0 +1,7 @@
+{
+  "candidate_revision": "e920cb57eeda98bbb0c222a690c27a38505e0028",
+  "public_base_revision": "6c762936a51a95834f1320a2383869c2aef1a230",
+  "agent_bundle_path": "/tmp/finsecure-step52-e920cb57eeda98bbb0c222a690c27a38505e0028.bundle",
+  "bundle_sha256": "cd1d08c9ddbe97feb2aadf6794c57509aeada821a8b903c46c20b71fbd3f3f22",
+  "expected_tests": 410
+}

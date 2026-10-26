@@ -1,0 +1,32 @@
+{
+  "verified_at_utc": "2026-10-26T11:54:01.778141+00:00",
+  "review_jobs_disabled_one_build_each": true,
+  "agent_bundle_removed": true,
+  "workspace_image_cleanup": [
+    {
+      "job": "finsecure-ci-image-review-success-20261026113827",
+      "archive_sha256": "2710de69812fea63a68e6ee6d6e4d9f192606ce92e43d7e6f9325f6bcd215629",
+      "image_id": "sha256:9007cf91a9090b2bec035267e6ec9663a7f7bb9577aafc5b201f1230159ec1d4",
+      "workspace_archive_removed": true
+    },
+    {
+      "job": "finsecure-ci-image-review-blocked-20261026114149",
+      "archive_sha256": "134d814d7981bc0f1731aeb730a2e9386d3546d40a06c51a21f7045834b27f0a",
+      "image_id": "sha256:30403b554b38ee44600e27c911eaea3e58f26b568e1ae5bb5e1d068b99fd9db6",
+      "workspace_archive_removed": true
+    },
+    {
+      "job": "finsecure-ci-image-review-error-20261026114904",
+      "archive_sha256": "ab33ec75369247e443449d85806b40b455f8b07afcf6b567459e8215f68161ed",
+      "image_id": "sha256:9007cf91a9090b2bec035267e6ec9663a7f7bb9577aafc5b201f1230159ec1d4",
+      "workspace_archive_removed": true
+    }
+  ],
+  "main_last_build_unchanged": 7,
+  "main_7_archived_image_checksum_unchanged": true,
+  "passing_review_archive_still_available_and_checksum_matches": true,
+  "smoke_containers_removed": true,
+  "buildkit_cache_and_named_volumes_preserved": true,
+  "host_review_archives_and_loaded_passing_image_retained": true,
+  "no_source_image_publication_or_cloud_changes": true
+}

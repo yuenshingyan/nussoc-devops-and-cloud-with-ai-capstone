@@ -1,0 +1,134 @@
+{
+  "verified_at_utc": "2026-10-26T11:49:31.803040+00:00",
+  "job": "finsecure-ci-image-review-error-20261026114904",
+  "build": 1,
+  "result": "FAILURE",
+  "candidate_revision": "e920cb57eeda98bbb0c222a690c27a38505e0028",
+  "public_base_revision": "6c762936a51a95834f1320a2383869c2aef1a230",
+  "agent_bundle_path": "/tmp/finsecure-step52-e920cb57eeda98bbb0c222a690c27a38505e0028.bundle",
+  "bundle_sha256": "cd1d08c9ddbe97feb2aadf6794c57509aeada821a8b903c46c20b71fbd3f3f22",
+  "expected_tests": 410,
+  "executed_script_sha256": "be585a14f0c647882c12c9550d2e555141d315fe262feb0167c93118407a8ac4",
+  "probe": "checksum file replaced after export; actual gate rejected input with exit 2 before scanner/database",
+  "test_count": 410,
+  "image_scan": {
+    "started_at_utc": "2026-10-26T11:49:27.177214+00:00",
+    "status": "error",
+    "source_revision": "e920cb57eeda98bbb0c222a690c27a38505e0028",
+    "local_tag": "finsecure-pay-ci:jenkins-finsecure-ci-image-review-error-20261026114904-1",
+    "database_repository": "ghcr.io/aquasecurity/trivy-db:2",
+    "operation_budget_seconds": 300,
+    "max_database_age_seconds": 86400,
+    "phase": "input",
+    "trivy_version": "0.76.1",
+    "reason": "execution_identity_or_report_invalid",
+    "finished_at_utc": "2026-10-26T11:49:27.197314+00:00",
+    "elapsed_seconds": 0.020244666000508005,
+    "report_sha256": {}
+  },
+  "artifacts": {
+    "dist/finsecure_pay-0.2.0-py3-none-any.whl": {
+      "bytes": 13075,
+      "sha256": "0c47ae44e3d6c009f27052d344785d783592432a3697fd4004754f16531fbf4e"
+    },
+    "dist/finsecure_pay-0.2.0.tar.gz": {
+      "bytes": 442414,
+      "sha256": "08b632d73763560c944781ebf340c262214e998d2f03c725452a104fe0d2c4e0"
+    },
+    "reports/bandit.json": {
+      "bytes": 25592,
+      "sha256": "bff8978f7716bcc4e6b93b3db8d8913332ab5fb663f85cada9e82b4428c3d131"
+    },
+    "reports/bandit.txt": {
+      "bytes": 213,
+      "sha256": "cbdcb21f996bbcee086d84b3866c7ee7ae261a506de510360aef715a8e09c33f"
+    },
+    "reports/build-metadata.txt": {
+      "bytes": 174,
+      "sha256": "8826119da0d43b8388e80456ea44b1f8386fc0c3c0c78e7a1f16a476a86afb4c"
+    },
+    "reports/buildkit-image.json": {
+      "bytes": 700,
+      "sha256": "ca5c2943ef2f1191a8dda7b21c29ebc2204a8e9aaf9b77d1773ff284452c4ff6"
+    },
+    "reports/buildkit-workers.txt": {
+      "bytes": 674,
+      "sha256": "b9f2f581939891369c0a9c9f824c40f6fe2033fa9b8d870d5047bac2e0788764"
+    },
+    "reports/coverage.xml": {
+      "bytes": 8695,
+      "sha256": "480fbf49aeb2de94b170d11476ba522e6cab5c734c8a9c5303c74b072e7ec84b"
+    },
+    "reports/dependencies.txt": {
+      "bytes": 1631,
+      "sha256": "77d66dd01b140416415cd06216de0733d8d1ee6a9d3b3c7dd4180d78745499e9"
+    },
+    "reports/format.txt": {
+      "bytes": 27,
+      "sha256": "19a92c58959b1f6fb6427b78e201fbed4b62201f1e4af7e700ab9f2b4cbf7ce1"
+    },
+    "reports/image-build.txt": {
+      "bytes": 2256,
+      "sha256": "0179acb073e5ffc3102719fda81815134fcf81017b69f13e999a04e89b8191b2"
+    },
+    "reports/image-metadata.txt": {
+      "bytes": 162,
+      "sha256": "b1296cd21189bfe25304da68ecf8168adee2b8c2566f65c3de2eb7bba967524c"
+    },
+    "reports/image-security-summary.json": {
+      "bytes": 593,
+      "sha256": "de9c414a322e9c336e27455e6d069547996491d45fbc46b2a94eaa8bb89eee30"
+    },
+    "reports/image.sha256": {
+      "bytes": 17,
+      "sha256": "65abe5337c178ec9eec517113729cbd70d15f9d536324b5a509ab7241368e3fe"
+    },
+    "reports/junit.xml": {
+      "bytes": 58759,
+      "sha256": "bcd34a04439d891ea371a21d09a57b3cebb49d90288b2bf8b0a1348d6aaf789d"
+    },
+    "reports/lint.txt": {
+      "bytes": 19,
+      "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+    },
+    "reports/package.txt": {
+      "bytes": 187,
+      "sha256": "7dd09086c60e4b6cdde16a54eaadc2f70941d0722d1609bbad931f98946a11bb"
+    },
+    "reports/packages.sha256": {
+      "bytes": 206,
+      "sha256": "863e2564e7e49eab0f9a6660e8b9e65f903402bfbf6a4dfe1a9cd7ae00c7de8c"
+    },
+    "reports/pip-audit.json": {
+      "bytes": 838,
+      "sha256": "b0bcb91132d8becee3d7cafee2e8eb797fbb75834c8d08ef147bfe921fc98937"
+    },
+    "reports/pip-audit.txt": {
+      "bytes": 265,
+      "sha256": "79d30422388543b2563e1dde76bb7e7857d7ef0c6fdf05c8c71598633ca07e1e"
+    },
+    "reports/runtime-requirements.txt": {
+      "bytes": 260,
+      "sha256": "ac46a68afa9b7bb4fe1d7beca4c7c27d90198e19af735a52210307dc7af69fba"
+    },
+    "reports/security-export.txt": {
+      "bytes": 291,
+      "sha256": "1b96b767be60fd9bf32df63f622b01b7d654b99c012c558c03e384f3d024a7d9"
+    },
+    "reports/security-summary.json": {
+      "bytes": 3993,
+      "sha256": "764f7a49fd73bd246a81f4c6e7e1c57c222660ebbe600332bb9d978713816990"
+    },
+    "reports/security-tools.txt": {
+      "bytes": 50,
+      "sha256": "44a60294bb4e259844ac5e29a7fc37051d18a55e9c972ecc09604e374fa1b2b2"
+    },
+    "reports/tests.txt": {
+      "bytes": 4444,
+      "sha256": "4059a3d23a13f96574c74ccea116376aa0ddaa8450d401f91917c3ea72b99d0f"
+    }
+  },
+  "image_archived": false,
+  "pipeline_from_scm_verified": false,
+  "published_or_deployed": false
+}

@@ -35,8 +35,10 @@ Debian bases still block, while Python 3.14.9/Alpine 3.24 candidates report no k
 and each pass 316 tests plus runtime checks on ARM64 and emulated AMD64. The user approved
 Alpine adoption; the root Dockerfile now uses that base with pip/ensurepip removed. The
 local candidate Jenkinsfile gates image archival on fresh fail-closed scans, with a
-30-minute global budget. Candidate verification, merge/publication and normal SCM proof
-are tracked separately. See the
+30-minute global budget. Three candidate Jenkins runs each passed **410 tests**, verifying
+a passing image, real vulnerability blocking and a fail-closed input error. The passing
+export also passed operator runtime checks. Merge/publication and normal SCM proof remain
+pending. See the [gate evidence](evidence/task-05/step-02-image-gates.md) and
 [image-security checkpoints](docs/runbooks/image-security.md).
 
 **Evaluator source link:** [reviewed application on main](https://github.com/yuenshingyan/nussoc-devops-and-cloud-with-ai-capstone/tree/main).
@@ -231,8 +233,8 @@ Remove a placeholder when its directory receives real content.
 - Remaining Task 4: registry/cloud delivery, full release-gate proof, rollout/rollback.
 - Task 5.1: reviewed, merged, published, and verified through normal SCM build #6
   (316 tests, passing scans, 25 artifacts); 17 LOW Bandit findings remain reported.
-- Task 5.2: Alpine adoption approved and local image-gate implementation added. Review,
-  publication and normal SCM verification remain pending; see the image-security runbook.
+- Task 5.2: Alpine/image gate implemented and locally verified with passing, vulnerability-
+  blocked and error cases (410 tests each). Review/publication and normal SCM proof pending.
 - Remaining Tasks 5–6: complete image gates, secret-management work, monitoring/logging, demonstrations.
 - Task 7: Design document, architecture diagram, AI use case, and presentation.
 

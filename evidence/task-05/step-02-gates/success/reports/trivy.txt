@@ -1,0 +1,9 @@
+2026-10-26T11:40:19Z	INFO	Loaded	file_path="/tmp/finsecure-image-scan-i6zah5d4/config.yaml"
+2026-10-26T11:40:19Z	INFO	[vuln] Vulnerability scanning is enabled
+2026-10-26T11:40:21Z	WARN	Third-party SBOM may lead to inaccurate vulnerability detection
+2026-10-26T11:40:21Z	WARN	Recommend using Trivy to generate SBOMs
+2026-10-26T11:40:21Z	INFO	[python] Licenses acquired from one or more METADATA files may be subject to additional terms. Use `--debug` flag to see all affected packages.
+2026-10-26T11:40:21Z	INFO	Detected OS	family="alpine" version="3.24.3"
+2026-10-26T11:40:21Z	INFO	[alpine] Detecting vulnerabilities...	os_version="3.24" repository="3.24" pkg_num=30
+2026-10-26T11:40:21Z	INFO	Number of language-specific files	num=1
+2026-10-26T11:40:21Z	INFO	[python-pkg] Detecting vulnerabilities...

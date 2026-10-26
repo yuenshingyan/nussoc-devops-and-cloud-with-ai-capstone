@@ -1,0 +1,12 @@
+buildctl github.com/moby/buildkit v0.34.1 f5b59a1f2fb25a0cb7072c398cab9aed7835da4e
+ID:		pu3onm79dqp3z46aes1p5ea0c
+Platforms:	linux/arm64,linux/amd64,linux/amd64/v2,linux/riscv64,linux/ppc64le,linux/s390x,linux/386,linux/arm/v7,linux/arm/v6
+BuildKit:	github.com/moby/buildkit v0.34.1 f5b59a1f2fb25a0cb7072c398cab9aed7835da4e
+Dockerfile:	1.28.0
+Labels:
+	org.mobyproject.buildkit.worker.executor:		oci
+	org.mobyproject.buildkit.worker.hostname:		71cc7bc862a4
+	org.mobyproject.buildkit.worker.network:		host
+	org.mobyproject.buildkit.worker.oci.process-mode:	sandbox
+	org.mobyproject.buildkit.worker.selinux.enabled:	false
+	org.mobyproject.buildkit.worker.snapshotter:		native

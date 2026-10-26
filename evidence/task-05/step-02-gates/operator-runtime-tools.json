@@ -1,0 +1,6 @@
+{
+  "python": "3.14.9",
+  "pip_ensurepip_uv_absent": true,
+  "alpine": "3.24.3",
+  "native_module": "/opt/venv/lib/python3.14/site-packages/pydantic_core/_pydantic_core.cpython-314-aarch64-linux-musl.so"
+}
