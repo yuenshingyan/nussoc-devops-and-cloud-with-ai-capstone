@@ -4,7 +4,7 @@ pipeline {
         skipDefaultCheckout(true)
         disableConcurrentBuilds()
         skipStagesAfterUnstable()
-        timeout(time: 15, unit: 'MINUTES')
+        timeout(time: 30, unit: 'MINUTES')
     }
     stages {
         stage('Checkout') {
@@ -121,6 +121,16 @@ test -s images/finsecure-pay.tar
 gzip -n -1 images/finsecure-pay.tar
 sha256sum images/finsecure-pay.tar.gz > reports/image.sha256
 '''
+            }
+        }
+        stage('Image security gate') {
+            steps {
+                sh '''#!/usr/bin/env bash
+set -euo pipefail
+uv run --locked python -m scripts.image_scan \
+    --revision "$(git rev-parse HEAD)" --tag "finsecure-pay-ci:${BUILD_TAG}"
+'''
+                // A scanner error or policy block must never reach image archival.
                 archiveArtifacts artifacts: 'images/finsecure-pay.tar.gz',
                                  allowEmptyArchive: false, fingerprint: true
             }
@@ -129,7 +139,7 @@ sha256sum images/finsecure-pay.tar.gz > reports/image.sha256
     post {
         always {
             // Exact allowlist: never archive environments, credentials, caches, or the workspace.
-            archiveArtifacts artifacts: 'reports/build-metadata.txt,reports/dependencies.txt,reports/lint.txt,reports/format.txt,reports/tests.txt,reports/junit.xml,reports/coverage.xml,reports/package.txt,reports/packages.sha256,reports/buildkit-workers.txt,reports/image-metadata.txt,reports/image-build.txt,reports/buildkit-image.json,reports/image.sha256,reports/security-summary.json,reports/security-tools.txt,reports/security-export.txt,reports/runtime-requirements.txt,reports/bandit.json,reports/bandit.txt,reports/pip-audit.json,reports/pip-audit.txt',
+            archiveArtifacts artifacts: 'reports/build-metadata.txt,reports/dependencies.txt,reports/lint.txt,reports/format.txt,reports/tests.txt,reports/junit.xml,reports/coverage.xml,reports/package.txt,reports/packages.sha256,reports/buildkit-workers.txt,reports/image-metadata.txt,reports/image-build.txt,reports/buildkit-image.json,reports/image.sha256,reports/security-summary.json,reports/security-tools.txt,reports/security-export.txt,reports/runtime-requirements.txt,reports/bandit.json,reports/bandit.txt,reports/pip-audit.json,reports/pip-audit.txt,reports/image-security-summary.json,reports/image-security-tools.txt,reports/image-security-export.txt,reports/image-runtime-requirements.txt,reports/trivy-db.json,reports/trivy-db.txt,reports/trivy.json,reports/trivy.txt',
                              allowEmptyArchive: true
         }
     }

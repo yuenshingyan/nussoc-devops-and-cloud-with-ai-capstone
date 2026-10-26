@@ -127,6 +127,63 @@ def require_security_reports(output: Path, artifacts: set[str], skipped: bool) -
     return report
 
 
+IMAGE_SECURITY_ARTIFACTS = {
+    "reports/" + name
+    for name in (
+        "image-security-summary.json",
+        "image-security-tools.txt",
+        "image-security-export.txt",
+        "image-runtime-requirements.txt",
+        "trivy-db.json",
+        "trivy-db.txt",
+        "trivy.json",
+        "trivy.txt",
+    )
+}
+
+
+def require_image_security_reports(
+    output: Path, artifacts: set[str], skipped: bool, revision: str
+) -> dict | None:
+    """Bind a complete passing image gate to its downloaded reports, archive and source."""
+    if skipped:
+        if IMAGE_SECURITY_ARTIFACTS.intersection(artifacts):
+            raise RuntimeError("Image security ran after an earlier failed stage")
+        return None
+    if not IMAGE_SECURITY_ARTIFACTS.issubset(artifacts):
+        raise RuntimeError("Image security reports are missing")
+    report = loads((output / "reports/image-security-summary.json").read_text())
+    if (
+        report.get("status") != "passed"
+        or report.get("source_revision") != revision
+        or type(report.get("blocking_findings")) is not int
+        or report["blocking_findings"] != 0
+        or report.get("end_of_life") is not False
+        or report.get("temporary_cache_removed") is not True
+    ):
+        raise RuntimeError("Image security gate is not a complete pass for this source")
+    checksums = report.get("report_sha256")
+    names = {name.removeprefix("reports/") for name in IMAGE_SECURITY_ARTIFACTS}
+    names.remove("image-security-summary.json")
+    if not isinstance(checksums, dict) or set(checksums) != names:
+        raise RuntimeError("Image security report checksum inventory is incomplete")
+    for name, digest in checksums.items():
+        if sha256((output / "reports" / name).read_bytes()).hexdigest() != digest:
+            raise RuntimeError("Image security report checksum mismatch")
+    archive = output / "images/finsecure-pay.tar.gz"
+    if not archive.is_file() or sha256(archive.read_bytes()).hexdigest() != report.get(
+        "archive_sha256"
+    ):
+        raise RuntimeError("Image scan does not match the archived image")
+    metadata = (output / "reports/build-metadata.txt").read_text()
+    if report.get("lock_sha256", "missing") + "  uv.lock" not in metadata.splitlines():
+        raise RuntimeError("Image scan lock differs from the build")
+    raw = loads((output / "reports/trivy.json").read_text())
+    if raw.get("Metadata", {}).get("ImageID") != report.get("image_id"):
+        raise RuntimeError("Image scan/report identity mismatch")
+    return report
+
+
 def verify(
     source_revision: str,
     expected_tests: int,
@@ -154,6 +211,7 @@ def verify(
     script = prefix + script
     expects_image = "stage('Local image export')" in candidate
     expects_security = "stage('Security scans')" in candidate
+    expects_image_security = "stage('Image security gate')" in candidate
     mode = "failure" if fail_after_tests else "success"
     stamp = datetime.now(UTC).strftime("%Y%m%d%H%M%S")
     job_name = existing_job or f"finsecure-ci-review-{mode}-{stamp}"
@@ -237,6 +295,8 @@ def verify(
             allowed.update(image_files)
         if expects_security:
             allowed.update(SECURITY_ARTIFACTS)
+        if expects_image_security:
+            allowed.update(IMAGE_SECURITY_ARTIFACTS)
         for artifact in build["artifacts"]:
             name = artifact["relativePath"]
             package = fullmatch(r"dist/finsecure_pay-[A-Za-z0-9_.+-]+\.(whl|tar\.gz)", name)
@@ -252,6 +312,13 @@ def verify(
         security = (
             require_security_reports(output, set(artifacts), fail_after_tests)
             if expects_security
+            else None
+        )
+        image_security = (
+            require_image_security_reports(
+                output, set(artifacts), fail_after_tests, source_revision
+            )
+            if expects_image_security
             else None
         )
         tests = loads(client.request(build_path + "testReport/api/json"))
@@ -335,6 +402,7 @@ def verify(
             "artifacts": artifacts,
             "image_export": image,
             "security_scans": security,
+            "image_security": image_security,
         }
         (output / "verification.json").write_text(dumps(record, indent=2) + "\n")
         return record

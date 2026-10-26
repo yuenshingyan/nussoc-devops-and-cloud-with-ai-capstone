@@ -1,5 +1,6 @@
 """Regression tests for JUnit API interpretation and safe review-job configuration."""
 
+from hashlib import sha256
 from json import dumps
 from pathlib import Path
 from runpy import run_path
@@ -86,3 +87,87 @@ def test_security_verification_requires_complete_pass_and_matching_lock(
     else:
         with raises(RuntimeError):
             ci_helpers["require_security_reports"](tmp_path, paths, False)
+
+
+def test_image_reports_must_not_exist_after_an_earlier_failed_stage(ci_helpers, tmp_path):
+    assert ci_helpers["require_image_security_reports"](tmp_path, set(), True, "a" * 40) is None
+    with raises(RuntimeError):
+        ci_helpers["require_image_security_reports"](
+            tmp_path, {"reports/trivy.json"}, True, "a" * 40
+        )
+
+
+@mark.parametrize(
+    "problem",
+    [
+        None,
+        "missing",
+        "blocked",
+        "incomplete",
+        "boolean",
+        "revision",
+        "eol",
+        "cleanup",
+        "hashes",
+        "modified-report",
+        "archive",
+        "lock",
+        "image",
+    ],
+)
+def test_image_verification_requires_bound_reports_and_archive(ci_helpers, tmp_path, problem):
+    reports = tmp_path / "reports"
+    reports.mkdir()
+    (tmp_path / "images").mkdir()
+    archive = tmp_path / "images/finsecure-pay.tar.gz"
+    archive.write_bytes(b"synthetic archive")
+    paths = ci_helpers["IMAGE_SECURITY_ARTIFACTS"].copy()
+    for name in paths:
+        (tmp_path / name).write_text("synthetic diagnostic")
+    (reports / "trivy.json").write_text(dumps({"Metadata": {"ImageID": "sha256:test"}}))
+    record = {
+        "status": "passed",
+        "source_revision": "a" * 40,
+        "blocking_findings": 0,
+        "end_of_life": False,
+        "temporary_cache_removed": True,
+        "image_id": "sha256:test",
+        "archive_sha256": sha256(archive.read_bytes()).hexdigest(),
+        "lock_sha256": "b" * 64,
+        "report_sha256": {
+            Path(name).name: sha256((tmp_path / name).read_bytes()).hexdigest()
+            for name in paths
+            if not name.endswith("image-security-summary.json")
+        },
+    }
+    (reports / "build-metadata.txt").write_text("b" * 64 + "  uv.lock\n")
+    if problem == "missing":
+        paths.remove("reports/trivy.json")
+    elif problem in {"blocked", "incomplete"}:
+        record["status"] = problem
+    elif problem == "boolean":
+        record["blocking_findings"] = False
+    elif problem == "revision":
+        record["source_revision"] = "c" * 40
+    elif problem == "eol":
+        record["end_of_life"] = True
+    elif problem == "cleanup":
+        record["temporary_cache_removed"] = False
+    elif problem == "hashes":
+        record["report_sha256"].pop("trivy.json")
+    elif problem == "modified-report":
+        (reports / "trivy.txt").write_text("changed")
+    elif problem == "archive":
+        archive.write_bytes(b"changed")
+    elif problem == "lock":
+        record["lock_sha256"] = "c" * 64
+    elif problem == "image":
+        record["image_id"] = "sha256:other"
+    (reports / "image-security-summary.json").write_text(dumps(record))
+    if problem is None:
+        assert (
+            ci_helpers["require_image_security_reports"](tmp_path, paths, False, "a" * 40) == record
+        )
+    else:
+        with raises(RuntimeError):
+            ci_helpers["require_image_security_reports"](tmp_path, paths, False, "a" * 40)

@@ -32,9 +32,11 @@ Step 5.2 is **in progress on its local branch**: verified Trivy tooling is insta
 while an operator preflight found 70 HIGH and 6 CRITICAL image finding occurrences.
 The approved policy would block that image. Approved candidate testing found that updated
 Debian bases still block, while Python 3.14.9/Alpine 3.24 candidates report no known findings
-and each pass 316 tests plus runtime checks on ARM64 and emulated AMD64. Adoption of the
-musl-based option awaits review; the root Dockerfile and pipeline remain unchanged.
-Jenkins image-gate integration is pending. See the
+and each pass 316 tests plus runtime checks on ARM64 and emulated AMD64. The user approved
+Alpine adoption; the root Dockerfile now uses that base with pip/ensurepip removed. The
+local candidate Jenkinsfile gates image archival on fresh fail-closed scans, with a
+30-minute global budget. Candidate verification, merge/publication and normal SCM proof
+are tracked separately. See the
 [image-security checkpoints](docs/runbooks/image-security.md).
 
 **Evaluator source link:** [reviewed application on main](https://github.com/yuenshingyan/nussoc-devops-and-cloud-with-ai-capstone/tree/main).
@@ -229,8 +231,8 @@ Remove a placeholder when its directory receives real content.
 - Remaining Task 4: registry/cloud delivery, full release-gate proof, rollout/rollback.
 - Task 5.1: reviewed, merged, published, and verified through normal SCM build #6
   (316 tests, passing scans, 25 artifacts); 17 LOW Bandit findings remain reported.
-- Task 5.2: tools installed; initial/updated Debian images block. Alpine candidates have
-  no known findings and pass both-platform checks; adoption review and Jenkins gating pending.
+- Task 5.2: Alpine adoption approved and local image-gate implementation added. Review,
+  publication and normal SCM verification remain pending; see the image-security runbook.
 - Remaining Tasks 5–6: complete image gates, secret-management work, monitoring/logging, demonstrations.
 - Task 7: Design document, architecture diagram, AI use case, and presentation.
 

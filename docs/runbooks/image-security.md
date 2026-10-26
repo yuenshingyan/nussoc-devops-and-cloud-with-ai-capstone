@@ -1,14 +1,13 @@
 # Image security — Step 5.2 checkpoints
 
-**Partial implementation, not a completed Jenkins image gate.** The user approved the
-policy below and tool installation. Verified Trivy is installed on the local ARM64 agent;
-the current image's real operator-side preflight produced blocking findings. Approved
-candidate testing subsequently found an Alpine option with no known findings and passing
-compatibility checks on both architectures. Adoption of that musl-based option is awaiting
-review; the application Dockerfile and policy remain unchanged. Jenkinsfile is still at
-Step 5.1: its 15-minute global limit and image-archiving behavior have not yet been replaced.
+**Local candidate implementation; review/publication and normal SCM verification pending.**
+The user approved the policy, verified tooling, candidate experiments, and adoption of the
+tested musl-based Alpine option. The root Dockerfile now uses that pinned base with whole
+pip/ensurepip removal. Jenkinsfile now has a 30-minute global limit and an image gate
+between export and image archival. This does not authorize registry/cloud delivery.
+Actual candidate Jenkins verification is recorded separately when completed.
 
-## Approved policy to implement
+## Approved policy
 
 - Pin Trivy **0.76.1** and verify its release signatures before installing it. Use
   Cosign **3.1.4** for verification, not as an application/runtime dependency.
@@ -109,15 +108,64 @@ The dependency lock and API contract were unchanged; OS package inventories were
   HTTP smoke/security/shutdown and 0.5 CPU / 256 MiB local safeguard checks also passed.
   AMD64 execution was emulated; no Kubernetes or rootless Jenkins build is implied.
 
-**Proposed adoption:** Python 3.14.9/Alpine 3.24 at index
+**Approved adoption, now in the root Dockerfile:** Python 3.14.9/Alpine 3.24 at index
 `sha256:dbeb11d16bb95c3a7e3c25c842cb9f20cbc8c18f8be0461a4a0dcc861ad386a0`,
 plus the tested whole-tool removal and equivalent non-root account setup. This changes
-**glibc to musl**, so approval is requested before changing the root Dockerfile. Future
+**glibc to musl** for the application builder/runtime, not the Jenkins agent. Future
 native dependencies must retain musllinux wheel/runtime compatibility. Zero reported
 findings are time-bound scanner results, not a guarantee of no vulnerabilities.
 
 Evidence: [tool verification and initial findings](../../evidence/task-05/step-02-preflight.md)
 and [candidate comparison/compatibility](../../evidence/task-05/step-02-remediation.md).
-Pipeline integration, automated error/report validation, Jenkins passing/blocked image
-archival demonstrations and normal SCM verification remain pending. Public release images
-were not individually rescanned, replaced or published by these experiments.
+The previous checkpoint's pending-adoption statements are historical, superseded by the
+subsequent approval. Public release images were not individually rescanned, replaced or
+published by these experiments.
+
+## Gate implementation and report contract
+
+Run only on the verified ARM64 agent after exporting this checkout's image:
+
+```sh
+uv run --locked python -m scripts.image_scan \
+  --revision "$(git rev-parse HEAD)" --tag "finsecure-pay-ci:${BUILD_TAG}"
+```
+
+`scripts/image_scan.py` verifies the export checksum, unique image/config, source label,
+ARM64 platform and UID/GID 10001. It checks the installed Trivy binary against the verified
+release digest, exports runtime pins offline from the lock, then uses separate temporary
+configuration/ignore/Docker-config/cache paths. `TRIVY_*` environment overrides are removed.
+No tool update, ignore rule, VEX override or registry credentials are supplied.
+
+The database operation has a shared 300-second budget including tool/version and locked-pin
+export; scanning has a separate 300-second budget. Freshness is checked before and after
+scanning. A successful download never permits fallback to another database. The wrapper
+returns **0 passed, 1 HIGH/CRITICAL or EOL policy block, 2 handled execution/identity/report
+error**. Unexpected exceptions also fail the shell stage; an incomplete summary is not a pass.
+Trivy itself generates an all-severity report with exit code 0, except `--exit-on-eol 2`;
+the wrapper validates that result and applies the actual severity policy.
+
+Validation requires schema/tool identity, a fresh report timestamp, matching image identity,
+and complete nonempty OS/Python inventories. Current supported scope is Alpine 3.24 and
+Debian 12/13 (including controlled comparison cases); other families/releases fail closed
+pending review. The pinned scanner's EOL result is enforced independently. Every locked
+runtime dependency and the project must appear at the expected version in `/opt/venv`.
+Additional packages are still scanned, not ignored. Findings must name an inventoried
+package; Debian epoch/release fields are reassembled without discarding version identity.
+Unknown severity names, duplicate JSON keys, modified/ignored findings, missing reports,
+scanner failures, changed inputs and stale/future databases fail closed.
+
+Eight new allowlisted artifacts are attempted from pipeline `post/always`:
+`image-security-summary.json`, `image-security-tools.txt`, `image-security-export.txt`,
+`image-runtime-requirements.txt`, `trivy-db.json`, `trivy-db.txt`, `trivy.json`, `trivy.txt`
+(all under `reports/`). The summary binds available reports by SHA-256 and identifies the
+exact input archive/source/lock. Early failures may have only partial diagnostics.
+Package archival remains before image building; image archival occurs only after the
+wrapper exits 0. The blocked image can remain in its isolated review workspace/builder
+cache, but is not a downloadable image artifact or a deployed workload. Existing manual
+retention rules still apply. Normal success now has 33 artifacts; a complete vulnerability
+block retains 32 (including packages and reports, excluding the image).
+
+Tests exercise severity/fix boundaries, EOL, unsupported OS, timestamps, inventory gaps,
+version identity, binary/archive integrity, scanner errors/timeouts, stale outputs and
+cleanup. External tools are mocked only in unit tests; live Jenkins evidence is separate.
+No automatic retries, vulnerability exceptions or coverage threshold were introduced.

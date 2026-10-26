@@ -1,5 +1,5 @@
 # Pin multi-platform image indexes; update these deliberately and reverify builds.
-ARG PYTHON_IMAGE=python:3.14.7-slim-bookworm@sha256:82bc3c539b8813ada9d68c63b40158fa002f7f33de9bf3312a3dfdc0620dff56
+ARG PYTHON_IMAGE=python:3.14.9-alpine3.24@sha256:dbeb11d16bb95c3a7e3c25c842cb9f20cbc8c18f8be0461a4a0dcc861ad386a0
 
 FROM ghcr.io/astral-sh/uv:0.9.21@sha256:15f68a476b768083505fe1dbfcc998344d0135f0ca1b8465c4760b323904f05a AS uv
 
@@ -23,8 +23,14 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     PATH="/opt/venv/bin:$PATH"
 
-RUN groupadd --gid 10001 app \
-    && useradd --uid 10001 --gid 10001 --no-create-home --shell /usr/sbin/nologin app
+RUN addgroup -S -g 10001 app \
+    && adduser -S -D -H -u 10001 -G app app
+# Runtime never installs packages. Remove the entire installer and its bootstrapping wheels,
+# not only their SBOM metadata; keep the system package database for vulnerability auditing.
+RUN python -m pip --disable-pip-version-check uninstall --yes pip \
+    && rm -rf /usr/local/lib/python3.14/ensurepip \
+    && python -c "from importlib.util import find_spec; assert find_spec('pip') is None; assert find_spec('ensurepip') is None"
+
 WORKDIR /app
 # Keep installed code root-owned: the runtime user must not rewrite its libraries.
 COPY --from=builder /opt/venv /opt/venv

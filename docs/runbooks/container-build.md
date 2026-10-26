@@ -2,13 +2,17 @@
 
 ## Design
 
-- Use digest-pinned, multi-platform Python 3.14.7 slim-bookworm and uv 0.9.21 images.
+- Use digest-pinned, multi-platform Python 3.14.9 Alpine 3.24 and uv 0.9.21 images.
+  Step 5.2 adoption changes the application image from glibc to musl; the Jenkins agent
+  and host development Python are unchanged. Retest native dependency compatibility.
 - The uv stage supplies the build executable. The builder installs locked runtime
   dependencies and the application into `/opt/venv` with
   `uv sync --locked --no-dev --no-editable`.
 - The runtime stage uses the same Python base and copies only that environment.
   It does not copy the uv executable, build workspace, or development dependencies.
-  The official Python base still includes its own standard packaging utilities.
+  Remove the entire inherited pip installation and ensurepip module/bundled wheels from
+  the runtime filesystem, not just their SBOMs. Runtime package installation is not needed.
+  The builder still installs the locked environment with uv; OS inventories are retained.
 - Run as numeric UID/GID `10001:10001`. Installed application files remain root-owned
   and are not writable by the runtime user.
 - Start Uvicorn directly with exec-form `CMD`, listening on container port 8000.
@@ -19,7 +23,8 @@
 
 The base-image digests and runtime dependency lock improve repeatability. They do
 not establish that an image is vulnerability-free. The isolated packaging backend
-still resolves from its declared version range; security scans and gates are Task 5.
+still resolves from its declared version range. Step 5.2 adds the
+[image gate](image-security.md); its reviewed/publication status is tracked there.
 
 ## Build
 
