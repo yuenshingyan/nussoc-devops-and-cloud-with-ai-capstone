@@ -130,6 +130,11 @@ and report retention on an isolated failure. Cloud delivery remains unverified.
   with `--disable-pip`. Merged/published as `12ebb9c`; normal SCM build #12 passed
   446 tests without pytest/audit warnings and all security gates. All 33 downloaded
   artifacts and the lock-bound export hashes were verified.
+- [Step 5.3 — secret-management audit checkpoint](../docs/runbooks/secret-management.md):
+  read-only current-credential/selected-pattern checks across 552 tracked files,
+  660 reachable Git blobs and the latest completed CI console found no matches.
+  Private file modes and local service boundaries verified. Scope limits, remaining
+  trust risks and rotation decisions are explicit; hardening/rotation remain pending.
 
 For each artifact, record the requirement demonstrated, timestamp, command or
 procedure, actual result, commit, applicable image digest, and artifact path or

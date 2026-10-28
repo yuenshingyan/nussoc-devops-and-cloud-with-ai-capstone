@@ -1,0 +1,102 @@
+"""Read-only local credential-boundary audit; output metadata and counts, never values."""
+
+from datetime import UTC, datetime
+from json import dumps, loads
+from pathlib import Path
+from re import compile
+from stat import S_IMODE
+from subprocess import run
+from urllib.error import HTTPError
+from urllib.request import ProxyHandler, build_opener
+
+from bootstrap import BASE_URL, COMPOSE, Jenkins, SECRET_DIRECTORY, admin_password
+from defusedxml.ElementTree import fromstring
+
+client = Jenkins(admin_password())
+agent_secret = fromstring(client.request('/computer/finsecure-python/jenkins-agent.jnlp')).find('.//argument').text
+known = [admin_password().encode(), agent_secret.encode(), client.authorization.encode(), client.authorization[6:].encode()]
+patterns = [compile(rb'-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----'), compile(rb'gh[pousr]_[A-Za-z0-9]{36,}'), compile(rb'github_pat_[A-Za-z0-9_]{50,}')]
+files = run(['git','ls-files','-z'],capture_output=True,check=True).stdout.split(b'\0')
+current_matches = 0
+pattern_matches = 0
+for filename in filter(None, files):
+    content = Path(filename.decode()).read_bytes()
+    current_matches += int(any(value in content for value in known))
+    pattern_matches += int(any(pattern.search(content) for pattern in patterns))
+objects = run(['git','rev-list','--objects','--all'],capture_output=True,check=True,timeout=30).stdout.splitlines()
+ids = sorted({line.split(b' ',1)[0] for line in objects})
+batch = run(['git','cat-file','--batch'],input=b'\n'.join(ids)+b'\n',capture_output=True,check=True,timeout=60).stdout
+position = 0
+blob_count = 0
+historical_matches = 0
+historical_patterns = 0
+while position < len(batch):
+    end = batch.index(b'\n',position)
+    header = batch[position:end].split()
+    size = int(header[2])
+    content = batch[end+1:end+1+size]
+    position = end+1+size+1
+    if header[1] != b'blob':
+        continue
+    blob_count += 1
+    historical_matches += int(any(value in content for value in known))
+    historical_patterns += int(any(pattern.search(content) for pattern in patterns))
+metadata = {}
+for service in ['controller','agent','builder']:
+    container = run([*COMPOSE,'ps','--quiet',service],capture_output=True,text=True,check=True,timeout=15).stdout.strip()
+    info = loads(run(['docker','inspect',container],capture_output=True,text=True,check=True,timeout=15).stdout)[0]
+    metadata[service] = {
+        'running':info['State']['Running'], 'user':info['Config']['User'],
+        'mounts':[{'type':item['Type'],'destination':item['Destination'],'writable':item['RW']} for item in info['Mounts']],
+        'known_secret_in_argv_or_environment':any(value in dumps([info['Config']['Cmd'],info['Config']['Env']]).encode() for value in known),
+        'privileged':info['HostConfig']['Privileged'],
+        'port_bindings':info['HostConfig']['PortBindings'],
+    }
+    if service in ['controller','agent']:
+        file = '/run/secrets/admin_password' if service == 'controller' else '/run/secrets/agent_secret'
+        result = run(['docker','exec',container,'stat','-c','%a %u %g',file],capture_output=True,text=True,check=True,timeout=15)
+        metadata[service]['secret_file_mode_uid_gid'] = result.stdout.strip()
+try:
+    with build_opener(ProxyHandler({})).open(BASE_URL+'/api/json',timeout=5) as response:
+        anonymous_status = response.status
+except HTTPError as error:
+    anonymous_status=error.code
+    error.close()
+job = loads(client.request('/job/finsecure-ci/api/json'))
+number = job['lastCompletedBuild']['number']
+console = client.request(f'/job/finsecure-ci/{number}/consoleText')
+job_xml = fromstring(client.request('/job/finsecure-ci/config.xml'))
+docker_config = Path.home()/'.docker/config.json'
+config = loads(docker_config.read_text()) if docker_config.exists() else {}
+helper = run(['git','config','--get-all','credential.helper'],capture_output=True,text=True,timeout=10)
+helpers = helper.stdout.splitlines()
+record = {
+    'checked_at_utc':datetime.now(UTC).isoformat(),
+    'source_revision':run(['git','rev-parse','HEAD'],capture_output=True,text=True,check=True).stdout.strip(),
+    'host_secret_directory_mode':oct(S_IMODE(SECRET_DIRECTORY.stat().st_mode)),
+    'host_password_file_mode':oct(S_IMODE((SECRET_DIRECTORY/'admin-password').stat().st_mode)),
+    'host_password_file_symlink':(SECRET_DIRECTORY/'admin-password').is_symlink(),
+    'tracked_files_scanned':len(list(filter(None,files))), 'tracked_known_secret_matches':current_matches,
+    'tracked_selected_pattern_matches':pattern_matches,
+    'reachable_git_blobs_scanned':blob_count, 'history_known_secret_matches':historical_matches,
+    'history_selected_pattern_matches':historical_patterns,
+    'last_completed_ci_build':number, 'console_known_secret_match':any(value in console for value in known),
+    'console_selected_pattern_match':any(pattern.search(console) for pattern in patterns),
+    'anonymous_api_status':anonymous_status, 'services':metadata,
+    'ci_branch':job_xml.findtext('.//branches/hudson.plugins.git.BranchSpec/name'),
+    'ci_has_nonempty_credentials_id':any((item.text or '').strip() for item in job_xml.findall('.//credentialsId')),
+    'docker_config_exists':docker_config.exists(),
+    'docker_credentials_store_configured':bool(config.get('credsStore')),
+    'docker_per_registry_helpers_configured':bool(config.get('credHelpers')),
+    'docker_inline_auth_nonempty_count':sum(bool(item.get('auth')) for item in config.get('auths',{}).values()),
+    'git_credential_helper_count':len(helpers),
+    'git_osxkeychain_helper_configured':any(item.strip()=='osxkeychain' for item in helpers),
+    'limitations':['No credential helper values retrieved; no token scope/expiry verified.',
+                   'Exact known Jenkins values and selected key/token patterns only; not proof of absence of all secrets.',
+                   'History scan includes reachable refs, not unreachable objects or remote-only refs.',
+                   'Only latest completed main console scanned live; no full Jenkins-home/log export.',
+                   'No rotation, permission change, credential creation, cloud or cluster operation.'],
+}
+assert not any(value in dumps(record).encode() for value in known)
+Path('reports/step53-audit.json').write_text(dumps(record,indent=2)+'\n')
+print(dumps(record,indent=2))

@@ -1,0 +1,105 @@
+{
+  "checked_at_utc": "2026-10-28T14:12:03.227136+00:00",
+  "source_revision": "8fd7a36736f833619f9f1ad09bfb40c2afc8cd2b",
+  "host_secret_directory_mode": "0o700",
+  "host_password_file_mode": "0o600",
+  "host_password_file_symlink": false,
+  "tracked_files_scanned": 552,
+  "tracked_known_secret_matches": 0,
+  "tracked_selected_pattern_matches": 0,
+  "reachable_git_blobs_scanned": 660,
+  "history_known_secret_matches": 0,
+  "history_selected_pattern_matches": 0,
+  "last_completed_ci_build": 13,
+  "console_known_secret_match": false,
+  "console_selected_pattern_match": false,
+  "anonymous_api_status": 403,
+  "services": {
+    "controller": {
+      "running": true,
+      "user": "jenkins",
+      "mounts": [
+        {
+          "type": "volume",
+          "destination": "/run/secrets",
+          "writable": false
+        },
+        {
+          "type": "volume",
+          "destination": "/var/jenkins_home",
+          "writable": true
+        }
+      ],
+      "known_secret_in_argv_or_environment": false,
+      "privileged": false,
+      "port_bindings": {
+        "8080/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "8080"
+          }
+        ]
+      },
+      "secret_file_mode_uid_gid": "400 1000 1000"
+    },
+    "agent": {
+      "running": true,
+      "user": "jenkins",
+      "mounts": [
+        {
+          "type": "volume",
+          "destination": "/run/secrets",
+          "writable": false
+        },
+        {
+          "type": "volume",
+          "destination": "/home/jenkins/agent",
+          "writable": true
+        },
+        {
+          "type": "volume",
+          "destination": "/run/buildkit",
+          "writable": false
+        }
+      ],
+      "known_secret_in_argv_or_environment": false,
+      "privileged": false,
+      "port_bindings": {},
+      "secret_file_mode_uid_gid": "400 1000 1000"
+    },
+    "builder": {
+      "running": true,
+      "user": "1000:1000",
+      "mounts": [
+        {
+          "type": "volume",
+          "destination": "/run/user/1000/buildkit",
+          "writable": true
+        },
+        {
+          "type": "volume",
+          "destination": "/home/user/.local/share/buildkit",
+          "writable": true
+        }
+      ],
+      "known_secret_in_argv_or_environment": false,
+      "privileged": false,
+      "port_bindings": {}
+    }
+  },
+  "ci_branch": "*/main",
+  "ci_has_nonempty_credentials_id": false,
+  "docker_config_exists": true,
+  "docker_credentials_store_configured": true,
+  "docker_per_registry_helpers_configured": false,
+  "docker_inline_auth_nonempty_count": 0,
+  "git_credential_helper_count": 1,
+  "git_osxkeychain_helper_configured": true,
+  "limitations": [
+    "No credential helper values retrieved; no token scope/expiry verified.",
+    "Exact known Jenkins values and selected key/token patterns only; not proof of absence of all secrets.",
+    "History scan includes reachable refs, not unreachable objects or remote-only refs.",
+    "Only latest completed main console scanned live; no full Jenkins-home/log export.",
+    "No rotation, permission change, credential creation, cloud or cluster operation."
+  ]
+}
