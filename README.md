@@ -68,8 +68,9 @@ image block with no archived image; restoring the production Alpine Dockerfile p
 with no known findings. The demo job is disabled and its workspace image archives are
 removed; no image was run, published or deployed. See the
 [demonstration evidence](evidence/task-05/step-04-security-demonstration.md).
-Step 6.1 is being scoped; metrics and Prometheus are not implemented yet. See the
-[proposal awaiting approval](docs/runbooks/metrics.md).
+Step 6.1's approved local metrics scope is implemented on its review branch, with
+538 passing host tests and validated Prometheus configuration. Real candidate-image
+and scrape verification remain pending. See the [metrics contract](docs/runbooks/metrics.md).
 
 ## Quick start
 
@@ -264,8 +265,9 @@ Remove a placeholder when its directory receives real content.
   registry/cloud credential controls remain deferred.
 - Task 5.4: local image-archival block/remediation demonstration reviewed, merged and
   published as `d76b713`. Registry/deployment-blocking proof remains deferred.
-- Task 6.1: local metrics contract/dependency/Prometheus proposal awaiting approval;
-  instrumentation and managed-cluster monitoring are not implemented.
+- Task 6.1: approved local instrumentation/Prometheus configuration implemented on its
+  review branch; candidate CI/image and live scrape verification pending. Managed-cluster
+  monitoring remains deferred.
 - Remaining Tasks 5–6: deferred security controls and cloud release-gate proof,
   monitoring/logging, alert delivery and notifications.
 - Task 7: Design document, architecture diagram, AI use case, and presentation.

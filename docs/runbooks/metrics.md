@@ -1,19 +1,22 @@
-# Step 6.1 — Proposed local metrics contract
+# Step 6.1 — Local metrics contract and verification
 
 ## Status and approval boundary
 
-**Proposal only; instrumentation and Prometheus are not implemented or running.**
+**Contract/dependency/local configuration approved. Implementation in progress;
+real collection/image-gate verification and review remain pending.**
 Branch: `task-06/step-01-metrics`, from reviewed/published `main` at `d76b713`.
 Step 5.4's local demonstration evidence is merged and published.
 
-Approve this endpoint/metric contract, the `prometheus-client` runtime dependency,
-and the local monitoring configuration before implementation. Existing `/health`
+The user approved this endpoint/metric contract, the `prometheus-client` runtime
+dependency and the local monitoring values. The runtime client is locked at 0.26.0
+with range `>=0.26,<0.27`; it has no required extra dependencies. Prometheus is pinned
+to official release 3.15.1 and its ARM64-capable multi-platform index digest. Existing `/health`
 and `/validate` request/response contracts and business rules remain unchanged.
 No database, additional business service, public image release or cloud deployment
 is included. Grafana, alerts, notifications and structured logging remain their
 later steps; existing scaffold directories do not mean those tools are configured.
 
-## Proposed scope
+## Approved scope
 
 1. Add explicit Prometheus instrumentation in `src/finsecure_pay/observability/` and
    the `/metrics` HTTP route in `src/finsecure_pay/api/`. Use ASGI-level middleware
@@ -28,10 +31,11 @@ later steps; existing scaffold directories do not mean those tools are configure
    container. These are **process metrics, not managed-cluster pod/node metrics**.
    Kubernetes infrastructure monitoring remains deferred until cloud approval.
 
-## Proposed GET /metrics contract
+## GET /metrics contract
 
 - HTTP 200, Prometheus text exposition using the client's documented text content
-  type; no request body or authentication for this **loopback-only local demo**.
+  type (`text/plain; version=1.0.0; charset=utf-8` for locked client 0.26.0); no request
+  body or authentication for this **loopback-only local demo**.
 - GET only. Unsupported methods retain framework method-error behaviour (405);
   no changes to existing route methods. The route is excluded from OpenAPI to keep
   the transaction API documentation focused; exclusion is not access control.
@@ -46,7 +50,7 @@ later steps; existing scaffold directories do not mean those tools are configure
   access/network controls before external routing; a same-port endpoint has no
   inherent private-path protection.
 
-## Proposed metric names and semantics
+## Metric names and semantics
 
 | Metric | Type | Labels | Meaning |
 | --- | --- | --- | --- |
@@ -96,11 +100,11 @@ expected; elapsed-time floating point is unrelated to Decimal monetary arithmeti
 Register only the explicitly chosen application metrics and the client's standard
 process collector with the `finsecure` namespace on this registry. Linux process
 CPU and resident memory are required in real demo verification; other supported
-standard process series may be present. Do not register default global collectors,
+standard process series may be present. Do not expose default global collectors,
 PID labels or arbitrary host metadata. Unsupported local-host process series must
 not be claimed as verified; the actual process check targets Linux Docker.
 
-## Proposed local monitoring values
+## Approved local monitoring values
 
 - Compose project: `finsecure-monitoring`, separate from Jenkins and its volumes.
   Application and Prometheus share only the demo network; no Docker socket, host
@@ -132,7 +136,9 @@ not be claimed as verified; the actual process check targets Linux Docker.
   traffic generator left running. Startup failure must be reported without deleting
   volumes or restarting unrelated Jenkins services.
 
-These operational values are proposed for approval, not existing configuration.
+These operational values are implemented in `ops/monitoring/compose.yaml` and
+`ops/monitoring/prometheus/prometheus.yaml`. Their real runtime verification is
+recorded below when complete; configuration alone is not execution evidence.
 
 ## Planned verification and evidence
 

@@ -1,5 +1,23 @@
 # API contract
 
+## GET /metrics (local monitoring)
+
+Additive endpoint approved for Step 6.1. Returns HTTP 200 with
+`Content-Type: text/plain; version=1.0.0; charset=utf-8`, using prometheus-client
+0.26.0 text exposition. GET only; unsupported methods return framework HTTP 405.
+It accepts no request body, requires no authentication in this loopback-only demo,
+and is excluded from OpenAPI. OpenAPI exclusion is not access control.
+
+The [metrics contract](runbooks/metrics.md) defines exact application metric names,
+finite labels, histogram buckets, process collection and exception/cancellation
+semantics. Metrics contain no request bodies, identifiers, arbitrary URLs or error
+messages. All methods on the exact `/metrics` path are excluded from application
+request instrumentation. Metrics are per application instance and single worker,
+not persistent transaction records; they reset on process restart.
+
+Do not expose this path publicly in a future deployment without first agreeing on
+scrape access controls. Existing `/health` and `/validate` contracts below are unchanged.
+
 ## GET /health
 
 Reports that the application is running and can serve an HTTP request. This is an
