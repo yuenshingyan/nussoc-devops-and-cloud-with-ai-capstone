@@ -2,7 +2,7 @@
 
 ## Status
 
-**Approved local demonstration executed and verified; review/publication pending.**
+**Approved local demonstration executed, verified, reviewed and published as `d76b713`.**
 Manual job `finsecure-security-demo-20261028144809` ran exactly twice on 28 October
 2026: build #1 passed 503 tests then blocked 61 HIGH/2 CRITICAL image findings;
 build #2 passed 503 tests and the restored production image gate with no known
@@ -125,6 +125,6 @@ remains; do not silently retry or broaden cleanup.
 
 The two local manual runs and bounded cleanup were approved and completed. The
 procedure above defines that run's scope; it is not permission for further runs.
-Review the branch and evidence before merge/publication. No registry publication,
+The branch and evidence are now merged/published. No registry publication,
 completed-image execution, credential rotation or cloud operation was included.
 Registry/deployment-blocking proof remains pending until those stages exist.

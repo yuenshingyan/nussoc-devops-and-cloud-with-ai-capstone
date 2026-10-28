@@ -62,13 +62,14 @@ artifact checks. The separate read-only operator check also passed. Live rotatio
 and registry/cloud credential controls remain deferred. See the
 [post-merge evidence](evidence/task-05/step-03-scm-verification.md).
 
-Step 5.4's approved local demonstration is verified on its review branch: two manual
+Step 5.4's approved local demonstration is reviewed, merged and published as `d76b713`: two manual
 runs each passed **503 tests**. The Debian comparison produced a real 61 HIGH/2 CRITICAL
 image block with no archived image; restoring the production Alpine Dockerfile passed
 with no known findings. The demo job is disabled and its workspace image archives are
 removed; no image was run, published or deployed. See the
 [demonstration evidence](evidence/task-05/step-04-security-demonstration.md).
-Branch/evidence review and publication remain pending.
+Step 6.1 is being scoped; metrics and Prometheus are not implemented yet. See the
+[proposal awaiting approval](docs/runbooks/metrics.md).
 
 ## Quick start
 
@@ -261,8 +262,10 @@ Remove a placeholder when its directory receives real content.
   410 tests and all gates, with 33 verified artifacts.
 - Task 5.3: approved local boundary-check subset merged/SCM-verified; rotation and
   registry/cloud credential controls remain deferred.
-- Task 5.4: local image-archival block/remediation demonstration verified; branch review
-  and publication pending. Registry/deployment-blocking proof remains deferred.
+- Task 5.4: local image-archival block/remediation demonstration reviewed, merged and
+  published as `d76b713`. Registry/deployment-blocking proof remains deferred.
+- Task 6.1: local metrics contract/dependency/Prometheus proposal awaiting approval;
+  instrumentation and managed-cluster monitoring are not implemented.
 - Remaining Tasks 5–6: deferred security controls and cloud release-gate proof,
   monitoring/logging, alert delivery and notifications.
 - Task 7: Design document, architecture diagram, AI use case, and presentation.

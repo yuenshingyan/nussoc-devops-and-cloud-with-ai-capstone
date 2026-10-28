@@ -146,8 +146,8 @@ and report retention on an isolated failure. Cloud delivery remains unverified.
   two approved manual runs at reviewed `43d6771`, 503 tests each. The real Debian
   image gate blocked 61 HIGH/2 CRITICAL occurrences and withheld the image; restoring
   the production Alpine Dockerfile passed with no known findings and 33 verified artifacts.
-  Demo job disabled, workspace images removed, shared cache/history preserved. Branch
-  review/publication pending; no registry/deployment-gate claim.
+  Demo job disabled, workspace images removed, shared cache/history preserved.
+  Reviewed, merged and published as `d76b713`; no registry/deployment-gate claim.
 
 For each artifact, record the requirement demonstrated, timestamp, command or
 procedure, actual result, commit, applicable image digest, and artifact path or

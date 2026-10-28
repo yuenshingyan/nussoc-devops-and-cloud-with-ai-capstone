@@ -126,7 +126,7 @@ wheel/source build and source/runtime scans passed. The separate
 Application/tool source and lock are unchanged from the reviewed baseline; this
 step adds only scope/runbook/evidence files.
 
-The approved local demonstration is verified; its branch/evidence await review and
-publication. This proves **image-archival blocking and subsequent remediation**, not
+The approved local demonstration is verified; its branch/evidence were subsequently
+reviewed, merged and published as `d76b713`. This proves **image-archival blocking and subsequent remediation**, not
 registry/deployment blocking or cloud rollout. Those stages are not implemented.
 No image push/deployment, cloud spending, credential rotation or later task occurred.
