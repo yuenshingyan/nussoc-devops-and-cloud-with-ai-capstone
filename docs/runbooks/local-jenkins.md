@@ -185,6 +185,22 @@ The configuration is now merged/published; normal SCM-triggered main build #8 at
 [post-merge evidence](../../evidence/task-05/step-02-scm-verification.md) and
 [image-security status and findings](image-security.md).
 
+## Operator credential-boundary check
+
+Step 5.3's local branch adds an operator-only, read-only verifier:
+
+```sh
+uv run --locked python ops/jenkins/verify_secrets.py
+```
+
+It checks existing file/mount/privilege/network and trusted-checkout boundaries
+without creating credentials, repairing permissions, restarting services or running
+builds. It writes only `reports/secret-boundaries.json`; failures never expose raw
+configuration/errors. It must not run inside the Jenkins agent or gain Docker access
+there. See the [scope, actual results and limits](secret-management.md). Live rotation
+and registry/cloud credentials remain deferred; the trusted single-operator model
+is unchanged. Review/merge and normal CI tests of this branch remain pending.
+
 ## What remains pending
 
 Step 4.2 is reviewed, merged, and verified through its normal SCM-loaded job. Step 4.3's

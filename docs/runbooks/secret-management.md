@@ -1,12 +1,15 @@
-# Secret management — Step 5.3 audit checkpoint
+# Secret management — Step 5.3 local boundary verification
 
 ## Status and scope
 
 Branch: `task-05/step-03-secret-management`, from reviewed `main` at `8fd7a36`.
-This is a **read-only audit and planning checkpoint**, not completion of Step 5.3.
-No credentials were created, rotated, revoked, printed or transferred to a new
-service. No permissions, Jenkins authorization, infrastructure or application code
-were changed. No cluster was contacted.
+The user approved automated boundary checks while retaining the trusted-local model
+and deferring live rotation/cloud credentials. The **local subset is implemented and
+operator-verified; review/merge/publication and normal CI tests remain pending**.
+Full cloud credential/RBAC and rotation verification remain deferred, so this is not
+completion of every Step 5.3 requirement. No credentials were created, rotated,
+revoked, printed or transferred to a new service. No permissions, Jenkins
+authorization, infrastructure or application code were changed. No cluster was contacted.
 
 The application validates synthetic transactions and currently requires **no secret**.
 Do not add an application secret, Kubernetes Secret or private-registry pull secret
@@ -82,6 +85,85 @@ unselected token formats, other Jenkins builds/raw service logs, binary image
 contents, Keychain/helper secrets, and cloud-provider state. Existing evidence
 retains its own narrower sanitization/verification claims.
 
+## Automated operator check
+
+From the repository root, with the existing local services running:
+
+```sh
+uv run --locked python ops/jenkins/verify_secrets.py
+```
+
+This is an **operator-only** check, not a Jenkins stage. Do not give the Jenkins
+agent Docker access to run it. It uses authenticated GET requests and read-only
+Docker inspection/`id`/`stat` commands, never POSTs, builds, restarts or repairs.
+Each Docker call has a 15-second timeout and each HTTP call a 5-second timeout,
+matching the audit's observation bounds. There are no automatic retries or background
+tasks; this is not an overall execution-time guarantee.
+
+The checker requires:
+
+- Existing host credential directory/file: owned by the current host UID, modes
+  0700/0600, correct directory/regular-file types, neither final path a symlink.
+  Missing credentials are rejected, not created. Host ancestor directories and
+  concurrent hostile host-account modifications are outside this trusted-local check.
+- Expected running Compose services, live UID 1000, no OOM/privileged mode, host
+  network/PID/IPC namespace or device mappings. Only the exact named volumes,
+  destinations and read/write modes are accepted; no host bind mounts are allowed.
+- Separate controller/agent read-only secret mounts, regular secret files at 0400
+  owned by UID/GID 1000; no secret volume on the builder.
+- Loopback-only controller port; no agent/builder published ports. Controller/agent
+  drop ALL capabilities, add none and retain no-new-privileges. The builder retains
+  only the already approved SETUID/SETGID and profile/path exceptions.
+- No current admin/agent/Basic-auth literal value in inspected argv/environment.
+  The agent secret argument must reference its mounted file.
+- Anonymous API access denied and the live application job using the exact public
+  repository, trusted main and SCM Jenkinsfile, without a nonempty SCM credential ID.
+
+It does not enumerate all accounts, verify the live authorization strategy, scan
+unknown credentials, audit all plugins/jobs/networks or establish token scopes.
+The remaining trust limitations above still apply. Builder exceptions are checked
+for consistency, not certified safe for hostile workloads.
+
+`reports/secret-boundaries.json` contains only safe status/summary fields. A pass
+returns 0. Handled boundary/observation failures return 1 with a generic failure
+report; raw external errors are intentionally excluded because they may contain
+sensitive configuration or response bodies. An initial `incomplete` report replaces
+any stale pass. Unexpected failures also fail execution and must not be treated as
+success. Only the one owned report file is replaced; no service configuration is
+modified. Inspect the checklist privately on failure; never paste raw credential
+files, JNLP responses or Docker inspection output into chat/evidence.
+
+## Local implementation verification
+
+On 28 October 2026:
+
+- **503 tests passed with `-W error`**, including 57 new deterministic cases.
+- Ruff lint/format, wheel/source build and source/runtime security gates passed.
+- Bandit reported 21 LOW findings, zero MEDIUM/HIGH; the two new LOW findings
+  remain visible, not suppressed. All 14 runtime dependencies passed auditing.
+- The real operator verifier passed against existing controller/agent/builder
+  services, with no secret, permission, authentication or lifecycle changes.
+- Test failures cover missing/unsafe host files, namespace/privilege/mount/port
+  drift, extra builder permissions, secret-in-environment/argv, changed checkout
+  configuration, anonymous access/errors, malformed XML and failed observations.
+  Tests also check stale-pass replacement, safe output and HTTP-error cleanup.
+
+The first live check failed closed because Docker inspect normalizes SETUID/SETGID
+to CAP-prefixed names and expands `systempaths=unconfined` into empty masked/read-only
+path lists. The parser now checks those actual fields, with regression cases; no
+runtime settings were weakened to make the check pass. An initial full-suite run
+caught unclosed HTTPError resources under warnings-as-errors; both the real handler
+and unconsumed synthetic fixture responses now close them. Initial formatting errors
+were also corrected before the final passing checks. No warnings were suppressed.
+
+[Local outputs](../../evidence/task-05/step-03-boundaries/local-checks.txt),
+[operator result](../../evidence/task-05/step-03-boundaries/secret-boundaries.json),
+[source/runtime summary](../../evidence/task-05/step-03-boundaries/security-summary.json),
+and [source hashes](../../evidence/task-05/step-03-boundaries/source-sha256.json).
+These are local results, not new SCM-build or cloud evidence. Failure paths use
+synthetic external boundaries; no live credential exposure or permission weakening
+was introduced for a demonstration.
+
 ## Rotation and least-privilege planning — approval required
 
 The following is a planning checklist, **not a tested rotation runbook**. Confirm
@@ -123,12 +205,11 @@ claim provider defaults or existing manifest settings establish these controls.
 Cloud credentials, kubectl contexts and kubeconfigs must remain outside Git/evidence.
 Current public image pulls and the application need no Kubernetes Secret.
 
-## Next decisions
+## Next review and deferred decisions
 
-1. Confirm keeping the current trusted, single-operator local model for this demo.
-2. Approve a bounded local verification/hardening scope, including any automated
-   checks, before changing permissions, authorization or bootstrap behaviour.
-3. Decide whether to validate Jenkins rotation now or defer live rotation until
-   a maintenance/recovery procedure is approved. An untested checklist is not proof.
-4. Keep registry/cloud credential work pending until delivery and provider decisions
-   are approved. Step 5.3 remains partial until its agreed scope is verified.
+The trusted single-operator model and automated read-only checks were approved.
+Review this implementation before merging/publishing, then verify normal CI tests.
+Live rotation and registry/cloud credentials remain deferred by agreement. Any
+permission, authorization, bootstrap or deployment change still needs separate
+approval. Rotation checklists remain untested planning, not completion evidence;
+provider-specific RBAC/encryption controls remain pending real cloud integration.

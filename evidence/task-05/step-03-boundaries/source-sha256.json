@@ -1,0 +1,10 @@
+{
+  "recorded_at_utc": "2026-10-28T14:28:23.054751+00:00",
+  "sha256": {
+    "ops/jenkins/verify_secrets.py": "cfca8ca1ade83b506dc0c2feeb3dbb1d7774fd2162188814ea26fc411a254af0",
+    "tests/unit/test_secret_boundaries.py": "fcfa9d7a32be5256053d1df4021aaa3f3f571b372962de3ab5f54a9ea939f2cf",
+    "ops/jenkins/compose.yaml": "4ba140bc764f097b90c679ab1b55fad38cd1fb56ac413a2f8f3f2c1943fd2af4",
+    "ops/jenkins/bootstrap.py": "499b008ad3f416f76e58156a1589c687f5727016ffa757cbcb5f22f1beda1de9",
+    "uv.lock": "7098c03eba5a4e6d6e8b1ceac1e6345a969877f0abf407ce30cf880aadb7ceab"
+  }
+}
