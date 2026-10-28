@@ -28,7 +28,7 @@ Submission is **4 November**. The user approved deferring budget-dependent cloud
 | --- | --- | --- |
 | Application | Python, FastAPI, Pydantic | Familiar language, typed request validation, automatic API documentation |
 | Dependencies/build | `pyproject.toml`, uv and a committed lockfile | Reproducible dependency installation and builds |
-| Testing | pytest, HTTPX, coverage | Unit tests, endpoint tests, and coverage reporting |
+| Testing | pytest, HTTPX2 (warning-remediation branch), coverage | Unit tests, endpoint tests, and coverage reporting |
 | Money | Python `Decimal` | Avoid binary floating-point errors; define explicit precision rules |
 | Source control | Git, GitHub | Branch-per-step history and evaluator-accessible repository |
 | CI/CD | Jenkins, Jenkinsfile | Matches the recommended CI/CD tool |
@@ -301,7 +301,7 @@ The assignment allows equivalent application, build, and unit-testing tools with
 
 ## Immediate next action
 
-Step 5.2 was approved, merged and published at `3d3aaa6`. Automatic normal SCM build #8 passed 410 tests and all gates; 33 artifacts were verified. See [follow-up evidence](evidence/task-05/step-02-scm-verification.md). Review the evidence follow-up before starting Step 5.3. Warning remediation would require a separately agreed dependency change; no later step or cloud work has started.
+Step 5.2 was approved, merged and published at `3d3aaa6`. Automatic normal SCM build #8 passed 410 tests and all gates; 33 artifacts were verified. See [follow-up evidence](evidence/task-05/step-02-scm-verification.md). The evidence follow-up is merged/published as `b7006b9`. The user approved a separate warning-remediation investigation, including HTTPX2, before Step 5.3. Its dedicated branch is `chore/warning-remediation`, based on that reviewed main. Review the test-client migration and investigation results before merge; no later step or cloud work has started.
 
 ### Historical pre-merge stopping point (superseded)
 

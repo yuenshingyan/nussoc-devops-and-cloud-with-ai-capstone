@@ -119,6 +119,10 @@ and report retention on an isolated failure. Cloud delivery remains unverified.
 - [Step 5.2 — post-merge SCM verification](task-05/step-02-scm-verification.md):
   automatic main build #8 at `3d3aaa6` passed 410 tests and source/dependency/image gates;
   all 33 downloaded artifacts verified. No registry publication or cloud delivery.
+- [Warning-remediation investigation](../docs/runbooks/warning-remediation.md):
+  separate approved branch; HTTPX2 migration passes 410 tests with warnings as errors.
+  Hashed pip-audit experiment passes, but scanner integration remains deferred.
+  These local results do not establish Jenkins/container verification of the new lock.
 
 For each artifact, record the requirement demonstrated, timestamp, command or
 procedure, actual result, commit, applicable image digest, and artifact path or

@@ -1,0 +1,39 @@
+Resolved 56 packages in 24ms
+Audited 54 packages in 13ms
+All checks passed!
+81 files already formatted
+============================= test session starts ==============================
+platform darwin -- Python 3.14.7, pytest-9.1.1, pluggy-1.7.0
+rootdir: /Users/yuenshingyanhindy/vscode/assignment/capstone
+configfile: pyproject.toml
+testpaths: tests
+plugins: cov-7.1.0, anyio-4.15.1, platformdirs-4.13.5
+collected 410 items
+
+tests/integration/test_application.py ..                                 [  0%]
+tests/integration/test_configuration_api.py ........                     [  2%]
+tests/integration/test_health_api.py ...                                 [  3%]
+tests/integration/test_validation_api.py ............................... [ 10%]
+...                                                                      [ 11%]
+tests/integration/test_validation_boundaries.py ........................ [ 17%]
+..................................                                       [ 25%]
+tests/unit/test_config.py ...................................            [ 34%]
+tests/unit/test_image_archive.py .............                           [ 37%]
+tests/unit/test_image_scan.py .......................................... [ 47%]
+......................................                                   [ 56%]
+tests/unit/test_jenkins_bootstrap.py .............                       [ 60%]
+tests/unit/test_jenkins_ci_verification.py ............................. [ 67%]
+.                                                                        [ 67%]
+tests/unit/test_jenkins_trigger_verification.py ..................       [ 71%]
+tests/unit/test_security_scan.py ....................................... [ 81%]
+.......                                                                  [ 82%]
+tests/unit/test_transaction_schema.py .................................. [ 91%]
+............                                                             [ 94%]
+tests/unit/test_validation.py ........................                   [100%]
+
+============================= 410 passed in 1.03s ==============================
+Building source distribution...
+Building wheel from source distribution...
+Successfully built dist/finsecure_pay-0.2.0.tar.gz
+Successfully built dist/finsecure_pay-0.2.0-py3-none-any.whl
+Security gate: passed; see reports/security-summary.json
