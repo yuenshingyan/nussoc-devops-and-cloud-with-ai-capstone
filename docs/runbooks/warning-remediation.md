@@ -78,8 +78,9 @@ That initial experiment did not change the scanner or prove hash-value enforceme
 The user subsequently approved implementation on `chore/hashed-dependency-audit`.
 A negative probe discovered that pip-audit with `--disable-pip` accepts incorrect hashes;
 the implementation adds an explicit lock-hash comparison. See the
-[implementation and verification record](hashed-dependency-audit.md). It is not yet
-merged or CI-verified. The original implementation checklist was:
+[implementation and verification record](hashed-dependency-audit.md). It is now merged
+and published as `12ebb9c`; normal SCM build #12 passed 446 tests and all gates with
+no pytest or audit warnings. The original implementation checklist was:
 
 1. Define and strictly validate the hash-bearing export format; continue rejecting
    URLs, editable requirements, markers, duplicates, missing hashes and pip options.

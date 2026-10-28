@@ -127,7 +127,9 @@ and report retention on an isolated failure. Cloud delivery remains unverified.
 - [Hashed dependency audit](../docs/runbooks/hashed-dependency-audit.md): approved separate
   branch; 446 local tests and real runtime scans pass without warnings. Explicit lock-hash
   validation was added after a negative probe showed pip-audit accepts incorrect hashes
-  with `--disable-pip`. Merge/publication and Jenkins verification remain pending.
+  with `--disable-pip`. Merged/published as `12ebb9c`; normal SCM build #12 passed
+  446 tests without pytest/audit warnings and all security gates. All 33 downloaded
+  artifacts and the lock-bound export hashes were verified.
 
 For each artifact, record the requirement demonstrated, timestamp, command or
 procedure, actual result, commit, applicable image digest, and artifact path or

@@ -19,8 +19,9 @@ The application image still installs only runtime dependencies, not these tools.
   Python itself, OS packages, and other platforms' dependencies are not audited by this gate.
 - On the approved `chore/hashed-dependency-audit` branch, exports include uv's artifact
   hashes. Every exported hash set must equal the corresponding exact package's SHA-256
-  artifact set in `uv.lock`, before pip-audit starts. Review/merge/CI verification of
-  this change remain pending; see the [verification record](hashed-dependency-audit.md).
+  artifact set in `uv.lock`, before pip-audit starts. This change is merged/published
+  as `12ebb9c` and verified in normal SCM build #12 (446 tests, no audit warning);
+  see the [verification record](hashed-dependency-audit.md).
 - pip-audit uses PyPI's vulnerability service with `--require-hashes --disable-pip --strict`:
   no fresh dependency resolution, package execution/installation, automatic upgrade,
   ignored advisory, or skipped dependency is accepted. The report must contain every

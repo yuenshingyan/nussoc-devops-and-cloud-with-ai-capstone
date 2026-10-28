@@ -4,8 +4,8 @@
 
 The user approved this change after the HTTPX2 migration and its evidence follow-up
 were merged/published. Branch: `chore/hashed-dependency-audit`, based on reviewed
-`main` at `5d743b9`. **Local implementation verified; merge/publication and Jenkins
-verification remain pending.** No application, dependency, Dockerfile or lockfile
+`main` at `5d743b9`. **Approved, merged/published as `12ebb9c`, and verified in
+normal SCM-triggered Jenkins build #12.** No application, dependency, Dockerfile or lockfile
 change is included. No later assignment task has started.
 
 ## Export and validation contract
@@ -93,6 +93,36 @@ instruction. `verify-probes.py.txt` validates those retained reports and the new
 lock checks. Probe directories retain requirement text, raw advisory reports and
 diagnostics. No binaries, caches, credentials or vulnerable installations are saved.
 
-These results are **not** a Jenkins blocked-build demonstration, a live service-outage
-test, or verification of a new image/deployment. Jenkins verification remains pending;
-prior CI evidence belongs to prior revisions. Security findings are time-bound.
+These local results are **not** a Jenkins blocked-build demonstration, a live
+service-outage test, or verification of a deployment. Security findings are time-bound.
+
+## Post-merge SCM verification
+
+On 28 October 2026, after explicit user approval, `12ebb9c` was merged into `main`
+and both branches were published. The queue was empty and prior build #11 had
+completed SUCCESS. No manual build or polling request was sent.
+
+Normal **finsecure-ci build #12** succeeded with SCMTriggerCause, loading the
+Jenkinsfile from Git and checking out `12ebb9c2db9604696e465046aa6fb22cf2e621cc`.
+
+- **446 tests passed**, none failed/skipped, with no pytest warning summary.
+- Ruff, packaging and source/runtime security gates passed; 19 LOW Bandit findings
+  remain reported, with no MEDIUM/HIGH. All 14 runtime dependencies were audited.
+- The archived pip-audit output contains no warnings. Exported hash sets were
+  independently checked against `uv.lock` from the exact verified Git revision.
+- The fresh Trivy image gate passed. All **33 downloaded artifacts** were checked,
+  including package manifests, image identity and scan/report/source/lock hashes.
+- Application coverage remains 125/125 lines and 28/28 branch outcomes, with no gate.
+
+[Verification record](../../evidence/task-05/hashed-dependency-audit/scm/verification.json),
+[sanitized console](../../evidence/task-05/hashed-dependency-audit/scm/console.txt),
+[test output](../../evidence/task-05/hashed-dependency-audit/scm/tests.txt),
+[audit output](../../evidence/task-05/hashed-dependency-audit/scm/pip-audit.txt), and
+[image gate](../../evidence/task-05/hashed-dependency-audit/scm/image-security-summary.json).
+
+The retained GET-only observer uses the hash-aware parser and a parsed lock from
+the verified revision. Known live credential values were checked before artifact
+saving. Binaries remain outside Git. No image was loaded/smoke-tested in this
+follow-up, published to a registry or deployed. This successful SCM run does not
+replace the separate local negative-probe evidence or establish live failure-path
+coverage for this revision.

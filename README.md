@@ -50,6 +50,12 @@ GitHub now defaults to `main`. See the
 See [PLAN.md](PLAN.md) for the approved budget-aware sequence, deferred requirements,
 and branch names.
 
+The subsequent warning-remediation changes are merged and SCM-verified: HTTPX2
+removed the test-client deprecation, and lock-bound hashed auditing removed the
+pip-audit recommendation. Normal build #12 at `12ebb9c` passed **446 tests** without
+pytest/audit warnings, all security gates, and 33 artifact checks. See the
+[verification record](docs/runbooks/hashed-dependency-audit.md).
+
 ## Quick start
 
 Prerequisites: uv and Python 3.14 (uv can install the interpreter if needed).
