@@ -4,8 +4,9 @@
 
 On 28 October 2026 the user approved publishing Step 5.2's evidence follow-up and
 investigating warning remediation, including HTTPX2. The evidence follow-up is
-published as `b7006b9`. This separate `chore/warning-remediation` branch contains
-a test-client dependency migration; review/merge/publication remain pending.
+published as `b7006b9`. Following user approval, the test-client migration on
+`chore/warning-remediation` was merged and published as `8f1e598`. Normal automatic
+SCM-triggered Jenkins build #10 succeeded at that revision on 28 October 2026.
 
 ## Starlette test-client deprecation: fixed locally
 
@@ -33,9 +34,27 @@ Actual local checks:
 
 The existing integration suite exercises the real TestClient. Treating warnings as
 errors in this verification command demonstrates the deprecation is removed; no
-warning filter/suppression was introduced. Jenkins and container verification of
-this new lock remain pending. Previous image-scan evidence is not evidence for a
-new image built from this branch.
+warning filter/suppression was introduced.
+
+### Post-merge Jenkins verification
+
+Normal build #10 loaded its Jenkinsfile from SCM at `8f1e598`, installed HTTPX2 and
+httpcore2 2.16.0 plus truststore 0.10.5, and passed all 410 tests without a pytest
+warning summary. Ruff, packaging, source/dependency gates and the fresh image gate
+passed. All 33 downloaded artifacts were verified against their manifests and the
+scanned image identity. No manual build or polling request was sent.
+
+[Verification record](../../evidence/task-05/warning-remediation/scm/verification.json),
+[sanitized console](../../evidence/task-05/warning-remediation/scm/console.txt),
+[test output](../../evidence/task-05/warning-remediation/scm/tests.txt), and
+[image gate](../../evidence/task-05/warning-remediation/scm/image-security-summary.json).
+The retained GET-only observer records the pre-push baseline (#9, completed SUCCESS)
+and validates source/lock/report/archive hashes. Known live credentials were checked
+before saving artifacts. Binary exports remain outside Git.
+
+This verifies the new lock in Linux Jenkins and a freshly built/scanned ARM64 image;
+it does not claim an additional container runtime smoke test, registry publication,
+or deployment. The pip-audit recommendation remains visible as described below.
 
 [Local verification output](../../evidence/task-05/warning-remediation/local-checks.txt).
 

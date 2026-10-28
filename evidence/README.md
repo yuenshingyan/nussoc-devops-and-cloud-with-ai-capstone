@@ -120,9 +120,10 @@ and report retention on an isolated failure. Cloud delivery remains unverified.
   automatic main build #8 at `3d3aaa6` passed 410 tests and source/dependency/image gates;
   all 33 downloaded artifacts verified. No registry publication or cloud delivery.
 - [Warning-remediation investigation](../docs/runbooks/warning-remediation.md):
-  separate approved branch; HTTPX2 migration passes 410 tests with warnings as errors.
+  HTTPX2 migration merged/published as `8f1e598`; normal SCM build #10 passed 410
+  tests without pytest warnings, all security gates, and 33 artifact checks.
   Hashed pip-audit experiment passes, but scanner integration remains deferred.
-  These local results do not establish Jenkins/container verification of the new lock.
+  No additional container runtime smoke test or deployment was performed.
 
 For each artifact, record the requirement demonstrated, timestamp, command or
 procedure, actual result, commit, applicable image digest, and artifact path or

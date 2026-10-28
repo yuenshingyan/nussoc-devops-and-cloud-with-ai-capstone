@@ -1,0 +1,61 @@
+Using CPython 3.14.7 interpreter at: /usr/local/bin/python3.14
+Creating virtual environment at: .venv
+Resolved 56 packages in 0.94ms
+   Building finsecure-pay @ file:///home/jenkins/agent/workspace/finsecure-ci
+      Built finsecure-pay @ file:///home/jenkins/agent/workspace/finsecure-ci
+Prepared 4 packages in 818ms
+Installed 54 packages in 380ms
+ + annotated-doc==0.0.5
+ + annotated-types==0.8.0
+ + anyio==4.15.1
+ + bandit==1.9.4
+ + boolean-py==5.0
+ + cachecontrol==0.14.4
+ + certifi==2026.10.19
+ + charset-normalizer==3.5.2
+ + click==8.5.0
+ + coverage==7.16.2
+ + cyclonedx-python-lib==11.12.0
+ + defusedxml==0.7.1
+ + fastapi==0.156.8
+ + filelock==4.2.4
+ + finsecure-pay==0.2.0 (from file:///home/jenkins/agent/workspace/finsecure-ci)
+ + h11==0.16.0
+ + httpcore2==2.16.0
+ + httpx2==2.16.0
+ + idna==3.20
+ + iniconfig==2.3.1
+ + license-expression==30.4.4
+ + markdown-it-py==4.2.0
+ + mdurl==0.1.2
+ + msgpack==1.2.3
+ + opentelemetry-api==1.45.1
+ + packageurl-python==0.17.6
+ + packaging==26.3
+ + pip==26.2.2
+ + pip-api==0.0.35
+ + pip-audit==2.10.1
+ + pip-requirements-parser==32.0.1
+ + platformdirs==4.13.5
+ + pluggy==1.7.0
+ + py-serializable==2.1.0
+ + pydantic==2.14.1
+ + pydantic-core==2.50.1
+ + pygments==2.21.0
+ + pyparsing==3.3.3
+ + pytest==9.1.1
+ + pytest-cov==7.1.0
+ + pyyaml==6.0.3
+ + requests==2.34.2
+ + rich==15.0.0
+ + ruff==0.17.1
+ + sortedcontainers==2.4.0
+ + starlette==1.9.0
+ + stevedore==5.9.1
+ + tomli==2.5.0
+ + tomli-w==1.2.0
+ + truststore==0.10.5
+ + typing-extensions==4.16.0
+ + typing-inspection==0.4.4
+ + urllib3==2.8.0
+ + uvicorn==0.54.0

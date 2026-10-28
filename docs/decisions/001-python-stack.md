@@ -4,7 +4,8 @@
 
 Use Python 3.14, FastAPI, Pydantic, uv, pytest, and HTTPX2 for this capstone.
 The user approved investigating the HTTPX-to-HTTPX2 development dependency migration
-on 28 October 2026; it is implemented on `chore/warning-remediation` pending review.
+on 28 October 2026; it was subsequently approved, merged and published as `8f1e598`.
+Normal SCM-triggered Jenkins build #10 passed all 410 tests without pytest warnings.
 Use Uvicorn to serve the ASGI application and Hatchling as the packaging backend.
 Use Ruff for formatting, linting, and import sorting.
 
