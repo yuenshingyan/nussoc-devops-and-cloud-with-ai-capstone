@@ -1,0 +1,66 @@
+{
+  "started_at_utc": "2026-10-28T12:55:42.255545+00:00",
+  "status": "passed",
+  "source_revision": "3d3aaa6dcb4ca14bd19d273b0f23c0964dcbc6f6",
+  "local_tag": "finsecure-pay-ci:jenkins-finsecure-ci-8",
+  "database_repository": "ghcr.io/aquasecurity/trivy-db:2",
+  "operation_budget_seconds": 300,
+  "max_database_age_seconds": 86400,
+  "phase": "report",
+  "trivy_version": "0.76.1",
+  "image_id": "sha256:8aebf726356c905d0530aa758395367ece891b1b37d2566b1d02c077ee3a9f9e",
+  "platform": "linux/arm64",
+  "archive_sha256": "fcec007b85433c74baa7cc56f2e06c54240d07ac409879db936e8617dc656ed4",
+  "lock_sha256": "c5856200e528008160c463b0bc18284902c6bc5608aecb1f1a6e05e9a3b571c0",
+  "trivy_sha256": "b422130ea54e53e142e65c838662e48919ce9c3f23f17d80066b43e70550cb85",
+  "database_exit_code": 0,
+  "database_age_seconds": 20737.099909,
+  "scan_exit_code": 0,
+  "database_age_at_finish_seconds": 20739.631118,
+  "os": {
+    "Family": "alpine",
+    "Name": "3.24.3"
+  },
+  "end_of_life": false,
+  "packages_by_type": {
+    "alpine": 30,
+    "python-pkg": 15
+  },
+  "runtime_packages": {
+    "annotated-doc": "0.0.5",
+    "annotated-types": "0.8.0",
+    "anyio": "4.15.1",
+    "click": "8.5.0",
+    "fastapi": "0.156.8",
+    "finsecure-pay": "0.2.0",
+    "h11": "0.16.0",
+    "idna": "3.20",
+    "opentelemetry-api": "1.45.1",
+    "pydantic": "2.14.1",
+    "pydantic-core": "2.50.1",
+    "starlette": "1.9.0",
+    "typing-inspection": "0.4.4",
+    "typing-extensions": "4.16.0",
+    "uvicorn": "0.54.0"
+  },
+  "severities": {
+    "UNKNOWN": 0,
+    "LOW": 0,
+    "MEDIUM": 0,
+    "HIGH": 0,
+    "CRITICAL": 0
+  },
+  "blocking_findings": 0,
+  "temporary_cache_removed": true,
+  "finished_at_utc": "2026-10-28T12:56:22.543275+00:00",
+  "elapsed_seconds": 40.29098972700001,
+  "report_sha256": {
+    "image-security-tools.txt": "84e54b2d02a5de1ad8dff546f152fb3aa252379d25a3a8d0f982d6d3a1fe4cba",
+    "image-security-export.txt": "72916b93d905714ce93b87b6498f496fcda1db1ac7c0a603689d2855cfa9b424",
+    "image-runtime-requirements.txt": "ac46a68afa9b7bb4fe1d7beca4c7c27d90198e19af735a52210307dc7af69fba",
+    "trivy-db.json": "9893c813662edc180debb3bb236578457ccb88c3a6988ee0cc98bda5c37f2c59",
+    "trivy-db.txt": "900377a70d6783f2e742a7fe84d446bad6817e76d453969dc2306b04d0af7393",
+    "trivy.json": "8f8775f3162012517db84f95728afa93b818fcff51cccad0cc4046b9cc647fbe",
+    "trivy.txt": "4e7355a413ae04248f387ce0da46a5a86eba914ba75c29b9a01af3876df6ed90"
+  }
+}

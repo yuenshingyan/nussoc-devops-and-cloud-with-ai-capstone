@@ -180,9 +180,10 @@ reconciles every manually upgraded plugin in Jenkins home. Avoid UI plugin upgra
 
 On the active Step 5.2 branch, `finsecure-jenkins-agent:step-05-02` adds the verified
 Trivy 0.76.1 ARM64 binary without new mounts, ports, privileges or application dependencies.
-The normal main pipeline is still Step 5.1: image gating has not been integrated.
-See [image-security status and findings](image-security.md). This local configuration is
-not yet merged/published; do not assume the old main Compose file selects the new agent.
+The configuration is now merged/published; normal SCM-triggered main build #8 at
+`3d3aaa6` passed the integrated image gate and all 410 tests. See
+[post-merge evidence](../../evidence/task-05/step-02-scm-verification.md) and
+[image-security status and findings](image-security.md).
 
 ## What remains pending
 

@@ -1,6 +1,9 @@
 # Image security — Step 5.2 checkpoints
 
-**Local candidate implementation; review/publication and normal SCM verification pending.**
+**Reviewed, merged, published, and normal SCM-verified.** Automatic main build #8
+at `3d3aaa6` passed 410 tests and all security gates, with 33 verified artifacts.
+See [post-merge evidence](../../evidence/task-05/step-02-scm-verification.md).
+The candidate checkpoints below describe the earlier pre-merge verification.
 The user approved the policy, verified tooling, candidate experiments, and adoption of the
 tested musl-based Alpine option. The root Dockerfile now uses that pinned base with whole
 pip/ensurepip removal. Jenkinsfile now has a 30-minute global limit and an image gate

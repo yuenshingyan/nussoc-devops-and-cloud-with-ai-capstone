@@ -28,7 +28,10 @@ Separate candidate runs verified real scan blocking; normal CI exported 25 verif
 See the [source-security runbook](docs/runbooks/source-security.md) and
 [post-merge evidence](evidence/task-05/step-01-scm-verification.md).
 
-Step 5.2 is **in progress on its local branch**: verified Trivy tooling is installed,
+Step 5.2 is **reviewed, merged, published, and SCM-verified**: normal automatic build
+#8 at `3d3aaa6` passed 410 tests, source/dependency/image gates, and verification of
+33 downloaded artifacts. See the [post-merge evidence](evidence/task-05/step-02-scm-verification.md).
+The implementation history follows: verified Trivy tooling was installed,
 while an operator preflight found 70 HIGH and 6 CRITICAL image finding occurrences.
 The approved policy would block that image. Approved candidate testing found that updated
 Debian bases still block, while Python 3.14.9/Alpine 3.24 candidates report no known findings
@@ -37,8 +40,8 @@ Alpine adoption; the root Dockerfile now uses that base with pip/ensurepip remov
 local candidate Jenkinsfile gates image archival on fresh fail-closed scans, with a
 30-minute global budget. Three candidate Jenkins runs each passed **410 tests**, verifying
 a passing image, real vulnerability blocking and a fail-closed input error. The passing
-export also passed operator runtime checks. Merge/publication and normal SCM proof remain
-pending. See the [gate evidence](evidence/task-05/step-02-image-gates.md) and
+export also passed operator runtime checks. Subsequent merge/publication and normal SCM
+proof are recorded above. See the [gate evidence](evidence/task-05/step-02-image-gates.md) and
 [image-security checkpoints](docs/runbooks/image-security.md).
 
 **Evaluator source link:** [reviewed application on main](https://github.com/yuenshingyan/nussoc-devops-and-cloud-with-ai-capstone/tree/main).
@@ -234,7 +237,8 @@ Remove a placeholder when its directory receives real content.
 - Task 5.1: reviewed, merged, published, and verified through normal SCM build #6
   (316 tests, passing scans, 25 artifacts); 17 LOW Bandit findings remain reported.
 - Task 5.2: Alpine/image gate implemented and locally verified with passing, vulnerability-
-  blocked and error cases (410 tests each). Review/publication and normal SCM proof pending.
+  blocked and error cases (410 tests each). Merged/published; normal SCM build #8 passed
+  410 tests and all gates, with 33 verified artifacts.
 - Remaining Tasks 5–6: complete image gates, secret-management work, monitoring/logging, demonstrations.
 - Task 7: Design document, architecture diagram, AI use case, and presentation.
 
