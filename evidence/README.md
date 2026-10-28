@@ -142,6 +142,12 @@ and report retention on an isolated failure. Cloud delivery remains unverified.
 - [Step 5.3 — post-merge local-subset verification](task-05/step-03-scm-verification.md):
   automatic build #14 passed 503 tests without pytest/audit warnings and all gates;
   33 artifacts verified. Separate real operator boundary check passed.
+- [Step 5.4 — isolated blocking and remediation](task-05/step-04-security-demonstration.md):
+  two approved manual runs at reviewed `43d6771`, 503 tests each. The real Debian
+  image gate blocked 61 HIGH/2 CRITICAL occurrences and withheld the image; restoring
+  the production Alpine Dockerfile passed with no known findings and 33 verified artifacts.
+  Demo job disabled, workspace images removed, shared cache/history preserved. Branch
+  review/publication pending; no registry/deployment-gate claim.
 
 For each artifact, record the requirement demonstrated, timestamp, command or
 procedure, actual result, commit, applicable image digest, and artifact path or

@@ -1,14 +1,20 @@
-# Step 5.4 — Proposed isolated blocking/remediation demonstration
+# Step 5.4 — Isolated blocking/remediation demonstration
 
 ## Status
 
-**Scope proposal only; execution not yet authorized or performed.**
+**Approved local demonstration executed and verified; review/publication pending.**
+Manual job `finsecure-security-demo-20261028144809` ran exactly twice on 28 October
+2026: build #1 passed 503 tests then blocked 61 HIGH/2 CRITICAL image findings;
+build #2 passed 503 tests and the restored production image gate with no known
+findings. The job is disabled and workspace image archives are removed. See
+[actual results and preservation limits](../../evidence/task-05/step-04-security-demonstration.md).
+
 Branch: `task-05/step-04-security-demonstration`, created from reviewed/published
 `main` at `43d6771`. Step 5.3's evidence follow-up is merged and published.
 This step does not change the normal pipeline, application contract, dependency
 lock, published images or Kubernetes image pin.
 
-## Proposed local scope
+## Approved local scope
 
 Use one dedicated, manual, sandboxed Jenkins demonstration job with no SCM polling,
 release credentials, registry push or deployment stage. Keep normal `finsecure-ci`
@@ -101,7 +107,7 @@ release/deployment blocking, managed Kubernetes rollout or completion of the def
 cloud delivery requirements. It also re-demonstrates an already adopted remediation;
 it must not be presented as a newly discovered production fix.
 
-## Preservation and cleanup proposal
+## Approved preservation and cleanup
 
 After both builds finish, disable the owned demo job, preserving its build history
 and sanitized diagnostics. Remove only the hash-identified workspace image archives
@@ -115,8 +121,10 @@ limitation rather than claiming complete erasure. No new retention/expiry policy
 introduced. If execution fails early, preserve diagnostic state and report what
 remains; do not silently retry or broaden cleanup.
 
-## Approval needed
+## Review boundary
 
-Approve the two local manual runs and their bounded preservation/cleanup above.
-No registry publication, image execution, credential rotation or cloud operation is
-included. Only after approval should the wrapper/job be implemented and run.
+The two local manual runs and bounded cleanup were approved and completed. The
+procedure above defines that run's scope; it is not permission for further runs.
+Review the branch and evidence before merge/publication. No registry publication,
+completed-image execution, credential rotation or cloud operation was included.
+Registry/deployment-blocking proof remains pending until those stages exist.

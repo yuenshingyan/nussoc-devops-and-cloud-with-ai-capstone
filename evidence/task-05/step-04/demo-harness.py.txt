@@ -1,0 +1,223 @@
+"""Run/observe the approved isolated two-build image-gate demonstration, without image execution."""
+
+from argparse import ArgumentParser
+from datetime import UTC, datetime
+from difflib import unified_diff
+from hashlib import sha256
+from json import dumps, loads
+from pathlib import Path
+from re import fullmatch
+from runpy import run_path
+from subprocess import run
+from time import monotonic, sleep
+from tomllib import load
+from urllib.parse import urlencode
+from urllib.request import Request
+from xml.etree.ElementTree import SubElement, tostring
+
+from bootstrap import BASE_URL, Jenkins, admin_password
+from defusedxml.ElementTree import fromstring
+from image_archive import inspect_image_archive
+from verify_ci import IMAGE_SECURITY_ARTIFACTS, SECURITY_ARTIFACTS, job_xml, post, require_image_security_reports, require_passing_tests, require_security_reports
+
+REVISION = '43d6771faff9d269697f64cb70a87080d224f23c'
+BASE = 'python:3.14.9-slim-bookworm@sha256:945c2676dc2b18e0c1f16879244122c57c0ffede60006bf3df159c507a31bcae'
+ROOT = Path('reports/step54-demo')
+ROOT.mkdir(exist_ok=True)
+
+
+def git_file(name: str) -> bytes:
+    return run(['git','show',REVISION+':'+name],capture_output=True,check=True,timeout=15).stdout
+
+
+def pipeline(mode: str) -> tuple[str, str]:
+    candidate = git_file('Jenkinsfile').decode()
+    script = "def scm = [$class: 'GitSCM', branches: [[name: '"+REVISION+"']], userRemoteConfigs: [[url: 'https://github.com/yuenshingyan/nussoc-devops-and-cloud-with-ai-capstone.git']], extensions: [[$class: 'CloneOption', timeout: 2]]]\n" + candidate
+    anchor = '                checkout scm\n'
+    assert script.count(anchor) == 1
+    script = script.replace(anchor, anchor + "                sh 'test \"$(git rev-parse HEAD)\" = " + REVISION + "'\n")
+    production = git_file('Dockerfile').decode()
+    dockerfile = production
+    command = ''
+    if mode == 'blocked':
+        template = git_file('evidence/task-05/step-02-remediation/Dockerfile.runtime-candidate').decode()
+        old = next(line for line in template.splitlines() if line.startswith('ARG PYTHON_IMAGE='))
+        assert template.count(old) == 1
+        dockerfile = template.replace(old, 'ARG PYTHON_IMAGE='+BASE)
+        command = 'git show '+REVISION+':evidence/task-05/step-02-remediation/Dockerfile.runtime-candidate > Dockerfile\n'
+        code = "from pathlib import Path; p=Path('Dockerfile'); text=p.read_text(); assert text.count("+repr(old)+")==1; p.write_text(text.replace("+repr(old)+","+repr('ARG PYTHON_IMAGE='+BASE)+"))"
+        command += "python - <<'PY_DEMO_DOCKERFILE'\n"+code+"\nPY_DEMO_DOCKERFILE\n"
+    digest = sha256(dockerfile.encode()).hexdigest()
+    command += "printf '%s  Dockerfile\\n' '"+digest+"' | sha256sum --check -\nprintf 'DEMO_DOCKERFILE_SHA256="+digest+"\\n'\n"
+    assert script.count('mkdir -p images\n') == 1
+    script = script.replace('mkdir -p images\n', command+'mkdir -p images\n')
+    (ROOT/(mode+'-pipeline.groovy.txt')).write_text(script)
+    (ROOT/(mode+'-Dockerfile.txt')).write_text(dockerfile)
+    (ROOT/'remediation.diff').write_text(''.join(unified_diff(
+        (dockerfile if mode=='blocked' else (ROOT/'blocked-Dockerfile.txt').read_text()).splitlines(True),
+        production.splitlines(True),fromfile='blocked/Dockerfile',tofile='remediated/Dockerfile')))
+    return script, digest
+
+
+def trigger(client: Jenkins, job: str) -> int:
+    crumb=loads(client.request('/crumbIssuer/api/json'))
+    request=Request(BASE_URL+job+'build',data=b'',headers={'Authorization':client.authorization,crumb['crumbRequestField']:crumb['crumb']})
+    with client.opener.open(request,timeout=10) as response:
+        location=response.headers['Location']
+    assert location.startswith(BASE_URL+'/queue/item/')
+    queue=location.removeprefix(BASE_URL)
+    assert fullmatch(r'/queue/item/[0-9]+/',queue)
+    (ROOT/'queue.json').write_text(dumps({'path':queue})+'\n')
+    deadline=monotonic()+2100
+    while monotonic()<deadline:
+        item=loads(client.request(queue+'api/json'))
+        assert not item.get('cancelled'), 'Owned queue item cancelled'
+        if 'executable' in item:
+            number=item['executable']['number']
+            break
+        sleep(3)
+    else:
+        raise TimeoutError('Owned queue observation exceeded 35 minutes; inspect without retry')
+    while monotonic()<deadline:
+        build=loads(client.request(job+str(number)+'/api/json'))
+        if not build['building']:
+            return number
+        sleep(3)
+    raise TimeoutError('Owned build observation exceeded 35 minutes; inspect without retry')
+
+
+def verify(client: Jenkins, job: str, mode: str, number: int, script: str, dockerfile_hash: str) -> dict:
+    output=ROOT/mode
+    output.mkdir(exist_ok=True)
+    base=job+str(number)+'/'
+    build=loads(client.request(base+'api/json'))
+    assert not build['building']
+    secret=fromstring(client.request('/computer/finsecure-python/jenkins-agent.jnlp')).findtext('.//argument')
+    assert fullmatch(r'[a-f0-9]{64}',secret)
+    sensitive=[admin_password(),secret,client.authorization,client.authorization[6:]]
+    console=client.request(base+'consoleText').decode()
+    for value in sensitive:
+        console=console.replace(value,'<redacted>')
+    (output/'console.txt').write_text(console)
+    assert build['result']==('FAILURE' if mode=='blocked' else 'SUCCESS'), 'Unexpected result; inspect sanitized output; do not retry'
+    assert 'SOURCE_REVISION='+REVISION in console and 'Running on finsecure-python' in console
+    assert 'DEMO_DOCKERFILE_SHA256='+dockerfile_hash in console
+    assert '503 passed' in console and 'warnings summary' not in console
+    causes=[cause for action in build['actions'] for cause in action.get('causes',[])]
+    assert any(cause['_class']=='hudson.model.Cause$UserIdCause' for cause in causes)
+    expected={'reports/'+name for name in ['build-metadata.txt','dependencies.txt','lint.txt','format.txt','tests.txt','junit.xml','coverage.xml','package.txt','packages.sha256','buildkit-workers.txt','image-metadata.txt','image-build.txt','buildkit-image.json','image.sha256']}|SECURITY_ARTIFACTS|IMAGE_SECURITY_ARTIFACTS|{'dist/finsecure_pay-0.2.0-py3-none-any.whl','dist/finsecure_pay-0.2.0.tar.gz'}
+    if mode=='remediated':
+        expected.add('images/finsecure-pay.tar.gz')
+    assert {item['relativePath'] for item in build['artifacts']}==expected, 'Artifact set differs from expected gate outcome'
+    artifacts={}
+    for item in build['artifacts']:
+        name=item['relativePath']
+        data=client.request(base+'artifact/'+name)
+        assert not any(value.encode() in data for value in sensitive), 'Known credential found; refusing save'
+        target=output/name
+        target.parent.mkdir(parents=True,exist_ok=True)
+        target.write_bytes(data)
+        artifacts[name]={'bytes':len(data),'sha256':sha256(data).hexdigest()}
+    tests=loads(client.request(base+'testReport/api/json'))
+    require_passing_tests(tests,503)
+    coverage=loads(client.request(base+'coverage/api/json'))
+    xml=fromstring((output/'reports/coverage.xml').read_bytes())
+    assert xml.attrib['lines-covered']==xml.attrib['lines-valid']=='125'
+    assert xml.attrib['branches-covered']==xml.attrib['branches-valid']=='28'
+    assert coverage['qualityGates']['overallResult']=='INACTIVE'
+    source=require_security_reports(output,set(artifacts),False)
+    tracked=run(['git','ls-tree','-r','--name-only',REVISION],capture_output=True,text=True,check=True,timeout=15).stdout.splitlines()
+    inventory={name for name in tracked if name.endswith('.py') and name.startswith(('src/finsecure_pay/','scripts/','ops/jenkins/'))}
+    assert set(source['source_files'])==set(source['source_sha256'])==inventory
+    for name,digest in source['source_sha256'].items():
+        assert sha256(git_file(name)).hexdigest()==digest
+    assert source['lock_sha256']==sha256(git_file('uv.lock')).hexdigest()
+    helpers=run_path('scripts/security_scan.py')
+    lock_path=ROOT/'reviewed-uv.lock'
+    lock_path.write_bytes(git_file('uv.lock'))
+    with lock_path.open('rb') as stream:
+        lock=load(stream)
+    pins=helpers['hashed_runtime_pins']((output/'reports/runtime-requirements.txt').read_text(),lock)
+    audited=helpers['dependency_result'](loads((output/'reports/pip-audit.json').read_text()),source['dependencies']['exit_code'],pins)
+    assert all(source['dependencies'][key]==value for key,value in audited.items())
+    assert 'WARNING' not in (output/'reports/pip-audit.txt').read_text()
+    gate=loads((output/'reports/image-security-summary.json').read_text())
+    assert gate['source_revision']==REVISION and gate['temporary_cache_removed'] is True
+    assert set(gate['report_sha256'])=={name.removeprefix('reports/') for name in IMAGE_SECURITY_ARTIFACTS}-{'image-security-summary.json'}
+    for name,digest in gate['report_sha256'].items():
+        assert artifacts['reports/'+name]['sha256']==digest
+    assert gate['lock_sha256']==source['lock_sha256']
+    assert gate['archive_sha256']+'  images/finsecure-pay.tar.gz\n'==(output/'reports/image.sha256').read_text()
+    raw=loads((output/'reports/trivy.json').read_text())
+    metadata=loads((output/'reports/buildkit-image.json').read_text())
+    assert raw['Metadata']['ImageID']==gate['image_id']==metadata['containerimage.config.digest']
+    assert 0<=gate['database_age_seconds']<=86400 and 0<=gate['database_age_at_finish_seconds']<=86400
+    for line in (output/'reports/packages.sha256').read_text().splitlines():
+        digest,name=line.split('  ',1)
+        assert artifacts[name]['sha256']==digest
+    for stage in ['Package','Local image export','Image security gate']:
+        assert '[Pipeline] { ('+stage+')' in console
+        assert f'Stage "{stage}" skipped due to earlier failure(s)' not in console
+    image=None
+    blocking=[]
+    if mode=='blocked':
+        assert gate['status']=='blocked' and gate['blocking_findings']>0 and gate['end_of_life'] is False
+        assert gate['scan_exit_code']==0 and 'script returned exit code 1' in console
+        for result in raw['Results']:
+            for item in result.get('Vulnerabilities',[]) or []:
+                if item['Severity'] in {'HIGH','CRITICAL'}:
+                    blocking.append({key:item.get(key) for key in ['VulnerabilityID','PkgName','InstalledVersion','FixedVersion','Severity','SeveritySource','PrimaryURL']})
+        assert len(blocking)==gate['blocking_findings']
+    else:
+        require_image_security_reports(output,set(artifacts),False,REVISION)
+        image=inspect_image_archive(output/'images/finsecure-pay.tar.gz',REVISION,'finsecure-pay-ci:jenkins-'+job.split('/')[2]+'-'+str(number),metadata['containerimage.config.digest'])
+    record={'verified_at_utc':datetime.now(UTC).isoformat(),'job':job.split('/')[2],'build':number,'result':build['result'],'mode':mode,'source_revision':REVISION,'executed_script_sha256':sha256(script.encode()).hexdigest(),'reviewed_jenkinsfile_sha256':sha256(git_file('Jenkinsfile')).hexdigest(),'dockerfile_sha256':dockerfile_hash,'dockerfile_override':mode=='blocked','pipeline_from_scm':False,'manual_inline_demo':True,'causes':causes,'tests_passed':503,'source_scan':source,'image_scan':gate,'blocking_occurrences':blocking,'artifacts':artifacts,'image_export':image,'image_loaded_run_published_or_deployed':False}
+    (output/'verification.json').write_text(dumps(record,indent=2)+'\n')
+    (output/'junit-api-summary.json').write_text(dumps({key:tests[key] for key in ['passCount','failCount','skipCount','duration']},indent=2)+'\n')
+    (output/'coverage-api.json').write_text(dumps(coverage,indent=2)+'\n')
+    return {'job':record['job'],'build':number,'result':build['result'],'tests':503,'image_gate':gate['status'],'severities':gate['severities'],'artifact_count':len(artifacts),'image_archived':'images/finsecure-pay.tar.gz' in artifacts}
+
+
+parser=ArgumentParser(description=__doc__)
+parser.add_argument('mode',choices=['blocked','remediated'])
+parser.add_argument('--observe',action='store_true',help='Inspect the same retained build; never retrigger it')
+args=parser.parse_args()
+script,digest=pipeline(args.mode)
+client=Jenkins(admin_password())
+name_path=ROOT/'job-name.txt'
+if name_path.exists():
+    name=name_path.read_text().strip()
+else:
+    assert args.mode=='blocked' and not args.observe
+    name='finsecure-security-demo-'+datetime.now(UTC).strftime('%Y%m%d%H%M%S')
+assert fullmatch(r'finsecure-security-demo-[0-9]{14}',name)
+job='/job/'+name+'/'
+number=1 if args.mode=='blocked' else 2
+if not args.observe:
+    assert not loads(client.request('/queue/api/json'))['items']
+    assert loads(client.request('/computer/finsecure-python/api/json?tree=idle'))['idle']
+    if not name_path.exists():
+        baseline=loads(client.request('/job/finsecure-ci/api/json'))['lastBuild']['number']
+        assert not loads(client.request(f'/job/finsecure-ci/{baseline}/api/json'))['building']
+        (ROOT/'main-before.json').write_text(dumps({'build':baseline,'image_manifest_sha256':sha256(client.request(f'/job/finsecure-ci/{baseline}/artifact/reports/image.sha256')).hexdigest()},indent=2)+'\n')
+        post(client,'/createItem?'+urlencode({'name':name}),job_xml(script,'Approved Step 5.4 isolated image-gate demonstration; no publishing or deployment.'),'application/xml')
+        name_path.write_text(name+'\n')
+    else:
+        assert args.mode=='remediated', 'Never rerun an existing blocked case'
+        assert loads((ROOT/'blocked/verification.json').read_text())['result']=='FAILURE'
+        assert [b['number'] for b in loads(client.request(job+'api/json'))['builds']]==[1]
+        post(client,job+'config.xml',job_xml(script,'Approved Step 5.4 restored-production Dockerfile remediation; no publishing or deployment.'),'application/xml')
+    print('Starting',args.mode,name,flush=True)
+    actual=trigger(client,job)
+    assert actual==number
+else:
+    assert fromstring(client.request(job+'config.xml')).findtext('definition/script')==script
+try:
+    print(dumps(verify(client,job,args.mode,number,script,digest),indent=2),flush=True)
+finally:
+    config=fromstring(client.request(job+'config.xml'))
+    disabled=config.find('disabled')
+    if disabled is None:
+        disabled=SubElement(config,'disabled')
+    disabled.text='true'
+    post(client,job+'config.xml',tostring(config),'application/xml')

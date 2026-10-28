@@ -1,0 +1,59 @@
+"""Disable/check the owned demo job and remove only its hash-identified workspace image."""
+
+from datetime import UTC, datetime
+from hashlib import sha256
+from json import dumps, loads
+from pathlib import Path
+from re import fullmatch
+from subprocess import run
+
+from bootstrap import COMPOSE, Jenkins, admin_password
+from defusedxml.ElementTree import fromstring
+
+root=Path('reports/step54-demo')
+name=(root/'job-name.txt').read_text().strip()
+assert fullmatch(r'finsecure-security-demo-[0-9]{14}',name)
+client=Jenkins(admin_password())
+job='/job/'+name+'/'
+config=fromstring(client.request(job+'config.xml'))
+assert config.findtext('disabled')=='true'
+assert config.find('triggers') is not None and len(config.find('triggers'))==0
+builds=loads(client.request(job+'api/json'))['builds']
+assert [item['number'] for item in builds]==[2,1]
+for number,expected in [(1,'FAILURE'),(2,'SUCCESS')]:
+    build=loads(client.request(job+str(number)+'/api/json'))
+    assert not build['building'] and build['result']==expected
+assert not loads(client.request('/queue/api/json'))['items']
+assert loads(client.request('/computer/finsecure-python/api/json?tree=idle'))['idle']
+blocked=loads((root/'blocked/verification.json').read_text())
+passed=loads((root/'remediated/verification.json').read_text())
+assert blocked['image_scan']['archive_sha256']!=passed['image_scan']['archive_sha256']
+console=(root/'remediated/console.txt').read_text()
+workspace='/home/jenkins/agent/workspace/'+name
+assert 'Running on finsecure-python in '+workspace+'\n' in console
+assert '[Pipeline] deleteDir' in console
+archive=workspace+'/images/finsecure-pay.tar.gz'
+digest=passed['image_scan']['archive_sha256']
+assert fullmatch(r'[a-f0-9]{64}',digest)
+code=f'''from hashlib import sha256
+from json import dumps
+from pathlib import Path
+p=Path({archive!r})
+assert p.is_file() and not p.is_symlink()
+assert sha256(p.read_bytes()).hexdigest()=={digest!r}
+assert sorted(x.name for x in p.parent.iterdir())==['finsecure-pay.tar.gz']
+p.unlink()
+assert list(p.parent.iterdir())==[]
+print(dumps({{'workspace_image_hash_verified':True,'workspace_image_removed':True,'images_directory_empty':True}}))
+'''
+container=run([*COMPOSE,'ps','--quiet','agent'],capture_output=True,text=True,check=True,timeout=15).stdout.strip()
+assert fullmatch(r'[a-f0-9]{64}',container)
+result=run(['docker','exec','-i',container,'python','-'],input=code,capture_output=True,text=True,check=True,timeout=30)
+cleanup=loads(result.stdout)
+before=loads((root/'main-before.json').read_text())
+assert loads(client.request('/job/finsecure-ci/api/json'))['lastBuild']['number']==before['build']
+assert sha256(client.request(f"/job/finsecure-ci/{before['build']}/artifact/reports/image.sha256")).hexdigest()==before['image_manifest_sha256']
+assert sha256(client.request(job+'2/artifact/images/finsecure-pay.tar.gz')).hexdigest()==digest
+record={'verified_at_utc':datetime.now(UTC).isoformat(),'job':name,'disabled':True,'no_triggers':True,'retained_builds':[1,2],'normal_main_build_unchanged':before['build'],'normal_main_image_manifest_unchanged':True,'blocked_workspace_archive_removed_by_next_clean_checkout':True,'blocked_archive_not_downloadable':True,**cleanup,'passing_archived_image_still_downloadable_and_hash_verified':True,'shared_buildkit_cache_and_named_volumes_preserved':True,'host_passing_archive_retained_outside_git':True,'transfer_files_created':False,'no_image_load_run_push_or_deployment':True}
+(root/'cleanup.json').write_text(dumps(record,indent=2)+'\n')
+print(dumps(record,indent=2))

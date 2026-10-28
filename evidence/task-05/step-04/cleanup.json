@@ -1,0 +1,22 @@
+{
+  "verified_at_utc": "2026-10-28T14:52:56.244240+00:00",
+  "job": "finsecure-security-demo-20261028144809",
+  "disabled": true,
+  "no_triggers": true,
+  "retained_builds": [
+    1,
+    2
+  ],
+  "normal_main_build_unchanged": 15,
+  "normal_main_image_manifest_unchanged": true,
+  "blocked_workspace_archive_removed_by_next_clean_checkout": true,
+  "blocked_archive_not_downloadable": true,
+  "workspace_image_hash_verified": true,
+  "workspace_image_removed": true,
+  "images_directory_empty": true,
+  "passing_archived_image_still_downloadable_and_hash_verified": true,
+  "shared_buildkit_cache_and_named_volumes_preserved": true,
+  "host_passing_archive_retained_outside_git": true,
+  "transfer_files_created": false,
+  "no_image_load_run_push_or_deployment": true
+}

@@ -62,6 +62,14 @@ artifact checks. The separate read-only operator check also passed. Live rotatio
 and registry/cloud credential controls remain deferred. See the
 [post-merge evidence](evidence/task-05/step-03-scm-verification.md).
 
+Step 5.4's approved local demonstration is verified on its review branch: two manual
+runs each passed **503 tests**. The Debian comparison produced a real 61 HIGH/2 CRITICAL
+image block with no archived image; restoring the production Alpine Dockerfile passed
+with no known findings. The demo job is disabled and its workspace image archives are
+removed; no image was run, published or deployed. See the
+[demonstration evidence](evidence/task-05/step-04-security-demonstration.md).
+Branch/evidence review and publication remain pending.
+
 ## Quick start
 
 Prerequisites: uv and Python 3.14 (uv can install the interpreter if needed).
@@ -251,7 +259,12 @@ Remove a placeholder when its directory receives real content.
 - Task 5.2: Alpine/image gate implemented and locally verified with passing, vulnerability-
   blocked and error cases (410 tests each). Merged/published; normal SCM build #8 passed
   410 tests and all gates, with 33 verified artifacts.
-- Remaining Tasks 5–6: complete image gates, secret-management work, monitoring/logging, demonstrations.
+- Task 5.3: approved local boundary-check subset merged/SCM-verified; rotation and
+  registry/cloud credential controls remain deferred.
+- Task 5.4: local image-archival block/remediation demonstration verified; branch review
+  and publication pending. Registry/deployment-blocking proof remains deferred.
+- Remaining Tasks 5–6: deferred security controls and cloud release-gate proof,
+  monitoring/logging, alert delivery and notifications.
 - Task 7: Design document, architecture diagram, AI use case, and presentation.
 
 Do not add empty executable configuration files as if they were working artifacts.
