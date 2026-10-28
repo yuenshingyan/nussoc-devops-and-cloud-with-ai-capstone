@@ -137,7 +137,11 @@ and report retention on an isolated failure. Cloud delivery remains unverified.
   trust risks and rotation decisions are explicit. The approved local boundary verifier
   subsequently passed its real operator check and all 503 tests (57 new cases), Ruff,
   packaging and source/runtime scans. See the linked runbook and `step-03-boundaries/`.
-  Review/merge/CI tests remain pending; live rotation/cloud credentials are deferred.
+  The approved local subset is merged/published as `1ace992` and SCM-verified;
+  live rotation/cloud credentials remain deferred.
+- [Step 5.3 — post-merge local-subset verification](task-05/step-03-scm-verification.md):
+  automatic build #14 passed 503 tests without pytest/audit warnings and all gates;
+  33 artifacts verified. Separate real operator boundary check passed.
 
 For each artifact, record the requirement demonstrated, timestamp, command or
 procedure, actual result, commit, applicable image digest, and artifact path or

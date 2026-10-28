@@ -56,6 +56,12 @@ pip-audit recommendation. Normal build #12 at `12ebb9c` passed **446 tests** wit
 pytest/audit warnings, all security gates, and 33 artifact checks. See the
 [verification record](docs/runbooks/hashed-dependency-audit.md).
 
+Step 5.3's approved local credential-boundary subset is merged/published as
+`1ace992`: automatic build #14 passed **503 tests**, all security gates, and 33
+artifact checks. The separate read-only operator check also passed. Live rotation
+and registry/cloud credential controls remain deferred. See the
+[post-merge evidence](evidence/task-05/step-03-scm-verification.md).
+
 ## Quick start
 
 Prerequisites: uv and Python 3.14 (uv can install the interpreter if needed).

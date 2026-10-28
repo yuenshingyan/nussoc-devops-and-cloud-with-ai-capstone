@@ -4,8 +4,10 @@
 
 Branch: `task-05/step-03-secret-management`, from reviewed `main` at `8fd7a36`.
 The user approved automated boundary checks while retaining the trusted-local model
-and deferring live rotation/cloud credentials. The **local subset is implemented and
-operator-verified; review/merge/publication and normal CI tests remain pending**.
+and deferring live rotation/cloud credentials. The **local subset is approved,
+merged/published as `1ace992`, and SCM-verified in build #14 (503 tests)**. The
+separate post-merge operator check also passed; see
+[follow-up evidence](../../evidence/task-05/step-03-scm-verification.md).
 Full cloud credential/RBAC and rotation verification remain deferred, so this is not
 completion of every Step 5.3 requirement. No credentials were created, rotated,
 revoked, printed or transferred to a new service. No permissions, Jenkins
@@ -160,7 +162,8 @@ were also corrected before the final passing checks. No warnings were suppressed
 [operator result](../../evidence/task-05/step-03-boundaries/secret-boundaries.json),
 [source/runtime summary](../../evidence/task-05/step-03-boundaries/security-summary.json),
 and [source hashes](../../evidence/task-05/step-03-boundaries/source-sha256.json).
-These are local results, not new SCM-build or cloud evidence. Failure paths use
+These were pre-merge local results; subsequent SCM verification is linked above.
+They are not cloud evidence. Failure paths use
 synthetic external boundaries; no live credential exposure or permission weakening
 was introduced for a demonstration.
 
@@ -208,8 +211,8 @@ Current public image pulls and the application need no Kubernetes Secret.
 ## Next review and deferred decisions
 
 The trusted single-operator model and automated read-only checks were approved.
-Review this implementation before merging/publishing, then verify normal CI tests.
-Live rotation and registry/cloud credentials remain deferred by agreement. Any
+The implementation is merged/published and normal CI tests are verified; review
+the evidence follow-up before starting the next step. Live rotation and registry/cloud credentials remain deferred by agreement. Any
 permission, authorization, bootstrap or deployment change still needs separate
 approval. Rotation checklists remain untested planning, not completion evidence;
 provider-specific RBAC/encryption controls remain pending real cloud integration.

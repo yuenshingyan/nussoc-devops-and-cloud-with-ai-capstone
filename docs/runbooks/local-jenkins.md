@@ -187,7 +187,7 @@ The configuration is now merged/published; normal SCM-triggered main build #8 at
 
 ## Operator credential-boundary check
 
-Step 5.3's local branch adds an operator-only, read-only verifier:
+Step 5.3's approved local subset adds an operator-only, read-only verifier:
 
 ```sh
 uv run --locked python ops/jenkins/verify_secrets.py
@@ -199,7 +199,9 @@ builds. It writes only `reports/secret-boundaries.json`; failures never expose r
 configuration/errors. It must not run inside the Jenkins agent or gain Docker access
 there. See the [scope, actual results and limits](secret-management.md). Live rotation
 and registry/cloud credentials remain deferred; the trusted single-operator model
-is unchanged. Review/merge and normal CI tests of this branch remain pending.
+is unchanged. The subset is merged/published as `1ace992`; normal SCM build #14
+passed 503 tests and all gates. The separate operator check also passed. See
+[post-merge evidence](../../evidence/task-05/step-03-scm-verification.md).
 
 ## What remains pending
 
