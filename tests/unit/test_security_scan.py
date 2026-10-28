@@ -39,6 +39,108 @@ def test_runtime_export_accepts_only_exact_unique_pins(scan_helpers):
     }
 
 
+def hashed_requirement(pin: str = "sample==1.0.0") -> str:
+    """Create a synthetic uv-style requirement with a SHA-256 artifact hash."""
+    return pin + " \\\n    --hash=sha256:" + "a" * 64 + "\n"
+
+
+def synthetic_lock() -> dict:
+    """Supply only synthetic package artifacts, never real downloaded package bytes."""
+    return {
+        "package": [
+            {"name": "sample", "version": "1.0.0", "sdist": {"hash": "sha256:" + "a" * 64}},
+            {
+                "name": "other",
+                "version": "2.0rc1",
+                "wheels": [{"hash": "sha256:" + value * 64} for value in ("b", "c")],
+            },
+        ]
+    }
+
+
+@mark.parametrize("newline", ["\n", "\r\n"])
+def test_hashed_export_accepts_exact_pins_with_multiple_artifact_hashes(scan_helpers, newline):
+    text = hashed_requirement() + (
+        "other==2.0rc1 \\\n    --hash=sha256:"
+        + "b" * 64
+        + " \\\n    --hash=sha256:"
+        + "c" * 64
+        + "\n"
+    )
+    assert scan_helpers["hashed_runtime_pins"](text.replace("\n", newline), synthetic_lock()) == {
+        "sample": "1.0.0",
+        "other": "2.0rc1",
+    }
+
+
+@mark.parametrize(
+    "text",
+    [
+        "",
+        "sample==1.0.0\n",
+        "sample==1.0.0 \\\n",
+        hashed_requirement() + hashed_requirement(),
+        hashed_requirement("sample>=1"),
+        hashed_requirement("sample @ https://example.invalid/package"),
+        hashed_requirement("sample==1 ; python_version > '3'"),
+        hashed_requirement("-e ."),
+        hashed_requirement().replace("sha256", "sha512"),
+        hashed_requirement().replace("a" * 64, "a" * 63),
+        hashed_requirement().replace("a" * 64, "g" * 64),
+        hashed_requirement().replace("a" * 64, "A" * 64),
+        hashed_requirement().replace("    --hash", "--hash"),
+        hashed_requirement().replace("\n", "\n\n"),
+        hashed_requirement().rstrip() + " \\\n",
+        hashed_requirement().rstrip() + " \\\n    --hash=sha256:" + "a" * 64 + "\n",
+        hashed_requirement() + "    --hash=sha256:" + "b" * 64 + "\n",
+        hashed_requirement().replace("--hash=", "--index-url="),
+        hashed_requirement().rstrip() + " # comment\n",
+        "--requirement other.txt\n" + hashed_requirement(),
+    ],
+)
+def test_hashed_export_rejects_unsafe_or_incomplete_requirements(scan_helpers, text):
+    with raises(ValueError):
+        scan_helpers["hashed_runtime_pins"](text, synthetic_lock())
+
+
+@mark.parametrize(
+    "problem", ["missing_pin", "different_version", "duplicate_pin", "missing_hash", "invalid_hash"]
+)
+def test_hashed_export_rejects_unmatched_or_invalid_lock(scan_helpers, problem):
+    lock = synthetic_lock()
+    package = lock["package"][0]
+    if problem == "missing_pin":
+        lock["package"].pop(0)
+    elif problem == "different_version":
+        package["version"] = "2.0.0"
+    elif problem == "duplicate_pin":
+        lock["package"].append(deepcopy(package))
+    elif problem == "missing_hash":
+        del package["sdist"]
+    else:
+        package["sdist"]["hash"] = "invalid"
+    with raises(ValueError):
+        scan_helpers["hashed_runtime_pins"](hashed_requirement(), lock)
+
+
+@mark.parametrize("digest", ["0" * 64, "b" * 64])
+def test_hashed_export_rejects_valid_but_incorrect_hashes(scan_helpers, digest):
+    text = hashed_requirement().replace("a" * 64, digest)
+    with raises(ValueError, match="do not match"):
+        scan_helpers["hashed_runtime_pins"](text, synthetic_lock())
+
+
+def test_hashed_export_rejects_partial_locked_artifact_set(scan_helpers):
+    text = hashed_requirement("other==2.0rc1").replace("a" * 64, "b" * 64)
+    with raises(ValueError, match="do not match"):
+        scan_helpers["hashed_runtime_pins"](text, synthetic_lock())
+
+
+def test_plain_image_export_does_not_accept_hash_blocks(scan_helpers):
+    with raises(ValueError):
+        scan_helpers["runtime_pins"](hashed_requirement())
+
+
 def source_report(severity: str | None = None, confidence: str = "HIGH") -> dict:
     """Minimal synthetic output using the scanner's public JSON fields."""
     return {
@@ -184,6 +286,11 @@ def test_dependency_audit_fails_closed(scan_helpers, problem):
         ("timeout", 2),
         ("tool_error", 2),
         ("export_error", 2),
+        ("unhashed_export", 2),
+        ("invalid_hash", 2),
+        ("audit_timeout", 2),
+        ("hash_mismatch", 2),
+        ("lock_hash_mismatch", 2),
     ],
 )
 def test_scan_retains_reports_blocks_errors_and_never_retries(
@@ -192,7 +299,10 @@ def test_scan_retains_reports_blocks_errors_and_never_retries(
     for directory in ["src/finsecure_pay", "scripts", "ops/jenkins"]:
         (tmp_path / directory).mkdir(parents=True)
     (tmp_path / "src/finsecure_pay/main.py").write_text('"""Synthetic source."""\n')
-    (tmp_path / "uv.lock").write_text("synthetic lock\n")
+    (tmp_path / "uv.lock").write_text(
+        '[[package]]\nname = "sample"\nversion = "1.0.0"\n'
+        'sdist = { hash = "sha256:' + "a" * 64 + '" }\n'
+    )
     reports = tmp_path / "reports"
     reports.mkdir()
     (reports / "bandit.json").write_text(dumps(source_report()))
@@ -220,13 +330,28 @@ def test_scan_retains_reports_blocks_errors_and_never_retries(
                 flag in arguments
                 for flag in ["--locked", "--offline", "--no-dev", "--no-emit-project"]
             )
-            (reports / "runtime-requirements.txt").write_text("sample==1.0.0\n")
+            assert "--no-hashes" not in arguments
+            exported = "sample==1.0.0\n" if mode == "unhashed_export" else hashed_requirement()
+            if mode == "invalid_hash":
+                exported = exported.replace("a" * 64, "invalid")
+            elif mode == "lock_hash_mismatch":
+                exported = exported.replace("a" * 64, "0" * 64)
+            (reports / "runtime-requirements.txt").write_text(exported)
             return CompletedProcess(arguments, 2 if mode == "export_error" else 0)
         assert "pip_audit" in arguments
         assert arguments[arguments.index("--timeout") + 1] == "15"
-        assert all(flag in arguments for flag in ["--disable-pip", "--no-deps", "--strict"])
+        assert all(flag in arguments for flag in ["--disable-pip", "--require-hashes", "--strict"])
+        assert "--no-deps" not in arguments
+        assert arguments[arguments.index("--vulnerability-service") + 1] == "pypi"
         assert "--ignore-vuln" not in arguments and "--fix" not in arguments
-        (reports / "pip-audit.json").write_text(dumps(audit_report(mode == "dependency_block")))
+        if mode == "audit_timeout":
+            raise TimeoutExpired(arguments, kwargs["timeout"])
+        report = audit_report(mode == "dependency_block")
+        if mode == "hash_mismatch":
+            report["dependencies"][0]["skip_reason"] = "hash mismatch"
+            (reports / "pip-audit.json").write_text(dumps(report))
+            return CompletedProcess(arguments, 1)
+        (reports / "pip-audit.json").write_text(dumps(report))
         return CompletedProcess(
             arguments, 2 if mode == "tool_error" else int(mode == "dependency_block")
         )
@@ -236,7 +361,11 @@ def test_scan_retains_reports_blocks_errors_and_never_retries(
     assert helpers["scan"](tmp_path) == exit_code
     summary = loads((reports / "security-summary.json").read_text())
     assert summary["status"] == {0: "passed", 1: "blocked", 2: "error"}[exit_code]
-    assert len(commands) == (2 if mode == "export_error" else 3)
+    assert len(commands) == (
+        2
+        if mode in {"export_error", "unhashed_export", "invalid_hash", "lock_hash_mismatch"}
+        else 3
+    )
     assert (reports / "unrelated.txt").read_text() == "retain"
     assert (reports / "security-tools.txt").exists()
     if mode == "missing_report":

@@ -58,7 +58,7 @@ or deployment. The pip-audit recommendation remains visible as described below.
 
 [Local verification output](../../evidence/task-05/warning-remediation/local-checks.txt).
 
-## pip-audit recommendation: experiment passed; integration deferred
+## pip-audit recommendation: initial experiment and subsequent implementation
 
 The current scanner intentionally exports plain exact pins, passes `--no-deps`
 and disables pip. The installed pip-audit emits its hash recommendation whenever
@@ -74,7 +74,12 @@ All 14 exact pins were audited, with no known findings and no warning. The exist
 [Experiment output](../../evidence/task-05/warning-remediation/hashed-audit.txt) and
 [report](../../evidence/task-05/warning-remediation/hashed-audit.json).
 
-This has NOT changed the production scanner. A separate implementation must:
+That initial experiment did not change the scanner or prove hash-value enforcement.
+The user subsequently approved implementation on `chore/hashed-dependency-audit`.
+A negative probe discovered that pip-audit with `--disable-pip` accepts incorrect hashes;
+the implementation adds an explicit lock-hash comparison. See the
+[implementation and verification record](hashed-dependency-audit.md). It is not yet
+merged or CI-verified. The original implementation checklist was:
 
 1. Define and strictly validate the hash-bearing export format; continue rejecting
    URLs, editable requirements, markers, duplicates, missing hashes and pip options.

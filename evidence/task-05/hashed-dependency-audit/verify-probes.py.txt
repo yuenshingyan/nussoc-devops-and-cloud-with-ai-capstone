@@ -1,0 +1,49 @@
+"""Verify retained real advisory probes and the added lock-bound hash validator."""
+
+from datetime import UTC, datetime
+from json import dumps, loads
+from pathlib import Path
+from tomllib import load
+
+from scripts.security_scan import dependency_result, hashed_runtime_pins
+
+root = Path("reports/hashed-audit-probes")
+with Path("uv.lock").open("rb") as source:
+    lock = load(source)
+text = Path("reports/runtime-requirements.txt").read_text()
+pins = hashed_runtime_pins(text, lock)
+current = dependency_result(loads(Path("reports/pip-audit.json").read_text()), 0, pins)
+first_hash = text.split("--hash=sha256:", 1)[1][:64]
+changed = text.replace(first_hash, "0" * 64, 1)
+try:
+    hashed_runtime_pins(changed, lock)
+except ValueError as error:
+    assert "do not match" in str(error)
+else:
+    raise AssertionError("Modified export was accepted")
+blocked = dependency_result(
+    loads((root / "vulnerability/audit.json").read_text()), 1, {"requests": "2.19.1"}
+)
+assert blocked["blocking_findings"] > 0
+upstream = dependency_result(
+    loads((root / "hash-mismatch/audit.json").read_text()), 0, {"annotated-doc": "0.0.5"}
+)
+assert upstream["blocking_findings"] == 0
+try:
+    hashed_runtime_pins((root / "hash-mismatch/requirements.txt").read_text(), lock)
+except ValueError as error:
+    assert "do not match" in str(error)
+else:
+    raise AssertionError("Wrong-hash probe was accepted")
+record = {
+    "verified_at_utc": datetime.now(UTC).isoformat(),
+    "actual_runtime_audit": current,
+    "actual_vulnerable_advisory_probe": blocked,
+    "pip_audit_disable_pip_accepted_incorrect_hash": True,
+    "lock_validator_rejects_incorrect_hash_probe": True,
+    "lock_validator_rejects_modified_real_export": True,
+    "vulnerable_package_installed_or_executed": False,
+    "scope": "local scanner and isolated advisory probes, not Jenkins gate demonstrations",
+}
+(root / "verification.json").write_text(dumps(record, indent=2) + "\n")
+print(dumps(record, indent=2))

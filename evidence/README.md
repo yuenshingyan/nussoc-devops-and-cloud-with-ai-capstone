@@ -122,8 +122,12 @@ and report retention on an isolated failure. Cloud delivery remains unverified.
 - [Warning-remediation investigation](../docs/runbooks/warning-remediation.md):
   HTTPX2 migration merged/published as `8f1e598`; normal SCM build #10 passed 410
   tests without pytest warnings, all security gates, and 33 artifact checks.
-  Hashed pip-audit experiment passes, but scanner integration remains deferred.
+  Initial hashed pip-audit experiment passed; subsequent integration is recorded below.
   No additional container runtime smoke test or deployment was performed.
+- [Hashed dependency audit](../docs/runbooks/hashed-dependency-audit.md): approved separate
+  branch; 446 local tests and real runtime scans pass without warnings. Explicit lock-hash
+  validation was added after a negative probe showed pip-audit accepts incorrect hashes
+  with `--disable-pip`. Merge/publication and Jenkins verification remain pending.
 
 For each artifact, record the requirement demonstrated, timestamp, command or
 procedure, actual result, commit, applicable image digest, and artifact path or

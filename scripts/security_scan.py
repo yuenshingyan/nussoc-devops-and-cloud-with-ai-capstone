@@ -11,6 +11,7 @@ from subprocess import STDOUT, TimeoutExpired, run
 from sys import executable
 from tempfile import TemporaryDirectory
 from time import monotonic
+from tomllib import load
 
 ROOT = Path(__file__).resolve().parents[1]
 SCAN_DIRECTORIES = ("src/finsecure_pay", "scripts", "ops/jenkins")
@@ -39,6 +40,48 @@ def runtime_pins(text: str) -> dict[str, str]:
     if not pins:
         raise ValueError("Runtime export is empty")
     return pins
+
+
+def hashed_runtime_pins(text: str, lock: dict) -> dict[str, str]:
+    """Require exact-pin blocks whose SHA-256 hash sets match their uv.lock artifacts."""
+    requirements = []
+    hashes: set[str] | None = None
+    for line in text.splitlines():
+        if hashes is None:
+            if not line.endswith(" \\"):
+                raise ValueError("Hashed runtime pin must start a continued requirement block")
+            requirement = line[:-2]
+            name, package_version = next(iter(runtime_pins(requirement).items()))
+            packages = [
+                package
+                for package in lock.get("package", [])
+                if package.get("name") == name and package.get("version") == package_version
+            ]
+            if len(packages) != 1:
+                raise ValueError("Runtime pin must identify exactly one locked package")
+            package = packages[0]
+            artifacts = package.get("wheels", []) + (
+                [package["sdist"]] if "sdist" in package else []
+            )
+            expected_hashes = {artifact.get("hash", "") for artifact in artifacts}
+            if not expected_hashes or any(
+                fullmatch(r"sha256:[0-9a-f]{64}", value) is None for value in expected_hashes
+            ):
+                raise ValueError("Locked runtime artifacts must have SHA-256 hashes")
+            requirements.append(requirement)
+            hashes = set()
+            continue
+        match = fullmatch(r"    --hash=sha256:([0-9a-f]{64})( \\)?", line)
+        if match is None or match[1] in hashes:
+            raise ValueError("Runtime hashes must be unique SHA-256 values in each block")
+        hashes.add(match[1])
+        if match[2] is None:
+            if {"sha256:" + value for value in hashes} != expected_hashes:
+                raise ValueError("Exported artifact hashes do not match the locked package")
+            hashes = None
+    if hashes is not None:
+        raise ValueError("Hashed runtime export has an unfinished requirement block")
+    return runtime_pins("\n".join(requirements))
 
 
 def bandit_result(report: dict, returncode: int, expected_files: set[str]) -> dict[str, int]:
@@ -188,7 +231,6 @@ def scan(root: Path = ROOT) -> int:
                 "--offline",
                 "--no-dev",
                 "--no-emit-project",
-                "--no-hashes",
                 "--no-annotate",
                 "--no-header",
                 "--output-file",
@@ -200,7 +242,11 @@ def scan(root: Path = ROOT) -> int:
         )
         if status != 0:
             raise ValueError("Locked dependency export failed")
-        pins = runtime_pins((reports / "runtime-requirements.txt").read_text(encoding="utf-8"))
+        with (root / "uv.lock").open("rb") as lock_file:
+            lock = load(lock_file)
+        pins = hashed_runtime_pins(
+            (reports / "runtime-requirements.txt").read_text(encoding="utf-8"), lock
+        )
         with TemporaryDirectory(prefix="finsecure-audit-") as cache:
             status = run_tool(
                 [
@@ -209,7 +255,7 @@ def scan(root: Path = ROOT) -> int:
                     "pip_audit",
                     "--requirement",
                     "reports/runtime-requirements.txt",
-                    "--no-deps",
+                    "--require-hashes",
                     "--disable-pip",
                     "--strict",
                     "--vulnerability-service",

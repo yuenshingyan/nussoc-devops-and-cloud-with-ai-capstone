@@ -1,0 +1,16 @@
+{
+  "verified_at_utc": "2026-10-28T13:51:12.495212+00:00",
+  "actual_runtime_audit": {
+    "dependencies_audited": 14,
+    "blocking_findings": 0
+  },
+  "actual_vulnerable_advisory_probe": {
+    "dependencies_audited": 1,
+    "blocking_findings": 10
+  },
+  "pip_audit_disable_pip_accepted_incorrect_hash": true,
+  "lock_validator_rejects_incorrect_hash_probe": true,
+  "lock_validator_rejects_modified_real_export": true,
+  "vulnerable_package_installed_or_executed": false,
+  "scope": "local scanner and isolated advisory probes, not Jenkins gate demonstrations"
+}

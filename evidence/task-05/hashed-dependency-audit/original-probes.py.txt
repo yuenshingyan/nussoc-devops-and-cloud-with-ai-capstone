@@ -1,0 +1,57 @@
+"""Isolated advisory-only probes: never install or execute the audited packages."""
+
+from datetime import UTC, datetime
+from json import dumps, load, loads
+from pathlib import Path
+from subprocess import STDOUT, run
+from sys import executable
+from tempfile import TemporaryDirectory
+from time import monotonic
+from urllib.request import urlopen
+
+from scripts.security_scan import dependency_result, hashed_runtime_pins
+
+output = Path("reports/hashed-audit-probes")
+output.mkdir(exist_ok=True)
+with urlopen("https://pypi.org/pypi/requests/2.19.1/json", timeout=15) as response:
+    release = load(response)
+hashes = sorted({item["digests"]["sha256"] for item in release["urls"]})
+assert hashes
+vulnerable = "requests==2.19.1 \\\n" + " \\\n".join("    --hash=sha256:" + value for value in hashes) + "\n"
+invalid = "annotated-doc==0.0.5 \\\n    --hash=sha256:" + "0" * 64 + "\n"
+results = {}
+for mode, text in (("vulnerability", vulnerable), ("hash-mismatch", invalid)):
+    root = output / mode
+    root.mkdir(exist_ok=True)
+    requirements = root / "requirements.txt"
+    requirements.write_text(text)
+    pins = hashed_runtime_pins(text)
+    started = monotonic()
+    with TemporaryDirectory(prefix="finsecure-audit-probe-") as cache:
+        arguments = [executable, "-m", "pip_audit", "--requirement", str(requirements),
+                     "--require-hashes", "--disable-pip", "--strict",
+                     "--vulnerability-service", "pypi", "--timeout", "15",
+                     "--cache-dir", cache, "--progress-spinner", "off", "--format", "json",
+                     "--output", str(root / "audit.json")]
+        with (root / "audit.txt").open("w") as log:
+            process = run(arguments, stdout=log, stderr=STDOUT, timeout=300, check=False)
+    record = {"exit_code": process.returncode, "elapsed_seconds": monotonic() - started}
+    if mode == "vulnerability":
+        result = dependency_result(loads((root / "audit.json").read_text()), process.returncode, pins)
+        assert result["blocking_findings"] > 0 and process.returncode == 1
+        record.update(result)
+        record["policy_result"] = "blocked"
+    else:
+        assert process.returncode != 0
+        if (root / "audit.json").exists():
+            try:
+                dependency_result(loads((root / "audit.json").read_text()), process.returncode, pins)
+            except ValueError:
+                pass
+            else:
+                raise AssertionError("Hash mismatch unexpectedly accepted")
+        record["policy_result"] = "error"
+    results[mode] = record
+results["verified_at_utc"] = datetime.now(UTC).isoformat()
+(output / "verification.json").write_text(dumps(results, indent=2) + "\n")
+print(dumps(results, indent=2))

@@ -17,7 +17,11 @@ The application image still installs only runtime dependencies, not these tools.
 - Export exact runtime pins using `uv export --locked --offline --no-dev --no-emit-project`.
   The local project is not a third-party PyPI dependency. Development/build dependencies,
   Python itself, OS packages, and other platforms' dependencies are not audited by this gate.
-- pip-audit uses PyPI's vulnerability service with `--no-deps --disable-pip --strict`:
+- On the approved `chore/hashed-dependency-audit` branch, exports include uv's artifact
+  hashes. Every exported hash set must equal the corresponding exact package's SHA-256
+  artifact set in `uv.lock`, before pip-audit starts. Review/merge/CI verification of
+  this change remain pending; see the [verification record](hashed-dependency-audit.md).
+- pip-audit uses PyPI's vulnerability service with `--require-hashes --disable-pip --strict`:
   no fresh dependency resolution, package execution/installation, automatic upgrade,
   ignored advisory, or skipped dependency is accepted. The report must contain every
   exact exported package/version once. **Any known advisory blocks**, even without a
@@ -41,7 +45,7 @@ uv run --locked python scripts/security_scan.py
 
 The Jenkins **Security scans** stage runs after tests/report publication and before
 **Package** and **Local image export**. Its five-minute limit is in addition to the
-existing global fifteen-minute pipeline limit (after agent allocation). Locally, scanner
+global thirty-minute pipeline limit introduced in Step 5.2 (after agent allocation). Locally, scanner
 subprocesses share a **300-second monotonic budget**. PyPI requests have a **15-second
 socket timeout**. These are execution limits, not an uptime or laptop-suspend SLA.
 There are no new background tasks or process retries.
@@ -54,8 +58,12 @@ may interrupt the writer, so retain partial diagnostics and inspect the actual b
 Both scanners are attempted within the shared budget, including after source findings.
 Missing/malformed reports, skipped files/dependencies, unexpected tool exit status,
 inventory mismatches, or export errors cannot become successful results. The strict pin
-parser supports the current lock's plain canonical package names and exact versions;
-new markers, URLs, editable requirements, or other syntax fail closed until reviewed.
+parser supports canonical package names and exact versions, each followed by a continued
+block of one or more unique lowercase SHA-256 hashes. Hash sets must exactly match
+that package/version in the lock. Missing, malformed, duplicate, extra, or mismatched
+hashes, new markers, URLs, editable requirements and other options fail closed.
+The separate image scanner still uses its explicitly plain-pin export/parser; it
+has no hash-format change.
 Bandit's documented `./` file prefix is normalized only for inventory comparison.
 
 The gate replaces only its eight named reports under `reports/`. Jenkins starts with a
@@ -68,8 +76,12 @@ always-archive allowlist retains available reports on scan failure/abort:
 - `security-tools.txt`, `security-export.txt`, `runtime-requirements.txt`.
 - `bandit.json`, `bandit.txt`, `pip-audit.json`, `pip-audit.txt`.
 
-A completed successful pipeline now archives **25** allowlisted artifacts, including these
-8 reports. Raw scanner output can contain source fragments/advisory descriptions: review
+Step 5.1 archived **25** allowlisted artifacts, including these 8 reports; Step 5.2
+adds 8 image-gate reports for **33** on success. The hash-export change retains the
+same report names and summary structure; `runtime-requirements.txt` now contains
+hash blocks. Consumers parsing this file must use `hashed_runtime_pins(text, lock)`
+with the matching parsed `uv.lock`, not the image scanner's plain `runtime_pins`.
+Historical evidence and its historical observers are unchanged. Raw scanner output can contain source fragments/advisory descriptions: review
 and scan for secrets before curating it into Git. Do not archive caches or entire workspaces.
 
 ## Actual findings and remediation
@@ -88,11 +100,14 @@ permanent vulnerability-free guarantee. LOW findings remain reported; they inclu
 subprocess imports/calls (B404/B603), executable lookup through the trusted operator/agent
 PATH (B607), operational assertions (B101), and XML construction imports (B405). They were not silently suppressed.
 
-Known unsuppressed warnings: Starlette's existing HTTPX deprecation, plus pip-audit's
-recommendation to hash requirement exports. The advisory-only export is intentionally
-plain exact pins; installations still use the hashed `uv.lock` via locked uv execution.
-The scan records the lock hash and cross-checks all audited names/versions. This does not
-replace installed-byte/image verification or claim package authenticity from advisory lookup.
+The Step 5.1 runs retained Starlette's HTTPX deprecation and pip-audit's hash-export
+recommendation. HTTPX2 migration subsequently removed the former in normal build #10.
+The hash-export branch removes the latter without suppressing diagnostics.
+A real negative probe showed that pip-audit 2.10.1 with `--disable-pip` does not
+validate hash values, despite its CLI guidance. Therefore our parser explicitly binds
+the full export hash sets to the lock; pip-audit remains advisory-only. This does not
+verify installed bytes or authenticate packages. Locked uv installation and separate
+image inventory/identity checks remain separate controls.
 
 An initial gate validation rejected Bandit's `./` paths despite complete results; the
 validator was corrected narrowly and regression-tested. It failed closed before the fix.
