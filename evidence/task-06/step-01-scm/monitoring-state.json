@@ -1,0 +1,8 @@
+{
+  "services": {
+    "application": "exited",
+    "prometheus": "exited"
+  },
+  "named_data_volume_retained": true,
+  "services_restarted_in_this_followup": false
+}

@@ -2,8 +2,9 @@
 
 ## Status and approval boundary
 
-**Approved local subset implemented and verified; review/merge/publication and
-normal SCM verification remain pending.** Candidate `2328b9c` passed 538 Jenkins
+**Approved local subset merged/published as `cc25ae3`; normal SCM build #17 verified
+538 passing tests and all 33 artifacts.** See the
+[SCM follow-up](../../evidence/task-06/step-01-scm-verification.md). Candidate `2328b9c` passed 538 Jenkins
 tests and the real image gate. Its exact exported image was used for actual local
 Prometheus collection. The demo services are now stopped, with data preserved.
 See [actual evidence](../../evidence/task-06/step-01-metrics.md).
@@ -154,7 +155,8 @@ only; do not add public bindings or credentials.
 Use the **exact image archive that passed the candidate/application image gate**.
 Verify its SHA-256 against the archived manifest and its image ID/source label
 against the gate record before tagging it `finsecure-pay:metrics-local`. The retained
-candidate is an unpublished branch build, not the current public release. Public
+candidate is a pre-merge build, not a registry release. Main build #17 is a separate
+verified archive; its actual source/image identity must not be confused with the candidate. Public
 release 0.2.0 and its Kubernetes pin remain unchanged and do not have this endpoint.
 
 After setting `verified_archive` to that local archive path and `verified_image_id`

@@ -1,5 +1,9 @@
 # Step 6.1 — Local instrumentation and actual Prometheus collection
 
+**Later status:** merged/published as `cc25ae3`; normal SCM build #17 verified.
+See the [follow-up](step-01-scm-verification.md). The dated record below preserves
+the original candidate execution and its then-pending publication status.
+
 **28 October 2026 UTC.** Approved local subset implemented at
 `2328b9c58274f3a1b988445a513ef7fa1844f58c`, on `task-06/step-01-metrics`.
 **Not merged/published; normal SCM proof remains pending.** Managed-cluster pod/node

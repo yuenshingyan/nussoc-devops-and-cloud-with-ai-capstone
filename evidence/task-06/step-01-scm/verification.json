@@ -1,0 +1,320 @@
+{
+  "verified_at_utc": "2026-10-29T02:22:09.332703+00:00",
+  "job": "finsecure-ci",
+  "build": 17,
+  "source_revision": "cc25ae3913088ae59faf529b092a1aac5a82e227",
+  "result": "SUCCESS",
+  "causes": [
+    {
+      "_class": "hudson.triggers.SCMTrigger$SCMTriggerCause",
+      "shortDescription": "Started by an SCM change"
+    }
+  ],
+  "scm_trigger_verified": true,
+  "pipeline_from_scm_verified": true,
+  "jenkinsfile_sha256": "29166a71e14480490aec2f0ebe6a628944616bcb9f98c06dbb087185442e886f",
+  "security_scans": {
+    "started_at_utc": "2026-10-29T02:21:07.589960+00:00",
+    "status": "passed",
+    "budget_seconds": 300,
+    "advisory_request_timeout_seconds": 15,
+    "bandit": {
+      "status": "passed",
+      "exit_code": 1,
+      "LOW": 21,
+      "MEDIUM": 0,
+      "HIGH": 0,
+      "blocking_findings": 0
+    },
+    "dependencies": {
+      "status": "passed",
+      "exit_code": 0,
+      "dependencies_audited": 15,
+      "blocking_findings": 0
+    },
+    "source_files": [
+      "ops/jenkins/bootstrap.py",
+      "ops/jenkins/image_archive.py",
+      "ops/jenkins/verify.py",
+      "ops/jenkins/verify_ci.py",
+      "ops/jenkins/verify_secrets.py",
+      "ops/jenkins/verify_trigger.py",
+      "scripts/image_scan.py",
+      "scripts/security_scan.py",
+      "scripts/smoke_test.py",
+      "src/finsecure_pay/__init__.py",
+      "src/finsecure_pay/api/__init__.py",
+      "src/finsecure_pay/api/dependencies.py",
+      "src/finsecure_pay/api/errors.py",
+      "src/finsecure_pay/api/health.py",
+      "src/finsecure_pay/api/metrics.py",
+      "src/finsecure_pay/api/validation.py",
+      "src/finsecure_pay/config.py",
+      "src/finsecure_pay/main.py",
+      "src/finsecure_pay/observability/__init__.py",
+      "src/finsecure_pay/observability/http.py",
+      "src/finsecure_pay/observability/metrics.py",
+      "src/finsecure_pay/schemas/__init__.py",
+      "src/finsecure_pay/schemas/errors.py",
+      "src/finsecure_pay/schemas/health.py",
+      "src/finsecure_pay/schemas/transaction.py",
+      "src/finsecure_pay/services/__init__.py",
+      "src/finsecure_pay/services/validation.py"
+    ],
+    "source_sha256": {
+      "ops/jenkins/bootstrap.py": "499b008ad3f416f76e58156a1589c687f5727016ffa757cbcb5f22f1beda1de9",
+      "ops/jenkins/image_archive.py": "f08abc608f94f2b4187296d648613122fd30a2e2064966af921d654f4ddb9f7b",
+      "ops/jenkins/verify.py": "7b2184fecddb97b5d19d18de21a749a20e99b6c5ba0c3f58073ab837e47421ff",
+      "ops/jenkins/verify_ci.py": "db7974c668b7d53f3a3fcfcdcb3540067ec96324c4f481dd33e140303ed33f57",
+      "ops/jenkins/verify_secrets.py": "cfca8ca1ade83b506dc0c2feeb3dbb1d7774fd2162188814ea26fc411a254af0",
+      "ops/jenkins/verify_trigger.py": "f16eae8bc764fa54fabf90bf147f57032b3873e77dabc5c6f5e11bdceba0d95c",
+      "scripts/image_scan.py": "6e94fac0e8750afa45fb0f5d07498133f6a0d3c31d7c4807cf29c0e9dd89c800",
+      "scripts/security_scan.py": "a379e3ce4e9afd6cf2f119d0615b30f7af7edbc1ad45f0384e4971b98107d73a",
+      "scripts/smoke_test.py": "73b88a6b0d531a5e7cc0b3c681e34192d39a77808c30ada2384527a2f7865135",
+      "src/finsecure_pay/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "src/finsecure_pay/api/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "src/finsecure_pay/api/dependencies.py": "936849f4fd30fde77243a0add24158a1b52e04396054e0468013145e074a615c",
+      "src/finsecure_pay/api/errors.py": "90b4854d65f185abce6c2dad5b94fabf0140cb9461f6dbd3922d3b2a67eb7411",
+      "src/finsecure_pay/api/health.py": "44b177ed30442db2d5abcd532223ddc078f6b8539515b5e6d91d32d01424aebe",
+      "src/finsecure_pay/api/metrics.py": "276056377ca42aa35d1a7d36efc9b28fcaf899e4b7a239375c17703e4d112a39",
+      "src/finsecure_pay/api/validation.py": "5222a6c8ff613a3b8da8a3250d8e2abef071f07a9a51288da77e2d11658d22ae",
+      "src/finsecure_pay/config.py": "490f18f21c86e2775f701e4ddd20a41799ad1b92d0d7116656535c6fe032a065",
+      "src/finsecure_pay/main.py": "f9a01aa03414654e71e793515158d47fcf7afbc1e38a4a6acc4b204917bb8276",
+      "src/finsecure_pay/observability/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "src/finsecure_pay/observability/http.py": "488f3ef688fd6fbc098286467b74ec31fa697e57192123f78cff09330f2d92cf",
+      "src/finsecure_pay/observability/metrics.py": "10f1d0961d85b8d110f07086221675a3085de32bf6c29ec794a6ff19f2057587",
+      "src/finsecure_pay/schemas/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "src/finsecure_pay/schemas/errors.py": "ad689c0fb2960b53b4dbbce12c321e0b6b250b2fb4e7ee28c0e5ee53ddfe33d1",
+      "src/finsecure_pay/schemas/health.py": "7ccd0f73cb93a5ec8ecba748b4e67eeb43b77275cfce637b6300691f55957951",
+      "src/finsecure_pay/schemas/transaction.py": "2e5959dfadeb39a2722b7b658236ec717c2cfefe40fa24fcb83865f7ecd31bac",
+      "src/finsecure_pay/services/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "src/finsecure_pay/services/validation.py": "789f87b07baf82ad5fde4b95f2a3486ec4e306c24c5bae9a0df0c2411b7b3b66"
+    },
+    "lock_sha256": "efcb56c34386a1334d1079072997d3fc8fcccb353be46cdcdc97542c6290ea3d",
+    "finished_at_utc": "2026-10-29T02:21:10.325894+00:00",
+    "elapsed_seconds": 2.736050460000115
+  },
+  "image_security": {
+    "started_at_utc": "2026-10-29T02:21:25.229329+00:00",
+    "status": "passed",
+    "source_revision": "cc25ae3913088ae59faf529b092a1aac5a82e227",
+    "local_tag": "finsecure-pay-ci:jenkins-finsecure-ci-17",
+    "database_repository": "ghcr.io/aquasecurity/trivy-db:2",
+    "operation_budget_seconds": 300,
+    "max_database_age_seconds": 86400,
+    "phase": "report",
+    "trivy_version": "0.76.1",
+    "image_id": "sha256:82b5d38ad3ec729ff3e4f7f282a15612c2045a0435b87018667d79ffb8732836",
+    "platform": "linux/arm64",
+    "archive_sha256": "7a9aef8337ba95be1bdb4d3263754c3f919d6f50f05ea5b1334409fbfa7fd52c",
+    "lock_sha256": "efcb56c34386a1334d1079072997d3fc8fcccb353be46cdcdc97542c6290ea3d",
+    "trivy_sha256": "b422130ea54e53e142e65c838662e48919ce9c3f23f17d80066b43e70550cb85",
+    "database_exit_code": 0,
+    "database_age_seconds": 3575.998632,
+    "scan_exit_code": 0,
+    "database_age_at_finish_seconds": 3577.56996,
+    "os": {
+      "Family": "alpine",
+      "Name": "3.24.3"
+    },
+    "end_of_life": false,
+    "packages_by_type": {
+      "alpine": 30,
+      "python-pkg": 16
+    },
+    "runtime_packages": {
+      "annotated-doc": "0.0.5",
+      "annotated-types": "0.8.0",
+      "anyio": "4.15.1",
+      "click": "8.5.0",
+      "fastapi": "0.156.8",
+      "finsecure-pay": "0.2.0",
+      "h11": "0.16.0",
+      "idna": "3.20",
+      "opentelemetry-api": "1.45.1",
+      "prometheus-client": "0.26.0",
+      "pydantic": "2.14.1",
+      "pydantic-core": "2.50.1",
+      "starlette": "1.9.0",
+      "typing-inspection": "0.4.4",
+      "typing-extensions": "4.16.0",
+      "uvicorn": "0.54.0"
+    },
+    "severities": {
+      "UNKNOWN": 0,
+      "LOW": 0,
+      "MEDIUM": 0,
+      "HIGH": 0,
+      "CRITICAL": 0
+    },
+    "blocking_findings": 0,
+    "temporary_cache_removed": true,
+    "finished_at_utc": "2026-10-29T02:22:00.159422+00:00",
+    "elapsed_seconds": 34.93276543200045,
+    "report_sha256": {
+      "image-security-tools.txt": "84e54b2d02a5de1ad8dff546f152fb3aa252379d25a3a8d0f982d6d3a1fe4cba",
+      "image-security-export.txt": "92a15bba864f5586817274fc32c13b02343d2435d162ca9c3819fd3963409088",
+      "image-runtime-requirements.txt": "9224d43537fd4abb4bf349d2a326e5b449fe1c4349a6b401808c2834b2cf25e3",
+      "trivy-db.json": "296b2340a06694e22efa7248a4f568ebb6e19975fc4bf761376748e03c513278",
+      "trivy-db.txt": "894186307cfa145b6340e5819e1070b78c0c3f0005ecea56ee97a0767f12c1b4",
+      "trivy.json": "b06dfc627f92f187d15d7f974e6d214ddec951b1b383cb113a8d33ca612ca3c4",
+      "trivy.txt": "b410d3aab72f9fcfcf81a209020cfbaab31bb5319b9f808a3347a74ccdb6ca9c"
+    }
+  },
+  "passed": 538,
+  "failed": 0,
+  "skipped": 0,
+  "pytest_warning_summary_absent": true,
+  "audit_warning_absent": true,
+  "export_hashes_match_lock": true,
+  "coverage_xml": {
+    "lines-covered": "194",
+    "lines-valid": "194",
+    "branches-covered": "37",
+    "branches-valid": "38"
+  },
+  "coverage_quality_gate": "INACTIVE",
+  "artifacts": {
+    "dist/finsecure_pay-0.2.0-py3-none-any.whl": {
+      "bytes": 16889,
+      "sha256": "d0aeaa83cfd8bdbb9152c943373f208e305e42c35e3d1ac6552543b880a65a8a"
+    },
+    "dist/finsecure_pay-0.2.0.tar.gz": {
+      "bytes": 1089448,
+      "sha256": "3a7d63be61c0edcb37adc13999372363a7b717a6eeb45857acafff5378b2d22a"
+    },
+    "images/finsecure-pay.tar.gz": {
+      "bytes": 21649438,
+      "sha256": "7a9aef8337ba95be1bdb4d3263754c3f919d6f50f05ea5b1334409fbfa7fd52c"
+    },
+    "reports/bandit.json": {
+      "bytes": 28632,
+      "sha256": "fd95069048f216713b38148e9a85380f6c03451d8cb95af9192e0e10e29fa0ab"
+    },
+    "reports/bandit.txt": {
+      "bytes": 213,
+      "sha256": "cbdcb21f996bbcee086d84b3866c7ee7ae261a506de510360aef715a8e09c33f"
+    },
+    "reports/build-metadata.txt": {
+      "bytes": 174,
+      "sha256": "4570bfb40cd401c7c5138e81efedc4f9d2498a0e6a61dd219ae45e76c38c67a8"
+    },
+    "reports/buildkit-image.json": {
+      "bytes": 667,
+      "sha256": "8a277e0abc6dde413af172310444e87944bd7b81ecd106dc03016a1dc952fe0d"
+    },
+    "reports/buildkit-workers.txt": {
+      "bytes": 674,
+      "sha256": "b9f2f581939891369c0a9c9f824c40f6fe2033fa9b8d870d5047bac2e0788764"
+    },
+    "reports/coverage.xml": {
+      "bytes": 11901,
+      "sha256": "acb6e8f7834a053af41b42a6d57b9f685a1ef1de22636968221ed8967764834f"
+    },
+    "reports/dependencies.txt": {
+      "bytes": 1583,
+      "sha256": "6959839542be0e3679ddf9f7ca1ebe55aaa5afc0c106c1a197f1fbaaa066e958"
+    },
+    "reports/format.txt": {
+      "bytes": 27,
+      "sha256": "4327c987299d88b4f4a357992babe2c2d610c2ee6ae4106455f5eda8158364cc"
+    },
+    "reports/image-build.txt": {
+      "bytes": 3189,
+      "sha256": "e857450762408554997eb1699042397bdf8f0749a82effb5495882423357811b"
+    },
+    "reports/image-metadata.txt": {
+      "bytes": 129,
+      "sha256": "5f06e622a22b68e2d970e944db0a0cefe4cc13c7b156a3ca01a717e56f972afe"
+    },
+    "reports/image-runtime-requirements.txt": {
+      "bytes": 286,
+      "sha256": "9224d43537fd4abb4bf349d2a326e5b449fe1c4349a6b401808c2834b2cf25e3"
+    },
+    "reports/image-security-export.txt": {
+      "bytes": 317,
+      "sha256": "92a15bba864f5586817274fc32c13b02343d2435d162ca9c3819fd3963409088"
+    },
+    "reports/image-security-summary.json": {
+      "bytes": 2475,
+      "sha256": "b92768f3efae01220b08ddb5e77f667226b5f0dff108b4b9c9c14200db772f6d"
+    },
+    "reports/image-security-tools.txt": {
+      "bytes": 16,
+      "sha256": "84e54b2d02a5de1ad8dff546f152fb3aa252379d25a3a8d0f982d6d3a1fe4cba"
+    },
+    "reports/image.sha256": {
+      "bytes": 94,
+      "sha256": "abafa1f6354d0f285f174e53714f580f2b53bbb4feb7ef7050a90223f868a337"
+    },
+    "reports/junit.xml": {
+      "bytes": 78864,
+      "sha256": "b90213efd3206e14373fe274878506cfe28e7de24aef419f12665a5e7781c361"
+    },
+    "reports/lint.txt": {
+      "bytes": 19,
+      "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+    },
+    "reports/package.txt": {
+      "bytes": 187,
+      "sha256": "7dd09086c60e4b6cdde16a54eaadc2f70941d0722d1609bbad931f98946a11bb"
+    },
+    "reports/packages.sha256": {
+      "bytes": 206,
+      "sha256": "18ebf8c9651e55f6c67060dda0ec4a1a60cc128f427e9d0b04fcb09c30c9f39d"
+    },
+    "reports/pip-audit.json": {
+      "bytes": 903,
+      "sha256": "9633ea8ef4e54acfdb9d5fc509b003bdd526169b8b7823f9b638702453253228"
+    },
+    "reports/pip-audit.txt": {
+      "bytes": 31,
+      "sha256": "15950a68a7ed99c59779717acefdceb3f69cfd31bde67d2c954f2a3cea4d7955"
+    },
+    "reports/runtime-requirements.txt": {
+      "bytes": 5386,
+      "sha256": "497441010dc84048d4313d1bb9bcf84f42f9b2fede6296c2b319842da53d0e6b"
+    },
+    "reports/security-export.txt": {
+      "bytes": 5417,
+      "sha256": "03e9c96ecfc307dc0171e404c8cc1d7ffb6df6a4d79c6b12c804aaad4daec8e6"
+    },
+    "reports/security-summary.json": {
+      "bytes": 4612,
+      "sha256": "a4835d4289b6d655d3cabc5b13c2d1351448b7720d69f3a7b119b59ed09886d4"
+    },
+    "reports/security-tools.txt": {
+      "bytes": 50,
+      "sha256": "44a60294bb4e259844ac5e29a7fc37051d18a55e9c972ecc09604e374fa1b2b2"
+    },
+    "reports/tests.txt": {
+      "bytes": 4411,
+      "sha256": "63dd59a25af2ee85c8ddc39b1ce4d3c9956bab0595393d56c4f51d34c2ba6b2d"
+    },
+    "reports/trivy-db.json": {
+      "bytes": 170,
+      "sha256": "296b2340a06694e22efa7248a4f568ebb6e19975fc4bf761376748e03c513278"
+    },
+    "reports/trivy-db.txt": {
+      "bytes": 417,
+      "sha256": "894186307cfa145b6340e5819e1070b78c0c3f0005ecea56ee97a0767f12c1b4"
+    },
+    "reports/trivy.json": {
+      "bytes": 100338,
+      "sha256": "b06dfc627f92f187d15d7f974e6d214ddec951b1b383cb113a8d33ca612ca3c4"
+    },
+    "reports/trivy.txt": {
+      "bytes": 801,
+      "sha256": "b410d3aab72f9fcfcf81a209020cfbaab31bb5319b9f808a3347a74ccdb6ca9c"
+    }
+  },
+  "image_export": {
+    "image_id": "sha256:82b5d38ad3ec729ff3e4f7f282a15612c2045a0435b87018667d79ffb8732836",
+    "platform": "linux/arm64",
+    "local_tag": "finsecure-pay-ci:jenkins-finsecure-ci-17"
+  },
+  "demo_job_still_disabled": true,
+  "demo_build_count": 4,
+  "image_loaded_or_smoke_tested_in_this_followup": false,
+  "publishing_or_deployment": "not implemented"
+}

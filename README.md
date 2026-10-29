@@ -68,11 +68,12 @@ image block with no archived image; restoring the production Alpine Dockerfile p
 with no known findings. The demo job is disabled and its workspace image archives are
 removed; no image was run, published or deployed. See the
 [demonstration evidence](evidence/task-05/step-04-security-demonstration.md).
-Step 6.1's local metrics scope is implemented and verified on its review branch:
+Step 6.1's local metrics scope is merged, published and SCM-verified:
 538 host/candidate Jenkins tests passed, the exact candidate image passed its gate,
 and real Prometheus scrapes recorded 60 synthetic requests plus process metrics.
-The demo services are stopped with data preserved. Review/publication and normal SCM
-verification remain pending. See the [runbook](docs/runbooks/metrics.md) and
+The demo services are stopped with data preserved. Normal SCM build #17 passed
+538 tests and all gates; [follow-up evidence](evidence/task-06/step-01-scm-verification.md)
+distinguishes its archive from the earlier live-demo image. See the [runbook](docs/runbooks/metrics.md) and
 [actual evidence](evidence/task-06/step-01-metrics.md).
 
 ## Quick start
@@ -95,7 +96,7 @@ curl --fail --silent --show-error http://127.0.0.1:8000/health
 
 This checks application liveness, not external dependencies.
 
-On this metrics review branch, `GET /metrics` exposes Prometheus text on the same
+In the current source, `GET /metrics` exposes Prometheus text on the same
 local port. It is omitted from OpenAPI and must not be treated as a public endpoint.
 See the [local monitoring setup and limits](docs/runbooks/metrics.md) before starting
 the separate Docker application/Prometheus demo; do not bind another app to port
@@ -274,9 +275,9 @@ Remove a placeholder when its directory receives real content.
   registry/cloud credential controls remain deferred.
 - Task 5.4: local image-archival block/remediation demonstration reviewed, merged and
   published as `d76b713`. Registry/deployment-blocking proof remains deferred.
-- Task 6.1: local instrumentation/Prometheus verified on its review branch (538 tests,
-  candidate image gate and real 60-request/process collection). Review/merge/normal
-  SCM proof pending. Managed-cluster monitoring and later observability steps deferred.
+- Task 6.1: local instrumentation/Prometheus merged and SCM-verified (build #17,
+  538 tests, passing gates and 33 artifacts), with earlier real 60-request/process
+  collection evidence. Managed-cluster monitoring and later observability steps deferred.
 - Remaining Tasks 5–6: deferred security controls and cloud release-gate proof,
   monitoring/logging, alert delivery and notifications.
 - Task 7: Design document, architecture diagram, AI use case, and presentation.
