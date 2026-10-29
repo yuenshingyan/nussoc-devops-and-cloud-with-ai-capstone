@@ -1,7 +1,7 @@
 # Step 6.2 — Local Grafana dashboard
 
-**Implemented and locally verified; review/merge/publication and normal SCM proof
-remain pending.** Work is on `task-06/step-02-dashboard`, based on reviewed main
+**Merged/published as `f61cb4f`; normal SCM build #19 passed 578 tests, all gates
+and 33 artifact checks.** See the [SCM follow-up](../../evidence/task-06/step-02-scm-verification.md). Work is on `task-06/step-02-dashboard`, based on reviewed main
 `5e53c5f`. All three monitoring services are now stopped, with data and credentials
 preserved. See [actual evidence](../../evidence/task-06/step-02-dashboard.md).
 
@@ -154,6 +154,7 @@ No SLO, alert threshold or load/capacity benchmark is implied.
   diagnostics despite producing the reviewed screenshot; those are retained too.
 - The final three services stopped with exit 0, no OOM. Data/secret volumes and the
   unchanged host credential remain. Jenkins services were not stopped/reconfigured;
-  its credential-boundary check passed. Normal SCM verification of this branch is
-  still pending review/merge/publication. Alerts, delivery and centralized logs remain
+  its credential-boundary check passed. Normal SCM verification subsequently passed
+  in build #19; it did not rerun the Grafana demo or resolve vendor/browser diagnostics.
+  Alerts, delivery and centralized logs remain
   later steps with their own policies and approval.

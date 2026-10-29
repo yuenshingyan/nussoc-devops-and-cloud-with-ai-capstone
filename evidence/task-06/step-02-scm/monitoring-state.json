@@ -1,0 +1,13 @@
+{
+  "services": {
+    "application": "exited",
+    "grafana": "exited",
+    "prometheus": "exited"
+  },
+  "retained_volumes": [
+    "finsecure-monitoring_prometheus-data",
+    "finsecure-monitoring_grafana-data",
+    "finsecure-monitoring-grafana-secrets"
+  ],
+  "monitoring_restarted_in_followup": false
+}

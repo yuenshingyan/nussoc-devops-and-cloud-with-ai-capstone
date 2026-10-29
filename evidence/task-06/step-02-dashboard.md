@@ -1,5 +1,9 @@
 # Step 6.2 — Authenticated local Grafana dashboard
 
+**Later status:** merged/published as `f61cb4f`; normal SCM build #19 verified.
+See the [follow-up](step-02-scm-verification.md). The dated candidate record below
+preserves the original execution and its then-pending publication status.
+
 **29 October 2026 UTC.** Implementation `7858049` on `task-06/step-02-dashboard`,
 based on reviewed/published main `5e53c5f`. **Locally verified; review/merge/publication
 and normal SCM proof remain pending.** Application source and its metric contract

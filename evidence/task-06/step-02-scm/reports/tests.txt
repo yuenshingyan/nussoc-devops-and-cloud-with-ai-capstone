@@ -1,0 +1,64 @@
+============================= test session starts ==============================
+platform linux -- Python 3.14.7, pytest-9.1.1, pluggy-1.7.0
+rootdir: /home/jenkins/agent/workspace/finsecure-ci
+configfile: pyproject.toml
+testpaths: tests
+plugins: anyio-4.15.1, platformdirs-4.13.5, cov-7.1.0
+collected 578 items
+
+tests/integration/test_application.py ..                                 [  0%]
+tests/integration/test_configuration_api.py ........                     [  1%]
+tests/integration/test_health_api.py ...                                 [  2%]
+tests/integration/test_metrics_api.py ....................               [  5%]
+tests/integration/test_validation_api.py ............................... [ 11%]
+...                                                                      [ 11%]
+tests/integration/test_validation_boundaries.py ........................ [ 15%]
+..................................                                       [ 21%]
+tests/unit/test_config.py ...................................            [ 27%]
+tests/unit/test_dashboard_configuration.py .........                     [ 29%]
+tests/unit/test_http_metrics.py ...............                          [ 31%]
+tests/unit/test_image_archive.py .............                           [ 34%]
+tests/unit/test_image_scan.py .......................................... [ 41%]
+......................................                                   [ 47%]
+tests/unit/test_jenkins_bootstrap.py .............                       [ 50%]
+tests/unit/test_jenkins_ci_verification.py ............................. [ 55%]
+.                                                                        [ 55%]
+tests/unit/test_jenkins_trigger_verification.py ..................       [ 58%]
+tests/unit/test_monitoring_credentials.py .............................. [ 63%]
+.                                                                        [ 63%]
+tests/unit/test_secret_boundaries.py ................................... [ 69%]
+......................                                                   [ 73%]
+tests/unit/test_security_scan.py ....................................... [ 80%]
+...........................................                              [ 87%]
+tests/unit/test_transaction_schema.py .................................. [ 93%]
+............                                                             [ 95%]
+tests/unit/test_validation.py ........................                   [100%]
+
+- generated xml file: /home/jenkins/agent/workspace/finsecure-ci/reports/junit.xml -
+================================ tests coverage ================================
+_______________ coverage: platform linux, python 3.14.7-final-0 ________________
+
+Name                                          Stmts   Miss Branch BrPart  Cover   Missing
+-----------------------------------------------------------------------------------------
+src/finsecure_pay/__init__.py                     0      0      0      0   100%
+src/finsecure_pay/api/__init__.py                 0      0      0      0   100%
+src/finsecure_pay/api/dependencies.py             7      0      0      0   100%
+src/finsecure_pay/api/errors.py                  18      0      6      1    96%   16->18
+src/finsecure_pay/api/health.py                   6      0      0      0   100%
+src/finsecure_pay/api/metrics.py                  9      0      0      0   100%
+src/finsecure_pay/api/validation.py              14      0      0      0   100%
+src/finsecure_pay/config.py                      44      0     14      0   100%
+src/finsecure_pay/main.py                        21      0      0      0   100%
+src/finsecure_pay/observability/__init__.py       0      0      0      0   100%
+src/finsecure_pay/observability/http.py          27      0      4      0   100%
+src/finsecure_pay/observability/metrics.py       17      0      4      0   100%
+src/finsecure_pay/schemas/__init__.py             0      0      0      0   100%
+src/finsecure_pay/schemas/errors.py               3      0      0      0   100%
+src/finsecure_pay/schemas/health.py               3      0      0      0   100%
+src/finsecure_pay/schemas/transaction.py          7      0      0      0   100%
+src/finsecure_pay/services/__init__.py            0      0      0      0   100%
+src/finsecure_pay/services/validation.py         18      0     10      0   100%
+-----------------------------------------------------------------------------------------
+TOTAL                                           194      0     38      1    99%
+Coverage XML written to file reports/coverage.xml
+============================= 578 passed in 2.35s ==============================
