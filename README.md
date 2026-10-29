@@ -76,6 +76,9 @@ The demo services are stopped with data preserved. Normal SCM build #17 passed
 distinguishes its archive from the earlier live-demo image. See the [runbook](docs/runbooks/metrics.md) and
 [actual evidence](evidence/task-06/step-01-metrics.md).
 
+Step 6.2 is being scoped on its own branch. Grafana is not configured or running;
+see the [dashboard proposal awaiting approval](docs/runbooks/dashboard.md).
+
 ## Quick start
 
 Prerequisites: uv and Python 3.14 (uv can install the interpreter if needed).
