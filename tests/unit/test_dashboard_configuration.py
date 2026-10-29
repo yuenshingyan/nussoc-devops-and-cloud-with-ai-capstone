@@ -104,10 +104,20 @@ def test_overlay_keeps_the_metrics_only_stack_independent_and_limits_grafana():
     assert grafana["ports"] == ["127.0.0.1:3000:3000"]
     assert grafana["cpus"] == 0.5 and grafana["mem_limit"] == grafana["memswap_limit"] == "512m"
     assert grafana["tmpfs"] == ["/tmp:rw,noexec,nosuid,size=16m,mode=1777"]
-    assert grafana["secrets"] == ["grafana-admin-password"]
+    assert "grafana-secrets:/run/secrets:ro" in grafana["volumes"]
+    assert "secrets" not in grafana
     assert "environment" not in grafana
     assert all(mount.endswith(":ro") for mount in grafana["volumes"] if mount.startswith("./"))
-    assert set(overlay["volumes"]) == {"grafana-data"}
-    assert overlay["secrets"]["grafana-admin-password"]["file"].startswith(
-        "${GRAFANA_ADMIN_PASSWORD_FILE:?"
-    )
+    # Mount individual provisioning files so unused vendor directories remain present.
+    assert {mount.split(":")[1] for mount in grafana["volumes"] if mount.startswith("./")} == {
+        "/etc/grafana/grafana.ini",
+        "/etc/grafana/provisioning/datasources/finsecure.yaml",
+        "/etc/grafana/provisioning/dashboards/finsecure.yaml",
+        "/etc/grafana/dashboards",
+    }
+    assert set(overlay["volumes"]) == {"grafana-data", "grafana-secrets"}
+    assert overlay["volumes"]["grafana-secrets"] == {
+        "external": True,
+        "name": helpers["SECRET_VOLUME"],
+    }
+    assert "secrets" not in overlay

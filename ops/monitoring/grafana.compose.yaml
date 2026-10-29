@@ -6,11 +6,12 @@
       "ports": ["127.0.0.1:3000:3000"],
       "volumes": [
         "./grafana/grafana.ini:/etc/grafana/grafana.ini:ro",
-        "./grafana/provisioning:/etc/grafana/provisioning:ro",
+        "./grafana/provisioning/datasources/prometheus.yaml:/etc/grafana/provisioning/datasources/finsecure.yaml:ro",
+        "./grafana/provisioning/dashboards/finsecure.yaml:/etc/grafana/provisioning/dashboards/finsecure.yaml:ro",
         "./grafana/dashboards:/etc/grafana/dashboards:ro",
-        "grafana-data:/var/lib/grafana"
+        "grafana-data:/var/lib/grafana",
+        "grafana-secrets:/run/secrets:ro"
       ],
-      "secrets": ["grafana-admin-password"],
       "read_only": true,
       "tmpfs": ["/tmp:rw,noexec,nosuid,size=16m,mode=1777"],
       "cap_drop": ["ALL"],
@@ -20,10 +21,8 @@
       "memswap_limit": "512m"
     }
   },
-  "volumes": {"grafana-data": {}},
-  "secrets": {
-    "grafana-admin-password": {
-      "file": "${GRAFANA_ADMIN_PASSWORD_FILE:?Initialize the private Grafana credential and set its absolute file path}"
-    }
+  "volumes": {
+    "grafana-data": {},
+    "grafana-secrets": {"external": true, "name": "finsecure-monitoring-grafana-secrets"}
   }
 }

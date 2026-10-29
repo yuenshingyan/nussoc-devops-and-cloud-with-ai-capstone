@@ -1,7 +1,8 @@
-"""Exercise credential boundaries with real temporary files and mocked Docker only."""
+"""Credential tests use real private temporary files and mock only Docker boundaries."""
 
 from collections.abc import Iterator
-from os import stat_result
+from json import dumps
+from os import getuid, stat_result
 from pathlib import Path
 from runpy import run_path
 from stat import S_IFDIR, S_IFLNK, S_IFREG, S_IMODE
@@ -15,41 +16,66 @@ from pytest import MonkeyPatch, fixture, mark, raises
 @fixture
 def credentials(
     monkeypatch: MonkeyPatch, tmp_path: Path
-) -> Iterator[tuple[dict[str, Any], Mock, Path]]:
+) -> Iterator[tuple[dict[str, Any], Mock, Path, dict]]:
     monkeypatch.setenv("HOME", str(tmp_path))
-    command = Mock()
+    state = {"volumes": {}, "value": "x" * 43, "metadata": "472 null"}
+
+    def boundary(arguments: list[str], **kwargs: Any) -> CompletedProcess[str]:
+        if arguments[1:3] == ["volume", "inspect"]:
+            volume = state["volumes"].get(arguments[3])
+            return CompletedProcess(
+                arguments,
+                0 if volume else 1,
+                dumps([volume]) if volume else "",
+                "" if volume else "no such volume",
+            )
+        if arguments[1:3] == ["volume", "create"]:
+            state["volumes"][arguments[-1]] = {
+                "Name": arguments[-1],
+                "Labels": {"finsecure.purpose": "finsecure-pay-grafana-secrets"},
+            }
+        if arguments[1:3] == ["image", "inspect"]:
+            return CompletedProcess(arguments, 0, state["metadata"], "")
+        if arguments[1] == "create":
+            return CompletedProcess(arguments, 0, "a" * 64, "")
+        if arguments[1] == "start":
+            if kwargs.get("input") is not None:
+                state["value"] = kwargs["input"]
+            else:
+                return CompletedProcess(arguments, 0, state["value"], "")
+        return CompletedProcess(arguments, 0, "", "")
+
+    command = Mock(side_effect=boundary)
     monkeypatch.setattr("subprocess.run", command)
     helpers = run_path(
         str(Path(__file__).resolve().parents[2] / "scripts/monitoring_credentials.py")
     )
-    yield helpers, command, tmp_path / ".config/finsecure-pay/monitoring/grafana-admin-password"
+    yield (
+        helpers,
+        command,
+        tmp_path / ".config/finsecure-pay/monitoring/grafana-admin-password",
+        state,
+    )
 
 
-def metadata(
-    mode: int = S_IFREG | 0o400, uid: int = 472, gid: int = 472, links: int = 1
-) -> stat_result:
-    """Construct public POSIX metadata without requiring host root privileges."""
-    return stat_result((mode, 1, 1, links, uid, gid, 43, 0, 0, 0))
+def metadata(mode: int = S_IFREG | 0o400, uid: int | None = None, links: int = 1) -> stat_result:
+    """Construct public POSIX metadata without host root privileges."""
+    return stat_result((mode, 1, 1, links, getuid() if uid is None else uid, 20, 43, 0, 0, 0))
 
 
-def result(output: str = "", code: int = 0, error: str = "") -> CompletedProcess[str]:
-    """Represent a subprocess boundary result without starting Docker."""
-    return CompletedProcess([], code, output, error)
+def host_secret(helpers: dict, path: Path, value: str = "x" * 43) -> None:
+    """Make a private synthetic credential through real filesystem operations."""
+    helpers["private_directory"](create=True)
+    path.write_text(value)
+    path.chmod(0o400)
 
 
-def service_owned_file(monkeypatch: MonkeyPatch, path: Path) -> None:
-    """Simulate Docker's ownership change only in lstat, retaining real file contents/modes."""
-    original = Path.lstat
-
-    def lstat(actual: Path) -> stat_result:
-        value = original(actual)
-        if actual == path:
-            fields = list(value)
-            fields[4:6] = [472, 472]
-            return stat_result(fields)
-        return value
-
-    monkeypatch.setattr(Path, "lstat", lstat)
+def volume_record(
+    helpers: dict, state: dict, *, purpose: str = "finsecure-pay-grafana-secrets"
+) -> None:
+    """Supply simulated Docker volume metadata, not application internals."""
+    name = helpers["SECRET_VOLUME"]
+    state["volumes"][name] = {"Name": name, "Labels": {"finsecure.purpose": purpose}}
 
 
 @mark.parametrize(
@@ -59,25 +85,26 @@ def service_owned_file(monkeypatch: MonkeyPatch, path: Path) -> None:
         metadata(mode=S_IFREG | 0o444),
         metadata(mode=S_IFDIR | 0o400),
         metadata(mode=S_IFLNK | 0o400),
-        metadata(uid=0),
-        metadata(gid=0),
+        metadata(uid=getuid() + 1),
         metadata(links=2),
     ],
 )
-def test_secret_rejects_unsafe_permissions_type_ownership_or_links(credentials, info):
-    helpers, command, _ = credentials
-    with raises(RuntimeError, match="single regular"):
+def test_host_secret_rejects_unsafe_type_permissions_owner_or_links(credentials, info):
+    helpers, command, _, _ = credentials
+    with raises(RuntimeError, match="operator-owned regular"):
         helpers["validate_secret_metadata"](info)
     command.assert_not_called()
 
 
-def test_secret_accepts_only_expected_regular_metadata(credentials):
-    helpers, _, _ = credentials
+def test_host_secret_accepts_operator_owner_without_requiring_container_uid(credentials):
+    helpers, _, path, _ = credentials
+    host_secret(helpers, path)
+    assert helpers["read_password"]() == "x" * 43
     helpers["validate_secret_metadata"](metadata())
 
 
-def test_read_does_not_create_a_missing_credential(credentials):
-    helpers, command, path = credentials
+def test_read_never_creates_missing_credential(credentials):
+    helpers, command, path, _ = credentials
     with raises(FileNotFoundError):
         helpers["read_password"]()
     assert not path.parent.exists()
@@ -88,7 +115,7 @@ def test_read_does_not_create_a_missing_credential(credentials):
     "component", [".config", ".config/finsecure-pay", ".config/finsecure-pay/monitoring"]
 )
 def test_initialization_rejects_symlink_directories(credentials, tmp_path, component):
-    helpers, command, _ = credentials
+    helpers, command, _, _ = credentials
     target = tmp_path / "unrelated"
     target.mkdir()
     link = tmp_path / component
@@ -100,8 +127,8 @@ def test_initialization_rejects_symlink_directories(credentials, tmp_path, compo
     command.assert_not_called()
 
 
-def test_initialization_rejects_nonprivate_directory_without_chmod(credentials):
-    helpers, command, path = credentials
+def test_nonprivate_directory_is_not_silently_chmodded(credentials):
+    helpers, command, path, _ = credentials
     path.parent.mkdir(parents=True)
     path.parent.chmod(0o755)
     with raises(RuntimeError, match="0700"):
@@ -110,94 +137,139 @@ def test_initialization_rejects_nonprivate_directory_without_chmod(credentials):
     command.assert_not_called()
 
 
-@mark.parametrize("response", [result("[]"), result(code=1, error="daemon unavailable")])
-def test_initialization_does_not_guess_credentials_for_existing_or_unknown_data(
-    credentials, response
-):
-    helpers, command, path = credentials
-    command.return_value = response
-    with raises(RuntimeError):
+def test_existing_data_without_secret_volume_is_not_reseeded(credentials):
+    helpers, command, path, state = credentials
+    name = helpers["DATA_VOLUME"]
+    state["volumes"][name] = {"Name": name}
+    with raises(RuntimeError, match="recover credentials"):
         helpers["initialize_secret"]()
     assert not path.exists()
-    assert command.call_count == 1
+    assert all(call.args[0][1:3] == ["volume", "inspect"] for call in command.call_args_list)
 
 
-def test_initialization_creates_once_with_chown_only_and_no_secret_in_arguments(
-    credentials, monkeypatch
-):
-    helpers, command, path = credentials
-    service_owned_file(monkeypatch, path)
-    command.side_effect = [
-        result(code=1, error="no such volume"),
-        result("472 null"),
-        result("a" * 64),
-        result(),
-        result(),
-    ]
+def test_daemon_failure_is_not_interpreted_as_missing_volume(credentials):
+    helpers, command, path, _ = credentials
+    command.side_effect = None
+    command.return_value = CompletedProcess([], 1, "", "daemon unavailable")
+    with raises(RuntimeError, match="Could not rule out"):
+        helpers["initialize_secret"]()
+    assert not path.exists()
+
+
+def test_fresh_initialization_seeds_only_owned_volume_through_stdin(credentials):
+    helpers, command, path, state = credentials
     assert helpers["initialize_secret"]() == path
-    assert S_IMODE(path.stat().st_mode) == 0o400
-    # Host ownership is simulated, but content generation and private writes are real.
-    value = path.read_text()
-    assert len(value) == 43
-    calls = command.call_args_list
-    creation = calls[2].args[0]
-    assert "--cap-add=CHOWN" in creation and "--user" in creation
-    assert creation[creation.index("--user") + 1] == "0:0"
-    assert "--entrypoint=/bin/chown" in creation
-    assert "--network=none" in creation and "--read-only" in creation
-    assert "--cap-drop=ALL" in creation and "--security-opt=no-new-privileges:true" in creation
-    assert sum("type=bind" in item for item in creation) == 1
-    assert not any(value in str(call) for call in calls)
-    assert calls[-1].args[0] == ["docker", "rm", "--force", "--volumes", "a" * 64]
+    password = path.read_text()
+    assert len(password) == 43 and state["value"] == password
+    assert S_IMODE(path.stat().st_mode) == 0o400 and path.stat().st_uid == getuid()
+    creations = [call.args[0] for call in command.call_args_list if call.args[0][1] == "create"]
+    assert len(creations) == 2
+    seed, verify = creations
+    assert "--cap-add=CHOWN" in seed and seed[seed.index("--user") + 1] == "0:0"
+    assert "--interactive" in seed
+    assert verify[verify.index("--user") + 1] == "472:472"
+    assert verify[verify.index("--mount") + 1].endswith(",readonly")
+    assert not any(item.startswith("--cap-add") for item in verify)
+    for arguments in creations:
+        assert "--network=none" in arguments and "--read-only" in arguments
+        assert "--cap-drop=ALL" in arguments
+        assert "--security-opt=no-new-privileges:true" in arguments
+        assert (
+            "type=volume,source=" + helpers["SECRET_VOLUME"]
+            in arguments[arguments.index("--mount") + 1]
+        )
+        assert not any("type=bind" in item or password in item for item in arguments)
+    assert sum(call.kwargs.get("input") == password for call in command.call_args_list) == 1
+    assert sum(call.args[0][1] == "rm" for call in command.call_args_list) == 2
 
 
-def test_existing_credential_is_read_only_and_not_regenerated(credentials, monkeypatch):
-    helpers, command, path = credentials
-    helpers["private_directory"](create=True)
-    path.write_text("x" * 43)
-    path.chmod(0o400)
-    service_owned_file(monkeypatch, path)
-    command.side_effect = [result("472 null"), result("a" * 64), result("x" * 43), result()]
-    assert helpers["initialize_secret"]() == path
-    assert path.read_text() == "x" * 43
-    creation = command.call_args_list[1].args[0]
-    assert "--entrypoint=/bin/cat" in creation
-    assert creation[creation.index("--user") + 1] == "472:472"
-    assert creation[creation.index("--mount") + 1].endswith(",readonly")
-    assert not any(item.startswith("--cap-add") for item in creation)
+def test_regression_preserves_host_password_from_failed_bind_mount_setup(credentials):
+    helpers, _, path, state = credentials
+    host_secret(helpers, path)
+    inode = path.stat().st_ino
+    helpers["initialize_secret"]()
+    assert path.read_text() == state["value"] == "x" * 43
+    assert path.stat().st_ino == inode and path.stat().st_uid == getuid()
 
 
-@mark.parametrize("value", ["admin", "x" * 42, "x" * 44, "x" * 42 + "!"])
-def test_malformed_existing_credential_fails_without_replacement(credentials, monkeypatch, value):
-    helpers, command, path = credentials
-    helpers["private_directory"](create=True)
-    path.write_text(value)
-    path.chmod(0o400)
-    service_owned_file(monkeypatch, path)
-    command.side_effect = [result("472 null"), result("a" * 64), result(value), result()]
+def test_existing_matching_volume_is_read_only_without_rotation(credentials):
+    helpers, command, path, state = credentials
+    host_secret(helpers, path)
+    volume_record(helpers, state)
+    helpers["initialize_secret"]()
+    assert path.read_text() == state["value"] == "x" * 43
+    assert not any(call.args[0][1:3] == ["volume", "create"] for call in command.call_args_list)
+    assert not any("--cap-add=CHOWN" in call.args[0] for call in command.call_args_list)
+    assert all(call.kwargs.get("input") is None for call in command.call_args_list)
+
+
+@mark.parametrize("problem", ["unowned", "mismatch", "missing_host", "bad_permissions"])
+def test_existing_invalid_state_is_not_replaced(credentials, problem):
+    helpers, command, path, state = credentials
+    host_secret(helpers, path)
+    volume_record(helpers, state, purpose="other" if problem == "unowned" else helpers["PURPOSE"])
+    if problem == "mismatch":
+        state["value"] = "y" * 43
+    if problem == "missing_host":
+        path.unlink()
+    if problem == "bad_permissions":
+        path.chmod(0o600)
+    with raises((RuntimeError, FileNotFoundError)):
+        helpers["initialize_secret"]()
+    assert not any(call.args[0][1:3] == ["volume", "create"] for call in command.call_args_list)
+    assert not any("--cap-add=CHOWN" in call.args[0] for call in command.call_args_list)
+    if problem == "missing_host":
+        assert not path.exists()
+    else:
+        assert path.read_text() == "x" * 43
+
+
+@mark.parametrize("value", ["admin", "x" * 42, "x" * 44, "x" * 42 + "!", "x" * 43 + "\n"])
+def test_bad_host_format_never_seeds_a_volume(credentials, value):
+    helpers, command, path, _ = credentials
+    host_secret(helpers, path, value)
     with raises(RuntimeError, match="do not replace"):
         helpers["initialize_secret"]()
     assert path.read_text() == value
+    assert not any(call.args[0][1:3] == ["volume", "create"] for call in command.call_args_list)
 
 
 @mark.parametrize("image_metadata", ["0 null", '472 {"/data":{}}'])
-def test_unexpected_helper_image_metadata_receives_no_secret_mount(credentials, image_metadata):
-    helpers, command, path = credentials
-    command.return_value = result(image_metadata)
+def test_unexpected_helper_image_never_receives_secret_mount(credentials, image_metadata):
+    helpers, command, path, state = credentials
+    host_secret(helpers, path)
+    volume_record(helpers, state)
+    state["metadata"] = image_metadata
     with raises(RuntimeError, match="Unexpected Grafana helper"):
-        helpers["secret_helper"](path)
-    assert command.call_count == 1
-    assert str(path) not in str(command.call_args)
+        helpers["verify_secret"]()
+    assert not any(call.args[0][1] == "create" for call in command.call_args_list)
 
 
-@mark.parametrize(
-    "failure",
-    [result(code=1, error="private-output"), TimeoutExpired("docker", 30, output="private-output")],
-)
-def test_helper_cleanup_runs_on_failure_without_exposing_output(credentials, failure):
-    helpers, command, path = credentials
-    command.side_effect = [result("472 null"), result("a" * 64), failure, result()]
-    with raises(RuntimeError) as error:
-        helpers["secret_helper"](path)
-    assert "private-output" not in str(error.value)
+@mark.parametrize("timeout", [False, True])
+def test_failed_helper_is_removed_without_exposing_output(credentials, timeout):
+    helpers, command, path, state = credentials
+    host_secret(helpers, path)
+    volume_record(helpers, state)
+    original = command.side_effect
+
+    def fail(arguments: list[str], **kwargs: Any) -> CompletedProcess[str]:
+        if arguments[1] == "start":
+            if timeout:
+                raise TimeoutExpired("docker", 30, output="private-output")
+            return CompletedProcess(arguments, 1, "private-output", "private-output")
+        return original(arguments, **kwargs)
+
+    command.side_effect = fail
+    with raises(RuntimeError) as caught:
+        helpers["verify_secret"]()
+    assert "private-output" not in str(caught.value)
     assert command.call_args.args[0] == ["docker", "rm", "--force", "--volumes", "a" * 64]
+
+
+def test_volume_reader_checks_private_metadata_and_rejects_symlinks(credentials):
+    helpers, _, _, _ = credentials
+    script = helpers["READ_SECRET"]
+    assert "472:472:700" in script and "472:472:400:1" in script
+    assert "test ! -L /out;" in script and "test ! -L /out/grafana-admin-password;" in script
+    assert "test -f /out/grafana-admin-password" in script
+    assert 'test -z "$(ls -A /out)"' in helpers["SEED_SECRET"]
