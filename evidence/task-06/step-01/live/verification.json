@@ -1,0 +1,32 @@
+{
+  "verified_at_utc": "2026-10-28T15:53:36.064426+00:00",
+  "result": "passed",
+  "requests_sent_once": 60,
+  "traffic_seconds": 60.645967917000235,
+  "total_seconds": 65.04818258299929,
+  "counter_deltas": {
+    "health": 20.0,
+    "evaluated": 30.0,
+    "malformed": 10.0,
+    "accepted": 20.0,
+    "rejected": 10.0,
+    "invalid": 10.0,
+    "latency_observations": 60.0,
+    "requests": 60.0
+  },
+  "application_scrape_up": 1,
+  "prometheus_scrape_up": 1,
+  "process_cpu_seconds_before": 2.3600000000000003,
+  "process_cpu_seconds_after": 2.98,
+  "process_resident_memory_bytes": 57389056.0,
+  "latency_seconds_sum": 0.19196441400526965,
+  "prometheus_head_series": 877.0,
+  "prometheus_flags": {
+    "storage.tsdb.retention.time": "1d",
+    "storage.tsdb.retention.size": "256MiB",
+    "web.listen-address": "0.0.0.0:9090"
+  },
+  "response_samples_saved": true,
+  "metric_label_contract_verified": true,
+  "scope": "real local application/process/Prometheus metrics, not Kubernetes infrastructure"
+}

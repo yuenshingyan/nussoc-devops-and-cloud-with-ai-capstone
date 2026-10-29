@@ -5,7 +5,7 @@
 Additive endpoint approved for Step 6.1. Returns HTTP 200 with
 `Content-Type: text/plain; version=1.0.0; charset=utf-8`, using prometheus-client
 0.26.0 text exposition. GET only; unsupported methods return framework HTTP 405.
-It accepts no request body, requires no authentication in this loopback-only demo,
+It requires no request body or authentication in this loopback-only demo,
 and is excluded from OpenAPI. OpenAPI exclusion is not access control.
 
 The [metrics contract](runbooks/metrics.md) defines exact application metric names,

@@ -1,0 +1,125 @@
+"""Bounded local metrics demonstration using the exact passing candidate image."""
+
+from datetime import UTC, datetime
+from json import dumps, loads
+from math import isfinite
+from pathlib import Path
+from subprocess import run
+from time import monotonic, sleep
+
+from httpx2 import Client, HTTPError
+from prometheus_client.parser import text_string_to_metric_families
+
+ROOT=Path('reports/step61-live')
+ROOT.mkdir(exist_ok=True)
+API='http://127.0.0.1:8000'
+PROM='http://127.0.0.1:9090'
+
+
+def data(client: Client, path: str, expression: str | None = None) -> dict:
+    response=client.get(PROM+path,params={'query':expression} if expression else None)
+    response.raise_for_status()
+    value=response.json()
+    assert value['status']=='success'
+    return value['data']
+
+
+def scalar(client: Client, expression: str, empty_zero: bool = False) -> float:
+    result=data(client,'/api/v1/query',expression)
+    assert result['resultType']=='vector'
+    if not result['result']:
+        assert empty_zero
+        return 0.0
+    assert len(result['result'])==1
+    value=float(result['result'][0]['value'][1])
+    assert isfinite(value)
+    return value
+
+
+started=monotonic()
+with Client(timeout=5,trust_env=False,follow_redirects=False) as client:
+    deadline=monotonic()+120
+    while monotonic()<deadline:
+        try:
+            metrics=client.get(API+'/metrics')
+            ready=client.get(PROM+'/-/ready')
+            if metrics.status_code==ready.status_code==200:
+                assert metrics.headers['content-type']=='text/plain; version=1.0.0; charset=utf-8'
+                targets=data(client,'/api/v1/targets')['activeTargets']
+                if len(targets)==2 and all(target['health']=='up' for target in targets):
+                    break
+        except HTTPError:
+            pass
+        sleep(2)
+    else:
+        raise TimeoutError('Local targets not ready within 120 seconds')
+    assert {target['labels']['job'] for target in targets}=={'finsecure-pay','prometheus'}
+    assert all(target['scrapeInterval']=='15s' and target['scrapeTimeout']=='5s' for target in targets)
+    build=data(client,'/api/v1/status/buildinfo')
+    assert build['version']=='3.15.1'
+    flags=data(client,'/api/v1/status/flags')
+    queries={
+        'health':'sum(finsecure_http_requests_total{job="finsecure-pay",route="/health",method="GET",status_class="2xx"})',
+        'evaluated':'sum(finsecure_http_requests_total{job="finsecure-pay",route="/validate",method="POST",status_class="2xx"})',
+        'malformed':'sum(finsecure_http_requests_total{job="finsecure-pay",route="/validate",method="POST",status_class="4xx"})',
+        'accepted':'sum(finsecure_validation_outcomes_total{job="finsecure-pay",outcome="accepted"})',
+        'rejected':'sum(finsecure_validation_outcomes_total{job="finsecure-pay",outcome="rejected"})',
+        'invalid':'sum(finsecure_validation_outcomes_total{job="finsecure-pay",outcome="invalid"})',
+        'latency_observations':'sum(finsecure_http_request_duration_seconds_count{job="finsecure-pay"})',
+        'requests':'sum(finsecure_http_requests_total{job="finsecure-pay"})',
+    }
+    before={name:scalar(client,query,True) for name,query in queries.items()}
+    assert all(value==0 for value in before.values()), 'Unexpected concurrent traffic; do not hide it'
+    cpu_before=scalar(client,'finsecure_process_cpu_seconds_total{job="finsecure-pay"}')
+    responses={}
+    payload={'transaction_id':'metrics_demo','sender_id':'synthetic_sender','recipient_id':'synthetic_recipient','amount':'125.50','currency':'SGD'}
+    traffic_started=monotonic()
+    for kind in ['health']*20+['accepted']*20+['rejected']*10+['invalid']*10:
+        if kind=='health':
+            response=client.get(API+'/health')
+            assert response.status_code==200 and response.json()=={'status':'healthy'}
+        else:
+            request=dict(payload)
+            if kind=='rejected': request['amount']='0'
+            if kind=='invalid': request['amount']=1
+            response=client.post(API+'/validate',json=request)
+            assert response.status_code==(422 if kind=='invalid' else 200)
+            if kind=='accepted': assert response.json()=={'valid':True,'errors':[]}
+            if kind=='rejected': assert response.json()=={'valid':False,'errors':['AMOUNT_NOT_POSITIVE']}
+        responses[kind]={'status':response.status_code,'body':response.json()}
+        sleep(1)
+    traffic_seconds=monotonic()-traffic_started
+    expected={'health':20,'evaluated':30,'malformed':10,'accepted':20,'rejected':10,'invalid':10,'latency_observations':60,'requests':60}
+    deadline=monotonic()+120
+    while monotonic()<deadline:
+        after={name:scalar(client,query,True) for name,query in queries.items()}
+        deltas={name:after[name]-before[name] for name in queries}
+        if deltas==expected: break
+        sleep(2)
+    else:
+        raise TimeoutError('Expected exact deltas not observed within 120 seconds; no traffic retries')
+    cpu_after=scalar(client,'finsecure_process_cpu_seconds_total{job="finsecure-pay"}')
+    memory=scalar(client,'finsecure_process_resident_memory_bytes{job="finsecure-pay"}')
+    latency_sum=scalar(client,'sum(finsecure_http_request_duration_seconds_sum{job="finsecure-pay"})')
+    assert cpu_after>cpu_before>=0 and memory>0 and latency_sum>=0
+    assert scalar(client,'up{job="finsecure-pay"}')==scalar(client,'up{job="prometheus"}')==1
+    self_series=scalar(client,'prometheus_tsdb_head_series{job="prometheus"}')
+    assert self_series>0
+    text=client.get(API+'/metrics').text
+    assert 'metrics_demo' not in text and 'synthetic_sender' not in text and 'synthetic_recipient' not in text
+    for family in text_string_to_metric_families(text):
+        for sample in family.samples:
+            assert set(sample.labels)<={'route','method','status_class','outcome','le'}
+            if 'route' in sample.labels: assert sample.labels['route'] in {'/health','/validate','other'}
+            if 'method' in sample.labels: assert sample.labels['method'] in {'GET','POST','OTHER'}
+    targets=data(client,'/api/v1/targets')['activeTargets']
+    assert all(target['health']=='up' and not target['lastError'] for target in targets)
+    (ROOT/'metrics.txt').write_text(text)
+    (ROOT/'targets.json').write_text(dumps(targets,indent=2)+'\n')
+    (ROOT/'responses.json').write_text(dumps(responses,indent=2)+'\n')
+    (ROOT/'prometheus-build.json').write_text(dumps(build,indent=2)+'\n')
+    (ROOT/'queries.json').write_text(dumps({'expressions':queries,'before':before,'after':after,'deltas':deltas},indent=2)+'\n')
+    retention={key:flags[key] for key in ['storage.tsdb.retention.time','storage.tsdb.retention.size','web.listen-address']}
+record={'verified_at_utc':datetime.now(UTC).isoformat(),'result':'passed','requests_sent_once':60,'traffic_seconds':traffic_seconds,'total_seconds':monotonic()-started,'counter_deltas':deltas,'application_scrape_up':1,'prometheus_scrape_up':1,'process_cpu_seconds_before':cpu_before,'process_cpu_seconds_after':cpu_after,'process_resident_memory_bytes':memory,'latency_seconds_sum':latency_sum,'prometheus_head_series':self_series,'prometheus_flags':retention,'response_samples_saved':True,'metric_label_contract_verified':True,'scope':'real local application/process/Prometheus metrics, not Kubernetes infrastructure'}
+(ROOT/'verification.json').write_text(dumps(record,indent=2)+'\n')
+print(dumps(record,indent=2))

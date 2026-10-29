@@ -1,0 +1,43 @@
+quay.io/prometheus/prometheus@sha256:fa3302279710be2f21a8301ec17a8b4f2301fd829bd113839b3b6b02b6f191a2: Pulling from prometheus/prometheus
+edf6c6b1320f: Pulling fs layer
+3a02e730f394: Pulling fs layer
+7393e25cd8f3: Pulling fs layer
+df867ec13c7a: Pulling fs layer
+67b02532b81c: Pulling fs layer
+e3f841be4001: Pulling fs layer
+ab279a31ee5b: Pulling fs layer
+b75b08def1f5: Pulling fs layer
+8a9a555f5a5e: Pulling fs layer
+df867ec13c7a: Waiting
+67b02532b81c: Waiting
+e3f841be4001: Waiting
+ab279a31ee5b: Waiting
+b75b08def1f5: Waiting
+8a9a555f5a5e: Waiting
+edf6c6b1320f: Verifying Checksum
+edf6c6b1320f: Download complete
+edf6c6b1320f: Pull complete
+3a02e730f394: Download complete
+3a02e730f394: Pull complete
+67b02532b81c: Download complete
+e3f841be4001: Verifying Checksum
+e3f841be4001: Download complete
+ab279a31ee5b: Verifying Checksum
+ab279a31ee5b: Download complete
+b75b08def1f5: Verifying Checksum
+b75b08def1f5: Download complete
+8a9a555f5a5e: Verifying Checksum
+8a9a555f5a5e: Download complete
+7393e25cd8f3: Verifying Checksum
+7393e25cd8f3: Download complete
+7393e25cd8f3: Pull complete
+df867ec13c7a: Download complete
+df867ec13c7a: Pull complete
+67b02532b81c: Pull complete
+e3f841be4001: Pull complete
+ab279a31ee5b: Pull complete
+b75b08def1f5: Pull complete
+8a9a555f5a5e: Pull complete
+Digest: sha256:fa3302279710be2f21a8301ec17a8b4f2301fd829bd113839b3b6b02b6f191a2
+Status: Downloaded newer image for quay.io/prometheus/prometheus@sha256:fa3302279710be2f21a8301ec17a8b4f2301fd829bd113839b3b6b02b6f191a2
+quay.io/prometheus/prometheus:v3.15.1@sha256:fa3302279710be2f21a8301ec17a8b4f2301fd829bd113839b3b6b02b6f191a2

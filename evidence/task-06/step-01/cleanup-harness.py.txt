@@ -1,0 +1,77 @@
+"""Record exact local monitoring boundaries, then clean only owned temporary artifacts."""
+
+from datetime import UTC, datetime
+from hashlib import sha256
+from json import dumps, loads
+from pathlib import Path
+from re import fullmatch
+from subprocess import run
+
+from bootstrap import COMPOSE, Jenkins, admin_password, command
+from defusedxml.ElementTree import fromstring
+
+root=Path('reports/step61-live')
+compose=['docker','compose','-f','ops/monitoring/compose.yaml']
+job_name=Path('reports/step61-gate-success-job.txt').read_text().strip()
+assert fullmatch(r'finsecure-ci-metrics-review-success-[0-9]{14}',job_name)
+ci=loads((Path('reports')/job_name/'verification.json').read_text())
+expected_image=ci['image_scan']['image_id']
+containers={}
+identifiers={}
+for service,uid,port,memory in [('application','10001','8000',256*1024**2),('prometheus','65534','9090',512*1024**2)]:
+    identifier=run([*compose,'ps','--quiet',service],capture_output=True,text=True,check=True,timeout=15).stdout.strip()
+    assert fullmatch(r'[a-f0-9]{64}',identifier)
+    identifiers[service]=identifier
+    info=loads(run(['docker','inspect',identifier],capture_output=True,text=True,check=True,timeout=15).stdout)[0]
+    host=info['HostConfig']
+    assert info['State']['Running'] and not info['State']['OOMKilled']
+    assert info['Config']['User']==uid+':'+uid
+    assert host['ReadonlyRootfs'] and host['CapDrop']==['ALL'] and not host['CapAdd'] and not host['Privileged']
+    assert host['SecurityOpt']==['no-new-privileges:true']
+    assert host['Memory']==host['MemorySwap']==memory and host['NanoCpus']==500000000
+    assert host['PortBindings']=={port+'/tcp':[{'HostIp':'127.0.0.1','HostPort':port}]}
+    assert set(info['NetworkSettings']['Networks'])=={'finsecure-monitoring_default'}
+    actual_uid=run(['docker','exec',identifier,'id','-u'],capture_output=True,text=True,check=True,timeout=15).stdout.strip()
+    assert actual_uid==uid
+    if service=='application':
+        assert info['Image']==expected_image
+        assert info['Config']['Labels']['org.opencontainers.image.revision']==ci['candidate_revision']
+        assert info['Mounts']==[] and 'size=16m' in host['Tmpfs']['/tmp']
+    else:
+        mounts={item['Destination']:item for item in info['Mounts']}
+        assert set(mounts)=={'/etc/prometheus/prometheus.yml','/prometheus'}
+        cfg=mounts['/etc/prometheus/prometheus.yml']
+        assert cfg['Type']=='bind' and not cfg['RW'] and cfg['Source']==str(Path('ops/monitoring/prometheus/prometheus.yaml').resolve())
+        data=mounts['/prometheus']
+        assert data['Type']=='volume' and data['RW'] and data['Name']=='finsecure-monitoring_prometheus-data'
+        assert info['Config']['Image']=='quay.io/prometheus/prometheus:v3.15.1@sha256:fa3302279710be2f21a8301ec17a8b4f2301fd829bd113839b3b6b02b6f191a2'
+    containers[service]={'image_id':info['Image'],'actual_uid':actual_uid,'read_only_root':True,'all_capabilities_dropped':True,'no_new_privileges':True,'memory_limit_bytes':memory,'cpu_limit':0.5,'loopback_port':int(port),'separate_monitoring_network':True,'oom_killed':False,'mounts':[{'type':item['Type'],'destination':item['Destination'],'writable':item['RW']} for item in info['Mounts']]}
+(root/'runtime.json').write_text(dumps({'verified_at_utc':datetime.now(UTC).isoformat(),'application_source_revision':ci['candidate_revision'],'containers':containers},indent=2)+'\n')
+result=run([*compose,'stop','--timeout','30'],capture_output=True,text=True,check=True,timeout=75)
+(root/'stop.txt').write_text(result.stdout+result.stderr)
+for service,identifier in identifiers.items():
+    state=loads(run(['docker','inspect',identifier],capture_output=True,text=True,check=True,timeout=15).stdout)[0]['State']
+    assert not state['Running'] and state['ExitCode']==0 and not state['OOMKilled']
+volume=loads(run(['docker','volume','inspect','finsecure-monitoring_prometheus-data'],capture_output=True,text=True,check=True,timeout=15).stdout)[0]
+assert volume['Labels']['com.docker.compose.project']=='finsecure-monitoring'
+client=Jenkins(admin_password())
+job='/job/'+job_name+'/'
+assert fromstring(client.request(job+'config.xml')).findtext('disabled')=='true'
+assert len(loads(client.request(job+'api/json'))['builds'])==1
+assert not loads(client.request('/queue/api/json'))['items']
+assert loads(client.request('/computer/finsecure-python/api/json?tree=idle'))['idle']
+info=loads(Path('reports/step61-gate-candidate.json').read_text())
+archive='/home/jenkins/agent/workspace/'+job_name+'/images/finsecure-pay.tar.gz'
+paths={archive:ci['image_scan']['archive_sha256'],info['agent_bundle_path']:info['bundle_sha256']}
+code='from pathlib import Path; from hashlib import sha256\n'
+for path,digest in paths.items():
+    code+='p=Path('+repr(path)+'); assert p.is_file() and not p.is_symlink(); assert sha256(p.read_bytes()).hexdigest()=='+repr(digest)+'; p.unlink(); assert not p.exists()\n'
+agent=command([*COMPOSE,'ps','--quiet','agent'])
+run(['docker','exec','-i',agent,'python','-'],input=code,capture_output=True,text=True,check=True,timeout=30)
+before=loads(Path('reports/step61-main-before.json').read_text())
+assert loads(client.request('/job/finsecure-ci/api/json'))['lastBuild']['number']==before['build']
+assert sha256(client.request(f"/job/finsecure-ci/{before['build']}/artifact/reports/image.sha256")).hexdigest()==before['image_manifest_sha256']
+assert sha256(client.request(job+'1/artifact/images/finsecure-pay.tar.gz')).hexdigest()==ci['image_scan']['archive_sha256']
+record={'verified_at_utc':datetime.now(UTC).isoformat(),'monitoring_services_stopped_exit_zero':True,'monitoring_containers_and_named_data_volume_preserved':True,'owned_candidate_job_disabled':True,'candidate_builds_retained':1,'agent_workspace_archive_and_bundle_removed_after_hash_checks':True,'candidate_archived_image_still_downloadable':True,'jenkins_main_build_unchanged':before['build'],'jenkins_main_image_manifest_unchanged':True,'jenkins_services_not_stopped_or_reconfigured':True,'jenkins_volumes_and_buildkit_cache_preserved':True,'host_downloads_and_local_images_retained':True,'registry_publication_or_cloud_deployment':False}
+(root/'cleanup.json').write_text(dumps(record,indent=2)+'\n')
+print(dumps(record,indent=2))

@@ -1,0 +1,15 @@
+{
+  "verified_at_utc": "2026-10-28T15:58:25.315477+00:00",
+  "monitoring_services_stopped_exit_zero": true,
+  "monitoring_containers_and_named_data_volume_preserved": true,
+  "owned_candidate_job_disabled": true,
+  "candidate_builds_retained": 1,
+  "agent_workspace_archive_and_bundle_removed_after_hash_checks": true,
+  "candidate_archived_image_still_downloadable": true,
+  "jenkins_main_build_unchanged": 16,
+  "jenkins_main_image_manifest_unchanged": true,
+  "jenkins_services_not_stopped_or_reconfigured": true,
+  "jenkins_volumes_and_buildkit_cache_preserved": true,
+  "host_downloads_and_local_images_retained": true,
+  "registry_publication_or_cloud_deployment": false
+}

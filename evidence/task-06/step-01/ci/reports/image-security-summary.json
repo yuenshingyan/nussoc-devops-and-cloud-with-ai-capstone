@@ -1,0 +1,67 @@
+{
+  "started_at_utc": "2026-10-28T15:47:31.980422+00:00",
+  "status": "passed",
+  "source_revision": "2328b9c58274f3a1b988445a513ef7fa1844f58c",
+  "local_tag": "finsecure-pay-ci:jenkins-finsecure-ci-metrics-review-success-20261028154656-1",
+  "database_repository": "ghcr.io/aquasecurity/trivy-db:2",
+  "operation_budget_seconds": 300,
+  "max_database_age_seconds": 86400,
+  "phase": "report",
+  "trivy_version": "0.76.1",
+  "image_id": "sha256:f11d1f52e2a8eb3d45d879d5332874249d4f33e40a8af10f8e073a1fd003d50a",
+  "platform": "linux/arm64",
+  "archive_sha256": "0c3c2f198e05063df39279dff980b0aedf351c7b6a55bccb97908fa806dc6562",
+  "lock_sha256": "efcb56c34386a1334d1079072997d3fc8fcccb353be46cdcdc97542c6290ea3d",
+  "trivy_sha256": "b422130ea54e53e142e65c838662e48919ce9c3f23f17d80066b43e70550cb85",
+  "database_exit_code": 0,
+  "database_age_seconds": 10022.738332,
+  "scan_exit_code": 0,
+  "database_age_at_finish_seconds": 10024.485105,
+  "os": {
+    "Family": "alpine",
+    "Name": "3.24.3"
+  },
+  "end_of_life": false,
+  "packages_by_type": {
+    "alpine": 30,
+    "python-pkg": 16
+  },
+  "runtime_packages": {
+    "annotated-doc": "0.0.5",
+    "annotated-types": "0.8.0",
+    "anyio": "4.15.1",
+    "click": "8.5.0",
+    "fastapi": "0.156.8",
+    "finsecure-pay": "0.2.0",
+    "h11": "0.16.0",
+    "idna": "3.20",
+    "opentelemetry-api": "1.45.1",
+    "prometheus-client": "0.26.0",
+    "pydantic": "2.14.1",
+    "pydantic-core": "2.50.1",
+    "starlette": "1.9.0",
+    "typing-inspection": "0.4.4",
+    "typing-extensions": "4.16.0",
+    "uvicorn": "0.54.0"
+  },
+  "severities": {
+    "UNKNOWN": 0,
+    "LOW": 0,
+    "MEDIUM": 0,
+    "HIGH": 0,
+    "CRITICAL": 0
+  },
+  "blocking_findings": 0,
+  "temporary_cache_removed": true,
+  "finished_at_utc": "2026-10-28T15:48:15.155234+00:00",
+  "elapsed_seconds": 43.176912478000304,
+  "report_sha256": {
+    "image-security-tools.txt": "84e54b2d02a5de1ad8dff546f152fb3aa252379d25a3a8d0f982d6d3a1fe4cba",
+    "image-security-export.txt": "82885cb06c0fd2e1f0d3a4e8586d96bbabcd518c9583ae4c916fa0933029fbd2",
+    "image-runtime-requirements.txt": "9224d43537fd4abb4bf349d2a326e5b449fe1c4349a6b401808c2834b2cf25e3",
+    "trivy-db.json": "a63969b99af20cde63b32f2e44743a30a958f9dee9fe02ab5d8b79abb2159d02",
+    "trivy-db.txt": "b80141d82692d2eafa22439e4e97c849ea1ec3025e98c5394de53fd4f7daac08",
+    "trivy.json": "81dcbdfd31764e68ff2b41856d9a8806b88b28ee9076c1108cc6e94b021fe642",
+    "trivy.txt": "9a550ab7bda696feada3fd96e2c4868928e6565c4d9147b1f26f1761fa9bff5b"
+  }
+}

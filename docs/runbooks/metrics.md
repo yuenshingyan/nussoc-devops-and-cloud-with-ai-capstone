@@ -2,8 +2,11 @@
 
 ## Status and approval boundary
 
-**Contract/dependency/local configuration approved. Implementation in progress;
-real collection/image-gate verification and review remain pending.**
+**Approved local subset implemented and verified; review/merge/publication and
+normal SCM verification remain pending.** Candidate `2328b9c` passed 538 Jenkins
+tests and the real image gate. Its exact exported image was used for actual local
+Prometheus collection. The demo services are now stopped, with data preserved.
+See [actual evidence](../../evidence/task-06/step-01-metrics.md).
 Branch: `task-06/step-01-metrics`, from reviewed/published `main` at `d76b713`.
 Step 5.4's local demonstration evidence is merged and published.
 
@@ -85,7 +88,7 @@ inner instrumentation call failed, and exceptions can occur after response-start
 Do not blindly sum 5xx and exception counts as if they were disjoint. Cancellation
 must propagate unchanged; record elapsed handling/request termination in `finally`
 but do not count cancellation as an application exception or manufacture a response.
-No change to existing error responses is authorized by this proposal.
+No change to existing error responses is authorized by this scope.
 
 Exclude **all methods on the exact `/metrics` path** from application request,
 duration and exception metrics so scraping does not inflate traffic/latency/error
@@ -137,10 +140,111 @@ not be claimed as verified; the actual process check targets Linux Docker.
   volumes or restarting unrelated Jenkins services.
 
 These operational values are implemented in `ops/monitoring/compose.yaml` and
-`ops/monitoring/prometheus/prometheus.yaml`. Their real runtime verification is
-recorded below when complete; configuration alone is not execution evidence.
+`ops/monitoring/prometheus/prometheus.yaml` and were verified in real containers.
+Prometheus reports the configured `256MB` flag as `256MiB`; its retention duration
+is reported as `1d`. Neither is a hard disk-usage cap.
 
-## Planned verification and evidence
+## Local operation
+
+Prerequisites: Docker/Compose, available loopback ports 8000/9090, and enough Docker
+memory for the existing Jenkins services plus the demo. Do not stop unrelated
+services or overwrite unowned volumes to resolve conflicts. This setup is local
+only; do not add public bindings or credentials.
+
+Use the **exact image archive that passed the candidate/application image gate**.
+Verify its SHA-256 against the archived manifest and its image ID/source label
+against the gate record before tagging it `finsecure-pay:metrics-local`. The retained
+candidate is an unpublished branch build, not the current public release. Public
+release 0.2.0 and its Kubernetes pin remain unchanged and do not have this endpoint.
+
+After setting `verified_archive` to that local archive path and `verified_image_id`
+to its verified SHA-256 image/config ID:
+
+```sh
+docker load --input "$verified_archive"
+docker tag "$verified_image_id" finsecure-pay:metrics-local
+docker compose -f ops/monitoring/compose.yaml config --quiet
+```
+
+The application has `pull_policy: never`, and this Compose file does not build it
+implicitly. A separate local rebuild is a different artifact and needs its own gate
+verification; do not claim the retained scan proves that image passed. Prometheus
+uses the pinned official image from the configuration. Never reuse a blocked archive.
+
+Validate the static configuration with the pinned image before first startup:
+
+```sh
+docker run --rm --network none --read-only --cap-drop ALL \
+  --security-opt no-new-privileges:true --user 65534:65534 \
+  --entrypoint /bin/promtool \
+  --volume "$PWD/ops/monitoring/prometheus/prometheus.yaml:/etc/prometheus/prometheus.yml:ro" \
+  quay.io/prometheus/prometheus:v3.15.1@sha256:fa3302279710be2f21a8301ec17a8b4f2301fd829bd113839b3b6b02b6f191a2 \
+  check config /etc/prometheus/prometheus.yml
+```
+
+After these checks pass, start only the monitoring project:
+
+```sh
+docker compose -f ops/monitoring/compose.yaml up --detach --no-build
+```
+
+The application exposes <http://127.0.0.1:8000/metrics>. Prometheus is at
+<http://127.0.0.1:9090/>; inspect targets and query, for example:
+
+```promql
+up{job="finsecure-pay"}
+sum by (outcome) (finsecure_validation_outcomes_total{job="finsecure-pay"})
+sum by (route) (rate(finsecure_http_requests_total{job="finsecure-pay"}[2m]))
+finsecure_process_resident_memory_bytes{job="finsecure-pay"}
+```
+
+Generate only bounded synthetic traffic; counters are not expected to increase
+without requests. Rate queries need multiple scrapes; empty/zero results before
+traffic are not evidence of failed collection. Stored process/app series may become
+stale after shutdown; they are not proof a stopped application is still available.
+
+Stop only this project, allowing up to 30 seconds for graceful shutdown:
+
+```sh
+docker compose -f ops/monitoring/compose.yaml stop --timeout 30
+```
+
+This preserves containers and `finsecure-monitoring_prometheus-data`. Do not use
+`down --volumes` or global prune. No backup or automatic recovery is promised.
+
+## Actual local verification
+
+- Official client [0.26.0](https://pypi.org/project/prometheus-client/0.26.0/) and
+  Prometheus [3.15.1](https://github.com/prometheus/prometheus/releases/tag/v3.15.1)
+  were selected. The [official installation documentation](https://prometheus.io/docs/prometheus/latest/installation/)
+  identifies Quay as a project image registry. Index/platform digest and runtime
+  version were checked; no independent signature-verification claim is made.
+- 538 host and candidate Jenkins tests passed. Application coverage was 194/194
+  lines and 37/38 branch outcomes, with no coverage threshold. Ruff/build/source
+  gates passed; all 15 runtime dependencies audited with no known advisories.
+- Candidate image gate passed with no known findings. All 33 artifacts verified.
+  The exact ARM64 archive was loaded for collection; no separately rebuilt image
+  was substituted. Prometheus server version/config/runtime were verified; the
+  application-specific Trivy gate is not a scan of the entire monitoring stack.
+- Actual 60-request sequence over about 61 seconds yielded exactly 20 health,
+  20 accepted, 10 rejected and 10 invalid outcomes, with 60 request and histogram
+  observations. Both scrape targets were up. CPU increased and resident memory
+  was positive; Prometheus self-series were observed.
+- Both services ran non-root, read-only, capability-dropped, on the separate
+  monitoring network with loopback ports and configured CPU/memory limits.
+- Both stopped with exit 0 and no OOM. Data volume/history retained. The only
+  observed Prometheus warning was its graceful-shutdown signal notice; no
+  application warning/error lines were observed. No warning was suppressed.
+- Candidate Jenkins job disabled after one retained build; its checksum-identified
+  workspace image and transfer bundle removed while idle. Jenkins main build #16
+  and its image manifest remained unchanged; Jenkins was not stopped/reconfigured.
+
+This is a local single-worker ARM64 verification, not a load test, latency SLO,
+AMD64 compatibility test, Grafana dashboard, alert, notification, centralized log
+pipeline or managed-cluster metric verification. Historical harnesses in evidence
+record that run, not permission to rerun disabled jobs or removed bundles.
+
+## Verification policy and evidence
 
 - Deterministic unit/API tests: accepted/rejected/invalid outcomes, multiple-rule
   rejection, health, 404/405 and arbitrary paths/methods, metrics exclusion, registry
@@ -164,4 +268,4 @@ recorded below when complete; configuration alone is not execution evidence.
   preserving named data; no Jenkins shutdown or image publishing.
 
 Full Step 6.1 remains incomplete until required managed-cluster pod/node metrics
-are implemented and actually scraped. This proposal covers its feasible local subset.
+are implemented and actually scraped. This approved scope covers its feasible local subset.
