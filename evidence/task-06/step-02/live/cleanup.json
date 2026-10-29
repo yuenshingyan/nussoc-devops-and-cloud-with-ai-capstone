@@ -1,0 +1,11 @@
+{
+  "verified_at_utc": "2026-10-29T11:45:53.581487+00:00",
+  "all_three_monitoring_services_stopped_exit_zero": true,
+  "no_oom_kills": true,
+  "prometheus_grafana_data_and_secret_volumes_retained": true,
+  "private_host_credential_retained_without_rotation": true,
+  "credential_helpers_removed": true,
+  "browser_logout_and_profile_cleanup_verified": true,
+  "no_jenkins_service_shutdown_or_reconfiguration": true,
+  "no_registry_publication_or_cloud_deployment": true
+}

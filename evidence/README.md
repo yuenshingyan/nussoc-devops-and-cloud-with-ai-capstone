@@ -16,10 +16,15 @@ and report retention on an isolated failure. Cloud delivery remains unverified.
 | 3 — Kubernetes and cloud | [task-03](task-03/) | Steps 3.1–3.2 merged; cloud execution deferred |
 | 4 — CI/CD | [task-04](task-04/) | Steps 4.1–4.2 merged; Step 4.3 local build/export merged and SCM-verified (245 tests/image smoke); Step 4.4 local SCM/test-gate merged and SCM-verified (260 tests); publishing/deployment pending |
 | 5 — DevSecOps | [task-05](task-05/) | Step 5.1 merged/SCM-verified; Step 5.2 merged/published and SCM-verified (410 tests, passing image gate, 33 verified artifacts) |
-| 6 — Observability | [task-06](task-06/) | Step 6.1 local subset merged/published and SCM-verified (build #17, 538 tests, 33 artifacts), with earlier real scrapes; Step 6.2 configuration checkpoint blocked on host secret ownership; live Grafana proof pending; managed metrics/later steps deferred |
+| 6 — Observability | [task-06](task-06/) | Step 6.1 local subset merged/published and SCM-verified (build #17, 538 tests, 33 artifacts), with earlier real scrapes; Step 6.2 local dashboard verified (578 host tests, real authenticated queries/screenshot), review/publication pending; managed metrics/later steps deferred |
 | 7 — Documentation and demonstration | [task-07](task-07/) | Pending |
 
 ## Recorded evidence
+
+- [Step 6.2 — Authenticated Grafana dashboard](task-06/step-02-dashboard.md): approved
+  secret-volume correction, 578 host tests, real five-panel queries and an inspected
+  browser screenshot after exactly 60 synthetic requests. Mount errors corrected and
+  rechecked; vendor/browser diagnostics retained. Services stopped, data/secrets preserved.
 
 - [Step 6.2 — Blocked dashboard preflight](task-06/step-02-preflight.md): 572 host tests
   and source/dependency gates passed, but the approved CHOWN-only host-secret helper

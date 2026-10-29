@@ -1,0 +1,39 @@
+{
+  "health": {
+    "status": 200,
+    "body": {
+      "status": "healthy"
+    }
+  },
+  "accepted": {
+    "status": 200,
+    "body": {
+      "valid": true,
+      "errors": []
+    }
+  },
+  "rejected": {
+    "status": 200,
+    "body": {
+      "valid": false,
+      "errors": [
+        "AMOUNT_NOT_POSITIVE"
+      ]
+    }
+  },
+  "invalid": {
+    "status": 422,
+    "body": {
+      "detail": [
+        {
+          "loc": [
+            "body",
+            "amount"
+          ],
+          "type": "string_type",
+          "msg": "Invalid request value. Check the API contract."
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,6 @@
+ Container finsecure-monitoring-grafana-1 Stopping 
+ Container finsecure-monitoring-application-1 Stopping 
+ Container finsecure-monitoring-prometheus-1 Stopping 
+ Container finsecure-monitoring-prometheus-1 Stopped 
+ Container finsecure-monitoring-application-1 Stopped 
+ Container finsecure-monitoring-grafana-1 Stopped 

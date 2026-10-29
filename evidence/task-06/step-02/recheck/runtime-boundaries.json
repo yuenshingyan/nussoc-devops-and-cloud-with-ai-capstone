@@ -1,0 +1,102 @@
+{
+  "verified_at_utc": "2026-10-29T11:52:57.056053+00:00",
+  "containers": {
+    "application": {
+      "image_id": "sha256:8f5bd152a3acc4af31baac013d262e8de3fbe60a53d15638f8908d6c1b430e29",
+      "uid": "10001",
+      "read_only_root": true,
+      "capabilities_dropped": true,
+      "no_new_privileges": true,
+      "cpu_limit": 0.5,
+      "memory_limit_bytes": 268435456,
+      "loopback_port": 8000,
+      "separate_network": true,
+      "oom_killed": false,
+      "mounts": []
+    },
+    "prometheus": {
+      "image_id": "sha256:345c03f8738a25e86baee35b1ee84cf1007036cbe75f51a2fa8965dd91374b9a",
+      "uid": "65534",
+      "read_only_root": true,
+      "capabilities_dropped": true,
+      "no_new_privileges": true,
+      "cpu_limit": 0.5,
+      "memory_limit_bytes": 536870912,
+      "loopback_port": 9090,
+      "separate_network": true,
+      "oom_killed": false,
+      "mounts": [
+        {
+          "type": "bind",
+          "destination": "/etc/prometheus/prometheus.yml",
+          "writable": false,
+          "volume_name": null
+        },
+        {
+          "type": "volume",
+          "destination": "/prometheus",
+          "writable": true,
+          "volume_name": "finsecure-monitoring_prometheus-data"
+        }
+      ]
+    },
+    "grafana": {
+      "image_id": "sha256:d2bd57647b75782cd681a6cdf42826a5e7a6f95d064aa6195bb9570e4b2bc2c5",
+      "uid": "472",
+      "read_only_root": true,
+      "capabilities_dropped": true,
+      "no_new_privileges": true,
+      "cpu_limit": 0.5,
+      "memory_limit_bytes": 536870912,
+      "loopback_port": 3000,
+      "separate_network": true,
+      "oom_killed": false,
+      "mounts": [
+        {
+          "type": "volume",
+          "destination": "/var/lib/grafana",
+          "writable": true,
+          "volume_name": "finsecure-monitoring_grafana-data"
+        },
+        {
+          "type": "volume",
+          "destination": "/run/secrets",
+          "writable": false,
+          "volume_name": "finsecure-monitoring-grafana-secrets"
+        },
+        {
+          "type": "bind",
+          "destination": "/etc/grafana/grafana.ini",
+          "writable": false,
+          "volume_name": null
+        },
+        {
+          "type": "bind",
+          "destination": "/etc/grafana/provisioning/datasources/finsecure.yaml",
+          "writable": false,
+          "volume_name": null
+        },
+        {
+          "type": "bind",
+          "destination": "/etc/grafana/provisioning/dashboards/finsecure.yaml",
+          "writable": false,
+          "volume_name": null
+        },
+        {
+          "type": "bind",
+          "destination": "/etc/grafana/dashboards",
+          "writable": false,
+          "volume_name": null
+        }
+      ]
+    }
+  },
+  "host_secret_mode": "0o400",
+  "host_secret_uid": 501,
+  "host_private_directory_mode": "0o700",
+  "secret_volume_purpose": "finsecure-pay-grafana-secrets",
+  "volume_directory_uid_gid_mode": "472:472:700",
+  "volume_file_uid_gid_mode_links": "472:472:400:1",
+  "host_volume_values_match": true,
+  "password_absent_from_container_config_and_grafana_process_environment": true
+}

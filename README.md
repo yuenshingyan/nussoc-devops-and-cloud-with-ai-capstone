@@ -76,10 +76,13 @@ The demo services are stopped with data preserved. Normal SCM build #17 passed
 distinguishes its archive from the earlier live-demo image. See the [runbook](docs/runbooks/metrics.md) and
 [actual evidence](evidence/task-06/step-01-metrics.md).
 
-Step 6.2 is in progress on its own branch. Provisioning/dashboard files are written
-and 572 host tests pass, but real secret-file ownership setup failed safely on Docker
-Desktop. Grafana is not running and no live dashboard proof exists. See the
-[checkpoint and secret-volume correction awaiting approval](docs/runbooks/dashboard.md).
+Step 6.2's authenticated local Grafana dashboard is implemented and verified on its
+review branch: 578 host tests passed, real five-panel queries and a browser screenshot
+were captured after 60 synthetic requests. The approved secret-volume correction
+preserved the existing password. Services are stopped with data/secrets retained.
+See the [setup and known warnings](docs/runbooks/dashboard.md) and
+[actual dashboard evidence](evidence/task-06/step-02-dashboard.md). Merge/publication
+and normal SCM verification remain pending.
 
 ## Quick start
 

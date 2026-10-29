@@ -1,0 +1,8 @@
+{
+  "authenticated_without_password_in_arguments_or_logs": true,
+  "all_five_panel_titles_visible": true,
+  "request_rate_memory_and_scrape_health_text_present": true,
+  "screenshot": "dashboard.png",
+  "browser_session_logged_out": true,
+  "isolated_browser_and_profile_removed": true
+}

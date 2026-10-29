@@ -1,0 +1,87 @@
+"""Actual authenticated Grafana query/render verification, with one bounded traffic run."""
+
+from base64 import b64encode
+from datetime import UTC, datetime
+from json import dumps, loads
+from math import isfinite
+from pathlib import Path
+from runpy import run_path
+from subprocess import run
+from time import monotonic, sleep, time
+
+from httpx2 import Client, HTTPError
+
+root=Path('reports/step62-live')
+root.mkdir(exist_ok=True)
+helpers=run_path('scripts/monitoring_credentials.py')
+helpers['verify_secret']()
+password=helpers['read_password']()
+protected=[password,b64encode(('admin:'+password).encode()).decode()]
+base='http://127.0.0.1:3000'
+expected=loads(Path('ops/monitoring/grafana/dashboards/finsecure-pay.json').read_text())
+
+with Client(timeout=5,trust_env=False,follow_redirects=False) as anonymous, Client(timeout=5,trust_env=False,follow_redirects=False,auth=('admin',password)) as client:
+    deadline=monotonic()+120
+    while monotonic()<deadline:
+        try:
+            health=client.get(base+'/api/health')
+            if health.status_code==200 and health.json()['database']=='ok': break
+        except HTTPError: pass
+        sleep(2)
+    else: raise TimeoutError('Grafana not ready within 120 seconds')
+    assert health.json()['version']=='13.3.0'
+    assert anonymous.get(base+'/api/health').status_code==200
+    statuses={path:anonymous.get(base+path).status_code for path in ['/api/dashboards/uid/finsecure-pay-local','/api/datasources']}
+    assert set(statuses.values())=={401}
+    page=anonymous.get(base+'/d/finsecure-pay-local/local-metrics')
+    assert page.status_code in (302,303) and '/login' in page.headers['location']
+    dashboard=client.get(base+'/api/dashboards/uid/finsecure-pay-local')
+    dashboard.raise_for_status()
+    document=dashboard.json()
+    assert document['meta']['provisioned'] is True
+    actual=document['dashboard']
+    assert actual['uid']==expected['uid'] and actual['editable'] is False
+    assert {p['id']:p['targets'][0]['expr'] for p in actual['panels']}=={p['id']:p['targets'][0]['expr'] for p in expected['panels']}
+    datasource=client.get(base+'/api/datasources/uid/finsecure-prometheus')
+    datasource.raise_for_status()
+    source=datasource.json()
+    assert source['url']=='http://prometheus:9090' and source['readOnly'] is True
+    response=client.get(base+'/api/datasources/uid/finsecure-prometheus/health')
+    response.raise_for_status()
+    assert response.json()['status']=='OK'
+    (root/'grafana-access.json').write_text(dumps({'version':health.json()['version'],'database':'ok','public_health_status':200,'unauthenticated_protected_api_statuses':statuses,'unauthenticated_dashboard_redirects_to_login':True,'dashboard_provisioned':True,'dashboard_editable':False,'datasource_read_only':True,'datasource_health':'OK'},indent=2)+'\n')
+    # This historical harness issues exactly 60 application requests, once, without retries.
+    run_path('reports/step62-verify-traffic.py')
+    values={}
+    responses={}
+    for panel in expected['panels']:
+        model={**panel['targets'][0], 'datasource':panel['datasource'], 'intervalMs':15000, 'maxDataPoints':1000, 'format':'time_series'}
+        now=int(time()*1000)
+        response=client.post(base+'/api/ds/query',json={'from':str(now-900000),'to':str(now),'queries':[model]})
+        response.raise_for_status()
+        body=response.json()
+        result=body['results']['A']
+        assert not result.get('error') and result.get('status',200)==200
+        numeric=[]
+        for frame in result['frames']:
+            for field,column in zip(frame['schema']['fields'],frame['data']['values'],strict=True):
+                if field['type']=='number': numeric.extend(value for value in column if value is not None and isfinite(value))
+        assert numeric, 'Panel returned no actual numeric data'
+        if panel['id'] in (1,2,4): assert numeric[-1]>0
+        if panel['id']==3: assert numeric[-1]==1
+        if panel['id']==5: assert all(value>=0 for value in numeric) and max(numeric)>0
+        values[panel['title']]={'numeric_values':len(numeric),'last_value':numeric[-1]}
+        responses[str(panel['id'])]=body
+    result=run(['node','reports/step62-browser.mjs'],input=password,capture_output=True,text=True,timeout=180)
+    assert not any(value in result.stdout+result.stderr for value in protected), 'Sensitive browser output; do not save'
+    (root/'browser-observer.txt').write_text(result.stdout+result.stderr)
+    assert result.returncode==0, 'Browser verification failed; preserve evidence, no traffic retry'
+    (root/'grafana-panel-queries.json').write_text(dumps(responses,indent=2)+'\n')
+    (root/'grafana-panel-values.json').write_text(dumps(values,indent=2)+'\n')
+    (root/'grafana-provisioned-dashboard.json').write_text(dumps(document,indent=2)+'\n')
+    for path in root.iterdir():
+        if path.is_file() and path.suffix!='.png':
+            assert not any(value.encode() in path.read_bytes() for value in protected), 'Credential in '+path.name
+    record={'verified_at_utc':datetime.now(UTC).isoformat(),'result':'passed','protected_api_access_verified':True,'provisioned_panel_queries_verified':5,'synthetic_requests_sent_once':60,'browser_screenshot_captured':True,'browser_logged_out_and_profile_removed':True,'new_dependencies_installed':False,'scope':'local Grafana with real application/process metrics; no managed cluster or alerts'}
+    (root/'grafana-verification.json').write_text(dumps(record,indent=2)+'\n')
+    print(dumps(record,indent=2))

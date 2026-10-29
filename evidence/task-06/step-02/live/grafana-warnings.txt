@@ -1,0 +1,48 @@
+logger=settings t=2026-10-29T11:33:39.699479298Z level=warn msg="Deprecation Notice: The [security]x_xss_protection setting is enabled, but it will be removed in a future major version. Support for it has been removed by browsers. Consider disabling it in the meantime and using [security]content_security_policy instead."
+logger=migrator t=2026-10-29T11:33:40.630357506Z level=warn msg="Skipping migration: Already executed, but not recorded in migration log" id="drop unique orgID index on alert_configuration if exists"
+logger=migrator t=2026-10-29T11:33:40.870511423Z level=warn msg="Skipping migration: Already executed, but not recorded in migration log" id="drop index UQE_dashboard_public_config_uid - v1"
+logger=migrator t=2026-10-29T11:33:40.872142048Z level=warn msg="Skipping migration: Already executed, but not recorded in migration log" id="drop index IDX_dashboard_public_config_org_id_dashboard_uid - v1"
+logger=migrator t=2026-10-29T11:33:40.922126423Z level=warn msg="Skipping migration: Already executed, but not recorded in migration log" id="drop my_row_id and add primary key to file table if my_row_id exists (auto-generated mysql column)"
+logger=migrator t=2026-10-29T11:33:40.93428259Z level=warn msg="Skipping migration: Already executed, but not recorded in migration log" id="drop my_row_id and add primary key to file_meta table if my_row_id exists (auto-generated mysql column)"
+logger=migrator t=2026-10-29T11:33:41.180411923Z level=warn msg="Skipping migration: Already executed, but not recorded in migration log" id="drop my_row_id and add primary key with columns snapshot_uid,resource_type,partition_number to table cloud_migration_snapshot_partition if my_row_id exists (auto-generated mysql column)"
+logger=accesscontrol.service t=2026-10-29T11:33:41.392077923Z level=info msg="Starting migration to remove deprecated permissions" migration=removeDeprecatedPermissions
+logger=accesscontrol.service t=2026-10-29T11:33:41.39217484Z level=info msg="Completed migration to remove deprecated permissions" migration=removeDeprecatedPermissions totalRemoved=0 duration=96.291µs
+logger=secret-migrator t=2026-10-29T11:33:44.554125633Z level=warn msg="Skipping migration: Already executed, but not recorded in migration log" id="drop my_row_id and add primary key with columns namespace,name,version to table secret_encrypted_value if my_row_id exists (auto-generated mysql column)"
+logger=resource-migrator t=2026-10-29T11:33:44.649039383Z level=warn msg="Skipping migration: Already executed, but not recorded in migration log" id="drop my_row_id and add primary key with columns group,resource to table resource_version if my_row_id exists (auto-generated mysql column)"
+logger=search-manifest-watcher t=2026-10-29T11:33:44.703721883Z level=warn msg="manifest watcher: source listed zero manifests" source=discovery
+logger=search-manifest-watcher t=2026-10-29T11:33:44.703731425Z level=warn msg="manifest watcher poll cycle: zero manifests, keeping previous set"
+logger=provisioning.plugins t=2026-10-29T11:33:47.060856051Z level=error msg="Failed to read plugin provisioning files from directory" path=/etc/grafana/provisioning/plugins error="open /etc/grafana/provisioning/plugins: no such file or directory"
+logger=provisioning.alerting t=2026-10-29T11:33:47.061056093Z level=error msg="can't read alerting provisioning files from directory" path=/etc/grafana/provisioning/alerting error="open /etc/grafana/provisioning/alerting: no such file or directory"
+logger=search-manifest-watcher t=2026-10-29T11:33:50.209089386Z level=warn msg="manifest watcher: source listed zero manifests" source=discovery
+logger=search-manifest-watcher t=2026-10-29T11:33:50.209256344Z level=warn msg="manifest watcher poll cycle: zero manifests, keeping previous set"
+logger=search-manifest-watcher t=2026-10-29T11:34:06.080478546Z level=warn msg="manifest watcher: source listed zero manifests" source=discovery
+logger=search-manifest-watcher t=2026-10-29T11:34:06.080900754Z level=warn msg="manifest watcher poll cycle: zero manifests, keeping previous set"
+logger=search-manifest-watcher t=2026-10-29T11:34:31.327868544Z level=warn msg="manifest watcher: source listed zero manifests" source=discovery
+logger=search-manifest-watcher t=2026-10-29T11:34:31.32799896Z level=warn msg="manifest watcher poll cycle: zero manifests, keeping previous set"
+logger=search-manifest-watcher t=2026-10-29T11:35:30.402934126Z level=warn msg="manifest watcher: source listed zero manifests" source=discovery
+logger=search-manifest-watcher t=2026-10-29T11:35:30.403552376Z level=warn msg="manifest watcher poll cycle: zero manifests, keeping previous set"
+logger=search-manifest-watcher t=2026-10-29T11:36:13.889057466Z level=warn msg="manifest watcher: source listed zero manifests" source=discovery
+logger=search-manifest-watcher t=2026-10-29T11:36:13.889535508Z level=warn msg="manifest watcher poll cycle: zero manifests, keeping previous set"
+logger=search-manifest-watcher t=2026-10-29T11:37:04.827873337Z level=warn msg="manifest watcher: source listed zero manifests" source=discovery
+logger=search-manifest-watcher t=2026-10-29T11:37:04.828238837Z level=warn msg="manifest watcher poll cycle: zero manifests, keeping previous set"
+logger=search-manifest-watcher t=2026-10-29T11:37:47.857004676Z level=warn msg="manifest watcher: source listed zero manifests" source=discovery
+logger=search-manifest-watcher t=2026-10-29T11:37:47.857486635Z level=warn msg="manifest watcher poll cycle: zero manifests, keeping previous set"
+logger=search-manifest-watcher t=2026-10-29T11:38:30.747938752Z level=warn msg="manifest watcher: source listed zero manifests" source=discovery
+logger=search-manifest-watcher t=2026-10-29T11:38:30.748360793Z level=warn msg="manifest watcher poll cycle: zero manifests, keeping previous set"
+logger=search-manifest-watcher t=2026-10-29T11:39:25.492976972Z level=warn msg="manifest watcher: source listed zero manifests" source=discovery
+logger=search-manifest-watcher t=2026-10-29T11:39:25.494593472Z level=warn msg="manifest watcher poll cycle: zero manifests, keeping previous set"
+logger=search-manifest-watcher t=2026-10-29T11:40:24.62956568Z level=warn msg="manifest watcher: source listed zero manifests" source=discovery
+logger=search-manifest-watcher t=2026-10-29T11:40:24.63000318Z level=warn msg="manifest watcher poll cycle: zero manifests, keeping previous set"
+logger=search-manifest-watcher t=2026-10-29T11:41:17.315940759Z level=warn msg="manifest watcher: source listed zero manifests" source=discovery
+logger=search-manifest-watcher t=2026-10-29T11:41:17.316474176Z level=warn msg="manifest watcher poll cycle: zero manifests, keeping previous set"
+logger=search-manifest-watcher t=2026-10-29T11:42:03.572823836Z level=warn msg="manifest watcher: source listed zero manifests" source=discovery
+logger=search-manifest-watcher t=2026-10-29T11:42:03.573096795Z level=warn msg="manifest watcher poll cycle: zero manifests, keeping previous set"
+logger=search-manifest-watcher t=2026-10-29T11:43:00.781525585Z level=warn msg="manifest watcher: source listed zero manifests" source=discovery
+logger=search-manifest-watcher t=2026-10-29T11:43:00.783135543Z level=warn msg="manifest watcher poll cycle: zero manifests, keeping previous set"
+logger=search-manifest-watcher t=2026-10-29T11:43:58.387273959Z level=warn msg="manifest watcher: source listed zero manifests" source=discovery
+logger=search-manifest-watcher t=2026-10-29T11:43:58.387639542Z level=warn msg="manifest watcher poll cycle: zero manifests, keeping previous set"
+logger=search-manifest-watcher t=2026-10-29T11:44:53.546858512Z level=warn msg="manifest watcher: source listed zero manifests" source=discovery
+logger=search-manifest-watcher t=2026-10-29T11:44:53.547361179Z level=warn msg="manifest watcher poll cycle: zero manifests, keeping previous set"
+logger=search-manifest-watcher t=2026-10-29T11:45:38.502238922Z level=warn msg="manifest watcher: source listed zero manifests" source=discovery
+logger=search-manifest-watcher t=2026-10-29T11:45:38.502599797Z level=warn msg="manifest watcher poll cycle: zero manifests, keeping previous set"
+t=2026-10-29T11:45:53.073768346Z level=error caller=logger.go:242 time=2026-10-29T11:45:53.073749137Z msg="job cleanup controller failed" error="context canceled"

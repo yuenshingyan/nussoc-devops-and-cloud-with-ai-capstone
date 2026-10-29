@@ -1,0 +1,8 @@
+{
+  "jenkins_main_build_at_completion": 18,
+  "monitoring_stopped": true,
+  "checked_implementation_revision": "7858049",
+  "evidence_checked_against_current_credentials": true,
+  "docs_links_checked": true,
+  "application_image_not_rebuilt_or_published": true
+}

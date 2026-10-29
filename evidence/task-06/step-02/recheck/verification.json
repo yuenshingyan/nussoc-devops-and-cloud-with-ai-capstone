@@ -1,0 +1,9 @@
+{
+  "corrected_mount_startup": "passed",
+  "same_dashboard_queries_provisioned": true,
+  "datasource_health": "OK",
+  "unauthenticated_dashboard_api_status": 401,
+  "additional_application_traffic": 0,
+  "existing_secret_value_reused": true,
+  "screenshot_remains_from_first_run": true
+}

@@ -1,0 +1,556 @@
+{
+  "1": {
+    "results": {
+      "A": {
+        "status": 200,
+        "frames": [
+          {
+            "schema": {
+              "refId": "A",
+              "meta": {
+                "type": "numeric-multi",
+                "typeVersion": [
+                  0,
+                  1
+                ],
+                "custom": {
+                  "calculatedMinStep": 15000,
+                  "resultType": "vector"
+                },
+                "executedQueryString": "Expr: sum(rate(finsecure_http_requests_total{job=\"finsecure-pay\"}[2m]))\nStep: 15s"
+              },
+              "fields": [
+                {
+                  "name": "Time",
+                  "type": "time",
+                  "typeInfo": {
+                    "frame": "time.Time"
+                  },
+                  "config": {
+                    "interval": 15000
+                  }
+                },
+                {
+                  "name": "Value",
+                  "type": "number",
+                  "typeInfo": {
+                    "frame": "float64"
+                  },
+                  "labels": {},
+                  "config": {
+                    "displayNameFromDS": "sum(rate(finsecure_http_requests_total{job=\"finsecure-pay\"}[2m]))"
+                  }
+                }
+              ]
+            },
+            "data": {
+              "values": [
+                [
+                  1793274036781
+                ],
+                [
+                  0.4578674585140447
+                ]
+              ]
+            }
+          }
+        ]
+      }
+    }
+  },
+  "2": {
+    "results": {
+      "A": {
+        "status": 200,
+        "frames": [
+          {
+            "schema": {
+              "refId": "A",
+              "meta": {
+                "type": "numeric-multi",
+                "typeVersion": [
+                  0,
+                  1
+                ],
+                "custom": {
+                  "calculatedMinStep": 15000,
+                  "resultType": "vector"
+                },
+                "executedQueryString": "Expr: sum(rate(finsecure_http_request_duration_seconds_sum{job=\"finsecure-pay\"}[2m])) / sum(rate(finsecure_http_request_duration_seconds_count{job=\"finsecure-pay\"}[2m]))\nStep: 15s"
+              },
+              "fields": [
+                {
+                  "name": "Time",
+                  "type": "time",
+                  "typeInfo": {
+                    "frame": "time.Time"
+                  },
+                  "config": {
+                    "interval": 15000
+                  }
+                },
+                {
+                  "name": "Value",
+                  "type": "number",
+                  "typeInfo": {
+                    "frame": "float64"
+                  },
+                  "labels": {},
+                  "config": {
+                    "displayNameFromDS": "sum(rate(finsecure_http_request_duration_seconds_sum{job=\"finsecure-pay\"}[2m])) / sum(rate(finsecure_http_request_duration_seconds_count{job=\"finsecure-pay\"}[2m]))"
+                  }
+                }
+              ]
+            },
+            "data": {
+              "values": [
+                [
+                  1793274036831
+                ],
+                [
+                  0.0029187601343299086
+                ]
+              ]
+            }
+          }
+        ]
+      }
+    }
+  },
+  "3": {
+    "results": {
+      "A": {
+        "status": 200,
+        "frames": [
+          {
+            "schema": {
+              "refId": "A",
+              "meta": {
+                "type": "numeric-multi",
+                "typeVersion": [
+                  0,
+                  1
+                ],
+                "custom": {
+                  "calculatedMinStep": 15000,
+                  "resultType": "vector"
+                },
+                "executedQueryString": "Expr: up{job=\"finsecure-pay\"}\nStep: 15s"
+              },
+              "fields": [
+                {
+                  "name": "Time",
+                  "type": "time",
+                  "typeInfo": {
+                    "frame": "time.Time"
+                  },
+                  "config": {
+                    "interval": 15000
+                  }
+                },
+                {
+                  "name": "up",
+                  "type": "number",
+                  "typeInfo": {
+                    "frame": "float64"
+                  },
+                  "labels": {
+                    "__name__": "up",
+                    "instance": "application:8000",
+                    "job": "finsecure-pay"
+                  },
+                  "config": {
+                    "displayNameFromDS": "up{instance=\"application:8000\", job=\"finsecure-pay\"}"
+                  }
+                }
+              ]
+            },
+            "data": {
+              "values": [
+                [
+                  1793274036859
+                ],
+                [
+                  1
+                ]
+              ]
+            }
+          }
+        ]
+      }
+    }
+  },
+  "4": {
+    "results": {
+      "A": {
+        "status": 200,
+        "frames": [
+          {
+            "schema": {
+              "refId": "A",
+              "meta": {
+                "type": "numeric-multi",
+                "typeVersion": [
+                  0,
+                  1
+                ],
+                "custom": {
+                  "calculatedMinStep": 15000,
+                  "resultType": "vector"
+                },
+                "executedQueryString": "Expr: finsecure_process_resident_memory_bytes{job=\"finsecure-pay\"} / 1024 / 1024\nStep: 15s"
+              },
+              "fields": [
+                {
+                  "name": "Time",
+                  "type": "time",
+                  "typeInfo": {
+                    "frame": "time.Time"
+                  },
+                  "config": {
+                    "interval": 15000
+                  }
+                },
+                {
+                  "name": "Value",
+                  "type": "number",
+                  "typeInfo": {
+                    "frame": "float64"
+                  },
+                  "labels": {
+                    "instance": "application:8000",
+                    "job": "finsecure-pay"
+                  },
+                  "config": {
+                    "displayNameFromDS": "{instance=\"application:8000\", job=\"finsecure-pay\"}"
+                  }
+                }
+              ]
+            },
+            "data": {
+              "values": [
+                [
+                  1793274036872
+                ],
+                [
+                  55.1484375
+                ]
+              ]
+            }
+          }
+        ]
+      }
+    }
+  },
+  "5": {
+    "results": {
+      "A": {
+        "status": 200,
+        "frames": [
+          {
+            "schema": {
+              "refId": "A",
+              "meta": {
+                "type": "timeseries-multi",
+                "typeVersion": [
+                  0,
+                  1
+                ],
+                "custom": {
+                  "calculatedMinStep": 15000,
+                  "resultType": "matrix"
+                },
+                "executedQueryString": "Expr: sum by (outcome) (rate(finsecure_validation_outcomes_total{job=\"finsecure-pay\"}[2m]))\nStep: 15s"
+              },
+              "fields": [
+                {
+                  "name": "Time",
+                  "type": "time",
+                  "typeInfo": {
+                    "frame": "time.Time"
+                  },
+                  "config": {
+                    "interval": 15000
+                  }
+                },
+                {
+                  "name": "Value",
+                  "type": "number",
+                  "typeInfo": {
+                    "frame": "float64"
+                  },
+                  "labels": {
+                    "outcome": "accepted"
+                  },
+                  "config": {
+                    "displayNameFromDS": "accepted"
+                  }
+                }
+              ]
+            },
+            "data": {
+              "values": [
+                [
+                  1793273655000,
+                  1793273670000,
+                  1793273685000,
+                  1793273700000,
+                  1793273715000,
+                  1793273730000,
+                  1793273745000,
+                  1793273760000,
+                  1793273775000,
+                  1793273790000,
+                  1793273805000,
+                  1793273820000,
+                  1793273835000,
+                  1793273850000,
+                  1793273865000,
+                  1793273880000,
+                  1793273895000,
+                  1793273910000,
+                  1793273925000,
+                  1793273940000,
+                  1793273955000,
+                  1793273970000,
+                  1793273985000,
+                  1793274000000,
+                  1793274015000,
+                  1793274030000
+                ],
+                [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0.027228613878359585,
+                  0.1633716832701575,
+                  0.1815173188826773
+                ]
+              ]
+            }
+          },
+          {
+            "schema": {
+              "refId": "A",
+              "meta": {
+                "type": "timeseries-multi",
+                "typeVersion": [
+                  0,
+                  1
+                ],
+                "custom": {
+                  "resultType": "matrix"
+                }
+              },
+              "fields": [
+                {
+                  "name": "Time",
+                  "type": "time",
+                  "typeInfo": {
+                    "frame": "time.Time"
+                  },
+                  "config": {
+                    "interval": 15000
+                  }
+                },
+                {
+                  "name": "Value",
+                  "type": "number",
+                  "typeInfo": {
+                    "frame": "float64"
+                  },
+                  "labels": {
+                    "outcome": "invalid"
+                  },
+                  "config": {
+                    "displayNameFromDS": "invalid"
+                  }
+                }
+              ]
+            },
+            "data": {
+              "values": [
+                [
+                  1793273655000,
+                  1793273670000,
+                  1793273685000,
+                  1793273700000,
+                  1793273715000,
+                  1793273730000,
+                  1793273745000,
+                  1793273760000,
+                  1793273775000,
+                  1793273790000,
+                  1793273805000,
+                  1793273820000,
+                  1793273835000,
+                  1793273850000,
+                  1793273865000,
+                  1793273880000,
+                  1793273895000,
+                  1793273910000,
+                  1793273925000,
+                  1793273940000,
+                  1793273955000,
+                  1793273970000,
+                  1793273985000,
+                  1793274000000,
+                  1793274015000,
+                  1793274030000
+                ],
+                [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0.027227597832401598
+                ]
+              ]
+            }
+          },
+          {
+            "schema": {
+              "refId": "A",
+              "meta": {
+                "type": "timeseries-multi",
+                "typeVersion": [
+                  0,
+                  1
+                ],
+                "custom": {
+                  "resultType": "matrix"
+                }
+              },
+              "fields": [
+                {
+                  "name": "Time",
+                  "type": "time",
+                  "typeInfo": {
+                    "frame": "time.Time"
+                  },
+                  "config": {
+                    "interval": 15000
+                  }
+                },
+                {
+                  "name": "Value",
+                  "type": "number",
+                  "typeInfo": {
+                    "frame": "float64"
+                  },
+                  "labels": {
+                    "outcome": "rejected"
+                  },
+                  "config": {
+                    "displayNameFromDS": "rejected"
+                  }
+                }
+              ]
+            },
+            "data": {
+              "values": [
+                [
+                  1793273655000,
+                  1793273670000,
+                  1793273685000,
+                  1793273700000,
+                  1793273715000,
+                  1793273730000,
+                  1793273745000,
+                  1793273760000,
+                  1793273775000,
+                  1793273790000,
+                  1793273805000,
+                  1793273820000,
+                  1793273835000,
+                  1793273850000,
+                  1793273865000,
+                  1793273880000,
+                  1793273895000,
+                  1793273910000,
+                  1793273925000,
+                  1793273940000,
+                  1793273955000,
+                  1793273970000,
+                  1793273985000,
+                  1793274000000,
+                  1793274015000,
+                  1793274030000
+                ],
+                [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0.09075865944133865
+                ]
+              ]
+            }
+          }
+        ]
+      }
+    }
+  }
+}

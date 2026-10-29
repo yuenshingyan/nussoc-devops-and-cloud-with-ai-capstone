@@ -1,0 +1,66 @@
+"""Record actual isolation and secret boundaries, then stop only the owned monitoring stack."""
+
+from base64 import b64encode
+from datetime import UTC, datetime
+from hashlib import sha256
+from json import dumps, loads
+from pathlib import Path
+from runpy import run_path
+from subprocess import run
+
+root=Path('reports/step62-recheck')
+compose=['docker','compose','-f','ops/monitoring/compose.yaml','-f','ops/monitoring/grafana.compose.yaml']
+h=run_path('scripts/monitoring_credentials.py')
+h['verify_secret']()
+password=h['read_password']()
+protected=[password.encode(),b64encode(('admin:'+password).encode())]
+provenance=loads(Path('reports/step62-application-provenance.json').read_text())
+records={}
+identifiers={}
+started_at={}
+for service,uid,port,memory in [('application','10001','8000',256*1024**2),('prometheus','65534','9090',512*1024**2),('grafana','472','3000',512*1024**2)]:
+    identifier=run([*compose,'ps','--quiet',service],capture_output=True,text=True,check=True,timeout=15).stdout.strip()
+    info=loads(run(['docker','inspect',identifier],capture_output=True,text=True,check=True,timeout=15).stdout)[0]
+    identifiers[service]=identifier
+    started_at[service]=info['State']['StartedAt']
+    host=info['HostConfig']
+    assert info['State']['Running'] and not info['State']['OOMKilled']
+    assert info['Config']['User']==uid+':'+uid
+    assert host['ReadonlyRootfs'] and host['CapDrop']==['ALL'] and not host['CapAdd'] and not host['Privileged']
+    assert host['SecurityOpt']==['no-new-privileges:true']
+    assert host['Memory']==host['MemorySwap']==memory and host['NanoCpus']==500000000
+    assert host['PortBindings']=={port+'/tcp':[{'HostIp':'127.0.0.1','HostPort':port}]}
+    assert set(info['NetworkSettings']['Networks'])=={'finsecure-monitoring_default'}
+    assert run(['docker','exec',identifier,'id','-u'],capture_output=True,text=True,check=True,timeout=15).stdout.strip()==uid
+    assert not any(value in dumps(info).encode() for value in protected)
+    if service=='application': assert info['Image']==provenance['image_id'] and not info['Mounts']
+    if service=='grafana':
+        assert info['Config']['Image']==h['GRAFANA_IMAGE']
+        mounts={mount['Destination']:mount for mount in info['Mounts']}
+        assert set(mounts)=={'/etc/grafana/grafana.ini','/etc/grafana/provisioning/datasources/finsecure.yaml','/etc/grafana/provisioning/dashboards/finsecure.yaml','/etc/grafana/dashboards','/var/lib/grafana','/run/secrets'}
+        assert all(not item['RW'] for dest,item in mounts.items() if dest!='/var/lib/grafana')
+        assert mounts['/run/secrets']['Name']==h['SECRET_VOLUME']
+        assert mounts['/var/lib/grafana']['Name']==h['DATA_VOLUME'] and mounts['/var/lib/grafana']['RW']
+        environment=run(['docker','exec',identifier,'/bin/cat','/proc/1/environ'],capture_output=True,check=True,timeout=15).stdout
+        assert not any(value in environment for value in protected)
+    records[service]={'image_id':info['Image'],'uid':uid,'read_only_root':True,'capabilities_dropped':True,'no_new_privileges':True,'cpu_limit':0.5,'memory_limit_bytes':memory,'loopback_port':int(port),'separate_network':True,'oom_killed':False,'mounts':[{'type':item['Type'],'destination':item['Destination'],'writable':item['RW'],'volume_name':item.get('Name')} for item in info['Mounts']]}
+secret_info=h['inspect_volume'](h['SECRET_VOLUME'])
+assert secret_info['Driver']=='local' and secret_info['Scope']=='local' and not secret_info.get('Options')
+s=h['secret_path']().lstat()
+record={'verified_at_utc':datetime.now(UTC).isoformat(),'containers':records,'host_secret_mode':oct(s.st_mode & 0o777),'host_secret_uid':s.st_uid,'host_private_directory_mode':oct(h['secret_path']().parent.stat().st_mode & 0o777),'secret_volume_purpose':secret_info['Labels']['finsecure.purpose'],'volume_directory_uid_gid_mode':'472:472:700','volume_file_uid_gid_mode_links':'472:472:400:1','host_volume_values_match':True,'password_absent_from_container_config_and_grafana_process_environment':True}
+(root/'runtime-boundaries.json').write_text(dumps(record,indent=2)+'\n')
+result=run([*compose,'stop','--timeout','30'],capture_output=True,text=True,check=True,timeout=105)
+(root/'stop.txt').write_text(result.stdout+result.stderr)
+for service,identifier in identifiers.items():
+    state=loads(run(['docker','inspect',identifier],capture_output=True,text=True,check=True,timeout=15).stdout)[0]['State']
+    assert not state['Running'] and state['ExitCode']==0 and not state['OOMKilled']
+    logs=run(['docker','logs','--since',started_at[service],identifier],capture_output=True,check=True,timeout=15)
+    content=logs.stdout+logs.stderr
+    assert not any(value in content for value in protected)
+    lines=[line for line in content.decode().splitlines() if any(word in line.lower() for word in ['level=warn','level=error','warning','deprecated'])]
+    (root/(service+'-warnings.txt')).write_text('\n'.join(lines)+'\n')
+for volume in ['finsecure-monitoring_prometheus-data',h['DATA_VOLUME'],h['SECRET_VOLUME']]:
+    assert h['inspect_volume'](volume) is not None
+assert not run(['docker','ps','--all','--quiet','--filter','label=finsecure.purpose=grafana-credential'],capture_output=True,text=True,check=True).stdout.strip()
+(root/'cleanup.json').write_text(dumps({'verified_at_utc':datetime.now(UTC).isoformat(),'all_three_monitoring_services_stopped_exit_zero':True,'no_oom_kills':True,'prometheus_grafana_data_and_secret_volumes_retained':True,'private_host_credential_retained_without_rotation':True,'credential_helpers_removed':True,'browser_logout_and_profile_cleanup_verified':loads(Path('reports/step62-live/browser-verification.json').read_text())['isolated_browser_and_profile_removed'],'no_jenkins_service_shutdown_or_reconfiguration':True,'no_registry_publication_or_cloud_deployment':True},indent=2)+'\n')
+print('Runtime/secret boundaries verified; three services stopped cleanly; data and secrets retained')

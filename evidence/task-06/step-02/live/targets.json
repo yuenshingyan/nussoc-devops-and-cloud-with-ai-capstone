@@ -1,0 +1,54 @@
+[
+  {
+    "discoveredLabels": {
+      "__address__": "application:8000",
+      "__always_scrape_classic_histograms__": "false",
+      "__convert_classic_histograms_to_nhcb__": "false",
+      "__metrics_path__": "/metrics",
+      "__scheme__": "http",
+      "__scrape_interval__": "15s",
+      "__scrape_native_histograms__": "false",
+      "__scrape_timeout__": "5s",
+      "job": "finsecure-pay"
+    },
+    "labels": {
+      "instance": "application:8000",
+      "job": "finsecure-pay"
+    },
+    "scrapePool": "finsecure-pay",
+    "scrapeUrl": "http://application:8000/metrics",
+    "globalUrl": "http://application:8000/metrics",
+    "lastError": "",
+    "lastScrape": "2026-10-29T11:40:35.641676212Z",
+    "lastScrapeDuration": 0.038313458,
+    "health": "up",
+    "scrapeInterval": "15s",
+    "scrapeTimeout": "5s"
+  },
+  {
+    "discoveredLabels": {
+      "__address__": "localhost:9090",
+      "__always_scrape_classic_histograms__": "false",
+      "__convert_classic_histograms_to_nhcb__": "false",
+      "__metrics_path__": "/metrics",
+      "__scheme__": "http",
+      "__scrape_interval__": "15s",
+      "__scrape_native_histograms__": "false",
+      "__scrape_timeout__": "5s",
+      "job": "prometheus"
+    },
+    "labels": {
+      "instance": "localhost:9090",
+      "job": "prometheus"
+    },
+    "scrapePool": "prometheus",
+    "scrapeUrl": "http://localhost:9090/metrics",
+    "globalUrl": "http://8a3e7d4caee9:9090/metrics",
+    "lastError": "",
+    "lastScrape": "2026-10-29T11:40:35.870415337Z",
+    "lastScrapeDuration": 0.011584584,
+    "health": "up",
+    "scrapeInterval": "15s",
+    "scrapeTimeout": "5s"
+  }
+]

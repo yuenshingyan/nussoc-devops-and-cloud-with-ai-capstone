@@ -1,0 +1,2 @@
+time=2026-10-28T15:58:23.333Z level=WARN source=main.go:1280 msg="Received an OS signal, exiting gracefully..." signal=terminated
+time=2026-10-29T11:45:52.579Z level=WARN source=main.go:1280 msg="Received an OS signal, exiting gracefully..." signal=terminated

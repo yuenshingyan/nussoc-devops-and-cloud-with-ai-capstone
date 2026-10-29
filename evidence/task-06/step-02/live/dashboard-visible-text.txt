@@ -1,0 +1,22 @@
+Last 15 minutes
+UTC
+Refresh
+Request rate
+0.533 req/s
+Mean ASGI handling latency
+2.918 ms
+Application scrape health
+UP
+Application process memory
+55.15 MiB
+Validation outcomes / second
+Series color
+Name
+Last
+accepted
+0.182 req/s
+invalid
+0.027 req/s
+rejected
+0.091 req/s
+Powered by

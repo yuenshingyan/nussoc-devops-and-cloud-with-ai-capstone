@@ -1,0 +1,72 @@
+# HELP finsecure_http_requests_total Finished or terminated HTTP ASGI invocations, excluding the exact metrics path.
+# TYPE finsecure_http_requests_total counter
+finsecure_http_requests_total{method="GET",route="/health",status_class="2xx"} 20.0
+finsecure_http_requests_total{method="POST",route="/validate",status_class="2xx"} 30.0
+finsecure_http_requests_total{method="POST",route="/validate",status_class="4xx"} 10.0
+# HELP finsecure_http_requests_created Finished or terminated HTTP ASGI invocations, excluding the exact metrics path.
+# TYPE finsecure_http_requests_created gauge
+finsecure_http_requests_created{method="GET",route="/health",status_class="2xx"} 1.7932739676718524e+09
+finsecure_http_requests_created{method="POST",route="/validate",status_class="2xx"} 1.7932739879400156e+09
+finsecure_http_requests_created{method="POST",route="/validate",status_class="4xx"} 1.793274018389107e+09
+# HELP finsecure_http_request_duration_seconds Elapsed ASGI handling time in seconds, not client-perceived delivery time.
+# TYPE finsecure_http_request_duration_seconds histogram
+finsecure_http_request_duration_seconds_bucket{le="0.005",method="GET",route="/health"} 19.0
+finsecure_http_request_duration_seconds_bucket{le="0.01",method="GET",route="/health"} 20.0
+finsecure_http_request_duration_seconds_bucket{le="0.025",method="GET",route="/health"} 20.0
+finsecure_http_request_duration_seconds_bucket{le="0.05",method="GET",route="/health"} 20.0
+finsecure_http_request_duration_seconds_bucket{le="0.1",method="GET",route="/health"} 20.0
+finsecure_http_request_duration_seconds_bucket{le="0.25",method="GET",route="/health"} 20.0
+finsecure_http_request_duration_seconds_bucket{le="0.5",method="GET",route="/health"} 20.0
+finsecure_http_request_duration_seconds_bucket{le="1.0",method="GET",route="/health"} 20.0
+finsecure_http_request_duration_seconds_bucket{le="2.5",method="GET",route="/health"} 20.0
+finsecure_http_request_duration_seconds_bucket{le="5.0",method="GET",route="/health"} 20.0
+finsecure_http_request_duration_seconds_bucket{le="+Inf",method="GET",route="/health"} 20.0
+finsecure_http_request_duration_seconds_count{method="GET",route="/health"} 20.0
+finsecure_http_request_duration_seconds_sum{method="GET",route="/health"} 0.0323500399972545
+finsecure_http_request_duration_seconds_bucket{le="0.005",method="POST",route="/validate"} 35.0
+finsecure_http_request_duration_seconds_bucket{le="0.01",method="POST",route="/validate"} 39.0
+finsecure_http_request_duration_seconds_bucket{le="0.025",method="POST",route="/validate"} 40.0
+finsecure_http_request_duration_seconds_bucket{le="0.05",method="POST",route="/validate"} 40.0
+finsecure_http_request_duration_seconds_bucket{le="0.1",method="POST",route="/validate"} 40.0
+finsecure_http_request_duration_seconds_bucket{le="0.25",method="POST",route="/validate"} 40.0
+finsecure_http_request_duration_seconds_bucket{le="0.5",method="POST",route="/validate"} 40.0
+finsecure_http_request_duration_seconds_bucket{le="1.0",method="POST",route="/validate"} 40.0
+finsecure_http_request_duration_seconds_bucket{le="2.5",method="POST",route="/validate"} 40.0
+finsecure_http_request_duration_seconds_bucket{le="5.0",method="POST",route="/validate"} 40.0
+finsecure_http_request_duration_seconds_bucket{le="+Inf",method="POST",route="/validate"} 40.0
+finsecure_http_request_duration_seconds_count{method="POST",route="/validate"} 40.0
+finsecure_http_request_duration_seconds_sum{method="POST",route="/validate"} 0.13603554298606468
+# HELP finsecure_http_request_duration_seconds_created Elapsed ASGI handling time in seconds, not client-perceived delivery time.
+# TYPE finsecure_http_request_duration_seconds_created gauge
+finsecure_http_request_duration_seconds_created{method="GET",route="/health"} 1.7932739676719546e+09
+finsecure_http_request_duration_seconds_created{method="POST",route="/validate"} 1.7932739879401312e+09
+# HELP finsecure_http_exceptions_total Unhandled non-cancellation exceptions escaping instrumented ASGI handling.
+# TYPE finsecure_http_exceptions_total counter
+# HELP finsecure_validation_outcomes_total Business evaluations or schema-invalid POST validate requests, not deliveries.
+# TYPE finsecure_validation_outcomes_total counter
+finsecure_validation_outcomes_total{outcome="accepted"} 20.0
+finsecure_validation_outcomes_total{outcome="rejected"} 10.0
+finsecure_validation_outcomes_total{outcome="invalid"} 10.0
+# HELP finsecure_validation_outcomes_created Business evaluations or schema-invalid POST validate requests, not deliveries.
+# TYPE finsecure_validation_outcomes_created gauge
+finsecure_validation_outcomes_created{outcome="accepted"} 1.7932736220235443e+09
+finsecure_validation_outcomes_created{outcome="rejected"} 1.7932736220235586e+09
+finsecure_validation_outcomes_created{outcome="invalid"} 1.793273622023564e+09
+# HELP finsecure_process_virtual_memory_bytes Virtual memory size in bytes.
+# TYPE finsecure_process_virtual_memory_bytes gauge
+finsecure_process_virtual_memory_bytes 6.8968448e+07
+# HELP finsecure_process_resident_memory_bytes Resident memory size in bytes.
+# TYPE finsecure_process_resident_memory_bytes gauge
+finsecure_process_resident_memory_bytes 5.7827328e+07
+# HELP finsecure_process_start_time_seconds Start time of the process since unix epoch in seconds.
+# TYPE finsecure_process_start_time_seconds gauge
+finsecure_process_start_time_seconds 1.7932736187e+09
+# HELP finsecure_process_cpu_seconds_total Total user and system CPU time spent in seconds.
+# TYPE finsecure_process_cpu_seconds_total counter
+finsecure_process_cpu_seconds_total 3.97
+# HELP finsecure_process_open_fds Number of open file descriptors.
+# TYPE finsecure_process_open_fds gauge
+finsecure_process_open_fds 10.0
+# HELP finsecure_process_max_fds Maximum number of open file descriptors.
+# TYPE finsecure_process_max_fds gauge
+finsecure_process_max_fds 1.048576e+06

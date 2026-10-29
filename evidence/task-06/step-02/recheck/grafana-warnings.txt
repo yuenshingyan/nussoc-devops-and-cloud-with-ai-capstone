@@ -1,0 +1,14 @@
+logger=settings t=2026-10-29T11:51:01.57419546Z level=warn msg="Deprecation Notice: The [security]x_xss_protection setting is enabled, but it will be removed in a future major version. Support for it has been removed by browsers. Consider disabling it in the meantime and using [security]content_security_policy instead."
+logger=accesscontrol.service t=2026-10-29T11:51:01.677367002Z level=info msg="Starting migration to remove deprecated permissions" migration=removeDeprecatedPermissions
+logger=accesscontrol.service t=2026-10-29T11:51:01.67763021Z level=info msg="Completed migration to remove deprecated permissions" migration=removeDeprecatedPermissions totalRemoved=0 duration=263.125µs
+logger=search-manifest-watcher t=2026-10-29T11:51:04.151085461Z level=warn msg="manifest watcher: source listed zero manifests" source=discovery
+logger=search-manifest-watcher t=2026-10-29T11:51:04.151103211Z level=warn msg="manifest watcher poll cycle: zero manifests, keeping previous set"
+logger=search-manifest-watcher t=2026-10-29T11:51:12.376020715Z level=warn msg="manifest watcher: source listed zero manifests" source=discovery
+logger=search-manifest-watcher t=2026-10-29T11:51:12.37628559Z level=warn msg="manifest watcher poll cycle: zero manifests, keeping previous set"
+logger=search-manifest-watcher t=2026-10-29T11:51:23.566746471Z level=warn msg="manifest watcher: source listed zero manifests" source=discovery
+logger=search-manifest-watcher t=2026-10-29T11:51:23.566897387Z level=warn msg="manifest watcher poll cycle: zero manifests, keeping previous set"
+logger=search-manifest-watcher t=2026-10-29T11:51:59.981136626Z level=warn msg="manifest watcher: source listed zero manifests" source=discovery
+logger=search-manifest-watcher t=2026-10-29T11:51:59.981253584Z level=warn msg="manifest watcher poll cycle: zero manifests, keeping previous set"
+logger=search-manifest-watcher t=2026-10-29T11:52:54.214444429Z level=warn msg="manifest watcher: source listed zero manifests" source=discovery
+logger=search-manifest-watcher t=2026-10-29T11:52:54.214943304Z level=warn msg="manifest watcher poll cycle: zero manifests, keeping previous set"
+t=2026-10-29T11:52:57.548441417Z level=error caller=logger.go:242 time=2026-10-29T11:52:57.5484195Z msg="job cleanup controller failed" error="context canceled"

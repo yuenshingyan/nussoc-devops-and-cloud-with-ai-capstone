@@ -1,0 +1,42 @@
+{
+  "expressions": {
+    "health": "sum(finsecure_http_requests_total{job=\"finsecure-pay\",route=\"/health\",method=\"GET\",status_class=\"2xx\"})",
+    "evaluated": "sum(finsecure_http_requests_total{job=\"finsecure-pay\",route=\"/validate\",method=\"POST\",status_class=\"2xx\"})",
+    "malformed": "sum(finsecure_http_requests_total{job=\"finsecure-pay\",route=\"/validate\",method=\"POST\",status_class=\"4xx\"})",
+    "accepted": "sum(finsecure_validation_outcomes_total{job=\"finsecure-pay\",outcome=\"accepted\"})",
+    "rejected": "sum(finsecure_validation_outcomes_total{job=\"finsecure-pay\",outcome=\"rejected\"})",
+    "invalid": "sum(finsecure_validation_outcomes_total{job=\"finsecure-pay\",outcome=\"invalid\"})",
+    "latency_observations": "sum(finsecure_http_request_duration_seconds_count{job=\"finsecure-pay\"})",
+    "requests": "sum(finsecure_http_requests_total{job=\"finsecure-pay\"})"
+  },
+  "before": {
+    "health": 0.0,
+    "evaluated": 0.0,
+    "malformed": 0.0,
+    "accepted": 0.0,
+    "rejected": 0.0,
+    "invalid": 0.0,
+    "latency_observations": 0.0,
+    "requests": 0.0
+  },
+  "after": {
+    "health": 20.0,
+    "evaluated": 30.0,
+    "malformed": 10.0,
+    "accepted": 20.0,
+    "rejected": 10.0,
+    "invalid": 10.0,
+    "latency_observations": 60.0,
+    "requests": 60.0
+  },
+  "deltas": {
+    "health": 20.0,
+    "evaluated": 30.0,
+    "malformed": 10.0,
+    "accepted": 20.0,
+    "rejected": 10.0,
+    "invalid": 10.0,
+    "latency_observations": 60.0,
+    "requests": 60.0
+  }
+}

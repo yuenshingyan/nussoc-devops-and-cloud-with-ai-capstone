@@ -1,0 +1,11 @@
+{
+  "verified_at_utc": "2026-10-29T11:40:45.618714+00:00",
+  "result": "passed",
+  "protected_api_access_verified": true,
+  "provisioned_panel_queries_verified": 5,
+  "synthetic_requests_sent_once": 60,
+  "browser_screenshot_captured": true,
+  "browser_logged_out_and_profile_removed": true,
+  "new_dependencies_installed": false,
+  "scope": "local Grafana with real application/process metrics; no managed cluster or alerts"
+}

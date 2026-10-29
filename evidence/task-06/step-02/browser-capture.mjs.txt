@@ -1,0 +1,106 @@
+// Historical operator capture: isolated Chrome profile, localhost only, password via stdin.
+import {spawn} from 'node:child_process';
+import {mkdtempSync, readFileSync, existsSync, writeFileSync, rmSync, createWriteStream} from 'node:fs';
+import {tmpdir} from 'node:os';
+import {join} from 'node:path';
+import {once} from 'node:events';
+import assert from 'node:assert/strict';
+
+const password = readFileSync(0, 'utf8');
+assert(/^[A-Za-z0-9_-]{43}$/.test(password));
+const root = 'reports/step62-live';
+const profile = mkdtempSync(join(tmpdir(), 'finsecure-grafana-browser-'));
+const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+const deadline = Date.now() + 120000;
+const browser = spawn('/Applications/Google Chrome.app/Contents/MacOS/Google Chrome', [
+  '--headless=new', '--remote-debugging-address=127.0.0.1', '--remote-debugging-port=0',
+  '--user-data-dir=' + profile, '--no-first-run', '--no-default-browser-check',
+  '--disable-background-networking', '--disable-component-update', '--disable-sync',
+  '--disable-extensions', '--window-size=1600,1100', 'about:blank'
+], {stdio: ['ignore', 'ignore', 'pipe']});
+const stderr = createWriteStream(root + '/browser-stderr.txt', {flags: 'wx'});
+browser.stderr.pipe(stderr);
+let ws;
+let sequence = 0;
+const pending = new Map();
+const record = {};
+const alive = () => browser.exitCode === null && browser.signalCode === null;
+function rpc(method, params = {}) {
+  return new Promise((resolve, reject) => {
+    const id = ++sequence;
+    const timer = setTimeout(() => {pending.delete(id); reject(new Error('CDP operation timed out'));}, 5000);
+    pending.set(id, {resolve, reject, timer});
+    ws.send(JSON.stringify({id, method, params}));
+  });
+}
+async function evaluate(expression) {
+  const result = await rpc('Runtime.evaluate', {expression, awaitPromise: true, returnByValue: true});
+  if (result.exceptionDetails) throw new Error('Browser evaluation failed; no expressions or auth output logged');
+  return result.result.value;
+}
+try {
+  while (!existsSync(join(profile, 'DevToolsActivePort'))) {
+    assert(alive() && Date.now() < deadline, 'Owned browser did not start');
+    await sleep(200);
+  }
+  const port = Number(readFileSync(join(profile, 'DevToolsActivePort'), 'utf8').split('\n')[0]);
+  const targets = await (await fetch(`http://127.0.0.1:${port}/json/list`, {signal: AbortSignal.timeout(5000)})).json();
+  const target = targets.find(t => t.type === 'page');
+  assert(target.webSocketDebuggerUrl.startsWith(`ws://127.0.0.1:${port}/`));
+  ws = new WebSocket(target.webSocketDebuggerUrl);
+  await Promise.race([once(ws, 'open'), sleep(5000).then(() => {throw new Error('CDP connection timeout');})]);
+  ws.addEventListener('message', event => {
+    const message = JSON.parse(event.data);
+    const request = pending.get(message.id);
+    if (!request) return;
+    clearTimeout(request.timer); pending.delete(message.id);
+    if (message.error) request.reject(new Error('CDP command failed'));
+    else request.resolve(message.result);
+  });
+  await rpc('Page.enable');
+  await rpc('Emulation.setDeviceMetricsOverride', {width: 1600, height: 1100, deviceScaleFactor: 1, mobile: false});
+  await rpc('Page.navigate', {url: 'http://127.0.0.1:3000/login'});
+  while (Date.now() < deadline) {
+    if (await evaluate('location.origin === "http://127.0.0.1:3000" && document.readyState === "complete"')) break;
+    await sleep(500);
+  }
+  assert(Date.now() < deadline, 'Login page readiness timeout');
+  const login = await evaluate(`fetch('/login', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({user:'admin',password:${JSON.stringify(password)}}), credentials:'same-origin', redirect:'error', signal:AbortSignal.timeout(5000)}).then(r => r.status)`);
+  assert.equal(login, 200, 'Authentication failed; response deliberately not logged');
+  record.authenticated_without_password_in_arguments_or_logs = true;
+  await rpc('Page.navigate', {url: 'http://127.0.0.1:3000/d/finsecure-pay-local/local-metrics?kiosk'});
+  let text;
+  const titles = ['Request rate', 'Mean ASGI handling latency', 'Application scrape health', 'Application process memory', 'Validation outcomes / second'];
+  while (Date.now() < deadline) {
+    text = await evaluate('document.body.innerText');
+    if (titles.every(title => text.includes(title)) && text.includes('req/s') && text.includes('MiB') && text.includes('UP') && !text.includes('No active requests') && !text.includes('No process data') && !text.includes('No data')) break;
+    await sleep(2000);
+  }
+  assert(Date.now() < deadline, 'Real panel rendering not verified before deadline');
+  assert(!text.includes(password));
+  await evaluate('document.fonts.ready.then(() => true)');
+  const shot = await rpc('Page.captureScreenshot', {format: 'png', captureBeyondViewport: false});
+  writeFileSync(root + '/dashboard.png', Buffer.from(shot.data, 'base64'), {flag:'wx'});
+  writeFileSync(root + '/dashboard-visible-text.txt', text + '\n', {flag:'wx'});
+  record.all_five_panel_titles_visible = true;
+  record.request_rate_memory_and_scrape_health_text_present = true;
+  record.screenshot = 'dashboard.png';
+  await evaluate("fetch('/logout', {credentials:'same-origin', redirect:'manual', signal:AbortSignal.timeout(5000)}).then(() => true)");
+  const afterLogout = await evaluate("fetch('/api/user', {credentials:'same-origin', redirect:'error', signal:AbortSignal.timeout(5000)}).then(r => r.status)");
+  assert.equal(afterLogout, 401);
+  record.browser_session_logged_out = true;
+} finally {
+  if (ws) ws.close();
+  for (const request of pending.values()) clearTimeout(request.timer);
+  if (alive()) {
+    browser.kill('SIGTERM');
+    const end = Date.now() + 30000;
+    while (alive() && Date.now() < end) await sleep(100);
+    if (alive()) {browser.kill('SIGKILL'); await once(browser, 'exit');}
+  }
+  rmSync(profile, {recursive:true, force:true});
+  stderr.end();
+}
+record.isolated_browser_and_profile_removed = true;
+writeFileSync(root + '/browser-verification.json', JSON.stringify(record, null, 2)+'\n');
+console.log(JSON.stringify(record));

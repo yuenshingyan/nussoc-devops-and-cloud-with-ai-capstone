@@ -1,149 +1,159 @@
-# Step 6.2 — Local Grafana dashboard and blocked setup checkpoint
+# Step 6.2 — Local Grafana dashboard
 
-**Initial scope approved; implementation in progress, live verification blocked.**
-Branch `task-06/step-02-dashboard` starts from reviewed/published `5e53c5f`.
-Provisioning/dashboard files and an optional Compose overlay are written. The official
-Grafana 13.3.0 ARM64 image was downloaded, but Grafana has **not started**.
-The original CHOWN-only host-file plan failed its real Docker Desktop check. The
-replacement secret-volume approach below needs approval before implementation.
-See [actual preflight evidence](../../evidence/task-06/step-02-preflight.md).
+**Implemented and locally verified; review/merge/publication and normal SCM proof
+remain pending.** Work is on `task-06/step-02-dashboard`, based on reviewed main
+`5e53c5f`. All three monitoring services are now stopped, with data and credentials
+preserved. See [actual evidence](../../evidence/task-06/step-02-dashboard.md).
 
-## Scope
+## Scope and configuration
 
-Add Grafana to the existing `finsecure-monitoring` project, using its Prometheus
-service as a provisioned, server-side data source. Commit provisioning files and
-dashboard JSON under `ops/monitoring/grafana/`; do not change the application,
-metric contract, published image tags or Kubernetes pins.
+Grafana 13.3.0 uses the existing Prometheus service. Its official ARM64-capable image
+is pinned in `ops/monitoring/grafana.compose.yaml` to index digest
+`sha256:488984b716c0862639f91a698adbe2862677a5a07bad42da5f03f3030883b205`.
+Release, digest/platform metadata and actual runtime version were verified. This
+is not an independent signature verification or a complete third-party image scan.
 
-Use an exact gate-verified application archive, checking its source/image identity
-before starting the demo. Preserve the existing Prometheus volume and settings.
-Historical candidate scrapes are not evidence of new Grafana panels working.
+The overlay is optional: the original metrics-only Compose file remains unchanged.
+Provisioning/overlay files use the JSON subset of YAML so deterministic tests require
+no additional parser dependency. Dashboard JSON is under
+`ops/monitoring/grafana/dashboards/`; Grafana's native file provider reads its password.
+No application code, metrics contract, dependency versions or Kubernetes pins changed.
 
-No alert rules, notifications, external plugins, cloud resources or managed-cluster
-metrics are included. Application process memory must not be labelled pod/node memory.
-
-## Initially approved local access and resource controls
-
-- Bind Grafana only to `127.0.0.1:3000`. Fail on port conflicts; no tunnels/public ports.
-- Select an official supported ARM64-capable Grafana release, verify its provenance
-  and immutable image digest, and record the version before adding configuration.
-- Run as non-root with a read-only root, dropped capabilities and no-new-privileges.
-  Proposed limit: 0.5 CPU, 512 MiB memory, no additional swap, and 16 MiB temporary
-  space. Keep configuration/dashboard mounts read-only and use a separate owned
-  named Grafana data volume. Confirm image-specific writable-path requirements
-  before implementation; do not silently weaken these controls.
-- Use one authenticated local operator account; **anonymous access disabled**.
-  Generate a unique password outside Git and pass it through file-backed configuration,
-  not Compose literals, command-line arguments, reports or committed environment files.
-  Proposed storage: an operator-owned private directory (0700) and password file
-  (0400) owned by the verified Grafana container UID. If ownership needs adjustment,
-  use a one-shot, network-isolated helper with only CHOWN capability and only the
-  newly owned secret file mounted; never change Jenkins files or unrelated paths.
-  The trusted operator can read it through a read-only container helper, captured
-  in memory rather than emitted into reports/chat. Verify modes and UID before use.
-  No default password or reuse of Jenkins credentials. No OAuth, external identity
-  service or SMTP. Secret creation/ownership changes are part of this approval request.
-- Do not grant Grafana or the application access to Jenkins secrets, the Docker socket,
-  host process namespace or another project's volumes. Data/secret persistence is
-  local, not a claim of encrypted storage or provider secret management.
-- Disable reporting/update checks and avoid external plugin installation. Authentication
-  and dashboard provisioning must work without an external application service.
-- Check Docker capacity first. Do not stop Jenkins or increase Docker allocation to
-  fit Grafana; stop and ask if the existing resources are insufficient.
-
-The authenticated operator is trusted, as with the existing single-operator local
-Jenkins setup. This is not a shared-user or production Grafana security design.
-Provisioned dashboards should reject UI persistence of edits; change their tracked
-JSON instead. An administrative account is not a read-only security boundary.
-
-## Approved dashboard
-
-Default time range: last 15 minutes. Refresh: 15 seconds. Rate window: 2 minutes.
-Scope application selectors to `job="finsecure-pay"`; avoid identifier variables
-or arbitrary user-controlled label dimensions.
-
-| Panel | Measurement and interpretation |
+| Setting | Approved local value |
 | --- | --- |
-| Request rate | Sum of HTTP counter rates, in requests/second; metrics scrapes are already excluded |
-| Mean ASGI handling latency | Rate of histogram sum divided by rate of count, in seconds; not client delivery latency |
-| Validation outcomes | Counter rates grouped by accepted/rejected/invalid; business rejection is not a server failure |
-| Application process memory | Resident memory bytes displayed in MiB; not container limit, pod memory or node usage |
-| Application scrape health | Actual Prometheus `up` for the application target; not business success or Kubernetes readiness |
+| Project/network | Existing `finsecure-monitoring`, separate from Jenkins |
+| Host binding | `127.0.0.1:3000` only; no public listener/tunnel |
+| Runtime identity | UID/GID 472, read-only root, all capabilities dropped, no-new-privileges |
+| Resources | 0.5 CPU, 512 MiB memory, no additional swap, 16 MiB temporary space |
+| Dashboard/config | Read-only binds; individual provisioning files preserve unused vendor directories |
+| Grafana database | Owned named volume `finsecure-monitoring_grafana-data` |
+| Secret volume | External, purpose-labelled `finsecure-monitoring-grafana-secrets`, read-only in Grafana |
+| Authentication | One trusted local operator (`admin`), unique generated password, no anonymous dashboard access |
+| Data source | Read-only provisioning, server-side `http://prometheus:9090`, 15-second scrape interval hint, 5-second query timeout |
+| Dashboard | Last 15 minutes, 15-second refresh, reset-aware 2-minute rate windows |
+| Readiness/query observation | 120 seconds per phase; 2-second polling, 5-second HTTP timeouts |
+| Stop allowance | 30 seconds, preserving all named data/secret volumes |
 
-Use reset-aware PromQL rates. Do not replace missing/stale data with success or
-fabricated zero latency. An idle request window can legitimately have undefined
-mean latency. No SLO, alert threshold or performance-capacity claim is introduced.
+Analytics reporting, update/news checks, external plugin preinstallation and Grafana
+alerting are disabled for this scope. No external notification/identity service,
+Grafana plugin installation, cloud resources or managed-cluster monitoring is included.
+The administrative operator remains trusted; provisioned resources rejecting UI
+persistence is not a security boundary against an administrator.
 
-## Verification and cleanup
+## Credential ownership and recovery boundary
 
-- Validate provisioning/dashboard structure and selectors against the metric contract.
-  Run configured repository checks for any executable changes; documentation alone
-  does not require a new application test run.
-- Confirm actual Grafana version, authenticated health/data-source access, provisioning,
-  and rejection of unauthenticated dashboard/API access. Never record passwords,
-  session cookies, Authorization headers or authentication responses in evidence.
-- Readiness and scrape observation: maximum 120 seconds per phase, polling every
-  2 seconds with 5-second HTTP timeouts. Do not automatically retry failed traffic.
-- Generate at most 60 synthetic requests over about one minute: 20 health, 20
-  accepted, 10 rejected and 10 invalid. Record actual counter deltas and query data.
-- Confirm at least request rate and mean latency visibly render from real Prometheus
-  data. Save dashboard JSON and reviewed dashboard-only browser screenshots. API
-  success or static JSON is not visual verification. Check available browser tooling
-  first; ask before adding dependencies. If screenshots cannot be captured, report
-  that check as pending rather than fabricating images or using unrelated screen data.
-- Save sanitized source/image/config identities, panel/query results, screenshots and
-  cleanup status under `evidence/task-06/`. Do not commit Grafana databases or secrets.
-- Stop only owned monitoring services with a 30-second graceful-stop allowance.
-  Preserve existing and newly owned named data volumes; no global prune, credential
-  rotation, unrelated service shutdown or deletion of retained evidence.
+The operator's host credential is at
+`~/.config/finsecure-pay/monitoring/grafana-admin-password`, mode **0400**, inside a
+private **0700** directory. It stays owned by the operator, not container UID 472.
+The initial host bind-mount ownership attempt failed safely on Docker Desktop; the
+[historical failure](../../evidence/task-06/step-02-preflight.md) is retained.
+The user approved the replacement Linux secret-volume design.
 
-After verification, commit and pause for review before merge/publication. Step 6.3
-alert policy and delivery require their own approval and branch.
+`scripts/monitoring_credentials.py init` preserves the existing host value. For a new
+installation it generates a value only when neither existing data nor a secret volume
+requires recovery. A labelled, empty Linux volume is initialized through **stdin**,
+not arguments/environment, by a network-isolated helper with only CHOWN added.
+The volume directory is mode 0700 and its regular single-link password file is mode
+0400, both UID/GID 472. Helpers are removed after their operations. No host file is
+chowned, and no Jenkins file/volume is mounted into these helpers.
 
-## Actual checkpoint and proposed correction
+`verify` reads existing state only and checks ownership, internal permissions and
+exact host/volume agreement without printing either value. Missing, foreign or
+mismatched state fails closed; no automatic rotation, reseeding, chmod repair or
+recovery guess is performed. Docker operations have 30-second bounds. If a Docker
+failure leaves ambiguous helper state, inspect only the owned
+`finsecure.purpose=grafana-credential` helpers; do not globally prune or rerun blindly.
 
-Official release API identified [Grafana 13.3.0](https://github.com/grafana/grafana/releases/tag/v13.3.0),
-newer than the search index result. Its multi-platform Docker index is pinned at
-`sha256:488984b716c0862639f91a698adbe2862677a5a07bad42da5f03f3030883b205`;
-ARM64 availability and image UID 472 were checked. No independent image-signature
-or complete third-party vulnerability-scan claim is made.
+The native `$__file{...}` setting avoids putting the password in Grafana's environment;
+this was checked against both container configuration and the running server environment.
+Authentication to protected APIs was separately tested: matching files alone does not
+prove agreement with an existing Grafana database. The initial-admin setting is not
+an automatic password-rotation mechanism.
 
-The overlay is separate from `compose.yaml`, so existing metrics-only commands do
-not require Grafana credentials. New YAML provisioning/overlay files use the JSON
-subset of YAML, allowing deterministic tests without adding a YAML dependency.
-The native Grafana `$__file{...}` provider reads the password without exporting its
-value into the server environment. Protected dashboard/data-source APIs must require
-authentication; Grafana's public health/login resources remain loopback-only.
+These are local plaintext stores, not encrypted provider secret management. Anyone
+with Docker-daemon access is trusted. Never commit databases/passwords, put values in
+command arguments or screenshots, or paste credentials into chat.
 
-Host lint/format, 572 tests (34 new), package build and source/dependency gates passed.
-Bandit reported 26 LOW findings and no MEDIUM/HIGH; all 15 runtime dependencies
-passed auditing. Chrome and Node are already available; no browser dependency was
-installed. Unit tests are not proof of Docker Desktop ownership semantics.
+## Start, inspect and stop
 
-The real helper returned `chown: /secret: Permission denied`. It had only CHOWN
-capability, no network, a read-only root and only the intended host secret file mounted.
-No extra capability or relaxed permission was tried. The generated credential remains
-unchanged: operator-owned UID 501/GID 20, mode 0400, under its private 0700 directory.
-Both attempted helpers were removed. No Grafana data volume or service was created.
-Existing monitoring services were not started; no screenshots/live dashboard proof exist.
+Run from the repository root. First check Docker capacity and that ports 8000, 9090
+and 3000 are available. Do not stop Jenkins, change Docker allocation, take over
+another process or overwrite an unowned volume to resolve conflicts.
 
-**Proposed correction — approval required:**
+Load/tag an **exact verified application archive** as described in the
+[metrics runbook](metrics.md). This demonstration used normal SCM build #18's archive
+at `5e53c5f`, not a fresh application rebuild. Image/source/manifest identity was checked.
+Pull the pinned Grafana image before invoking the helper, which never pulls implicitly:
 
-1. Keep the existing host credential operator-owned, mode 0400, beneath the private
-   0700 directory. Preserve its value; do not regenerate or rotate it.
-2. Create a dedicated, purpose-labelled external Docker secret volume,
-   `finsecure-monitoring-grafana-secrets`, separate from Grafana's database volume.
-3. Initialize only that new owned volume through stdin using a network-isolated,
-   read-only-root helper with CHOWN as its only added capability. Inside the Linux
-   volume, set directory mode 0700 and file mode 0400, both UID/GID 472. No host
-   file is chowned or mounted into this helper. Never print the input value.
-4. Mount the secret volume read-only at `/run/secrets` in Grafana. Refuse unowned
-   volumes, missing credentials on an existing installation, or host/volume content
-   mismatches. Verify identity and permissions before startup; no automatic replacement.
-5. Keep all other approved resource, authentication, verification and cleanup limits.
-   Preserve this secret volume on normal shutdown; this is local plaintext storage,
-   not encrypted secret management or a cloud provider control.
+```sh
+docker pull grafana/grafana:13.3.0@sha256:488984b716c0862639f91a698adbe2862677a5a07bad42da5f03f3030883b205
+uv run --locked python scripts/monitoring_credentials.py init
+uv run --locked python scripts/monitoring_credentials.py verify
+docker compose -f ops/monitoring/compose.yaml -f ops/monitoring/grafana.compose.yaml config --quiet
+docker compose -f ops/monitoring/compose.yaml -f ops/monitoring/grafana.compose.yaml up --detach --no-build
+```
 
-Do not use the current credential initializer as a working setup procedure on this
-host. It is a fail-closed, documented checkpoint until the correction is approved
-and actually verified. Application code and metrics contracts are unchanged.
+Open <http://127.0.0.1:3000/d/finsecure-pay-local/local-metrics> and sign in locally as
+`admin`, using the password from the private host file. Do not display the password
+in evidence. The helper CLI prints only status, never the value.
+
+Grafana's health/login/static resources are publicly readable on loopback by design.
+Unauthenticated dashboard navigation redirects to login; protected dashboard and
+data-source APIs returned 401 in verification. This is not a claim that every Grafana
+HTTP route requires authentication, or that loopback HTTP is suitable for production.
+
+Use **both files** to operate the full stack; the metrics-only file does not manage
+Grafana. After verification:
+
+```sh
+docker compose -f ops/monitoring/compose.yaml -f ops/monitoring/grafana.compose.yaml stop --timeout 30
+```
+
+Do not use `--remove-orphans`, `down --volumes` or global prune. Preserve the Grafana
+and Prometheus data volumes plus the external secret volume. No backup/recovery or
+production retention guarantee is introduced.
+
+## Dashboard interpretation
+
+| Panel | Meaning |
+| --- | --- |
+| Request rate | Sum of HTTP counter rates in requests/second; metrics scrapes excluded |
+| Mean ASGI handling latency | Rate of duration sum divided by rate of count; seconds displayed in an appropriate unit, not client delivery latency |
+| Validation outcomes | Rates grouped by accepted/rejected/invalid; rejection is not a server failure |
+| Application process memory | Resident memory in MiB, not pod/node memory or a container limit |
+| Application scrape health | Prometheus `up`, not business success or Kubernetes readiness |
+
+Missing/stale samples are not converted to successful/zero measurements. Idle rate
+windows can have undefined mean latency. Panels do not reuse a stale last-non-null
+latency. The 2-minute rates are not equal to the 1-minute traffic generator's send rate;
+scrape timing, series creation and extrapolation affect the displayed values.
+No SLO, alert threshold or load/capacity benchmark is implied.
+
+## Actual verification and remaining warnings
+
+- 578 host tests passed, including 40 dashboard/credential cases. Locked lint/format,
+  warnings-as-errors tests, report generation, build and source/dependency gates passed.
+  No application test threshold or extra dependency was introduced.
+- An authenticated real Grafana queried all five panels. Protected APIs returned 401
+  without credentials; provisioning and data-source health were verified.
+- Exactly 60 synthetic application requests were sent once: 20 health, 20 accepted,
+  10 rejected and 10 invalid. Actual Prometheus deltas matched all counts.
+- The reviewed screenshot visibly shows 0.533 requests/second, 2.918 ms mean handling
+  latency, 55.15 MiB process memory, UP and outcome-rate curves at capture time.
+  These are measurements, not defaults. The isolated Chrome session logged out;
+  its process and private profile were removed. Existing Chrome/Node were used.
+- Log review found two missing-directory provisioning errors caused by the original
+  whole-directory mount. Individual file mounts fixed them; a regression assertion
+  and real authenticated startup/provisioning recheck passed. No more synthetic
+  health/validation requests were generated; metrics probes and infrastructure checks continued. The screenshot remains evidence of the first successful
+  panel run, not a new traffic run after that mount correction.
+- Vendor security-header deprecation, search-discovery warnings and a shutdown
+  context-cancellation ERROR remain recorded. The first startup also emitted migration
+  warnings. No logger suppression, security-header weakening or speculative feature
+  toggle was used to hide them. Chrome emitted native macOS display-link/allocator
+  diagnostics despite producing the reviewed screenshot; those are retained too.
+- The final three services stopped with exit 0, no OOM. Data/secret volumes and the
+  unchanged host credential remain. Jenkins services were not stopped/reconfigured;
+  its credential-boundary check passed. Normal SCM verification of this branch is
+  still pending review/merge/publication. Alerts, delivery and centralized logs remain
+  later steps with their own policies and approval.

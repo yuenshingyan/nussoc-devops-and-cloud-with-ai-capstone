@@ -1,5 +1,9 @@
 # Step 6.2 — Dashboard configuration and blocked credential preflight
 
+**Later status:** the user approved the secret-volume correction, which was implemented
+and actually verified. See [dashboard results](step-02-dashboard.md). The original
+failure and then-blocked status below are retained as historical evidence.
+
 29 October 2026 UTC, branch `task-06/step-02-dashboard`, based on reviewed main
 `5e53c5f`. Initial scope was approved. This is a **partial implementation checkpoint**,
 not proof of a working Grafana deployment or completed dashboard step.

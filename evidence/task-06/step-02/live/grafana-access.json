@@ -1,0 +1,14 @@
+{
+  "version": "13.3.0",
+  "database": "ok",
+  "public_health_status": 200,
+  "unauthenticated_protected_api_statuses": {
+    "/api/dashboards/uid/finsecure-pay-local": 401,
+    "/api/datasources": 401
+  },
+  "unauthenticated_dashboard_redirects_to_login": true,
+  "dashboard_provisioned": true,
+  "dashboard_editable": false,
+  "datasource_read_only": true,
+  "datasource_health": "OK"
+}
