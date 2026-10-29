@@ -1,0 +1,2 @@
+docker compose config --quiet passed for the base plus Grafana overlay.
+Structural validation only: no services started; credential ownership remains blocked.

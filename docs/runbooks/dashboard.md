@@ -1,8 +1,12 @@
-# Step 6.2 — Proposed local Grafana dashboard
+# Step 6.2 — Local Grafana dashboard and blocked setup checkpoint
 
-**Proposal only.** Branch `task-06/step-02-dashboard` starts from reviewed/published
-`5e53c5f`. Grafana is not installed, configured or running by this document.
-Approve the access controls and operational values below before implementation.
+**Initial scope approved; implementation in progress, live verification blocked.**
+Branch `task-06/step-02-dashboard` starts from reviewed/published `5e53c5f`.
+Provisioning/dashboard files and an optional Compose overlay are written. The official
+Grafana 13.3.0 ARM64 image was downloaded, but Grafana has **not started**.
+The original CHOWN-only host-file plan failed its real Docker Desktop check. The
+replacement secret-volume approach below needs approval before implementation.
+See [actual preflight evidence](../../evidence/task-06/step-02-preflight.md).
 
 ## Scope
 
@@ -18,7 +22,7 @@ Historical candidate scrapes are not evidence of new Grafana panels working.
 No alert rules, notifications, external plugins, cloud resources or managed-cluster
 metrics are included. Application process memory must not be labelled pod/node memory.
 
-## Proposed local access and resource controls
+## Initially approved local access and resource controls
 
 - Bind Grafana only to `127.0.0.1:3000`. Fail on port conflicts; no tunnels/public ports.
 - Select an official supported ARM64-capable Grafana release, verify its provenance
@@ -52,7 +56,7 @@ Jenkins setup. This is not a shared-user or production Grafana security design.
 Provisioned dashboards should reject UI persistence of edits; change their tracked
 JSON instead. An administrative account is not a read-only security boundary.
 
-## Proposed dashboard
+## Approved dashboard
 
 Default time range: last 15 minutes. Refresh: 15 seconds. Rate window: 2 minutes.
 Scope application selectors to `job="finsecure-pay"`; avoid identifier variables
@@ -70,7 +74,7 @@ Use reset-aware PromQL rates. Do not replace missing/stale data with success or
 fabricated zero latency. An idle request window can legitimately have undefined
 mean latency. No SLO, alert threshold or performance-capacity claim is introduced.
 
-## Proposed verification and cleanup
+## Verification and cleanup
 
 - Validate provisioning/dashboard structure and selectors against the metric contract.
   Run configured repository checks for any executable changes; documentation alone
@@ -95,3 +99,51 @@ mean latency. No SLO, alert threshold or performance-capacity claim is introduce
 
 After verification, commit and pause for review before merge/publication. Step 6.3
 alert policy and delivery require their own approval and branch.
+
+## Actual checkpoint and proposed correction
+
+Official release API identified [Grafana 13.3.0](https://github.com/grafana/grafana/releases/tag/v13.3.0),
+newer than the search index result. Its multi-platform Docker index is pinned at
+`sha256:488984b716c0862639f91a698adbe2862677a5a07bad42da5f03f3030883b205`;
+ARM64 availability and image UID 472 were checked. No independent image-signature
+or complete third-party vulnerability-scan claim is made.
+
+The overlay is separate from `compose.yaml`, so existing metrics-only commands do
+not require Grafana credentials. New YAML provisioning/overlay files use the JSON
+subset of YAML, allowing deterministic tests without adding a YAML dependency.
+The native Grafana `$__file{...}` provider reads the password without exporting its
+value into the server environment. Protected dashboard/data-source APIs must require
+authentication; Grafana's public health/login resources remain loopback-only.
+
+Host lint/format, 572 tests (34 new), package build and source/dependency gates passed.
+Bandit reported 26 LOW findings and no MEDIUM/HIGH; all 15 runtime dependencies
+passed auditing. Chrome and Node are already available; no browser dependency was
+installed. Unit tests are not proof of Docker Desktop ownership semantics.
+
+The real helper returned `chown: /secret: Permission denied`. It had only CHOWN
+capability, no network, a read-only root and only the intended host secret file mounted.
+No extra capability or relaxed permission was tried. The generated credential remains
+unchanged: operator-owned UID 501/GID 20, mode 0400, under its private 0700 directory.
+Both attempted helpers were removed. No Grafana data volume or service was created.
+Existing monitoring services were not started; no screenshots/live dashboard proof exist.
+
+**Proposed correction — approval required:**
+
+1. Keep the existing host credential operator-owned, mode 0400, beneath the private
+   0700 directory. Preserve its value; do not regenerate or rotate it.
+2. Create a dedicated, purpose-labelled external Docker secret volume,
+   `finsecure-monitoring-grafana-secrets`, separate from Grafana's database volume.
+3. Initialize only that new owned volume through stdin using a network-isolated,
+   read-only-root helper with CHOWN as its only added capability. Inside the Linux
+   volume, set directory mode 0700 and file mode 0400, both UID/GID 472. No host
+   file is chowned or mounted into this helper. Never print the input value.
+4. Mount the secret volume read-only at `/run/secrets` in Grafana. Refuse unowned
+   volumes, missing credentials on an existing installation, or host/volume content
+   mismatches. Verify identity and permissions before startup; no automatic replacement.
+5. Keep all other approved resource, authentication, verification and cleanup limits.
+   Preserve this secret volume on normal shutdown; this is local plaintext storage,
+   not encrypted secret management or a cloud provider control.
+
+Do not use the current credential initializer as a working setup procedure on this
+host. It is a fail-closed, documented checkpoint until the correction is approved
+and actually verified. Application code and metrics contracts are unchanged.

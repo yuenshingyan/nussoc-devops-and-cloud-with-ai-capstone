@@ -1,0 +1,29 @@
+{
+  "observed_at_utc": "2026-10-29T03:22:40.023142+00:00",
+  "status": "blocked_on_host_bind_mount_ownership",
+  "host_secret_mode": "0400",
+  "directory_mode": "0700",
+  "host_secret_uid": 501,
+  "host_secret_gid": 20,
+  "secret_preserved_without_rotation": true,
+  "helper_containers_removed": true,
+  "grafana_data_volume_not_created": true,
+  "grafana_not_started": true,
+  "new_tests_passed": 34,
+  "total_host_tests_passed": 572,
+  "source_gate": "passed",
+  "bandit": {
+    "status": "passed",
+    "exit_code": 1,
+    "LOW": 26,
+    "MEDIUM": 0,
+    "HIGH": 0,
+    "blocking_findings": 0
+  },
+  "dependencies": {
+    "status": "passed",
+    "exit_code": 0,
+    "dependencies_audited": 15,
+    "blocking_findings": 0
+  }
+}

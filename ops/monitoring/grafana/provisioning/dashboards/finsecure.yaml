@@ -1,0 +1,15 @@
+{
+  "apiVersion": 1,
+  "providers": [
+    {
+      "name": "finsecure-pay",
+      "orgId": 1,
+      "folder": "FinSecure Pay",
+      "type": "file",
+      "disableDeletion": true,
+      "allowUiUpdates": false,
+      "updateIntervalSeconds": 15,
+      "options": {"path": "/etc/grafana/dashboards"}
+    }
+  ]
+}

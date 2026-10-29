@@ -1,0 +1,10 @@
+{
+  "ops/monitoring/grafana.compose.yaml": "4ab413cc5a1261567733e186a08a8418d1a9590e0030fdaedce3e6b2a0daa589",
+  "ops/monitoring/grafana/dashboards/finsecure-pay.json": "00e044464055ea5ad43d053606e7115fb07bd6aa0114930dbe7a78a19baacef7",
+  "ops/monitoring/grafana/grafana.ini": "9431b2fee52cd189f79f2dd4db9a5441e93d40ae78aca05d8ccf1764960e675e",
+  "ops/monitoring/grafana/provisioning/dashboards/finsecure.yaml": "4a7580326612ef2ccb8b060f905be827e15162fcd4c8977cce139f958b294945",
+  "ops/monitoring/grafana/provisioning/datasources/prometheus.yaml": "4e6e05d2e1ca087bb603b482c7782aecf5a45692f8fddee326b763471f3e75d1",
+  "scripts/monitoring_credentials.py": "59960cfc3faf27b7a3a923e5544704374f061602b5179871d0607eea2081cc8a",
+  "tests/unit/test_dashboard_configuration.py": "ffcae9b40ed85aba0f0a923a518812c929c77d6e8068be49bf63629fe7b69e11",
+  "tests/unit/test_monitoring_credentials.py": "224f219fc42970616155cac607fbede229b6783e08d6ffd2cd38f529441cc5bd"
+}

@@ -1,0 +1,1 @@
+chown: /secret: Permission denied

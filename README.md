@@ -76,8 +76,10 @@ The demo services are stopped with data preserved. Normal SCM build #17 passed
 distinguishes its archive from the earlier live-demo image. See the [runbook](docs/runbooks/metrics.md) and
 [actual evidence](evidence/task-06/step-01-metrics.md).
 
-Step 6.2 is being scoped on its own branch. Grafana is not configured or running;
-see the [dashboard proposal awaiting approval](docs/runbooks/dashboard.md).
+Step 6.2 is in progress on its own branch. Provisioning/dashboard files are written
+and 572 host tests pass, but real secret-file ownership setup failed safely on Docker
+Desktop. Grafana is not running and no live dashboard proof exists. See the
+[checkpoint and secret-volume correction awaiting approval](docs/runbooks/dashboard.md).
 
 ## Quick start
 

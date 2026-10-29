@@ -1,0 +1,71 @@
+{
+  "uid": "finsecure-pay-local",
+  "title": "FinSecure Pay — Local Application Metrics",
+  "description": "Single-worker local demo. ASGI duration is not client delivery latency. Process memory is not pod/node memory. No SLO or alert policy is implied.",
+  "schemaVersion": 41,
+  "version": 1,
+  "editable": false,
+  "timezone": "utc",
+  "tags": ["finsecure-pay", "local-demo"],
+  "refresh": "15s",
+  "time": {"from": "now-15m", "to": "now"},
+  "templating": {"list": []},
+  "annotations": {"list": []},
+  "panels": [
+    {
+      "id": 1,
+      "title": "Request rate",
+      "description": "Reset-aware counter rate over 2 minutes, summed across bounded routes/methods. Metrics scrapes are excluded by the application.",
+      "type": "stat",
+      "gridPos": {"h": 6, "w": 8, "x": 0, "y": 0},
+      "datasource": {"type": "prometheus", "uid": "finsecure-prometheus"},
+      "targets": [{"refId": "A", "expr": "sum(rate(finsecure_http_requests_total{job=\"finsecure-pay\"}[2m]))", "instant": true, "range": false}],
+      "fieldConfig": {"defaults": {"unit": "reqps", "decimals": 3, "noValue": "No data", "color": {"mode": "fixed", "fixedColor": "blue"}}, "overrides": []},
+      "options": {"reduceOptions": {"calcs": ["last"], "fields": "", "values": false}, "colorMode": "value", "graphMode": "none", "justifyMode": "center", "textMode": "auto"}
+    },
+    {
+      "id": 2,
+      "title": "Mean ASGI handling latency",
+      "description": "Rate of duration sum / rate of observation count over 2 minutes. Idle windows can be undefined; no zero or stale last-non-null substitution. Not an end-to-end latency SLO.",
+      "type": "stat",
+      "gridPos": {"h": 6, "w": 8, "x": 8, "y": 0},
+      "datasource": {"type": "prometheus", "uid": "finsecure-prometheus"},
+      "targets": [{"refId": "A", "expr": "sum(rate(finsecure_http_request_duration_seconds_sum{job=\"finsecure-pay\"}[2m])) / sum(rate(finsecure_http_request_duration_seconds_count{job=\"finsecure-pay\"}[2m]))", "instant": true, "range": false}],
+      "fieldConfig": {"defaults": {"unit": "s", "decimals": 3, "noValue": "No active requests", "color": {"mode": "fixed", "fixedColor": "blue"}}, "overrides": []},
+      "options": {"reduceOptions": {"calcs": ["last"], "fields": "", "values": false}, "colorMode": "value", "graphMode": "none", "justifyMode": "center", "textMode": "auto"}
+    },
+    {
+      "id": 3,
+      "title": "Application scrape health",
+      "description": "Prometheus target health, not business success, application readiness or Kubernetes readiness. Missing series must not appear healthy.",
+      "type": "stat",
+      "gridPos": {"h": 6, "w": 8, "x": 16, "y": 0},
+      "datasource": {"type": "prometheus", "uid": "finsecure-prometheus"},
+      "targets": [{"refId": "A", "expr": "up{job=\"finsecure-pay\"}", "instant": true, "range": false}],
+      "fieldConfig": {"defaults": {"unit": "none", "noValue": "No scrape data", "mappings": [{"type": "value", "options": {"0": {"text": "DOWN", "color": "red"}, "1": {"text": "UP", "color": "green"}}}]}, "overrides": []},
+      "options": {"reduceOptions": {"calcs": ["last"], "fields": "", "values": false}, "colorMode": "value", "graphMode": "none", "justifyMode": "center", "textMode": "auto"}
+    },
+    {
+      "id": 4,
+      "title": "Application process memory",
+      "description": "Resident memory of the application process in MiB. Not pod/node memory, total container usage, or the configured container limit.",
+      "type": "stat",
+      "gridPos": {"h": 8, "w": 8, "x": 0, "y": 6},
+      "datasource": {"type": "prometheus", "uid": "finsecure-prometheus"},
+      "targets": [{"refId": "A", "expr": "finsecure_process_resident_memory_bytes{job=\"finsecure-pay\"} / 1024 / 1024", "instant": true, "range": false}],
+      "fieldConfig": {"defaults": {"unit": "suffix:MiB", "decimals": 2, "noValue": "No process data", "color": {"mode": "fixed", "fixedColor": "blue"}}, "overrides": []},
+      "options": {"reduceOptions": {"calcs": ["last"], "fields": "", "values": false}, "colorMode": "value", "graphMode": "none", "justifyMode": "center", "textMode": "auto"}
+    },
+    {
+      "id": 5,
+      "title": "Validation outcomes / second",
+      "description": "Rates over 2 minutes grouped by accepted, rejected and invalid. A business rejection is not a server exception.",
+      "type": "timeseries",
+      "gridPos": {"h": 8, "w": 16, "x": 8, "y": 6},
+      "datasource": {"type": "prometheus", "uid": "finsecure-prometheus"},
+      "targets": [{"refId": "A", "expr": "sum by (outcome) (rate(finsecure_validation_outcomes_total{job=\"finsecure-pay\"}[2m]))", "legendFormat": "{{outcome}}", "instant": false, "range": true}],
+      "fieldConfig": {"defaults": {"unit": "reqps", "decimals": 3, "noValue": "No outcome data", "color": {"mode": "palette-classic"}, "custom": {"drawStyle": "line", "lineWidth": 2, "fillOpacity": 10, "spanNulls": false, "showPoints": "auto"}}, "overrides": []},
+      "options": {"legend": {"showLegend": true, "displayMode": "table", "placement": "bottom", "calcs": ["last"]}, "tooltip": {"mode": "multi", "sort": "none"}}
+    }
+  ]
+}
