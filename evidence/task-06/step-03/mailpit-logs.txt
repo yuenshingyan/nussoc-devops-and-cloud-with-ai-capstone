@@ -1,0 +1,6 @@
+time="2026/10/30 15:58:34" level=info msg="[smtp] only allowing recipients matching regexp: ^finsecure-operator@example\\.test$"
+time="2026/10/30 15:58:34" level=info msg="[smtpd] starting on [::]:1025 (no encryption)"
+time="2026/10/30 15:58:34" level=info msg="[host] allowed Host headers: 127.0.0.1, ::1, localhost, mailpit"
+time="2026/10/30 15:58:34" level=info msg="[http] starting on [::]:8025"
+time="2026/10/30 15:58:34" level=info msg="[http] accessible via http://localhost:8025/"
+[db] got terminated signal, shutting down

@@ -1,0 +1,45 @@
+{
+  "services": {
+    "prometheus": {
+      "command": ["--config.file=/etc/prometheus/alerts-prometheus.yaml", "--storage.tsdb.path=/prometheus", "--storage.tsdb.retention.time=24h", "--storage.tsdb.retention.size=256MB", "--web.listen-address=0.0.0.0:9090"],
+      "volumes": ["./prometheus/alerts-prometheus.yaml:/etc/prometheus/alerts-prometheus.yaml:ro", "./prometheus/alerts.yaml:/etc/prometheus/alerts.yaml:ro"]
+    },
+    "alertmanager": {
+      "image": "quay.io/prometheus/alertmanager:v0.34.2@sha256:39d8bb3966c694a124428a3a88fbcffd40bd069129ecd47c059f8a3f17c55f3b",
+      "user": "65534:65534",
+      "command": ["--config.file=/etc/alertmanager/alertmanager.yaml", "--storage.path=/alertmanager", "--cluster.listen-address="],
+      "ports": ["127.0.0.1:9093:9093"],
+      "networks": ["default", "notification"],
+      "volumes": ["./alertmanager/alertmanager.yaml:/etc/alertmanager/alertmanager.yaml:ro", "alertmanager-data:/alertmanager"],
+      "read_only": true,
+      "cap_drop": ["ALL"],
+      "security_opt": ["no-new-privileges:true"],
+      "cpus": 0.5,
+      "mem_limit": "256m",
+      "memswap_limit": "256m"
+    },
+    "mailpit": {
+      "image": "axllent/mailpit:v1.32.0@sha256:0790692be935ea4420d085694f7985b1f692ca6a8771ab0e0bd8ba75ac180498",
+      "user": "65534:65534",
+      "ports": ["127.0.0.1:8025:8025"],
+      "networks": ["notification"],
+      "environment": {
+        "MP_DISABLE_VERSION_CHECK": "true",
+        "MP_SMTP_DISABLE_RDNS": "true",
+        "MP_ALLOWED_HOSTS": "127.0.0.1,localhost,mailpit",
+        "MP_SMTP_ALLOWED_RECIPIENTS": "^finsecure-operator@example\\.test$",
+        "MP_BLOCK_REMOTE_CSS_AND_FONTS": "true",
+        "MP_LABEL": "FinSecure local test delivery"
+      },
+      "read_only": true,
+      "tmpfs": ["/tmp:rw,noexec,nosuid,size=64m,mode=1777"],
+      "cap_drop": ["ALL"],
+      "security_opt": ["no-new-privileges:true"],
+      "cpus": 0.5,
+      "mem_limit": "256m",
+      "memswap_limit": "256m"
+    }
+  },
+  "networks": {"notification": {}},
+  "volumes": {"alertmanager-data": {}}
+}

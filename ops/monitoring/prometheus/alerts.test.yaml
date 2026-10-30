@@ -1,0 +1,200 @@
+{
+  "rule_files": [
+    "alerts.yaml"
+  ],
+  "evaluation_interval": "15s",
+  "tests": [
+    {
+      "name": "healthy",
+      "interval": "15s",
+      "input_series": [
+        {
+          "series": "up{job=\"finsecure-pay\",instance=\"application:8000\"}",
+          "values": "1x12"
+        }
+      ],
+      "alert_rule_test": [
+        {
+          "eval_time": "2m",
+          "alertname": "FinSecureApplicationScrapeUnavailable",
+          "exp_alerts": []
+        }
+      ]
+    },
+    {
+      "name": "failed scrape pending and firing",
+      "interval": "15s",
+      "input_series": [
+        {
+          "series": "up{job=\"finsecure-pay\",instance=\"application:8000\"}",
+          "values": "0x12"
+        }
+      ],
+      "alert_rule_test": [
+        {
+          "eval_time": "45s",
+          "alertname": "FinSecureApplicationScrapeUnavailable",
+          "exp_alerts": []
+        },
+        {
+          "eval_time": "1m",
+          "alertname": "FinSecureApplicationScrapeUnavailable",
+          "exp_alerts": [
+            {
+              "exp_labels": {
+                "job": "finsecure-pay",
+                "instance": "application:8000",
+                "severity": "warning",
+                "scope": "local-demo"
+              },
+              "exp_annotations": {
+                "summary": "FinSecure application metrics are unavailable",
+                "description": "The configured application scrape has failed or disappeared for one minute. This is monitoring reachability, not proof of a failed payment. Check the owned application and Prometheus target before taking action."
+              }
+            }
+          ]
+        },
+        {
+          "eval_time": "2m",
+          "alertname": "FinSecureApplicationScrapeUnavailable",
+          "exp_alerts": [
+            {
+              "exp_labels": {
+                "job": "finsecure-pay",
+                "instance": "application:8000",
+                "severity": "warning",
+                "scope": "local-demo"
+              },
+              "exp_annotations": {
+                "summary": "FinSecure application metrics are unavailable",
+                "description": "The configured application scrape has failed or disappeared for one minute. This is monitoring reachability, not proof of a failed payment. Check the owned application and Prometheus target before taking action."
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "missing target pending and firing",
+      "interval": "15s",
+      "input_series": [],
+      "alert_rule_test": [
+        {
+          "eval_time": "45s",
+          "alertname": "FinSecureApplicationScrapeUnavailable",
+          "exp_alerts": []
+        },
+        {
+          "eval_time": "1m",
+          "alertname": "FinSecureApplicationScrapeUnavailable",
+          "exp_alerts": [
+            {
+              "exp_labels": {
+                "job": "finsecure-pay",
+                "instance": "application:8000",
+                "severity": "warning",
+                "scope": "local-demo"
+              },
+              "exp_annotations": {
+                "summary": "FinSecure application metrics are unavailable",
+                "description": "The configured application scrape has failed or disappeared for one minute. This is monitoring reachability, not proof of a failed payment. Check the owned application and Prometheus target before taking action."
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "brief failure does not fire",
+      "interval": "15s",
+      "input_series": [
+        {
+          "series": "up{job=\"finsecure-pay\",instance=\"application:8000\"}",
+          "values": "1 0 0 0 1x8"
+        }
+      ],
+      "alert_rule_test": [
+        {
+          "eval_time": "1m",
+          "alertname": "FinSecureApplicationScrapeUnavailable",
+          "exp_alerts": []
+        },
+        {
+          "eval_time": "2m",
+          "alertname": "FinSecureApplicationScrapeUnavailable",
+          "exp_alerts": []
+        }
+      ]
+    },
+    {
+      "name": "recovery resolves",
+      "interval": "15s",
+      "input_series": [
+        {
+          "series": "up{job=\"finsecure-pay\",instance=\"application:8000\"}",
+          "values": "0x4 1x8"
+        }
+      ],
+      "alert_rule_test": [
+        {
+          "eval_time": "1m",
+          "alertname": "FinSecureApplicationScrapeUnavailable",
+          "exp_alerts": [
+            {
+              "exp_labels": {
+                "job": "finsecure-pay",
+                "instance": "application:8000",
+                "severity": "warning",
+                "scope": "local-demo"
+              },
+              "exp_annotations": {
+                "summary": "FinSecure application metrics are unavailable",
+                "description": "The configured application scrape has failed or disappeared for one minute. This is monitoring reachability, not proof of a failed payment. Check the owned application and Prometheus target before taking action."
+              }
+            }
+          ]
+        },
+        {
+          "eval_time": "1m15s",
+          "alertname": "FinSecureApplicationScrapeUnavailable",
+          "exp_alerts": []
+        }
+      ]
+    },
+    {
+      "name": "failure to stale series preserves pending identity",
+      "interval": "15s",
+      "input_series": [
+        {
+          "series": "up{job=\"finsecure-pay\",instance=\"application:8000\"}",
+          "values": "0x2 stale _x8"
+        }
+      ],
+      "alert_rule_test": [
+        {
+          "eval_time": "45s",
+          "alertname": "FinSecureApplicationScrapeUnavailable",
+          "exp_alerts": []
+        },
+        {
+          "eval_time": "1m",
+          "alertname": "FinSecureApplicationScrapeUnavailable",
+          "exp_alerts": [
+            {
+              "exp_labels": {
+                "job": "finsecure-pay",
+                "instance": "application:8000",
+                "severity": "warning",
+                "scope": "local-demo"
+              },
+              "exp_annotations": {
+                "summary": "FinSecure application metrics are unavailable",
+                "description": "The configured application scrape has failed or disappeared for one minute. This is monitoring reachability, not proof of a failed payment. Check the owned application and Prometheus target before taking action."
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

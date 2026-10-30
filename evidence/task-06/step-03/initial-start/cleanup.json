@@ -1,0 +1,6 @@
+{
+  "all_four_services_stopped_exit_zero": true,
+  "prometheus_stopped_first": true,
+  "data_volumes_preserved": true,
+  "mailpit_temporary_inbox_discarded_on_stop": true
+}

@@ -1,0 +1,6 @@
+time=2026-10-30T15:57:09.567Z level=INFO source=app.go:194 msg="Starting Alertmanager" version="(version=0.34.2, branch=HEAD, revision=e8349048265ccc0871c3d0d668b05eacc68baf50)"
+time=2026-10-30T15:57:09.567Z level=INFO source=app.go:196 msg="Build context" build_context="(go=go1.26.10, platform=linux/arm64, user=root@9bef77d358e3, date=20261029-09:42:48, tags=netgo)"
+time=2026-10-30T15:57:09.595Z level=INFO source=tls_config.go:372 msg="Listening on" address=[::]:9093
+time=2026-10-30T15:57:09.595Z level=INFO source=tls_config.go:375 msg="TLS is disabled." http2=false address=[::]:9093
+time=2026-10-30T15:57:12.250Z level=INFO source=lifecycle.go:290 msg="Shutting down gracefully"
+time=2026-10-30T15:57:12.252Z level=INFO source=main.go:210 msg="Received shutdown signal, exiting gracefully..."

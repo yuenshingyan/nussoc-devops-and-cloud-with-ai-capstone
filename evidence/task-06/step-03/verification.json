@@ -1,0 +1,38 @@
+{
+  "verified_at_utc": "2026-10-30T15:58:51.621353+00:00",
+  "rules_loaded_healthy_inactive": true,
+  "alertmanager_discovered": true,
+  "smtp_recipient_accepted": true,
+  "email_delivered": false,
+  "outage_triggered": false,
+  "runtime": {
+    "application": {
+      "image_id": "sha256:8f5bd152a3acc4af31baac013d262e8de3fbe60a53d15638f8908d6c1b430e29",
+      "user": "10001:10001",
+      "memory_bytes": 268435456,
+      "started_at": "2026-10-30T15:58:34.691244635Z",
+      "container": "12037867b7d855a6729409e9f2c6922c97a1468927b8bada00f122bcef1fa49e"
+    },
+    "prometheus": {
+      "image_id": "sha256:345c03f8738a25e86baee35b1ee84cf1007036cbe75f51a2fa8965dd91374b9a",
+      "user": "65534:65534",
+      "memory_bytes": 536870912,
+      "started_at": "2026-10-30T15:58:34.705950968Z",
+      "container": "5eeeb315844e3b799097efb96bc5b9856dcaaf367f3768dba02bc9b660abe03f"
+    },
+    "alertmanager": {
+      "image_id": "sha256:fe6f88e15243771d5094cd5ce2c5ccc3b095a28f52f7fbffd9e7c868ebde939a",
+      "user": "65534:65534",
+      "memory_bytes": 268435456,
+      "started_at": "2026-10-30T15:58:34.699322301Z",
+      "container": "cd7ffbf537288efbdbfd7a771c86d8122be953d2e4276f85d95abb0b9962bbb3"
+    },
+    "mailpit": {
+      "image_id": "sha256:acb86f3d4a89677b0667c304035147ea39b2adc232606e66257de929531bd9cf",
+      "user": "65534:65534",
+      "memory_bytes": 268435456,
+      "started_at": "2026-10-30T15:58:34.692032051Z",
+      "container": "52421743cf02ca66723aae5aa1d125ff0ea0a38caf6933a16c0793fe68573c98"
+    }
+  }
+}

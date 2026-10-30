@@ -1,0 +1,14 @@
+{
+  "global": {"smtp_smarthost": "mailpit:1025", "smtp_from": "finsecure-alerts@example.test", "smtp_require_tls": false},
+  "route": {
+    "receiver": "local-mailpit",
+    "group_by": ["alertname", "job", "instance"],
+    "group_wait": "30s",
+    "group_interval": "5m",
+    "repeat_interval": "4h"
+  },
+  "receivers": [{
+    "name": "local-mailpit",
+    "email_configs": [{"to": "finsecure-operator@example.test", "send_resolved": true}]
+  }]
+}

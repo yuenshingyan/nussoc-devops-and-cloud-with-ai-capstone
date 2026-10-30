@@ -1,0 +1,8 @@
+Checking '/config/alertmanager.yaml'  SUCCESS
+Found:
+ - global config
+ - route
+ - 0 inhibit rules
+ - 1 receivers
+ - 0 templates
+

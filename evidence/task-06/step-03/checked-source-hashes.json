@@ -1,0 +1,8 @@
+{
+  "ops/monitoring/prometheus/alerts.test.yaml": "a09991283669f1f841ad067206347458583b5b2ca5674ee22a669b07350fbb96",
+  "ops/monitoring/prometheus/alerts.yaml": "6592b4c8200a9a8cbe1a93f3f9fa2c202c8171f2fad030bf42e8bad062a97ea0",
+  "ops/monitoring/prometheus/alerts-prometheus.yaml": "8d97d82378b9f1d328fa6f7db5bc649523c5ca87a23a5772580ccdbce8ffb9f0",
+  "ops/monitoring/alerts.compose.yaml": "999710df3010bbd3c92d1fcd23d0d847b91af0af93885c9fca2e8b4217ce2b56",
+  "ops/monitoring/alertmanager/alertmanager.yaml": "1e936b438cd41d33b164fb26b553dc91bbcc084acdf1af5bccf0d80ee5a656b7",
+  "tests/unit/test_alert_configuration.py": "6977933f3d0ae56b6acabbbc10ffc15ddfb82f8ae8e1d7ba9806305a10e0985e"
+}

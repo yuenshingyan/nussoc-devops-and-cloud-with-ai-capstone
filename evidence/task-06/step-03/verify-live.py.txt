@@ -1,0 +1,68 @@
+"""Bounded actual Step 6.3 preflight, without generating an outage or email."""
+from pathlib import Path
+from json import dumps,loads
+from subprocess import run
+from time import monotonic,sleep
+from datetime import datetime,UTC
+from httpx2 import Client,HTTPError
+
+out=Path('reports/step63')
+compose=['docker','compose','-f','ops/monitoring/compose.yaml','-f','ops/monitoring/alerts.compose.yaml']
+services=['application','prometheus','alertmanager','mailpit']
+observed={}
+(out/'cleanup.json').unlink(missing_ok=True)
+try:
+ with Client(timeout=5,trust_env=False) as client:
+  deadline=monotonic()+120
+  while monotonic()<deadline:
+   try:
+    for url in ['http://127.0.0.1:8000/metrics','http://127.0.0.1:9090/-/ready','http://127.0.0.1:9093/-/ready','http://127.0.0.1:8025/api/v1/messages']:
+     client.get(url).raise_for_status()
+    target=client.get('http://127.0.0.1:9090/api/v1/query',params={'query':'up{job="finsecure-pay"}'}).json()['data']['result']
+    current=client.get('http://127.0.0.1:9090/api/v1/rules').json()['data']['groups'][0]['rules'][0]
+    if target and target[0]['value'][1]=='1' and current['health']=='ok' and current['state']=='inactive': break
+   except (HTTPError,KeyError,IndexError): pass
+   sleep(2)
+  else: raise TimeoutError('Monitoring readiness failed')
+  rules=client.get('http://127.0.0.1:9090/api/v1/rules').json()
+  rule=rules['data']['groups'][0]['rules'][0]
+  assert rule['name']=='FinSecureApplicationScrapeUnavailable'
+  assert rule['duration']==60 and rule['state']=='inactive' and rule['health']=='ok'
+  managers=client.get('http://127.0.0.1:9090/api/v1/alertmanagers').json()
+  assert len(managers['data']['activeAlertmanagers'])==1
+  status=client.get('http://127.0.0.1:9093/api/v2/status'); status.raise_for_status()
+  assert 'local-mailpit' in status.json()['config']['original']
+  messages=client.get('http://127.0.0.1:8025/api/v1/messages').json()
+  assert messages['total']==0
+  for name,body in [('rules',rules),('alertmanagers',managers),('mailpit-messages',messages)]:
+   (out/(name+'.json')).write_text(dumps(body,indent=2)+'\n')
+ script='from smtplib import SMTP\nwith SMTP("mailpit",1025,timeout=5) as s:\n assert s.ehlo()[0]==250\n assert s.mail("finsecure-alerts@example.test")[0]==250\n assert s.rcpt("finsecure-operator@example.test")[0]==250\n assert s.rset()[0]==250\nprint("SMTP sender and recipient accepted; RSET sent, no DATA or email delivery")'
+ smtp=run(['docker','run','--rm','--label','finsecure.purpose=alert-preflight','--network','finsecure-monitoring_notification','--read-only','--cap-drop','ALL','--security-opt','no-new-privileges','--memory','64m','--memory-swap','64m','--cpus','0.25','--entrypoint','python','finsecure-pay:metrics-local','-c',script],capture_output=True,text=True,check=True,timeout=30)
+ (out/'smtp-preflight.txt').write_text(smtp.stdout)
+ for service in services:
+  identifier=run(compose+['ps','--quiet',service],capture_output=True,text=True,check=True).stdout.strip()
+  info=loads(run(['docker','inspect',identifier],capture_output=True,text=True,check=True).stdout)[0]
+  assert info['State']['Running'] and info['HostConfig']['ReadonlyRootfs']
+  assert info['HostConfig']['CapDrop']==['ALL']
+  assert 'no-new-privileges:true' in info['HostConfig']['SecurityOpt']
+  assert info['Config']['User'] in ['10001:10001','65534:65534']
+  assert all(binding['HostIp']=='127.0.0.1' for bindings in info['HostConfig']['PortBindings'].values() for binding in bindings)
+  if service=='mailpit':
+   assert set(info['NetworkSettings']['Networks'])=={'finsecure-monitoring_notification'}
+   assert '1025/tcp' not in info['HostConfig']['PortBindings']
+  observed[service]={'image_id':info['Image'],'user':info['Config']['User'],'memory_bytes':info['HostConfig']['Memory'],'started_at':info['State']['StartedAt'],'container':identifier}
+ (out/'verification.json').write_text(dumps({'verified_at_utc':datetime.now(UTC).isoformat(),'rules_loaded_healthy_inactive':True,'alertmanager_discovered':True,'smtp_recipient_accepted':True,'email_delivered':False,'outage_triggered':False,'runtime':observed},indent=2)+'\n')
+finally:
+ # Stop Prometheus first to prevent teardown from creating a synthetic outage alert.
+ stop=run(compose+['stop','--timeout','30','prometheus'],capture_output=True,text=True,timeout=45)
+ rest=run(compose+['stop','--timeout','30','application','alertmanager','mailpit'],capture_output=True,text=True,timeout=105)
+ (out/'stop.txt').write_text(stop.stdout+stop.stderr+rest.stdout+rest.stderr)
+ assert stop.returncode==rest.returncode==0
+ for service in services:
+  identifier=run(compose+['ps','--all','--quiet',service],capture_output=True,text=True,check=True).stdout.strip()
+  info=loads(run(['docker','inspect',identifier],capture_output=True,text=True,check=True).stdout)[0]
+  assert info['State']['ExitCode']==0 and not info['State']['OOMKilled'] and not info['State']['Running']
+  logs=run(['docker','logs','--since',info['State']['StartedAt'],identifier],capture_output=True,text=True,check=True)
+  (out/(service+'-logs.txt')).write_text(logs.stdout+logs.stderr)
+ (out/'cleanup.json').write_text(dumps({'all_four_services_stopped_exit_zero':True,'prometheus_stopped_first':True,'data_volumes_preserved':True,'mailpit_temporary_inbox_discarded_on_stop':True},indent=2)+'\n')
+print('Rules loaded, receiver preflight accepted; no outage/email generated; services stopped')

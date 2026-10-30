@@ -1,0 +1,18 @@
+INFO:     172.23.0.4:55372 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     172.23.0.4:48318 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     172.23.0.4:40146 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     172.23.0.4:59456 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     172.23.0.4:51310 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     172.23.0.4:36218 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     172.23.0.4:50192 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     172.23.0.4:47518 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     172.23.0.4:57114 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     172.23.0.4:45504 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     Started server process [1]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [1]

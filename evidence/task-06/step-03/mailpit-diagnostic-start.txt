@@ -1,0 +1,3 @@
+time="2026-10-30T23:55:54+08:00" level=warning msg="Found orphan containers (finsecure-monitoring-grafana-1) for this project. If you removed or renamed this service in your compose file, you can run this command with the --remove-orphans flag to clean it up."
+ Container finsecure-monitoring-mailpit-1 Starting 
+ Container finsecure-monitoring-mailpit-1 Started 

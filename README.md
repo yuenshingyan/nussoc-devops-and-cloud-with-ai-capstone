@@ -85,6 +85,12 @@ See the [setup and known warnings](docs/runbooks/dashboard.md) and
 #19 verified all gates and 33 artifacts; see the
 [follow-up evidence](evidence/task-06/step-02-scm-verification.md).
 
+Step 6.3's [local alerts and Mailpit SMTP inbox](docs/runbooks/alerts.md) are implemented
+on the review branch: 584 host tests, six rule scenarios, loaded-rule checks and SMTP
+recipient acceptance passed. This is local test delivery, not Gmail. No email or outage
+was generated; notification receipt remains Step 6.4. Initial failures and final clean
+shutdown are recorded in [evidence](evidence/task-06/step-03-alert-configuration.md).
+
 ## Quick start
 
 Prerequisites: uv and Python 3.14 (uv can install the interpreter if needed).
