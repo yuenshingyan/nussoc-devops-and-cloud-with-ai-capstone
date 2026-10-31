@@ -1,0 +1,37 @@
+{
+  "state": "pending",
+  "name": "FinSecureApplicationScrapeUnavailable",
+  "query": "(up{instance=\"application:8000\",job=\"finsecure-pay\"} == 0) or absent(up{instance=\"application:8000\",job=\"finsecure-pay\"})",
+  "duration": 60,
+  "keepFiringFor": 0,
+  "labels": {
+    "scope": "local-demo",
+    "severity": "warning"
+  },
+  "annotations": {
+    "description": "The configured application scrape has failed or disappeared for one minute. This is monitoring reachability, not proof of a failed payment. Check the owned application and Prometheus target before taking action.",
+    "summary": "FinSecure application metrics are unavailable"
+  },
+  "alerts": [
+    {
+      "labels": {
+        "alertname": "FinSecureApplicationScrapeUnavailable",
+        "instance": "application:8000",
+        "job": "finsecure-pay",
+        "scope": "local-demo",
+        "severity": "warning"
+      },
+      "annotations": {
+        "description": "The configured application scrape has failed or disappeared for one minute. This is monitoring reachability, not proof of a failed payment. Check the owned application and Prometheus target before taking action.",
+        "summary": "FinSecure application metrics are unavailable"
+      },
+      "state": "pending",
+      "activeAt": "2026-10-31T14:46:03.541757763Z",
+      "value": "0e+00"
+    }
+  ],
+  "health": "ok",
+  "evaluationTime": 0.003095292,
+  "lastEvaluation": "2026-10-31T14:46:03.542123458Z",
+  "type": "alerting"
+}

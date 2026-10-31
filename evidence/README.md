@@ -16,10 +16,14 @@ and report retention on an isolated failure. Cloud delivery remains unverified.
 | 3 — Kubernetes and cloud | [task-03](task-03/) | Steps 3.1–3.2 merged; cloud execution deferred |
 | 4 — CI/CD | [task-04](task-04/) | Steps 4.1–4.2 merged; Step 4.3 local build/export merged and SCM-verified (245 tests/image smoke); Step 4.4 local SCM/test-gate merged and SCM-verified (260 tests); publishing/deployment pending |
 | 5 — DevSecOps | [task-05](task-05/) | Step 5.1 merged/SCM-verified; Step 5.2 merged/published and SCM-verified (410 tests, passing image gate, 33 verified artifacts) |
-| 6 — Observability | [task-06](task-06/) | Step 6.1 local subset merged/published and SCM-verified (build #17, 538 tests, 33 artifacts), with earlier real scrapes; Step 6.2 local dashboard merged/published and SCM-verified (#19, 578 tests, 33 artifacts), with earlier real authenticated queries/screenshot; managed metrics/later steps deferred |
+| 6 — Observability | [task-06](task-06/) | Local metrics/dashboard/alert configuration merged; recovery and SCM #24 verified (584 tests, 33 artifacts). Step 6.4 actual firing/recovery SMTP receipt and screenshots complete locally, review pending. Jenkins notifications/logging and managed metrics remain pending. |
 | 7 — Documentation and demonstration | [task-07](task-07/) | Pending |
 
 ## Recorded evidence
+
+- [Step 6.4 — Actual local alert/recovery receipt](task-06/step-04-alert-demonstration.md):
+  bounded application interruption, real SMTP firing/resolved emails, inspected Mailpit
+  screenshots, timestamp chain and clean shutdown. Review/publication pending.
 
 - [Step 6.3 — Full post-recovery pipeline verification](task-06/step-03-recovery-build.md):
   one explicit operator build #23 of unchanged `d89a0c4` passed 584 tests, all gates

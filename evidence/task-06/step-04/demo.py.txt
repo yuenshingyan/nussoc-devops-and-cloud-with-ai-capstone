@@ -1,0 +1,114 @@
+"""One bounded real scrape outage; export actual SMTP messages before inbox cleanup."""
+from datetime import UTC,datetime
+from email.parser import BytesParser
+from email.policy import default
+from json import dumps
+from pathlib import Path
+from subprocess import run
+from time import monotonic,sleep
+from httpx2 import Client,HTTPError
+
+out=Path('reports/step64')
+compose=['docker','compose','-f','ops/monitoring/compose.yaml','-f','ops/monitoring/alerts.compose.yaml']
+name='FinSecureApplicationScrapeUnavailable'
+record={'started_at_utc':datetime.now(UTC).isoformat(),'outage_trigger':'stop only owned application container','maximum_outage_observation_seconds':150,'recovery_request_timeout_seconds':30,'maximum_recovery_email_wait_seconds':420,'new_synthetic_transaction_requests':0}
+app_stopped=False
+success=False
+
+def stamp(): return datetime.now(UTC).isoformat()
+def save(filename,value): (out/filename).write_text(dumps(value,indent=2)+'\n')
+def command(args,filename,timeout=45):
+ p=run(compose+args,capture_output=True,text=True,timeout=timeout)
+ (out/filename).write_text(p.stdout+p.stderr)
+ p.check_returncode()
+
+def export_message(client,listing,kind):
+ identifier=listing['ID']
+ r=client.get('http://127.0.0.1:8025/api/v1/message/'+identifier);r.raise_for_status()
+ save(kind+'-message.json',r.json())
+ raw=client.get('http://127.0.0.1:8025/api/v1/message/'+identifier+'/raw');raw.raise_for_status()
+ msg=BytesParser(policy=default).parsebytes(raw.content)
+ assert kind.upper() in str(msg['Subject']) and name in str(msg['Subject'])
+ assert 'finsecure-operator@example.test' in str(msg['To'])
+ assert 'finsecure-alerts@example.test' in str(msg['From'])
+ (out/(kind+'.eml')).write_bytes(raw.content)
+ return {'id':identifier,'subject':str(msg['Subject']),'mailpit_created':listing.get('Created'),'date_header':str(msg['Date']),'observed_at_utc':stamp()}
+
+try:
+ with Client(timeout=5,trust_env=False) as c:
+  def get(url):
+   r=c.get(url);r.raise_for_status();return r.json()
+  def rule(): return get('http://127.0.0.1:9090/api/v1/rules')['data']['groups'][0]['rules'][0]
+  def up(): return get('http://127.0.0.1:9090/api/v1/query?query=up%7Bjob%3D%22finsecure-pay%22%7D')['data']['result']
+  deadline=monotonic()+120
+  while monotonic()<deadline:
+   try:
+    c.get('http://127.0.0.1:8000/metrics').raise_for_status()
+    r=rule();u=up()
+    if r['state']=='inactive' and r['health']=='ok' and u and u[0]['value'][1]=='1': break
+   except HTTPError: pass
+   sleep(2)
+  else: raise TimeoutError('Healthy baseline not established')
+  assert get('http://127.0.0.1:8025/api/v1/messages')['total']==0
+  assert get('http://127.0.0.1:9093/api/v2/alerts')==[]
+  save('baseline.json',{'observed_at_utc':stamp(),'rule':r,'up':u,'inbox_empty':True})
+  outage_started=monotonic();record['stop_requested_at_utc']=stamp()
+  app_stopped=True
+  try:
+   command(['stop','--timeout','30','application'],'application-stop.txt')
+   record['application_stopped_at_utc']=stamp()
+   seen_firing=False
+   while monotonic()-outage_started<150:
+    r=rule();u=up()
+    if u and u[0]['value'][1]=='0' and 'first_down_at_utc' not in record:
+     record['first_down_at_utc']=stamp();save('down-query.json',u)
+    if r['state']=='pending' and 'pending_observed_at_utc' not in record:
+     record['pending_observed_at_utc']=stamp();save('pending-rule.json',r)
+    if r['state']=='firing' and not seen_firing:
+     record['firing_observed_at_utc']=stamp();save('firing-rule.json',r)
+     seen_firing=True
+    alerts=get('http://127.0.0.1:9093/api/v2/alerts')
+    if any(a['labels'].get('alertname')==name and a['status']['state']=='active' for a in alerts):
+     save('alertmanager-firing.json',alerts)
+    listing=get('http://127.0.0.1:8025/api/v1/messages')
+    found=[m for m in listing['messages'] if '[FIRING:' in m['Subject'] and name in m['Subject']]
+    if found:
+     assert seen_firing and 'first_down_at_utc' in record
+     record['firing_email']=export_message(c,found[0],'firing');break
+    sleep(2)
+   else: raise TimeoutError('Firing receipt not observed within bounded outage; restore without retry')
+  finally:
+   record['restore_requested_at_utc']=stamp()
+   record['seconds_until_restore_requested']=monotonic()-outage_started
+   command(['start','application'],'application-restore.txt',30)
+   app_stopped=False
+  deadline=monotonic()+120
+  while monotonic()<deadline:
+   try:
+    c.get('http://127.0.0.1:8000/metrics').raise_for_status()
+    r=rule();u=up()
+    if r['state']=='inactive' and r['health']=='ok' and u and u[0]['value'][1]=='1': break
+   except HTTPError: pass
+   sleep(2)
+  else: raise TimeoutError('Application/rule recovery not confirmed')
+  record['recovery_observed_at_utc']=stamp();save('recovered-rule.json',r);save('recovered-up.json',u)
+  deadline=monotonic()+420
+  while monotonic()<deadline:
+   listing=get('http://127.0.0.1:8025/api/v1/messages')
+   found=[m for m in listing['messages'] if '[RESOLVED]' in m['Subject'] and name in m['Subject']]
+   if found:
+    record['resolved_email']=export_message(c,found[0],'resolved');save('inbox.json',listing);break
+   sleep(2)
+  else: raise TimeoutError('Resolved email not received within bound; no retry')
+  alerts=get('http://127.0.0.1:9093/api/v2/alerts')
+  assert not any(a['labels'].get('alertname')==name and a['status']['state']=='active' for a in alerts)
+  save('alertmanager-recovered.json',alerts)
+  record['result']='passed';record['finished_at_utc']=stamp();success=True
+finally:
+ if app_stopped:
+  command(['start','application'],'emergency-restore.txt',30)
+ save('verification.json',record)
+ if not success:
+  command(['stop','--timeout','30','prometheus'],'failure-stop-prometheus.txt')
+  command(['stop','--timeout','30','application','alertmanager','mailpit'],'failure-stop-services.txt',105)
+print(dumps(record,indent=2))

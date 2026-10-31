@@ -88,10 +88,17 @@ See the [setup and known warnings](docs/runbooks/dashboard.md) and
 Step 6.3's [local alerts and Mailpit SMTP inbox](docs/runbooks/alerts.md) are implemented
 and merged/published as `dcab1c5`: 584 host tests, six rule scenarios, loaded-rule checks and SMTP
 recipient acceptance passed. This is local test delivery, not Gmail. No email or outage
-was generated; notification receipt remains Step 6.4. Initial failures and final clean
+was generated in that preflight; actual receipt is demonstrated separately in Step 6.4. Initial failures and final clean
 shutdown are recorded in [evidence](evidence/task-06/step-03-alert-configuration.md).
 [Normal SCM build #21](evidence/task-06/step-03-scm-verification.md) subsequently passed
 584 tests, all gates and 33 artifact checks, without restarting monitoring.
+
+Step 6.4's approved local interruption produced **real firing and recovery emails in
+Mailpit**, with inspected screenshots and raw-message exports. Restart was requested
+after 122 seconds; all monitoring services were stopped cleanly after evidence capture.
+See the [demonstration evidence](evidence/task-06/step-04-alert-demonstration.md) and
+[runbook](docs/runbooks/alert-demonstration.md). This is local SMTP, not Gmail delivery.
+The demonstration branch awaits review/publication; Jenkins notifications remain pending.
 
 ## Quick start
 

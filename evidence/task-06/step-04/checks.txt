@@ -1,0 +1,60 @@
+All checks passed!
+113 files already formatted
+============================= test session starts ==============================
+platform darwin -- Python 3.14.7, pytest-9.1.1, pluggy-1.7.0
+rootdir: <repository>
+configfile: pyproject.toml
+testpaths: tests
+plugins: cov-7.1.0, anyio-4.15.1, platformdirs-4.13.5
+collected 584 items
+
+tests/integration/test_application.py ..                                 [  0%]
+tests/integration/test_configuration_api.py ........                     [  1%]
+tests/integration/test_health_api.py ...                                 [  2%]
+tests/integration/test_metrics_api.py ....................               [  5%]
+tests/integration/test_validation_api.py ............................... [ 10%]
+...                                                                      [ 11%]
+tests/integration/test_validation_boundaries.py ........................ [ 15%]
+..................................                                       [ 21%]
+tests/unit/test_alert_configuration.py ......                            [ 22%]
+tests/unit/test_config.py ...................................            [ 28%]
+tests/unit/test_dashboard_configuration.py .........                     [ 29%]
+tests/unit/test_http_metrics.py ...............                          [ 32%]
+tests/unit/test_image_archive.py .............                           [ 34%]
+tests/unit/test_image_scan.py .......................................... [ 41%]
+......................................                                   [ 48%]
+tests/unit/test_jenkins_bootstrap.py .............                       [ 50%]
+tests/unit/test_jenkins_ci_verification.py ............................. [ 55%]
+.                                                                        [ 55%]
+tests/unit/test_jenkins_trigger_verification.py ..................       [ 58%]
+tests/unit/test_monitoring_credentials.py .............................. [ 64%]
+.                                                                        [ 64%]
+tests/unit/test_secret_boundaries.py ................................... [ 70%]
+......................                                                   [ 73%]
+tests/unit/test_security_scan.py ....................................... [ 80%]
+...........................................                              [ 88%]
+tests/unit/test_transaction_schema.py .................................. [ 93%]
+............                                                             [ 95%]
+tests/unit/test_validation.py ........................                   [100%]
+
+============================= 584 passed in 1.66s ==============================
+Building source distribution...
+Building wheel from source distribution...
+Successfully built dist/finsecure_pay-0.2.0.tar.gz
+Successfully built dist/finsecure_pay-0.2.0-py3-none-any.whl
+{
+  "status": "passed",
+  "verified_at_utc": "2026-10-31T14:57:53.685879+00:00",
+  "host_credentials": "owned regular file 0600 in owned directory 0700",
+  "containers": "expected volumes, read-only secret mounts, uid 1000, approved privileges",
+  "network": "loopback-only controller; no agent/builder published ports",
+  "anonymous_api": "denied",
+  "checkout": "anonymous public repository, trusted main, Jenkinsfile from SCM",
+  "known_credentials_in_argv_environment": false,
+  "limitations": [
+    "Trusted single-operator model; agent builds can read the agent secret.",
+    "Does not verify account inventory, authorization strategy, token scopes or rotation.",
+    "Does not scan source, history, logs or arbitrary unknown credentials.",
+    "No registry, cloud, cluster, service restart or configuration changes."
+  ]
+}

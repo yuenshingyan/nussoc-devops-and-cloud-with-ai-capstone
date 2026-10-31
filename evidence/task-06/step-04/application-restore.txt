@@ -1,0 +1,2 @@
+ Container finsecure-monitoring-application-1 Starting 
+ Container finsecure-monitoring-application-1 Started 

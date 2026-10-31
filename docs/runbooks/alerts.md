@@ -119,9 +119,10 @@ on verification failure too, and record nonzero exits rather than treating them 
   its normal graceful-stop WARN. Grafana remained stopped and its previously documented
   diagnostics are not resolved by this work. Jenkins was not stopped/reconfigured.
 
-Step 6.4 still requires separate approval of a bounded interruption, actual firing and
-recovery email receipt, timestamps and browser evidence. Step 6.5 separately covers
-Jenkins notifications and logs. No delivery evidence is claimed in Step 6.3.
+Step 6.4 was subsequently approved and completed locally: see the
+[bounded interruption and actual firing/recovery receipts](alert-demonstration.md).
+Its evidence is separate from this configuration preflight. Step 6.5 still covers
+Jenkins notifications and logs. No delivery evidence is claimed in Step 6.3 itself.
 
 References: [Alertmanager configuration](https://prometheus.io/docs/alerting/latest/configuration/),
 [Mailpit runtime settings](https://mailpit.axllent.org/docs/configuration/runtime-options/),

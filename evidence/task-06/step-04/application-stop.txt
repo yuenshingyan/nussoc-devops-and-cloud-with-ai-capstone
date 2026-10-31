@@ -1,0 +1,2 @@
+ Container finsecure-monitoring-application-1 Stopping 
+ Container finsecure-monitoring-application-1 Stopped 

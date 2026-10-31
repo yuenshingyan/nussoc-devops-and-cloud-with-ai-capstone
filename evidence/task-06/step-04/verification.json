@@ -1,0 +1,32 @@
+{
+  "started_at_utc": "2026-10-31T14:45:47.278475+00:00",
+  "outage_trigger": "stop only owned application container",
+  "maximum_outage_observation_seconds": 150,
+  "recovery_request_timeout_seconds": 30,
+  "maximum_recovery_email_wait_seconds": 420,
+  "new_synthetic_transaction_requests": 0,
+  "stop_requested_at_utc": "2026-10-31T14:45:47.361562+00:00",
+  "application_stopped_at_utc": "2026-10-31T14:45:48.154875+00:00",
+  "first_down_at_utc": "2026-10-31T14:46:00.276662+00:00",
+  "pending_observed_at_utc": "2026-10-31T14:46:04.322727+00:00",
+  "firing_observed_at_utc": "2026-10-31T14:47:19.186260+00:00",
+  "firing_email": {
+    "id": "5HLBR6IDJ6L1tAZDm1rMOv",
+    "subject": "[FIRING:1] FinSecureApplicationScrapeUnavailable application:8000 finsecure-pay (local-demo warning)",
+    "mailpit_created": "2026-10-31T14:47:48.583Z",
+    "date_header": "Sat, 31 Oct 2026 14:47:48 +0000",
+    "observed_at_utc": "2026-10-31T14:47:49.581420+00:00"
+  },
+  "restore_requested_at_utc": "2026-10-31T14:47:49.581469+00:00",
+  "seconds_until_restore_requested": 122.22241341600602,
+  "recovery_observed_at_utc": "2026-10-31T14:48:20.306214+00:00",
+  "resolved_email": {
+    "id": "13jwbTTREQfEsNv28wF05Z",
+    "subject": "[RESOLVED] FinSecureApplicationScrapeUnavailable application:8000 finsecure-pay (local-demo warning)",
+    "mailpit_created": "2026-10-31T14:52:48.603Z",
+    "date_header": "Sat, 31 Oct 2026 14:52:48 +0000",
+    "observed_at_utc": "2026-10-31T14:52:49.575222+00:00"
+  },
+  "result": "passed",
+  "finished_at_utc": "2026-10-31T14:52:49.581627+00:00"
+}

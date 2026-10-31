@@ -1,0 +1,49 @@
+"""Preserve actual receipts, verify boundaries, then stop only owned monitoring services."""
+from pathlib import Path
+from json import loads,dumps
+from subprocess import run
+from datetime import datetime,UTC
+from httpx2 import Client
+root=Path('reports/step64')
+compose=['docker','compose','-f','ops/monitoring/compose.yaml','-f','ops/monitoring/alerts.compose.yaml']
+services=['application','prometheus','alertmanager','mailpit']
+assert loads((root/'browser-verification.json').read_text())['isolated_browser_and_profile_removed']
+for kind in ['firing','resolved']:
+ assert (root/(kind+'.eml')).stat().st_size>1000
+ assert (root/(kind+'.png')).stat().st_size>10000
+with Client(timeout=5,trust_env=False) as c:
+ messages=c.get('http://127.0.0.1:8025/api/v1/messages').json()
+ assert messages['total']==2
+ (root/'inbox-after-browser.json').write_text(dumps(messages,indent=2)+'\n')
+ info=c.get('http://127.0.0.1:9090/api/v1/rules').json()['data']['groups'][0]['rules'][0]
+ assert info['state']=='inactive' and info['health']=='ok'
+runtime={}
+for name in services:
+ identifier=run(compose+['ps','--quiet',name],capture_output=True,text=True,check=True).stdout.strip()
+ data=loads(run(['docker','inspect',identifier],capture_output=True,text=True,check=True).stdout)[0]
+ h=data['HostConfig']
+ assert data['State']['Running'] and not data['State']['OOMKilled']
+ assert h['ReadonlyRootfs'] and h['CapDrop']==['ALL'] and 'no-new-privileges:true' in h['SecurityOpt']
+ assert h['NanoCpus']==500000000 and h['MemorySwap']==h['Memory']
+ assert h['Memory']==(512 if name=='prometheus' else 256)*1024**2
+ assert data['Config']['User']==('10001:10001' if name=='application' else '65534:65534')
+ assert all(b['HostIp']=='127.0.0.1' for bindings in h['PortBindings'].values() for b in bindings)
+ if name=='mailpit':
+  assert set(data['NetworkSettings']['Networks'])=={'finsecure-monitoring_notification'}
+  assert '1025/tcp' not in h['PortBindings']
+ runtime[name]={'image_id':data['Image'],'container':identifier,'started_at':data['State']['StartedAt'],'uid':data['Config']['User'],'memory_bytes':h['Memory'],'boundaries_verified':True}
+(root/'runtime.json').write_text(dumps(runtime,indent=2)+'\n')
+outputs=[]
+for selected in [['prometheus'],['application','alertmanager','mailpit']]:
+ p=run(compose+['stop','--timeout','30',*selected],capture_output=True,text=True,timeout=105,check=True)
+ outputs.append(p.stdout+p.stderr)
+(root/'stop.txt').write_text(''.join(outputs))
+for name in services:
+ data=loads(run(['docker','inspect',runtime[name]['container']],capture_output=True,text=True,check=True).stdout)[0]
+ assert not data['State']['Running'] and not data['State']['OOMKilled'] and data['State']['ExitCode']==0
+ # Include application logs from the original startup as well as its restoration.
+ since=loads((root/'verification.json').read_text())['started_at_utc']
+ p=run(['docker','logs','--since',since,runtime[name]['container']],capture_output=True,text=True,check=True)
+ (root/(name+'-logs.txt')).write_text(p.stdout+p.stderr)
+(root/'cleanup.json').write_text(dumps({'at_utc':datetime.now(UTC).isoformat(),'all_four_exit_zero_no_oom':True,'prometheus_stopped_first':True,'emails_exported_before_ephemeral_inbox_stop':True,'browser_profile_removed':True,'volumes_not_deleted':True},indent=2)+'\n')
+print('Two real emails exported; runtime boundaries verified; owned services stopped cleanly')

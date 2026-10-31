@@ -1,0 +1,13 @@
+[
+  {
+    "metric": {
+      "__name__": "up",
+      "instance": "application:8000",
+      "job": "finsecure-pay"
+    },
+    "value": [
+      1793457960.273,
+      "0"
+    ]
+  }
+]

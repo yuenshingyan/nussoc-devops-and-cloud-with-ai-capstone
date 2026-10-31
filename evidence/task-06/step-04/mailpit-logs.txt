@@ -1,0 +1,1 @@
+[db] got terminated signal, shutting down

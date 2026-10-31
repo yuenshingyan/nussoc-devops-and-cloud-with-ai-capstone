@@ -1,0 +1,8 @@
+{
+  "at_utc": "2026-10-31T14:55:02.085146+00:00",
+  "all_four_exit_zero_no_oom": true,
+  "prometheus_stopped_first": true,
+  "emails_exported_before_ephemeral_inbox_stop": true,
+  "browser_profile_removed": true,
+  "volumes_not_deleted": true
+}

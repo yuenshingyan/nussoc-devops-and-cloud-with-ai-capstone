@@ -1,0 +1,8 @@
+{
+  "source_revision": "5e53c5fec45bd335606a03ad00e1251c82f49ce0",
+  "scm_build": 18,
+  "image_id": "sha256:8f5bd152a3acc4af31baac013d262e8de3fbe60a53d15638f8908d6c1b430e29",
+  "archive_sha256": "37df40c74d0d4e68d4eb8f5307ef67781e55600c9d246d0fcd0ac4a9d50af671",
+  "loaded_exact_gated_archive": true,
+  "application_source_and_lock_unchanged": true
+}

@@ -1,0 +1,26 @@
+Mailpit
+Mark unreadDelete
+Download
+FinSecure local test delivery
+ Return to inbox
+finsecure-alerts@example.test
+a minute ago
+To: finsecure-operator@example.test
+[RESOLVED] FinSecureApplicationScrapeUnavailable application:8000 finsecure-pay (local-demo warning)
+finsecure-alerts@example.test
+6 minutes ago
+To: finsecure-operator@example.test
+[FIRING:1] FinSecureApplicationScrapeUnavailable application:8000 finsecure-pay (local-demo warning)
+ About
+From	<finsecure-alerts@example.test>
+To	<finsecure-operator@example.test>
+Subject	[FIRING:1] FinSecureApplicationScrapeUnavailable application:8000 finsecure-pay (local-demo warning)
+Date	Sat, 31 Oct 2026, 10:47 pm (11 kB)
+Tags	
+HTML
+HTML Source
+Text
+Headers
+Raw
+HTML Check 37%
+Link Check

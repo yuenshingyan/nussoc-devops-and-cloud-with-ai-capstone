@@ -1,0 +1,56 @@
+INFO:     172.23.0.1:63064 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     172.23.0.1:56744 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     172.23.0.1:56744 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     172.23.0.1:56744 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     172.23.0.4:38526 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     172.23.0.1:56744 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     172.23.0.1:56744 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     172.23.0.1:56744 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     172.23.0.1:56744 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     172.23.0.1:56744 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     172.23.0.1:56744 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     172.23.0.1:56744 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     172.23.0.1:56744 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     172.23.0.4:43296 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     172.23.0.1:56744 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     172.23.0.1:56744 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     172.23.0.1:56744 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     172.23.0.4:44094 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     172.23.0.4:54684 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     172.23.0.4:56316 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     172.23.0.4:56672 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     172.23.0.4:34640 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     172.23.0.4:52844 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     172.23.0.4:45222 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     172.23.0.4:39310 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     172.23.0.4:36736 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     172.23.0.4:35582 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     172.23.0.4:58604 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     172.23.0.4:38694 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     172.23.0.4:46544 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     172.23.0.4:58742 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     172.23.0.4:44618 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     172.23.0.4:33230 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     172.23.0.4:39970 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     172.23.0.4:43488 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     172.23.0.4:37200 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     172.23.0.4:54684 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     172.23.0.4:46882 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     172.23.0.4:55786 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     172.23.0.4:53210 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     172.23.0.4:33752 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     172.23.0.4:39574 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     172.23.0.4:53748 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     172.23.0.4:58112 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [1]
+INFO:     Started server process [1]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [1]

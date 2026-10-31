@@ -1,0 +1,34 @@
+{
+  "application": {
+    "image_id": "sha256:8f5bd152a3acc4af31baac013d262e8de3fbe60a53d15638f8908d6c1b430e29",
+    "container": "12037867b7d855a6729409e9f2c6922c97a1468927b8bada00f122bcef1fa49e",
+    "started_at": "2026-10-31T14:47:49.797248383Z",
+    "uid": "10001:10001",
+    "memory_bytes": 268435456,
+    "boundaries_verified": true
+  },
+  "prometheus": {
+    "image_id": "sha256:345c03f8738a25e86baee35b1ee84cf1007036cbe75f51a2fa8965dd91374b9a",
+    "container": "5eeeb315844e3b799097efb96bc5b9856dcaaf367f3768dba02bc9b660abe03f",
+    "started_at": "2026-10-31T14:44:20.570259175Z",
+    "uid": "65534:65534",
+    "memory_bytes": 536870912,
+    "boundaries_verified": true
+  },
+  "alertmanager": {
+    "image_id": "sha256:fe6f88e15243771d5094cd5ce2c5ccc3b095a28f52f7fbffd9e7c868ebde939a",
+    "container": "cd7ffbf537288efbdbfd7a771c86d8122be953d2e4276f85d95abb0b9962bbb3",
+    "started_at": "2026-10-31T14:44:20.561988841Z",
+    "uid": "65534:65534",
+    "memory_bytes": 268435456,
+    "boundaries_verified": true
+  },
+  "mailpit": {
+    "image_id": "sha256:acb86f3d4a89677b0667c304035147ea39b2adc232606e66257de929531bd9cf",
+    "container": "52421743cf02ca66723aae5aa1d125ff0ea0a38caf6933a16c0793fe68573c98",
+    "started_at": "2026-10-31T14:44:20.537869966Z",
+    "uid": "65534:65534",
+    "memory_bytes": 268435456,
+    "boundaries_verified": true
+  }
+}

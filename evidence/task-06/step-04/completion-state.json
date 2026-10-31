@@ -1,0 +1,8 @@
+{
+  "jenkins_main_build": 24,
+  "queue_empty": true,
+  "monitoring_stopped": true,
+  "existing_volumes_retained": true,
+  "no_gmail_or_external_delivery": true,
+  "no_cloud_or_registry_publication": true
+}

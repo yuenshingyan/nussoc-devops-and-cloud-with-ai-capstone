@@ -1,0 +1,61 @@
+{
+  "total": 2,
+  "unread": 1,
+  "count": 2,
+  "messages_count": 2,
+  "messages_unread": 1,
+  "start": 0,
+  "tags": [],
+  "messages": [
+    {
+      "ID": "13jwbTTREQfEsNv28wF05Z",
+      "MessageID": "1793458368597218840.11082081988874310559@cd7ffbf53728",
+      "Read": false,
+      "From": {
+        "Name": "",
+        "Address": "finsecure-alerts@example.test"
+      },
+      "To": [
+        {
+          "Name": "",
+          "Address": "finsecure-operator@example.test"
+        }
+      ],
+      "Cc": null,
+      "Bcc": null,
+      "ReplyTo": [],
+      "Subject": "[RESOLVED] FinSecureApplicationScrapeUnavailable application:8000 finsecure-pay (local-demo warning)",
+      "Created": "2026-10-31T14:52:48.603Z",
+      "Username": "",
+      "Tags": [],
+      "Size": 11330,
+      "Attachments": 0,
+      "Snippet": "1 alert for alertname=FinSecureApplicationScrapeUnavailable instance=application:8000 job=finsecure-pay View in Alertmanager [1] Resolved Labels alertname = FinSecureApplicationScrapeUnavailableinstan..."
+    },
+    {
+      "ID": "5HLBR6IDJ6L1tAZDm1rMOv",
+      "MessageID": "1793458068575708507.13944469540506325195@cd7ffbf53728",
+      "Read": true,
+      "From": {
+        "Name": "",
+        "Address": "finsecure-alerts@example.test"
+      },
+      "To": [
+        {
+          "Name": "",
+          "Address": "finsecure-operator@example.test"
+        }
+      ],
+      "Cc": null,
+      "Bcc": null,
+      "ReplyTo": [],
+      "Subject": "[FIRING:1] FinSecureApplicationScrapeUnavailable application:8000 finsecure-pay (local-demo warning)",
+      "Created": "2026-10-31T14:47:48.583Z",
+      "Username": "",
+      "Tags": [],
+      "Size": 11300,
+      "Attachments": 0,
+      "Snippet": "1 alert for alertname=FinSecureApplicationScrapeUnavailable instance=application:8000 job=finsecure-pay View in Alertmanager [1] Firing Labels alertname = FinSecureApplicationScrapeUnavailableinstance..."
+    }
+  ]
+}

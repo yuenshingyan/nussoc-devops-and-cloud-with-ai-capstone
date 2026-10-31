@@ -1,0 +1,2 @@
+time=2026-10-31T14:55:01.310Z level=INFO source=lifecycle.go:290 msg="Shutting down gracefully"
+time=2026-10-31T14:55:01.312Z level=INFO source=main.go:210 msg="Received shutdown signal, exiting gracefully..."
