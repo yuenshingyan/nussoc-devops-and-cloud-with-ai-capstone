@@ -1,0 +1,32 @@
+{
+  "result.json": {
+    "exists": false
+  },
+  "image.tar.gz": {
+    "exists": true,
+    "bytes": 21649040,
+    "sha256": "b7687517a78a302a939e6a1751c0ea1ab0e7bdaa2322b6a7bad50c7d02254373"
+  },
+  "database-download.txt": {
+    "exists": true,
+    "bytes": 320,
+    "sha256": "348e9c177f74159abda96aa202374f32f7e61e9ebac868f16c57238e36e6bfc0"
+  },
+  "database-metadata.json": {
+    "exists": false
+  },
+  "scan.txt": {
+    "exists": false
+  },
+  "trivy.json": {
+    "exists": false
+  },
+  "cache/db/trivy.db": {
+    "exists": true,
+    "bytes": 629145600,
+    "sha256": "01015506fa40c0f0a74c2ccf005d02149279d80903f4e76d661fd0aeade00145"
+  },
+  "cache/db/metadata.json": {
+    "exists": false
+  }
+}

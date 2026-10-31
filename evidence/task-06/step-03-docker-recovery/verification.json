@@ -1,0 +1,29 @@
+{
+  "checked_at_utc": "2026-10-31T14:16:30.574916+00:00",
+  "docker_reachable": true,
+  "jenkins_authenticated_api_reachable": true,
+  "agent": {
+    "_class": "hudson.slaves.SlaveComputer",
+    "idle": true,
+    "offline": false
+  },
+  "main_last_build": 22,
+  "failed_build_record_retained": true,
+  "queue_empty": true,
+  "monitoring_stopped": true,
+  "retained_volumes": [
+    "finsecure-jenkins-agent-secrets",
+    "finsecure-jenkins-controller-secrets",
+    "finsecure-jenkins_agent-workspace",
+    "finsecure-jenkins_builder-socket",
+    "finsecure-jenkins_builder-state",
+    "finsecure-jenkins_controller-home",
+    "finsecure-monitoring-grafana-secrets",
+    "finsecure-monitoring_alertmanager-data",
+    "finsecure-monitoring_grafana-data",
+    "finsecure-monitoring_prometheus-data"
+  ],
+  "all_volume_content_integrity_proven": false,
+  "ci_retry_performed": false,
+  "reset_or_prune_performed": false
+}

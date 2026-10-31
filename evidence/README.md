@@ -21,6 +21,10 @@ and report retention on an isolated failure. Cloud delivery remains unverified.
 
 ## Recorded evidence
 
+- [Step 6.3 — Approved Docker access recovery](task-06/step-03-docker-recovery.md):
+  explicit restart/force-quit approval; Docker/Jenkins reachable, retained volumes and
+  credentials checked. No reset/prune or new scan; complete data integrity not claimed.
+
 - [Step 6.3 blocker — Docker storage investigation](task-06/step-03-storage-investigation.md):
   disk I/O errors, aborted journal/read-only remount and host no-space log; Docker and
   Jenkins unavailable. No recovery action or CI retry performed; preserve data first.
