@@ -21,6 +21,10 @@ and report retention on an isolated failure. Cloud delivery remains unverified.
 
 ## Recorded evidence
 
+- [Step 6.3 — Post-recovery scanner comparison](task-06/step-03-scanner-comparison.md):
+  same #22 image and pinned Trivy passed existing validation with a different fresh
+  database snapshot, zero known findings. #22 remains failed; no CI retry or gate change.
+
 - [Step 6.3 — Approved Docker access recovery](task-06/step-03-docker-recovery.md):
   explicit restart/force-quit approval; Docker/Jenkins reachable, retained volumes and
   credentials checked. No reset/prune or new scan; complete data integrity not claimed.

@@ -1,0 +1,5 @@
+2026-10-31T14:24:23Z	INFO	Loaded	file_path="/home/jenkins/agent/trivy-diagnostic-build22-recovered/config.yaml"
+2026-10-31T14:24:23Z	INFO	[vulndb] Need to update DB
+2026-10-31T14:24:23Z	INFO	[vulndb] Downloading vulnerability DB...
+2026-10-31T14:24:23Z	INFO	[vulndb] Downloading artifact...	repo="ghcr.io/aquasecurity/trivy-db:2"
+2026-10-31T14:24:53Z	INFO	[vulndb] Artifact successfully downloaded	repo="ghcr.io/aquasecurity/trivy-db:2"

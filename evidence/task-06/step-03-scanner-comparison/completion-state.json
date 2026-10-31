@@ -1,0 +1,9 @@
+{
+  "main_last_build": 22,
+  "queue_empty": true,
+  "monitoring_stopped": true,
+  "gate_or_scanner_changes": false,
+  "image_execution_or_publication": false,
+  "old_partial_database_preserved": true,
+  "new_comparison_database_preserved": true
+}

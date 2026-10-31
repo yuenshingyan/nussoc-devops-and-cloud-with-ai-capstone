@@ -1,0 +1,47 @@
+{
+  "original_build": 22,
+  "original_build_result_remains": "FAILURE",
+  "same_image_and_scanner": true,
+  "report_validated_using_existing_policy": true,
+  "database_age_seconds": 4557.51283,
+  "database_is_different_snapshot": true,
+  "image_result": {
+    "os": {
+      "Family": "alpine",
+      "Name": "3.24.3"
+    },
+    "end_of_life": false,
+    "packages_by_type": {
+      "alpine": 30,
+      "python-pkg": 16
+    },
+    "runtime_packages": {
+      "annotated-doc": "0.0.5",
+      "annotated-types": "0.8.0",
+      "anyio": "4.15.1",
+      "click": "8.5.0",
+      "fastapi": "0.156.8",
+      "finsecure-pay": "0.2.0",
+      "h11": "0.16.0",
+      "idna": "3.20",
+      "opentelemetry-api": "1.45.1",
+      "prometheus-client": "0.26.0",
+      "pydantic": "2.14.1",
+      "pydantic-core": "2.50.1",
+      "starlette": "1.9.0",
+      "typing-inspection": "0.4.4",
+      "typing-extensions": "4.16.0",
+      "uvicorn": "0.54.0"
+    },
+    "severities": {
+      "UNKNOWN": 0,
+      "LOW": 0,
+      "MEDIUM": 0,
+      "HIGH": 0,
+      "CRITICAL": 0
+    },
+    "blocking_findings": 0
+  },
+  "comparison_status": "passed",
+  "root_cause_of_original_failure_proven": false
+}

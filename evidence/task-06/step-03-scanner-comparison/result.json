@@ -1,0 +1,19 @@
+{
+  "started_at_utc": "2026-10-31T14:24:23.165707+00:00",
+  "original_build": 22,
+  "archive_sha256": "b7687517a78a302a939e6a1751c0ea1ab0e7bdaa2322b6a7bad50c7d02254373",
+  "trivy_sha256": "b422130ea54e53e142e65c838662e48919ce9c3f23f17d80066b43e70550cb85",
+  "ci_build_retried": false,
+  "cache_reset_performed": false,
+  "database_exit_code": 0,
+  "database_sha256_before": "d81ea576fbcd02c304b980d8eec4dd1a372648b648bfb876f48790d63ee58f93",
+  "database_bytes": 1674162176,
+  "database_page_size": 4096,
+  "previous_panic_page_header": "924c04000000000002002a0000000000",
+  "same_original_metadata_version_and_update": false,
+  "scan_started_at_utc": "2026-10-31T14:24:55.311216+00:00",
+  "scan_exit_code": 0,
+  "database_sha256_after": "d81ea576fbcd02c304b980d8eec4dd1a372648b648bfb876f48790d63ee58f93",
+  "archive_unchanged": true,
+  "finished_at_utc": "2026-10-31T14:24:58.346051+00:00"
+}
