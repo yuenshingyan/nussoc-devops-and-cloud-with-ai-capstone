@@ -21,6 +21,10 @@ and report retention on an isolated failure. Cloud delivery remains unverified.
 
 ## Recorded evidence
 
+- [Step 6.3 — Full post-recovery pipeline verification](task-06/step-03-recovery-build.md):
+  one explicit operator build #23 of unchanged `d89a0c4` passed 584 tests, all gates
+  and 33 artifact checks. #22 retained as failed; no scanner/gate changes or repeated retries.
+
 - [Step 6.3 — Post-recovery scanner comparison](task-06/step-03-scanner-comparison.md):
   same #22 image and pinned Trivy passed existing validation with a different fresh
   database snapshot, zero known findings. #22 remains failed; no CI retry or gate change.

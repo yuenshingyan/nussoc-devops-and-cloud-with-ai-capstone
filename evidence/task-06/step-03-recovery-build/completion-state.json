@@ -1,0 +1,7 @@
+{
+  "original_build_22": "FAILURE",
+  "explicit_recovery_build_23": "SUCCESS",
+  "queue_empty": true,
+  "monitoring_stopped": true,
+  "source_published_during_recovery_build": false
+}

@@ -1,0 +1,5 @@
+{
+  "after_build": 22,
+  "expected_revision": "d89a0c437c9d5845da5085871f3f45a1bc7795ce",
+  "trigger": "one user-approved explicit recovery build"
+}
