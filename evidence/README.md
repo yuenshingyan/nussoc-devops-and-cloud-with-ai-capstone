@@ -21,6 +21,10 @@ and report retention on an isolated failure. Cloud delivery remains unverified.
 
 ## Recorded evidence
 
+- [Step 6.3 follow-up — SCM scanner failure](task-06/step-03-scm-followup-failure.md):
+  published `d89a0c4`; #22 passed 584 tests but Trivy crashed with a database-page
+  assertion. Image archival blocked; 31 artifacts retained, no automatic retry.
+
 - [Step 6.3 — Published main/SCM verification](task-06/step-03-scm-verification.md):
   automatic build #21 at `dcab1c5` passed 584 tests and all gates; 33 artifacts verified.
   No new image execution, outage or email delivery.

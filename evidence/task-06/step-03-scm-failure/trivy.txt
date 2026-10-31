@@ -1,0 +1,84 @@
+2026-10-31T11:07:20Z	INFO	Loaded	file_path="/tmp/finsecure-image-scan-o_nhvwz9/config.yaml"
+2026-10-31T11:07:20Z	INFO	[vuln] Vulnerability scanning is enabled
+2026-10-31T11:07:21Z	WARN	Third-party SBOM may lead to inaccurate vulnerability detection
+2026-10-31T11:07:21Z	WARN	Recommend using Trivy to generate SBOMs
+2026-10-31T11:07:22Z	INFO	[python] Licenses acquired from one or more METADATA files may be subject to additional terms. Use `--debug` flag to see all affected packages.
+2026-10-31T11:07:22Z	INFO	Detected OS	family="alpine" version="3.24.3"
+2026-10-31T11:07:22Z	INFO	[alpine] Detecting vulnerabilities...	os_version="3.24" repository="3.24" pkg_num=30
+2026-10-31T11:07:22Z	INFO	Number of language-specific files	num=1
+2026-10-31T11:07:22Z	INFO	[python-pkg] Detecting vulnerabilities...
+panic: assertion failed: Page expected to be: 281746, but self identifies as 0
+
+goroutine 1 [running]:
+go.etcd.io/bbolt/internal/common.(*Page).FastCheck(0xffff31892000, 0x0?)
+	/home/runner/go/pkg/mod/go.etcd.io/bbolt@v1.5.0/internal/common/page.go:92 +0x12c
+go.etcd.io/bbolt.(*Tx).page(0x0?, 0x61acde99a990?)
+	/home/runner/go/pkg/mod/go.etcd.io/bbolt@v1.5.0/tx.go:640 +0x74
+go.etcd.io/bbolt.(*Bucket).pageNode(0x4ad07d8?, 0x0?)
+	/home/runner/go/pkg/mod/go.etcd.io/bbolt@v1.5.0/bucket.go:954 +0x8c
+go.etcd.io/bbolt.(*Cursor).search(0x61acde112a30, {0x61acde1128df, 0x5, 0x20}, 0x0?)
+	/home/runner/go/pkg/mod/go.etcd.io/bbolt@v1.5.0/cursor.go:284 +0x38
+go.etcd.io/bbolt.(*Cursor).searchPage(0x61acde112a30, {0x61acde1128df, 0x5, 0x20}, 0x933cea0?)
+	/home/runner/go/pkg/mod/go.etcd.io/bbolt@v1.5.0/cursor.go:344 +0x188
+go.etcd.io/bbolt.(*Cursor).search(0x61acde112a30, {0x61acde1128df, 0x5, 0x20}, 0x61acde112738?)
+	/home/runner/go/pkg/mod/go.etcd.io/bbolt@v1.5.0/cursor.go:301 +0x174
+go.etcd.io/bbolt.(*Cursor).seek(0x61acde112a30, {0x61acde1128df?, 0x61acde112738?, 0x3268600?})
+	/home/runner/go/pkg/mod/go.etcd.io/bbolt@v1.5.0/cursor.go:162 +0x34
+go.etcd.io/bbolt.(*Cursor).Seek(0x61acde112a30, {0x61acde1128df?, 0x3df018d?, 0x2?})
+	/home/runner/go/pkg/mod/go.etcd.io/bbolt@v1.5.0/cursor.go:123 +0x34
+github.com/aquasecurity/trivy-db/pkg/db.Config.forEach.func1(0x61acdf1c22a0)
+	/home/runner/go/pkg/mod/github.com/aquasecurity/trivy-db@v0.0.0-20261012084708-cbebf2ecd6df/pkg/db/db.go:229 +0xec
+go.etcd.io/bbolt.(*DB).View(0x0?, 0x61acde112e48)
+	/home/runner/go/pkg/mod/go.etcd.io/bbolt@v1.5.0/db.go:953 +0x68
+github.com/aquasecurity/trivy-db/pkg/db.Config.forEach({}, {0x61acdd44c7c0, 0x2, 0x2})
+	/home/runner/go/pkg/mod/github.com/aquasecurity/trivy-db@v0.0.0-20261012084708-cbebf2ecd6df/pkg/db/db.go:222 +0x128
+github.com/aquasecurity/trivy-db/pkg/db.Config.ForEachAdvisory(...)
+	/home/runner/go/pkg/mod/github.com/aquasecurity/trivy-db@v0.0.0-20261012084708-cbebf2ecd6df/pkg/db/advisory.go:21
+github.com/aquasecurity/trivy-db/pkg/db.Config.GetAdvisories({}, {0x61acde60dd24, 0x5}, {0x61acdd384590, 0xd})
+	/home/runner/go/pkg/mod/github.com/aquasecurity/trivy-db@v0.0.0-20261012084708-cbebf2ecd6df/pkg/db/advisory.go:26 +0x1f4
+github.com/aquasecurity/trivy/pkg/detector/library.(*Driver).advisories(0x61acde113bc8, {0x61acdd384590, 0xd}, {0x61acdd38458a?, 0x61acde113528?})
+	/home/runner/work/trivy/trivy/pkg/detector/library/driver.go:165 +0x124
+github.com/aquasecurity/trivy/pkg/detector/library.(*Driver).DetectVulnerabilities(0x61acde113bc8, {0x0, 0x0}, {0x61acdd384590, 0xd}, {0x61acdd38458a, 0x5})
+	/home/runner/work/trivy/trivy/pkg/detector/library/driver.go:118 +0x64
+github.com/aquasecurity/trivy/pkg/detector/library.detect({0x9781da0, 0x61acde99a690}, {{0x3df0c0d, 0x3}, {0x972d678, 0x4be24a0}, {}}, {0x61acde480008?, 0xb9fdff231c830a?, 0x0?})
+	/home/runner/work/trivy/trivy/pkg/detector/library/detect.go:36 +0x1c8
+github.com/aquasecurity/trivy/pkg/detector/library.Detect({0x9781da0, 0x61acde99a690}, {0x3e1a258?, 0x61acddb79b00?}, {0x61acde480008, 0x10, 0x10})
+	/home/runner/work/trivy/trivy/pkg/detector/library/detect.go:20 +0x90
+github.com/aquasecurity/trivy/pkg/scan/langpkg.(*scanner).scanVulnerabilities(0x9776758?, {0x9781da0, 0x61acde99a690}, {{0x3e1a258, 0xa}, {0x0, 0x0}, {0x61acde480008, 0x10, 0x10}}, ...)
+	/home/runner/work/trivy/trivy/pkg/scan/langpkg/scan.go:95 +0x1a8
+github.com/aquasecurity/trivy/pkg/scan/langpkg.(*scanner).Scan(_, {_, _}, {{0xffffc11626a2, 0x46}, {{0x61acdd4eeab8, 0x6}, {0x61acdd4eecd0, 0x6}, 0x0, ...}, ...}, ...)
+	/home/runner/work/trivy/trivy/pkg/scan/langpkg/scan.go:68 +0x348
+github.com/aquasecurity/trivy/pkg/scan/local.Service.scanVulnerabilities({{_, _}, {_, _}, {_, _}, {{_, _}}}, {_, _}, ...)
+	/home/runner/work/trivy/trivy/pkg/scan/local/service.go:221 +0x4e8
+github.com/aquasecurity/trivy/pkg/scan/local.Service.ScanTarget({{_, _}, {_, _}, {_, _}, {{_, _}}}, {_, _}, ...)
+	/home/runner/work/trivy/trivy/pkg/scan/local/service.go:150 +0x244
+github.com/aquasecurity/trivy/pkg/scan/local.Service.Scan({{_, _}, {_, _}, {_, _}, {{_, _}}}, {_, _}, ...)
+	/home/runner/work/trivy/trivy/pkg/scan/local/service.go:127 +0xe80
+github.com/aquasecurity/trivy/pkg/scan.Service.ScanArtifact({{_, _}, {_, _}}, {_, _}, {{0x61acdd777e20, 0x2, 0x2}, {0x61acddafe3c0, ...}, ...})
+	/home/runner/work/trivy/trivy/pkg/scan/service.go:63 +0x214
+github.com/aquasecurity/trivy/pkg/commands/artifact.(*runner).scan(_, {_, _}, {{{0xffffc11625d0, 0x2e}, 0x0, 0x0, 0x0, 0x0, 0x0, ...}, ...}, ...)
+	/home/runner/work/trivy/trivy/pkg/commands/artifact/run.go:710 +0x374
+github.com/aquasecurity/trivy/pkg/commands/artifact.(*runner).scanArtifact(_, {_, _}, {{{0xffffc11625d0, 0x2e}, 0x0, 0x0, 0x0, 0x0, 0x0, ...}, ...}, ...)
+	/home/runner/work/trivy/trivy/pkg/commands/artifact/run.go:302 +0xc0
+github.com/aquasecurity/trivy/pkg/commands/artifact.(*runner).ScanImage(_, {_, _}, {{{0xffffc11625d0, 0x2e}, 0x0, 0x0, 0x0, 0x0, 0x0, ...}, ...})
+	/home/runner/work/trivy/trivy/pkg/commands/artifact/run.go:219 +0x138
+github.com/aquasecurity/trivy/pkg/commands/artifact.run({_, _}, {{{0xffffc11625d0, 0x2e}, 0x0, 0x0, 0x0, 0x0, 0x0, 0x45d964b800, ...}, ...}, ...)
+	/home/runner/work/trivy/trivy/pkg/commands/artifact/run.go:450 +0x6c4
+github.com/aquasecurity/trivy/pkg/commands/artifact.Run({_, _}, {{{0xffffc11625d0, 0x2e}, 0x0, 0x0, 0x0, 0x0, 0x0, 0x45d964b800, ...}, ...}, ...)
+	/home/runner/work/trivy/trivy/pkg/commands/artifact/run.go:409 +0x1f4
+github.com/aquasecurity/trivy/pkg/commands.NewImageCommand.func2(0x61acdded3508, {0x61acddb6c6c8?, 0x0?, 0x22?})
+	/home/runner/work/trivy/trivy/pkg/commands/app.go:337 +0x140
+github.com/spf13/cobra.(*Command).execute(0x61acdded3508, {0x61acddb6c488, 0x22, 0x22})
+	/home/runner/go/pkg/mod/github.com/spf13/cobra@v1.10.2/command.go:1015 +0x82c
+github.com/spf13/cobra.(*Command).ExecuteC(0x61acddef9b08)
+	/home/runner/go/pkg/mod/github.com/spf13/cobra@v1.10.2/command.go:1148 +0x340
+github.com/spf13/cobra.(*Command).Execute(...)
+	/home/runner/go/pkg/mod/github.com/spf13/cobra@v1.10.2/command.go:1071
+github.com/spf13/cobra.(*Command).ExecuteContext(...)
+	/home/runner/go/pkg/mod/github.com/spf13/cobra@v1.10.2/command.go:1064
+github.com/aquasecurity/trivy/pkg/commands.Run({0x9782158, 0x61acddea3000})
+	/home/runner/work/trivy/trivy/pkg/commands/run.go:23 +0x5c
+main.run()
+	/home/runner/work/trivy/trivy/cmd/trivy/main.go:48 +0x150
+main.main()
+	/home/runner/work/trivy/trivy/cmd/trivy/main.go:19 +0x20
