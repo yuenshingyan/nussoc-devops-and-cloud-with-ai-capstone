@@ -1,7 +1,8 @@
 # Step 6.3 — Local alerts and SMTP receiver
 
 Implemented on `task-06/step-03-alert-configuration`, based on reviewed/published
-`c27a2e8`. Review/merge/publication and normal SCM verification remain pending.
+`c27a2e8`. Merged/published as `dcab1c5`; normal SCM build #21 passed 584 tests, all gates
+and 33 artifact checks. See the [SCM follow-up](../../evidence/task-06/step-03-scm-verification.md).
 See [execution evidence](../../evidence/task-06/step-03-alert-configuration.md).
 
 ## Approved scope

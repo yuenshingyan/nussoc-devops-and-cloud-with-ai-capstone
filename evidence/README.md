@@ -21,6 +21,10 @@ and report retention on an isolated failure. Cloud delivery remains unverified.
 
 ## Recorded evidence
 
+- [Step 6.3 — Published main/SCM verification](task-06/step-03-scm-verification.md):
+  automatic build #21 at `dcab1c5` passed 584 tests and all gates; 33 artifacts verified.
+  No new image execution, outage or email delivery.
+
 - [Step 6.3 — Local alert configuration and receiver preflight](task-06/step-03-alert-configuration.md):
   584 host tests, six promtool scenarios, loaded rules and SMTP envelope acceptance.
   No actual email/outage yet; initial failures and successful final cleanup retained.

@@ -1,5 +1,9 @@
 # Step 6.3 — Local alert configuration and receiver preflight
 
+**Later status:** merged/published as `dcab1c5`; normal SCM build #21 verified.
+See the [follow-up](step-03-scm-verification.md). The candidate record below preserves
+its original execution and then-pending publication status.
+
 Implemented on `task-06/step-03-alert-configuration`, from reviewed/published
 `c27a2e8`. **Review, merge/publication and normal SCM verification pending.**
 The user approved the one-minute/15-second alert and chose local Mailpit instead of

@@ -86,10 +86,12 @@ See the [setup and known warnings](docs/runbooks/dashboard.md) and
 [follow-up evidence](evidence/task-06/step-02-scm-verification.md).
 
 Step 6.3's [local alerts and Mailpit SMTP inbox](docs/runbooks/alerts.md) are implemented
-on the review branch: 584 host tests, six rule scenarios, loaded-rule checks and SMTP
+and merged/published as `dcab1c5`: 584 host tests, six rule scenarios, loaded-rule checks and SMTP
 recipient acceptance passed. This is local test delivery, not Gmail. No email or outage
 was generated; notification receipt remains Step 6.4. Initial failures and final clean
 shutdown are recorded in [evidence](evidence/task-06/step-03-alert-configuration.md).
+[Normal SCM build #21](evidence/task-06/step-03-scm-verification.md) subsequently passed
+584 tests, all gates and 33 artifact checks, without restarting monitoring.
 
 ## Quick start
 

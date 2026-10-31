@@ -1,0 +1,10 @@
+{
+  "monitoring_stopped": true,
+  "retained_volumes": [
+    "finsecure-monitoring_prometheus-data",
+    "finsecure-monitoring_grafana-data",
+    "finsecure-monitoring-grafana-secrets",
+    "finsecure-monitoring_alertmanager-data"
+  ],
+  "outage_or_email_generated": false
+}
