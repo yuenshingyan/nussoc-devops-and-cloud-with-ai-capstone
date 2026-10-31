@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "<stdin>", line 53, in <module>
+  File "/usr/local/lib/python3.14/pathlib/__init__.py", line 809, in write_text
+  File "/usr/local/lib/python3.14/pathlib/__init__.py", line 771, in open
+OSError: [Errno 5] Input/output error: '/home/jenkins/agent/trivy-diagnostic-build22/result.json'

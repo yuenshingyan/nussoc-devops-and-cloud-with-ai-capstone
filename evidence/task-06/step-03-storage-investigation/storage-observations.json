@@ -1,0 +1,78 @@
+{
+  "observed_at_utc": "2026-10-31T13:23:11.482774+00:00",
+  "kernel_error_count": 37,
+  "kernel_error_excerpt": [
+    {
+      "time": "2026-10-31T12:00:55.748332179Z",
+      "message": "I/O error, dev vda, sector 100405256 op 0x1:(WRITE) flags 0x4000 phys_seg 254 prio class 2"
+    },
+    {
+      "time": "2026-10-31T12:00:55.748372596Z",
+      "message": "I/O error, dev vda, sector 100407296 op 0x1:(WRITE) flags 0x0 phys_seg 2 prio class 2"
+    },
+    {
+      "time": "2026-10-31T12:00:55.748431012Z",
+      "message": "EXT4-fs warning (device vda1): ext4_end_bio:353: I/O error 10 writing to inode 588012 starting block 12550912)"
+    },
+    {
+      "time": "2026-10-31T12:00:55.748490679Z",
+      "message": "I/O error, dev vda, sector 100407312 op 0x1:(WRITE) flags 0x4000 phys_seg 254 prio class 2"
+    },
+    {
+      "time": "2026-10-31T12:00:55.748506221Z",
+      "message": "I/O error, dev vda, sector 100409352 op 0x1:(WRITE) flags 0x0 phys_seg 2 prio class 2"
+    },
+    {
+      "time": "2026-10-31T12:00:55.748540096Z",
+      "message": "EXT4-fs warning (device vda1): ext4_end_bio:353: I/O error 10 writing to inode 588012 starting block 12551169)"
+    },
+    {
+      "time": "2026-10-31T12:00:55.748693137Z",
+      "message": "I/O error, dev vda, sector 100409368 op 0x1:(WRITE) flags 0x4000 phys_seg 254 prio class 2"
+    },
+    {
+      "time": "2026-10-31T12:00:55.748842137Z",
+      "message": "I/O error, dev vda, sector 100411400 op 0x1:(WRITE) flags 0x0 phys_seg 2 prio class 2"
+    },
+    {
+      "time": "2026-10-31T12:00:55.762332471Z",
+      "message": "Buffer I/O error on device vda1, logical block 12551952"
+    },
+    {
+      "time": "2026-10-31T12:00:55.969022179Z",
+      "message": "Aborting journal on device vda1-8."
+    },
+    {
+      "time": "2026-10-31T12:00:55.971968387Z",
+      "message": "EXT4-fs error (device vda1): ext4_journal_check_start:84: comm kworker/u32:1: Detected aborted journal"
+    },
+    {
+      "time": "2026-10-31T12:00:56.008382012Z",
+      "message": "Buffer I/O error on dev vda1, logical block 7372800, lost sync page write"
+    },
+    {
+      "time": "2026-10-31T12:00:56.008491179Z",
+      "message": "JBD2: I/O error when updating journal superblock for vda1-8."
+    },
+    {
+      "time": "2026-10-31T12:00:56.008994929Z",
+      "message": "Buffer I/O error on dev vda1, logical block 0, lost sync page write"
+    },
+    {
+      "time": "2026-10-31T12:00:56.009021471Z",
+      "message": "EXT4-fs (vda1): I/O error while writing superblock"
+    },
+    {
+      "time": "2026-10-31T12:00:56.009034887Z",
+      "message": "EXT4-fs (vda1): Remounting filesystem read-only"
+    }
+  ],
+  "docker_host_log_excerpt": [
+    "[2026-10-31T12:02:43.733105000Z][com.docker.virtualization.CrashDetectorPKG][W] logging console: write <HOME>/Library/Containers/com.docker.docker/Data/log/vm/console.log: no space left on device"
+  ],
+  "current_host_disk_usage": "Filesystem      Size    Used   Avail Capacity iused ifree %iused  Mounted on\n/dev/disk3s1   228Gi   191Gi    12Gi    94%    1.6M  130M    1%   /System/Volumes/Data\n",
+  "docker_ps_timed_out_after_seconds": 20,
+  "jenkins_login_http_status": "000",
+  "fresh_probe_completed_result_available": false,
+  "restart_reset_or_prune_performed_by_agent": false
+}

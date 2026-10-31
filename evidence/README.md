@@ -21,6 +21,10 @@ and report retention on an isolated failure. Cloud delivery remains unverified.
 
 ## Recorded evidence
 
+- [Step 6.3 blocker — Docker storage investigation](task-06/step-03-storage-investigation.md):
+  disk I/O errors, aborted journal/read-only remount and host no-space log; Docker and
+  Jenkins unavailable. No recovery action or CI retry performed; preserve data first.
+
 - [Step 6.3 follow-up — SCM scanner failure](task-06/step-03-scm-followup-failure.md):
   published `d89a0c4`; #22 passed 584 tests but Trivy crashed with a database-page
   assertion. Image archival blocked; 31 artifacts retained, no automatic retry.

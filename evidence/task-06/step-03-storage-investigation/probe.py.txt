@@ -1,0 +1,54 @@
+"""One isolated comparison, never a CI retry or a cache repair."""
+from pathlib import Path
+from datetime import datetime,UTC
+from json import loads,dumps
+from hashlib import file_digest
+from os import environ
+from shutil import copyfile,disk_usage
+from subprocess import run,STDOUT,TimeoutExpired
+from struct import unpack_from
+
+root=Path('/home/jenkins/agent/trivy-diagnostic-build22')
+root.mkdir(mode=0o700,exist_ok=False)
+def checksum(p):
+ with p.open('rb') as f: return file_digest(f,'sha256').hexdigest()
+source=Path('/home/jenkins/agent/workspace/finsecure-ci')
+original=loads((source/'reports/image-security-summary.json').read_text())
+assert original['source_revision']=='d89a0c437c9d5845da5085871f3f45a1bc7795ce'
+assert checksum(source/'images/finsecure-pay.tar.gz')==original['archive_sha256']
+assert checksum(Path('/usr/local/bin/trivy'))==original['trivy_sha256']
+assert disk_usage(root).free > 4*1024**3
+archive=root/'image.tar.gz';copyfile(source/'images/finsecure-pay.tar.gz',archive)
+assert checksum(archive)==original['archive_sha256']
+(root/'config.yaml').write_text('{}\n');(root/'ignore').write_text('');(root/'docker').mkdir()
+env={k:v for k,v in environ.items() if not k.startswith('TRIVY_')};env['DOCKER_CONFIG']=str(root/'docker')
+common=['/usr/local/bin/trivy','--config',str(root/'config.yaml'),'image','--cache-dir',str(root/'cache'),'--db-repository','ghcr.io/aquasecurity/trivy-db:2','--no-progress','--timeout','5m','--skip-version-check']
+record={'started_at_utc':datetime.now(UTC).isoformat(),'original_build':22,'archive_sha256':checksum(archive),'trivy_sha256':original['trivy_sha256'],'ci_build_retried':False,'cache_reset_performed':False}
+try:
+ with (root/'database-download.txt').open('w') as log:
+  db_result=run(common+['--download-db-only'],cwd=root,env=env,stdout=log,stderr=STDOUT,timeout=300,check=False)
+ record['database_exit_code']=db_result.returncode
+ assert db_result.returncode==0
+ db=root/'cache/db/trivy.db';metadata=loads((root/'cache/db/metadata.json').read_text())
+ (root/'database-metadata.json').write_text(dumps(metadata,indent=2)+'\n')
+ record['database_sha256_before']=checksum(db);record['database_bytes']=db.stat().st_size
+ with db.open('rb') as f:
+  header=f.read(64);page_size=unpack_from('<I',header,24)[0]
+  record['database_page_size']=page_size
+  if page_size in [4096,8192,16384,65536]:
+   f.seek(281746*page_size);page=f.read(16)
+   record['previous_panic_page_header']=page.hex()
+ original_db=loads((source/'reports/trivy-db.json').read_text())
+ record['same_original_metadata_version_and_update']=all(metadata.get(k)==original_db.get(k) for k in ['Version','UpdatedAt','NextUpdate'])
+ record['scan_started_at_utc']=datetime.now(UTC).isoformat()
+ with (root/'scan.txt').open('w') as log:
+  result=run(common+['--input',str(archive),'--skip-db-update','--skip-java-db-update','--offline-scan','--scanners','vuln','--pkg-types','os,library','--parallel','1','--list-all-pkgs','--ignorefile',str(root/'ignore'),'--severity','UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL','--exit-code','0','--exit-on-eol','2','--format','json','--output',str(root/'trivy.json')],cwd=root,env=env,stdout=log,stderr=STDOUT,timeout=300,check=False)
+ record['scan_exit_code']=result.returncode
+ record['database_sha256_after']=checksum(db)
+ record['archive_unchanged']=checksum(archive)==record['archive_sha256']
+except (TimeoutExpired,AssertionError,OSError) as e:
+ record['diagnostic_error_type']=type(e).__name__
+finally:
+ record['finished_at_utc']=datetime.now(UTC).isoformat()
+ (root/'result.json').write_text(dumps(record,indent=2)+'\n')
+ print(dumps(record,indent=2))
