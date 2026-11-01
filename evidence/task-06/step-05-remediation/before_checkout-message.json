@@ -1,0 +1,33 @@
+{
+  "ID": "4zXuOoGr74JatsFaax2GX7",
+  "MessageID": "1575105661.3.1793535686536@0b7dc2acf30f",
+  "From": {
+    "Name": "",
+    "Address": "finsecure-ci@example.test"
+  },
+  "To": [
+    {
+      "Name": "",
+      "Address": "finsecure-operator@example.test"
+    }
+  ],
+  "Cc": [],
+  "Bcc": [],
+  "ReplyTo": [],
+  "ReturnPath": "finsecure-ci@example.test",
+  "Subject": "[FAILURE] finsecure-revision-before_checkout-20261101122116 #1",
+  "ListUnsubscribe": {
+    "Header": "",
+    "Links": [],
+    "Errors": "",
+    "HeaderPost": ""
+  },
+  "Date": "2026-11-01T12:21:26Z",
+  "Tags": [],
+  "Username": "",
+  "Text": "Local FinSecure CI notification.\r\nJob: finsecure-revision-before_checkout-20261101122116\r\nBuild: 1\r\nResult before notification: FAILURE\r\nRevision: unavailable\r\nBuild: http://127.0.0.1:8080/job/finsecure-revision-before_checkout-20261101122116/1/\r\n",
+  "HTML": "",
+  "Size": 1424,
+  "Inline": [],
+  "Attachments": []
+}

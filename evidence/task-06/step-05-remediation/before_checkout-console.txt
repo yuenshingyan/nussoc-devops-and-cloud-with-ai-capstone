@@ -1,0 +1,33 @@
+Started by user admin
+[Pipeline] Start of Pipeline
+[Pipeline] timeout
+Timeout set to expire in 4 min 0 sec
+[Pipeline] {
+[Pipeline] stage
+[Pipeline] { (Controlled pre-checkout failure)
+[Pipeline] error
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Declarative: Post Actions)
+[Pipeline] script
+[Pipeline] {
+[Pipeline] catchError
+[Pipeline] {
+[Pipeline] timeout
+Timeout set to expire in 3 min 0 sec
+[Pipeline] {
+[Pipeline] mail
+[Pipeline] }
+[Pipeline] // timeout
+[Pipeline] }
+[Pipeline] // catchError
+[Pipeline] }
+[Pipeline] // script
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] }
+[Pipeline] // timeout
+[Pipeline] End of Pipeline
+ERROR: Controlled failure before checkout
+Finished: FAILURE

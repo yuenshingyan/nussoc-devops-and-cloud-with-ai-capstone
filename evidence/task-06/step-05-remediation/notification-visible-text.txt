@@ -1,0 +1,50 @@
+Mailpit
+Mark unreadDelete
+Download
+FinSecure local test delivery
+ Return to inbox
+finsecure-ci@example.test
+a minute ago
+To: finsecure-operator@example.test
+[FAILURE] finsecure-revision-before_checkout-20261101122116 #1
+finsecure-ci@example.test
+a minute ago
+To: finsecure-operator@example.test
+[SUCCESS] finsecure-revision-checkout-20261101122057 #1
+finsecure-ci@example.test
+3 hours ago
+To: finsecure-operator@example.test
+[SUCCESS] finsecure-ci #26
+finsecure-ci@example.test
+4 hours ago
+To: finsecure-operator@example.test
+[SUCCESS] finsecure-ci-logging-review-20261101081204 #1
+finsecure-ci@example.test
+5 hours ago
+To: finsecure-operator@example.test
+[SUCCESS] finsecure-notification-bridge-20261101072200 #1
+finsecure-ci@example.test
+5 hours ago
+To: finsecure-operator@example.test
+[FAILURE] finsecure-notification-review-20261101065903 #2
+finsecure-ci@example.test
+5 hours ago
+To: finsecure-operator@example.test
+[SUCCESS] finsecure-notification-review-20261101065903 #1
+ About
+From	<finsecure-ci@example.test>
+To	<finsecure-operator@example.test>
+Subject	[SUCCESS] finsecure-revision-checkout-20261101122057 #1
+Date	Sun, 1 Nov 2026, 8:21 pm (1.4 kB)
+Tags	
+Text
+Headers
+Raw
+Link Check
+Local FinSecure CI notification.
+Job: finsecure-revision-checkout-20261101122057
+Build: 1
+Result before notification: SUCCESS
+Revision: f4b2c5cb45c1d27c2828e560e17fb7b4e4b61be7
+Build: http://127.0.0.1:8080/job/finsecure-revision-checkout-20261101122057/1/
+

@@ -1,0 +1,9 @@
+{
+  "utc": "2026-11-01T12:18:59.872723+00:00",
+  "old_controller_id": "00f9f10fbd9e317c7b47d241e545a83fa2edb248fbca8581bcdebc83c41f0f80",
+  "image": "sha256:1cb8838d10c58513bb35c137637954533b744777e1f1d237448fd4f444918d41",
+  "main_build": 26,
+  "inbox_total": 5,
+  "backup_mode_owner": "600:1000:1000",
+  "source_sha256": "ac001dffddf34fb074ca4d86f62c46ecb292675d9d6a715ac6137b50b954d702"
+}

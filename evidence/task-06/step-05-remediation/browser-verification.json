@@ -1,0 +1,8 @@
+{
+  "notification": {
+    "url": "http://127.0.0.1:8025/view/2OpShfXxpH5supP2XLD3ZA",
+    "screenshot": "notification.png",
+    "expected_message_text_visible": true
+  },
+  "isolated_browser_and_profile_removed": true
+}

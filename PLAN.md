@@ -3,11 +3,13 @@
 ## Latest checkpoint — Step 6.5 publication follow-up
 
 Main `f4b2c5c` is published; automatic SCM #26 passed 654 tests/all gates/33 artifact
-checks. Its real email omitted the known revision, and the post-publication boundary
-check found the controller's notification-file bind unreadable despite the restored
-host file. **Pause for a narrow revision-propagation fix and separately approved
-controller recreation; do not start the next step.** See
-[SCM evidence and limitations](evidence/task-06/step-05-scm-verification.md).
+checks. Its missing email revision and unreadable configuration bind are preserved in
+[SCM evidence](evidence/task-06/step-05-scm-verification.md). The approved local fix now
+persists the checkout revision; 655 host tests and native success/pre-checkout-failure
+mail probes passed. One same-image controller recreation restored the bind. Its observer
+array-comparison failure is retained; subsequent read-only reconciliation and boundary
+checks passed. **Pause for review/publication of the fix, then automatic SCM verification;
+do not start the next step.** See [remediation evidence](evidence/task-06/step-05-remediation.md).
 This supersedes the pre-publication checkpoint below.
 
 ## Agreed structure

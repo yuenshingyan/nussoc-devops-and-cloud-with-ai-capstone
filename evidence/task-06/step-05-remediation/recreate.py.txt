@@ -1,0 +1,75 @@
+"""One approved same-image controller recreation; no automatic retries/restarts."""
+from datetime import UTC, datetime
+from hashlib import sha256
+from json import dumps, loads
+from pathlib import Path
+from subprocess import run
+from time import monotonic, sleep
+from httpx2 import Client
+from bootstrap import Jenkins, admin_password
+from verify_secrets import verify
+
+out = Path('reports/step65-remediation')
+def command(args: list[str], timeout: int = 30) -> str:
+    result = run(args, capture_output=True, text=True, timeout=timeout)
+    if result.returncode:
+        raise RuntimeError('Command failed; no automatic retry: ' + args[0])
+    return result.stdout
+
+def inspect(name: str) -> dict:
+    return loads(command(['docker', 'inspect', name]))[0]
+
+def plugins(client: Jenkins) -> list:
+    return sorted(loads(client.request('/pluginManager/api/json?tree=plugins[shortName,version,active,enabled]'))['plugins'], key=lambda p:p['shortName'])
+
+client = Jenkins(admin_password())
+assert not loads(client.request('/queue/api/json'))['items']
+a = loads(client.request('/computer/finsecure-python/api/json?tree=idle,offline'))
+assert a['idle'] and not a['offline']
+assert loads(client.request('/job/finsecure-ci/api/json'))['lastBuild']['number'] == 26
+before = inspect('finsecure-jenkins-controller-1')
+others = {n:inspect(n)['Id'] for n in ['finsecure-jenkins-agent-1','finsecure-jenkins-builder-1','finsecure-monitoring-mailpit-1']}
+assert before['Image'] == 'sha256:1cb8838d10c58513bb35c137637954533b744777e1f1d237448fd4f444918d41'
+assert inspect('finsecure-jenkins-controller:step-06-05')['Id'] == before['Image']
+old_plugins = plugins(client)
+backup = command(['docker','exec',before['Id'],'stat','-c','%a:%u:%g','/var/jenkins_home/.finsecure-step65-bridge-config.xml.backup']).strip()
+assert backup == '600:1000:1000'
+limits = ['Memory','MemorySwap','NanoCpus','ReadonlyRootfs','CapDrop','SecurityOpt']
+source_hash = sha256(Path('ops/jenkins/notifications.yaml').read_bytes()).hexdigest()
+assert source_hash == 'ac001dffddf34fb074ca4d86f62c46ecb292675d9d6a715ac6137b50b954d702'
+with Client(timeout=5,trust_env=False) as http:
+    response=http.get('http://127.0.0.1:8025/api/v1/messages');response.raise_for_status();inbox=response.json()
+    assert inbox['total']==5
+    (out/'inbox-before.json').write_text(dumps(inbox,indent=2)+'\n')
+    for message in inbox['messages']:
+        response=http.get('http://127.0.0.1:8025/api/v1/message/'+message['ID']+'/raw');response.raise_for_status()
+        (out/(message['ID']+'.eml')).write_bytes(response.content)
+(out/'recreation-start.json').write_text(dumps({'utc':datetime.now(UTC).isoformat(),'old_controller_id':before['Id'],'image':before['Image'],'main_build':26,'inbox_total':5,'backup_mode_owner':backup,'source_sha256':source_hash},indent=2)+'\n')
+result=run(['docker','compose','-f','ops/jenkins/compose.yaml','-f','ops/jenkins/notifications.compose.yaml','up','-d','--force-recreate','--no-deps','--no-build','--pull','never','controller'],capture_output=True,text=True,timeout=180)
+(out/'recreation-output.txt').write_text(result.stdout+result.stderr)
+assert result.returncode == 0, 'Recreation failed; inspect without another restart'
+deadline=monotonic()+180
+last_error=None
+while monotonic()<deadline:
+    try:
+        client=Jenkins(admin_password())
+        a=loads(client.request('/computer/finsecure-python/api/json?tree=idle,offline'))
+        if a['idle'] and not a['offline']:
+            break
+    except Exception as error:
+        # Readiness can fail while Jenkins starts. Retain the exception type, not auth data.
+        last_error=type(error).__name__
+    sleep(2)
+else:
+    raise RuntimeError('Readiness deadline exceeded; last error type: '+str(last_error))
+after=inspect('finsecure-jenkins-controller-1')
+assert after['Id'] != before['Id'] and after['Image']==before['Image']
+assert after['Config']['Env']==before['Config']['Env']
+assert {k:after['HostConfig'][k] for k in limits}=={k:before['HostConfig'][k] for k in limits}
+assert plugins(client)==old_plugins
+assert {n:inspect(n)['Id'] for n in others}==others
+assert loads(client.request('/job/finsecure-ci/api/json'))['lastBuild']['number']==26
+assert not loads(client.request('/queue/api/json'))['items']
+record={'utc':datetime.now(UTC).isoformat(),'image_unchanged':after['Image'],'controller_recreated_once':True,'other_container_ids_unchanged':True,'plugins_and_limits_unchanged':True,'environment_unchanged':True,'agent_idle_online':True,'main_build':26,'boundaries':verify(notifications=True)}
+(out/'recreation-result.json').write_text(dumps(record,indent=2)+'\n')
+print('One controller recreation complete; same image/plugins/limits; agent ready; boundary checks passed; main #26 unchanged')

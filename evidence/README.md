@@ -21,6 +21,11 @@ and report retention on an isolated failure. Cloud delivery remains unverified.
 
 ## Recorded evidence
 
+- [Step 6.5 — Approved local remediation](task-06/step-05-remediation.md): explicit
+  checkout-revision persistence, 655 host tests, native revision/fallback receipts and
+  one same-image controller recreation. Boundary checks restored; original observer
+  failure retained and reconciled. Review/publication pending; normal CI still #26.
+
 - [Step 6.5 — SCM publication and follow-up gaps](task-06/step-05-scm-verification.md):
   published `f4b2c5c`, automatic #26 SUCCESS, 654 tests/all gates/33 artifacts and real
   mail. Email revision absent; post-publication configuration-bind read failed.

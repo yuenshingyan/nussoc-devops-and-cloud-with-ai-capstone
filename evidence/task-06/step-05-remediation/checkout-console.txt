@@ -1,0 +1,69 @@
+Started by user admin
+[Pipeline] Start of Pipeline
+[Pipeline] timeout
+Timeout set to expire in 4 min 0 sec
+[Pipeline] {
+[Pipeline] stage
+[Pipeline] { (Checkout)
+[Pipeline] node
+Running on finsecure-python in /home/jenkins/agent/workspace/finsecure-revision-checkout-20261101122057
+[Pipeline] {
+[Pipeline] deleteDir
+[Pipeline] checkout
+Selected Git installation does not exist. Using Default
+The recommended git tool is: NONE
+No credentials specified
+Cloning the remote Git repository
+Cloning repository https://github.com/yuenshingyan/nussoc-devops-and-cloud-with-ai-capstone.git
+ > git init /home/jenkins/agent/workspace/finsecure-revision-checkout-20261101122057 # timeout=10
+Fetching upstream changes from https://github.com/yuenshingyan/nussoc-devops-and-cloud-with-ai-capstone.git
+ > git --version # timeout=10
+ > git --version # 'git version 2.39.5'
+ > git fetch --tags --force --progress -- https://github.com/yuenshingyan/nussoc-devops-and-cloud-with-ai-capstone.git +refs/heads/*:refs/remotes/origin/* # timeout=10
+ > git config remote.origin.url https://github.com/yuenshingyan/nussoc-devops-and-cloud-with-ai-capstone.git # timeout=10
+ > git config --add remote.origin.fetch +refs/heads/*:refs/remotes/origin/* # timeout=10
+Avoid second fetch
+Checking out Revision f4b2c5cb45c1d27c2828e560e17fb7b4e4b61be7 (detached)
+Commit message: "docs: verify candidate CI notifications and gated-image logging"
+First time build. Skipping changelog.
+[Pipeline] script
+[Pipeline] {
+[Pipeline] sh
+ > git rev-parse f4b2c5cb45c1d27c2828e560e17fb7b4e4b61be7^{commit} # timeout=10
+ > git config core.sparsecheckout # timeout=10
+ > git checkout -f f4b2c5cb45c1d27c2828e560e17fb7b4e4b61be7 # timeout=10
++ git rev-parse HEAD
+[Pipeline] }
+[Pipeline] // script
+[Pipeline] sh
+SOURCE_REVISION=f4b2c5cb45c1d27c2828e560e17fb7b4e4b61be7
+Python 3.14.7
+uv 0.9.21
+git version 2.39.5
+efcb56c34386a1334d1079072997d3fc8fcccb353be46cdcdc97542c6290ea3d  uv.lock
+[Pipeline] }
+[Pipeline] // node
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Declarative: Post Actions)
+[Pipeline] script
+[Pipeline] {
+[Pipeline] catchError
+[Pipeline] {
+[Pipeline] timeout
+Timeout set to expire in 3 min 0 sec
+[Pipeline] {
+[Pipeline] mail
+[Pipeline] }
+[Pipeline] // timeout
+[Pipeline] }
+[Pipeline] // catchError
+[Pipeline] }
+[Pipeline] // script
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] }
+[Pipeline] // timeout
+[Pipeline] End of Pipeline
+Finished: SUCCESS

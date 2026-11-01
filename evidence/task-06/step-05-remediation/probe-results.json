@@ -1,0 +1,26 @@
+[
+  {
+    "case": "checkout",
+    "job": "finsecure-revision-checkout-20261101122057",
+    "build": 1,
+    "result": "SUCCESS",
+    "expected_revision": "f4b2c5cb45c1d27c2828e560e17fb7b4e4b61be7",
+    "actual_message_id": "2OpShfXxpH5supP2XLD3ZA",
+    "script_sha256": "68285563d55edb114070fd63f890bd01885d6fba2edf940be206f0cd3ab325f5",
+    "revision_injected_into_environment": false,
+    "automatic_scm_build": false,
+    "application_gates_run": false
+  },
+  {
+    "case": "before_checkout",
+    "job": "finsecure-revision-before_checkout-20261101122116",
+    "build": 1,
+    "result": "FAILURE",
+    "expected_revision": "unavailable",
+    "actual_message_id": "4zXuOoGr74JatsFaax2GX7",
+    "script_sha256": "d29643496b650507bc1eccb7bea8255676103cc34f2b4af741becd564191d198",
+    "revision_injected_into_environment": false,
+    "automatic_scm_build": false,
+    "application_gates_run": false
+  }
+]

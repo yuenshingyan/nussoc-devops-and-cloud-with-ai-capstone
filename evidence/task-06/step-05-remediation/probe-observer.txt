@@ -1,0 +1,1 @@
+Native checkout revision and pre-checkout fallback verified; two receipts exported; probe jobs disabled

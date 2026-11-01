@@ -1,0 +1,56 @@
+"""Native checkout-to-agentless-cleanup probe; no injected revision variable."""
+from datetime import UTC, datetime
+from hashlib import sha256
+from json import dumps, loads
+from pathlib import Path
+from urllib.parse import urlencode
+from xml.etree.ElementTree import SubElement, tostring
+from defusedxml.ElementTree import fromstring
+from httpx2 import Client
+from bootstrap import Jenkins, admin_password
+from verify_ci import post, job_xml, run_build
+out=Path('reports/step65-remediation');client=Jenkins(admin_password())
+pipeline=Path('Jenkinsfile').read_text();cleanup=pipeline[pipeline.index('        cleanup {'):]
+checkout=pipeline[pipeline.index("        stage('Checkout')"):pipeline.index("        stage('Locked dependencies')")]
+checkout=checkout.replace("stage('Checkout') {", "stage('Checkout') {\n            agent { label 'python' }")
+revision='f4b2c5cb45c1d27c2828e560e17fb7b4e4b61be7'
+secret=fromstring(client.request('/computer/finsecure-python/jenkins-agent.jnlp')).findtext('.//argument')
+sensitive=[admin_password(),secret,client.authorization,client.authorization[6:]]
+results=[]
+validation=post(client,'/pipeline-model-converter/validate',urlencode({'jenkinsfile':pipeline}).encode(),'application/x-www-form-urlencoded').decode()
+(out/'pipeline-validation.txt').write_text(validation);assert 'Jenkinsfile successfully validated' in validation
+with Client(timeout=5,trust_env=False) as http:
+    def get(path: str) -> object:
+        result=http.get('http://127.0.0.1:8025'+path);result.raise_for_status();return result
+    for case,stage,result,expected in [
+        ('checkout',checkout,'SUCCESS',revision),
+        ('before_checkout',"stage('Controlled pre-checkout failure') { steps { error('Controlled failure before checkout') } }",'FAILURE','unavailable'),
+    ]:
+        name='finsecure-revision-'+case+'-'+datetime.now(UTC).strftime('%Y%m%d%H%M%S');job='/job/'+name+'/'
+        script="def scm = [$class: 'GitSCM', branches: [[name: '"+revision+"']], userRemoteConfigs: [[url: 'https://github.com/yuenshingyan/nussoc-devops-and-cloud-with-ai-capstone.git']]]\n"
+        script+="pipeline {\n agent none\n options { skipDefaultCheckout(true); timeout(time: 4, unit: 'MINUTES') }\n stages {\n"+stage+"\n }\n post {\n"+cleanup
+        (out/(case+'.groovy.txt')).write_text(script)
+        inbox=get('/api/v1/messages').json();ids={m['ID'] for m in inbox['messages']}
+        post(client,'/createItem?'+urlencode({'name':name}),job_xml(script,'Owned checkout revision regression probe; no application gates or automatic SCM claim.'),'application/xml')
+        try:
+            number=run_build(client,job);base=job+str(number)+'/'
+            build=loads(client.request(base+'api/json'));console=client.request(base+'consoleText').decode()
+            assert not any(v in console for v in sensitive)
+            (out/(case+'-console.txt')).write_text(console)
+            assert build['result']==result
+            after=get('/api/v1/messages').json();new=[m for m in after['messages'] if m['ID'] not in ids]
+            assert len(new)==1 and after['total']==inbox['total']+1
+            message=get('/api/v1/message/'+new[0]['ID']).json();raw=get('/api/v1/message/'+new[0]['ID']+'/raw').content
+            assert not any(v.encode() in raw for v in sensitive)
+            (out/(case+'-message.json')).write_text(dumps(message,indent=2)+'\n');(out/(case+'.eml')).write_bytes(raw)
+            assert message['Subject']==f'[{result}] {name} #{number}'
+            assert 'Revision: '+expected+'\r\n' in message['Text']
+            if case=='checkout':
+                assert 'SOURCE_REVISION='+revision in console
+            results.append({'case':case,'job':name,'build':number,'result':result,'expected_revision':expected,'actual_message_id':message['ID'],'script_sha256':sha256(script.encode()).hexdigest(),'revision_injected_into_environment':False,'automatic_scm_build':False,'application_gates_run':False})
+        finally:
+            config=fromstring(client.request(job+'config.xml'));disabled=config.find('disabled')
+            if disabled is None:disabled=SubElement(config,'disabled')
+            disabled.text='true';post(client,job+'config.xml',tostring(config),'application/xml')
+        (out/'probe-results.json').write_text(dumps(results,indent=2)+'\n')
+print('Native checkout revision and pre-checkout fallback verified; two receipts exported; probe jobs disabled')

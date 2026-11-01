@@ -11,6 +11,11 @@ pipeline {
             steps {
                 deleteDir()
                 checkout scm
+                script {
+                    env.FINSECURE_SOURCE_REVISION = sh(
+                        script: 'git rev-parse HEAD', returnStdout: true
+                    ).trim()
+                }
                 sh '''#!/usr/bin/env bash
 set -euo pipefail
 mkdir -p reports
@@ -157,7 +162,7 @@ uv run --locked python -m scripts.image_scan \
                             mail to: 'finsecure-operator@example.test',
                                  from: 'finsecure-ci@example.test',
                                  subject: "[${resultBeforeNotification}] ${env.JOB_NAME} #${env.BUILD_NUMBER}",
-                                 body: "Local FinSecure CI notification.\nJob: ${env.JOB_NAME}\nBuild: ${env.BUILD_NUMBER}\nResult before notification: ${resultBeforeNotification}\nRevision: ${env.GIT_COMMIT ?: 'unavailable'}\nBuild: ${env.BUILD_URL}\n",
+                                 body: "Local FinSecure CI notification.\nJob: ${env.JOB_NAME}\nBuild: ${env.BUILD_NUMBER}\nResult before notification: ${resultBeforeNotification}\nRevision: ${env.FINSECURE_SOURCE_REVISION ?: 'unavailable'}\nBuild: ${env.BUILD_URL}\n",
                                  charset: 'UTF-8', mimeType: 'text/plain'
                         }
                     }

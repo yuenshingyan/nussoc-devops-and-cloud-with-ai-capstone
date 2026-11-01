@@ -1,0 +1,33 @@
+{
+  "ID": "2OpShfXxpH5supP2XLD3ZA",
+  "MessageID": "255215671.1.1793535674822@0b7dc2acf30f",
+  "From": {
+    "Name": "",
+    "Address": "finsecure-ci@example.test"
+  },
+  "To": [
+    {
+      "Name": "",
+      "Address": "finsecure-operator@example.test"
+    }
+  ],
+  "Cc": [],
+  "Bcc": [],
+  "ReplyTo": [],
+  "ReturnPath": "finsecure-ci@example.test",
+  "Subject": "[SUCCESS] finsecure-revision-checkout-20261101122057 #1",
+  "ListUnsubscribe": {
+    "Header": "",
+    "Links": [],
+    "Errors": "",
+    "HeaderPost": ""
+  },
+  "Date": "2026-11-01T12:21:14Z",
+  "Tags": [],
+  "Username": "",
+  "Text": "Local FinSecure CI notification.\r\nJob: finsecure-revision-checkout-20261101122057\r\nBuild: 1\r\nResult before notification: SUCCESS\r\nRevision: f4b2c5cb45c1d27c2828e560e17fb7b4e4b61be7\r\nBuild: http://127.0.0.1:8080/job/finsecure-revision-checkout-20261101122057/1/\r\n",
+  "HTML": "",
+  "Size": 1434,
+  "Inline": [],
+  "Attachments": []
+}

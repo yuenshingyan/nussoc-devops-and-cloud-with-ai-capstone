@@ -70,6 +70,17 @@ def test_pipeline_notifies_after_artifact_attempt_and_never_swallows_cancellatio
     assert "retry(" not in notification and "attach" not in notification
 
 
+def test_notification_uses_explicitly_persisted_checkout_revision():
+    pipeline = (ROOT / "Jenkinsfile").read_text()
+    checkout = pipeline.split("stage('Checkout')", 1)[1].split("stage('Locked dependencies')", 1)[0]
+    notification = pipeline.split("        cleanup {", 1)[1]
+    assert checkout.index("checkout scm") < checkout.index("env.FINSECURE_SOURCE_REVISION = sh(")
+    assert "script: 'git rev-parse HEAD', returnStdout: true" in checkout
+    assert ").trim()" in checkout
+    assert "${env.FINSECURE_SOURCE_REVISION ?: 'unavailable'}" in notification
+    assert "env.GIT_COMMIT" not in notification
+
+
 def test_container_uses_safe_logging_configuration_without_raw_access_logs():
     dockerfile = (ROOT / "Dockerfile").read_text()
     assert '"--no-access-log", "--log-config", "/app/logging.json"' in dockerfile

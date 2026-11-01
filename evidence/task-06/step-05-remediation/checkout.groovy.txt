@@ -1,0 +1,59 @@
+def scm = [$class: 'GitSCM', branches: [[name: 'f4b2c5cb45c1d27c2828e560e17fb7b4e4b61be7']], userRemoteConfigs: [[url: 'https://github.com/yuenshingyan/nussoc-devops-and-cloud-with-ai-capstone.git']]]
+pipeline {
+ agent none
+ options { skipDefaultCheckout(true); timeout(time: 4, unit: 'MINUTES') }
+ stages {
+        stage('Checkout') {
+            agent { label 'python' }
+            steps {
+                deleteDir()
+                checkout scm
+                script {
+                    env.FINSECURE_SOURCE_REVISION = sh(
+                        script: 'git rev-parse HEAD', returnStdout: true
+                    ).trim()
+                }
+                sh '''#!/usr/bin/env bash
+set -euo pipefail
+mkdir -p reports
+{
+    printf 'SOURCE_REVISION='
+    git rev-parse HEAD
+    python --version
+    uv --version
+    git --version
+    sha256sum uv.lock
+} > reports/build-metadata.txt
+cat reports/build-metadata.txt
+'''
+            }
+        }
+
+ }
+ post {
+        cleanup {
+            script {
+                // Controller environment opt-in disappears when its overlay is removed.
+                def notify = env.FINSECURE_CI_NOTIFICATIONS ?: 'false'
+                if (!(notify in ['true', 'false'])) {
+                    error('Invalid FINSECURE_CI_NOTIFICATIONS; expected true or false')
+                }
+                if (notify == 'true') {
+                    def resultBeforeNotification = currentBuild.currentResult
+                    // Keep failed builds failed. Never swallow cancellation/timeouts.
+                    catchError(buildResult: 'UNSTABLE', stageResult: 'UNSTABLE', catchInterruptions: false) {
+                        timeout(time: 180, unit: 'SECONDS') {
+                            mail to: 'finsecure-operator@example.test',
+                                 from: 'finsecure-ci@example.test',
+                                 subject: "[${resultBeforeNotification}] ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+                                 body: "Local FinSecure CI notification.\nJob: ${env.JOB_NAME}\nBuild: ${env.BUILD_NUMBER}\nResult before notification: ${resultBeforeNotification}\nRevision: ${env.FINSECURE_SOURCE_REVISION ?: 'unavailable'}\nBuild: ${env.BUILD_URL}\n",
+                                 charset: 'UTF-8', mimeType: 'text/plain'
+                        }
+                    }
+                } else {
+                    echo 'Build notification disabled; no SMTP delivery attempted.'
+                }
+            }
+        }
+    }
+}

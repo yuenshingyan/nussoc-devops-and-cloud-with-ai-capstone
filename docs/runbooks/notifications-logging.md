@@ -1,13 +1,20 @@
 # Step 6.5 — Local notifications and structured logs
 
-Status: **published as `f4b2c5c`; SCM #26 passed, follow-up remediation pending**.
+Status: **published baseline `f4b2c5c`; approved local remediation awaits review/publication**.
 
-The actual SCM email says `Revision: unavailable`, and the controller's notification
-file is currently unreadable through its bind mount after the publication checkout.
-Do not treat successful delivery as a passed configuration-boundary check. See
-[SCM follow-up evidence](../../evidence/task-06/step-05-scm-verification.md).
-The earlier verification checkpoint below predates publication; no recovery restart
-or revision-propagation fix has yet been performed.
+SCM #26 passed but its email omitted the revision; the configuration bind also became
+unreadable after checkout. The approved one-controller recreation restored the bind
+and boundary verification now passes. The pipeline fix explicitly persists actual
+Git HEAD in `FINSECURE_SOURCE_REVISION` for cleanup. Native checkout/pre-checkout-failure
+probes delivered the correct revision/fallback; 655 host tests passed. The recreation
+observer's environment-array assertion failure and read-only reconciliation are retained.
+See [remediation evidence](../../evidence/task-06/step-05-remediation.md).
+Normal SCM CI still uses the old hook until this fix is approved and published.
+
+Avoid checking out an older tree that removes live configuration binds. Advance the
+reviewed main ref without changing the working tree after an ancestry check; switch
+only between identical trees. Do not weaken bind/hash checks or add a stable deployment
+copy without approval. The earlier checkpoint below predates these follow-ups.
 Branch: `task-06/step-05-notifications-logging`, from published `ab36eb5`.
 
 654 host tests, Ruff checks, package build and source/dependency gates passed. A real
