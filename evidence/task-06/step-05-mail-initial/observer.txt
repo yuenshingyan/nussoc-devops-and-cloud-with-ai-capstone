@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "<repository>/reports/step65-mail-tests.py", line 36, in <module>
+    assert build['result']==expected,(mode,build['result'])
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ('success', 'FAILURE')

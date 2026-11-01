@@ -1,0 +1,19 @@
+Started by user admin
+[Pipeline] Start of Pipeline
+[Pipeline] node
+Running on finsecure-python in /home/jenkins/agent/workspace/finsecure-notification-context-20261101065738
+[Pipeline] {
+[Pipeline] stage
+[Pipeline] { (Read notification opt-in only)
+[Pipeline] script
+[Pipeline] {
+[Pipeline] echo
+notification_opt_in=absent_or_false
+[Pipeline] }
+[Pipeline] // script
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] }
+[Pipeline] // node
+[Pipeline] End of Pipeline
+Finished: SUCCESS

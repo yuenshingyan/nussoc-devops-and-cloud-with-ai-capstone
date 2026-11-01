@@ -1,0 +1,7 @@
+{
+  "completed_at_utc": "2026-11-01T06:52:20.269079+00:00",
+  "status": "passed",
+  "controller_and_agent_ready": true,
+  "main_build_after": 25,
+  "mailpit_empty": true
+}

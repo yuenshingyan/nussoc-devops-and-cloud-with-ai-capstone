@@ -1,0 +1,59 @@
+from datetime import UTC,datetime
+from hashlib import sha256
+from json import loads,dumps
+from pathlib import Path
+from urllib.parse import urlencode
+from xml.etree.ElementTree import SubElement,tostring
+from httpx2 import Client
+from defusedxml.ElementTree import fromstring
+from bootstrap import Jenkins,admin_password
+from verify_ci import post,job_xml,run_build
+out=Path('reports/step65-mail');out.mkdir(exist_ok=True)
+c=Jenkins(admin_password());name='finsecure-notification-review-'+datetime.now(UTC).strftime('%Y%m%d%H%M%S');job='/job/'+name+'/'
+assert not loads(c.request('/queue/api/json'))['items']
+assert loads(c.request('/job/finsecure-ci/api/json'))['lastBuild']['number']==25
+pipeline=Path('Jenkinsfile').read_text();tail=pipeline[pipeline.index('        cleanup {'):]
+secret=fromstring(c.request('/computer/finsecure-python/jenkins-agent.jnlp')).findtext('.//argument')
+secrets=[admin_password(),secret,c.authorization,c.authorization[6:]]
+results=[];created=False
+with Client(timeout=5,trust_env=False) as h:
+ assert h.get('http://127.0.0.1:8025/api/v1/messages').json()['total']==0
+ try:
+  for mode,fail,disabled,bad_charset,expected,count in [('success',False,False,False,'SUCCESS',1),('failure',True,False,False,'FAILURE',2),('disabled',False,True,False,'SUCCESS',2),('notification_error',False,False,True,'UNSTABLE',2),('failure_and_notification_error',True,False,True,'FAILURE',2)]:
+   env="environment { FINSECURE_CI_NOTIFICATIONS = 'false' }" if disabled else ''
+   step="error('Deliberate isolated build failure; normal CI is untouched')" if fail else "echo 'Isolated notification verification; no test/image gate claim'"
+   script="pipeline { agent none options { timeout(time: 4, unit: 'MINUTES') } "+env+" stages { stage('Synthetic outcome') { steps { "+step+" } } } post {\n"+tail
+   if bad_charset:
+    # Exercise a real native mail-step exception, not an injected catchError result.
+    script=script.replace("charset: 'UTF-8'", "charset: 'not-a-real-charset'")
+   xml=job_xml(script,'Owned local notification-only verification; '+mode+'; no SCM trigger, application tests, image publication or deployment.')
+   post(c,job+'config.xml' if created else '/createItem?'+urlencode({'name':name}),xml,'application/xml');created=True
+   number=run_build(c,job);bp=job+str(number)+'/'
+   build=loads(c.request(bp+'api/json'));console=c.request(bp+'consoleText').decode()
+   assert not any(s in console for s in secrets),'Credential in console; refusing export'
+   (out/(mode+'-console.txt')).write_text(console)
+   (out/(mode+'.groovy.txt')).write_text(script)
+   assert build['result']==expected,(mode,build['result'])
+   inbox=h.get('http://127.0.0.1:8025/api/v1/messages').json()
+   assert inbox['total']==count,(mode,inbox['total'])
+   if disabled:assert 'no SMTP delivery attempted' in console
+   if bad_charset:assert 'not-a-real-charset' in console and ('UnsupportedEncodingException' in console or 'UnsupportedCharsetException' in console)
+   results.append({'mode':mode,'job':name,'build':number,'result':build['result'],'inbox_total':inbox['total'],'executed_script_sha256':sha256(script.encode()).hexdigest(),'timestamp':build['timestamp'],'duration_ms':build['duration']})
+   (out/'results.json').write_text(dumps(results,indent=2)+'\n')
+   print(mode,build['result'],'inbox',inbox['total'],flush=True)
+  (out/'inbox.json').write_text(dumps(inbox,indent=2)+'\n')
+  for m in inbox['messages']:
+   detail=h.get('http://127.0.0.1:8025/api/v1/message/'+m['ID']);detail.raise_for_status()
+   raw=h.get('http://127.0.0.1:8025/api/v1/message/'+m['ID']+'/raw');raw.raise_for_status()
+   assert not any(s.encode() in raw.content for s in secrets)
+   label='success' if m['Subject'].startswith('[SUCCESS]') else 'failure'
+   assert m['Subject'].startswith('[SUCCESS]') or m['Subject'].startswith('[FAILURE]')
+   (out/(label+'-message.json')).write_text(dumps(detail.json(),indent=2)+'\n')
+   (out/(label+'.eml')).write_bytes(raw.content)
+ finally:
+  if created:
+   config=fromstring(c.request(job+'config.xml'));d=config.find('disabled')
+   if d is None:d=SubElement(config,'disabled')
+   d.text='true';post(c,job+'config.xml',tostring(config),'application/xml')
+assert loads(c.request('/job/finsecure-ci/api/json'))['lastBuild']['number']==25
+print('Owned job disabled; main #25 unchanged; raw messages exported')

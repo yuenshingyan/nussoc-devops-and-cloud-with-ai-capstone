@@ -1,0 +1,48 @@
+{
+  "service": "controller",
+  "docker_desktop_verified": true,
+  "expected_source": "<repository>/ops/jenkins/notifications.yaml",
+  "mounts": [
+    {
+      "Type": "volume",
+      "Name": "finsecure-jenkins_controller-home",
+      "Source": "/var/lib/docker/volumes/finsecure-jenkins_controller-home/_data",
+      "Destination": "/var/jenkins_home",
+      "Driver": "local",
+      "Mode": "rw",
+      "RW": true,
+      "Propagation": ""
+    },
+    {
+      "Type": "volume",
+      "Name": "finsecure-jenkins-controller-secrets",
+      "Source": "/var/lib/docker/volumes/finsecure-jenkins-controller-secrets/_data",
+      "Destination": "/run/secrets",
+      "Driver": "local",
+      "Mode": "ro",
+      "RW": false,
+      "Propagation": ""
+    },
+    {
+      "Type": "bind",
+      "Source": "/host_mnt<repository>/ops/jenkins/notifications.yaml",
+      "Destination": "/etc/jenkins/notifications.yaml",
+      "Mode": "ro",
+      "RW": false,
+      "Propagation": "rprivate"
+    }
+  ],
+  "networks": [
+    "finsecure-jenkins_default",
+    "finsecure-monitoring_notification"
+  ],
+  "notification_mount_count": 1,
+  "checks": [
+    {
+      "type_matches": true,
+      "read_only": true,
+      "source_matches": false,
+      "source_matches_desktop_alternative": true
+    }
+  ]
+}

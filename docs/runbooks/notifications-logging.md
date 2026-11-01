@@ -1,27 +1,39 @@
 # Step 6.5 — Local notifications and structured logs
 
-Status: **scope approved; candidate implemented, live verification blocked**. Branch:
-`task-06/step-05-notifications-logging`, from published `ab36eb5`.
+Status: **partial, unpublished; real isolated-job mail received, normal CI opt-in pending**.
+Branch: `task-06/step-05-notifications-logging`, from published `ab36eb5`.
 
-632 host tests, Ruff checks, package build and source/dependency gates passed. A real
-host Uvicorn subprocess produced privacy-safe JSON for synthetic requests. Native
-Jenkins Pipeline validation passed. The first controller activation failed the exact
-notification-file mount check after controller/agent readiness. The safety handler
-restored the baseline controller and stopped Mailpit. Baseline boundaries passed;
-normal CI remains at #25. The actual failing mount metadata was not captured before
-rollback; isolated bind probes did not reproduce the mismatch. Do not infer a cause
-or loosen the check. An additional diagnostic restart was approved and captured an exact-source mismatch:
-Docker Desktop reported the same path with `/host_mnt` prefixed. The unchanged check
-rejected it and the controller was rolled back again. See the
-[diagnostic evidence and proposed narrow correction](../../evidence/task-06/step-05-diagnostic.md).
-Accepting that exact Docker Desktop representation plus mounted-file hash verification,
-and one further activation, require approval. No boundary check has been relaxed.
-See also the [original checkpoint](../../evidence/task-06/step-05-checkpoint.md).
+653 host tests, Ruff checks, package build and source/dependency gates passed. A real
+host Uvicorn subprocess produced privacy-safe JSON. After two documented rollbacks,
+the approved exact Docker Desktop path alternative and mounted-file hash verification
+passed live activation. Read-only/network/privilege checks remain enforced.
 
-No Jenkins email receipt or gated candidate-container log proof is claimed yet.
-The Mailer descriptor's `mailpit:1025` settings persisted in Jenkins home, but the
-controller notification opt-in and extra network/mount were removed on rollback.
-Restoring Compose does not restore every persisted Jenkins setting.
+Two actual Jenkins success/failure emails were received and inspected in Mailpit.
+Explicit isolated-job opt-in was required: the controller's Docker environment flag
+was not automatically visible to either agentless or Python-agent Pipelines. The
+five-case native matrix verified delivery, disabled behavior and encoding-error
+handling without changing normal CI. See [results and next proposal](../../evidence/task-06/step-05-local-delivery.md).
+
+Jenkins and Mailpit remain running, owned review jobs disabled, normal CI still #25.
+Other monitoring services are stopped. Gated candidate-image logging and interruption
+verification remain pending. No cloud collection or Gmail delivery claim.
+
+The next proposed change needs approval: add a JCasC job-environment bridge to the
+base configuration with a false default, rebuild only the local controller image
+using the same pinned base/plugins, and recreate the controller once while idle.
+Preserve the old image for rollback. Putting the bridge only in optional JCasC could
+leave a persisted enabled property after that file is removed.
+
+While the overlay is active, run boundary checks with:
+
+```sh
+uv run --locked python ops/jenkins/verify_secrets.py --notifications
+```
+
+The baseline mode intentionally rejects the extra configuration mount. Compose
+rollback alone does not restore every persisted Jenkins setting. Historical failures:
+[initial checkpoint](../../evidence/task-06/step-05-checkpoint.md) and
+[diagnostic activation](../../evidence/task-06/step-05-diagnostic.md).
 
 Step 6.4 is published. Automatic SCM build #25 passed 584 tests, all gates and
 33 artifact checks. That build did not demonstrate Jenkins email delivery.

@@ -1,0 +1,42 @@
+{
+  "service": "agent",
+  "docker_desktop_verified": true,
+  "expected_source": "<repository>/ops/jenkins/notifications.yaml",
+  "mounts": [
+    {
+      "Type": "volume",
+      "Name": "finsecure-jenkins_agent-workspace",
+      "Source": "/var/lib/docker/volumes/finsecure-jenkins_agent-workspace/_data",
+      "Destination": "/home/jenkins/agent",
+      "Driver": "local",
+      "Mode": "rw",
+      "RW": true,
+      "Propagation": ""
+    },
+    {
+      "Type": "volume",
+      "Name": "finsecure-jenkins_builder-socket",
+      "Source": "/var/lib/docker/volumes/finsecure-jenkins_builder-socket/_data",
+      "Destination": "/run/buildkit",
+      "Driver": "local",
+      "Mode": "ro",
+      "RW": false,
+      "Propagation": ""
+    },
+    {
+      "Type": "volume",
+      "Name": "finsecure-jenkins-agent-secrets",
+      "Source": "/var/lib/docker/volumes/finsecure-jenkins-agent-secrets/_data",
+      "Destination": "/run/secrets",
+      "Driver": "local",
+      "Mode": "ro",
+      "RW": false,
+      "Propagation": ""
+    }
+  ],
+  "networks": [
+    "finsecure-jenkins_default"
+  ],
+  "notification_mount_count": 0,
+  "checks": []
+}

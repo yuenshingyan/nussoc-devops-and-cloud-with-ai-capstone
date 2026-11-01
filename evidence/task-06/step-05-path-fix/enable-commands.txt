@@ -1,0 +1,58 @@
+[
+    {
+        "Name": "finsecure-monitoring_notification",
+        "Id": "ea797cdd2f56e67087a0e677a2c978474fa0cbe3ed22f35191b46ff7f3a6e7c8",
+        "Created": "2026-10-30T15:57:09.241244262Z",
+        "Scope": "local",
+        "Driver": "bridge",
+        "EnableIPv4": true,
+        "EnableIPv6": false,
+        "IPAM": {
+            "Driver": "default",
+            "Options": null,
+            "Config": [
+                {
+                    "Subnet": "172.24.0.0/16",
+                    "Gateway": "172.24.0.1"
+                }
+            ]
+        },
+        "Internal": false,
+        "Attachable": false,
+        "Ingress": false,
+        "ConfigFrom": {
+            "Network": ""
+        },
+        "ConfigOnly": false,
+        "Options": {
+            "com.docker.network.enable_ipv4": "true",
+            "com.docker.network.enable_ipv6": "false"
+        },
+        "Labels": {
+            "com.docker.compose.config-hash": "2ccab403a98774feb6a581212ee7accb3b20e572ba49c66623f3468095306dc7",
+            "com.docker.compose.network": "notification",
+            "com.docker.compose.project": "finsecure-monitoring",
+            "com.docker.compose.version": "5.2.0"
+        },
+        "Containers": {},
+        "Status": {
+            "IPAM": {
+                "Subnets": {
+                    "172.24.0.0/16": {
+                        "IPsInUse": 3,
+                        "DynamicIPsAvailable": 65533
+                    }
+                }
+            }
+        }
+    }
+]
+time="2026-11-01T14:52:00+08:00" level=warning msg="Found orphan containers (finsecure-monitoring-grafana-1) for this project. If you removed or renamed this service in your compose file, you can run this command with the --remove-orphans flag to clean it up."
+ Container finsecure-monitoring-mailpit-1 Starting 
+ Container finsecure-monitoring-mailpit-1 Started 
+ Container finsecure-jenkins-agent-1 Running 
+ Container finsecure-jenkins-builder-1 Running 
+ Container finsecure-jenkins-controller-1 Recreate 
+ Container finsecure-jenkins-controller-1 Recreated 
+ Container finsecure-jenkins-controller-1 Starting 
+ Container finsecure-jenkins-controller-1 Started 

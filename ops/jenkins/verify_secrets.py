@@ -2,6 +2,7 @@
 
 from argparse import ArgumentParser
 from datetime import UTC, datetime
+from hashlib import sha256
 from json import dumps, loads
 from os import getuid
 from pathlib import Path
@@ -52,7 +53,13 @@ def read_password(directory: Path) -> str:
 
 
 def check_container(
-    service: str, info: dict, uid: str, secrets: list[str], *, notifications: bool = False
+    service: str,
+    info: dict,
+    uid: str,
+    secrets: list[str],
+    *,
+    notifications: bool = False,
+    docker_desktop: bool = False,
 ) -> None:
     """Reject drift from the approved volume, network and privilege boundaries."""
     host = info["HostConfig"]
@@ -81,6 +88,12 @@ def check_container(
         if set(info["NetworkSettings"]["Networks"]) != expected_networks[service]:
             raise ValueError("notification_network_boundary_invalid")
         if service == "controller":
+            expected_source = str(ROOT / "ops/jenkins/notifications.yaml")
+            allowed_sources = {expected_source}
+            if docker_desktop:
+                # Desktop can report its VM-side representation of this exact host path.
+                # Do not normalize arbitrary prefixes or accept other bind sources.
+                allowed_sources.add("/host_mnt" + expected_source)
             configuration = [
                 m for m in mounts if m["Destination"] == "/etc/jenkins/notifications.yaml"
             ]
@@ -88,7 +101,7 @@ def check_container(
                 len(configuration) != 1
                 or configuration[0]["Type"] != "bind"
                 or configuration[0]["RW"] is not False
-                or configuration[0]["Source"] != str(ROOT / "ops/jenkins/notifications.yaml")
+                or configuration[0]["Source"] not in allowed_sources
             ):
                 raise ValueError("notification_configuration_mount_invalid")
             mounts = [m for m in mounts if m["Destination"] != "/etc/jenkins/notifications.yaml"]
@@ -167,6 +180,22 @@ def check_anonymous_access() -> None:
             raise ValueError("anonymous_api_status_unexpected") from None
 
 
+def verify_notification_file(identifier: str) -> str:
+    """Require exact mounted-file bytes and reject host changes during observation."""
+    path = ROOT / "ops/jenkins/notifications.yaml"
+    digest = sha256(path.read_bytes()).hexdigest()
+    observed = command(
+        ["docker", "exec", identifier, "sha256sum", "/etc/jenkins/notifications.yaml"],
+        timeout=15,
+    )
+    if (
+        observed != digest + "  /etc/jenkins/notifications.yaml"
+        or sha256(path.read_bytes()).hexdigest() != digest
+    ):
+        raise ValueError("notification_configuration_digest_invalid")
+    return digest
+
+
 def verify(*, notifications: bool = False) -> dict:
     """Inspect existing services only; never trigger builds, restart or rotate secrets."""
     password = read_password(SECRET_DIRECTORY)
@@ -178,6 +207,12 @@ def verify(*, notifications: bool = False) -> dict:
     secrets = [password, secret, client.authorization, client.authorization.removeprefix("Basic ")]
     check_anonymous_access()
     check_job(client.request("/job/finsecure-ci/config.xml"))
+    docker_desktop = (
+        notifications
+        and command(["docker", "info", "--format", "{{.OperatingSystem}}"], timeout=15)
+        == "Docker Desktop"
+    )
+    configuration_digest = None
     for service in MOUNTS:
         identifier = command([*COMPOSE, "ps", "--quiet", service], timeout=15)
         if not fullmatch(r"[a-f0-9]{64}", identifier):
@@ -186,7 +221,16 @@ def verify(*, notifications: bool = False) -> dict:
         if len(info) != 1:
             raise ValueError("container_inspection_invalid")
         uid = command(["docker", "exec", identifier, "id", "-u"], timeout=15)
-        check_container(service, info[0], uid, secrets, notifications=notifications)
+        check_container(
+            service,
+            info[0],
+            uid,
+            secrets,
+            notifications=notifications,
+            docker_desktop=docker_desktop,
+        )
+        if notifications and service == "controller":
+            configuration_digest = verify_notification_file(identifier)
         if service != "builder":
             filename = "admin_password" if service == "controller" else "agent_secret"
             metadata = command(
@@ -210,6 +254,8 @@ def verify(*, notifications: bool = False) -> dict:
         "containers": "expected volumes, read-only secret mounts, uid 1000, approved privileges",
         "network": "loopback-only controller; no agent/builder published ports",
         "notification_overlay_checked": notifications,
+        "notification_configuration_sha256": configuration_digest,
+        "docker_desktop_path_alternative_enabled": docker_desktop,
         "anonymous_api": "denied",
         "checkout": "anonymous public repository, trusted main, Jenkinsfile from SCM",
         "known_credentials_in_argv_environment": False,

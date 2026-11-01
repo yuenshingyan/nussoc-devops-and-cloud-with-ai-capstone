@@ -101,11 +101,13 @@ See the [demonstration evidence](evidence/task-06/step-04-alert-demonstration.md
 The demonstration was published as `ab36eb5`; automatic SCM build #25 passed 584 tests,
 all gates and 33 artifact checks ([verification](evidence/task-06/step-04-scm-verification.md)).
 Step 6.5's [local notification/logging scope](docs/runbooks/notifications-logging.md) was
-approved. Its unpublished candidate passed 632 host tests and source gates, including
-real host-process JSON logging. The first controller activation failed a strict mount
-check and rolled back; [details and remaining work](evidence/task-06/step-05-checkpoint.md).
-Actual Jenkins email receipt, gated-container logging and centralized cloud logging
-remain unverified. Normal CI remains at #25; notification opt-in is currently absent.
+approved. Its unpublished candidate passed 653 host tests and source gates, including
+real host-process JSON logging. The approved Desktop mount/hash correction passed
+activation; an explicitly opted-in isolated Jenkins job delivered real success/failure
+emails to Mailpit ([evidence](evidence/task-06/step-05-local-delivery.md)). Normal CI
+remains #25: its environment opt-in still needs a JCasC bridge. Jenkins/Mailpit remain
+running; other monitoring is stopped. Gated-container logging and centralized cloud
+logging remain unverified.
 
 ## Quick start
 

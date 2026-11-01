@@ -1,0 +1,52 @@
+[
+  {
+    "mode": "success",
+    "job": "finsecure-notification-review-20261101065903",
+    "build": 1,
+    "result": "SUCCESS",
+    "inbox_total": 1,
+    "executed_script_sha256": "c0226d1b7ee035c8d8dbe3421614df28116962da77888edb8bc2def78f76b368",
+    "timestamp": 1793516354300,
+    "duration_ms": 1441
+  },
+  {
+    "mode": "failure",
+    "job": "finsecure-notification-review-20261101065903",
+    "build": 2,
+    "result": "FAILURE",
+    "inbox_total": 2,
+    "executed_script_sha256": "ba3a28b256cd66ef9bdb02dc5d93c8a55cf51007b3b297d8d19a94200ad2a912",
+    "timestamp": 1793516364307,
+    "duration_ms": 1310
+  },
+  {
+    "mode": "disabled",
+    "job": "finsecure-notification-review-20261101065903",
+    "build": 3,
+    "result": "SUCCESS",
+    "inbox_total": 2,
+    "executed_script_sha256": "7e367a780a2a5ff42e1d47f12d03bde1a36b0dc3484fa672c65e948d12c5ae7a",
+    "timestamp": 1793516374322,
+    "duration_ms": 1183
+  },
+  {
+    "mode": "notification_error",
+    "job": "finsecure-notification-review-20261101065903",
+    "build": 4,
+    "result": "UNSTABLE",
+    "inbox_total": 2,
+    "executed_script_sha256": "2b93c124c1bd64e0a9c8c34e2ef5f12241f5fa2b998b271df777dedd793127d5",
+    "timestamp": 1793516384333,
+    "duration_ms": 1191
+  },
+  {
+    "mode": "failure_and_notification_error",
+    "job": "finsecure-notification-review-20261101065903",
+    "build": 5,
+    "result": "FAILURE",
+    "inbox_total": 2,
+    "executed_script_sha256": "f21018d94688735744300989029cf71ad950bba3dc575591201be02f0b3d8b18",
+    "timestamp": 1793516394350,
+    "duration_ms": 1093
+  }
+]

@@ -1,0 +1,18 @@
+{
+  "inbox": {
+    "url": "http://127.0.0.1:8025/",
+    "screenshot": "inbox.png",
+    "expected_message_text_visible": true
+  },
+  "success": {
+    "url": "http://127.0.0.1:8025/view/3BQjp57eMBHuPYSoINs1do",
+    "screenshot": "success.png",
+    "expected_message_text_visible": true
+  },
+  "failure": {
+    "url": "http://127.0.0.1:8025/view/1hTs4r4fc16KjUuw9Q9n7A",
+    "screenshot": "failure.png",
+    "expected_message_text_visible": true
+  },
+  "isolated_browser_and_profile_removed": true
+}

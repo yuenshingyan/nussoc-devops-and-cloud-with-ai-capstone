@@ -1,0 +1,32 @@
+pipeline {
+ agent none
+ options { timeout(time: 4, unit: 'MINUTES') }
+ environment { FINSECURE_CI_NOTIFICATIONS = 'true' }
+ stages { stage('Synthetic outcome') { steps { echo 'Isolated notification verification; no test/image gate claim' } } }
+ post {
+        cleanup {
+            script {
+                // Controller environment opt-in disappears when its overlay is removed.
+                def notify = env.FINSECURE_CI_NOTIFICATIONS ?: 'false'
+                if (!(notify in ['true', 'false'])) {
+                    error('Invalid FINSECURE_CI_NOTIFICATIONS; expected true or false')
+                }
+                if (notify == 'true') {
+                    def resultBeforeNotification = currentBuild.currentResult
+                    // Keep failed builds failed. Never swallow cancellation/timeouts.
+                    catchError(buildResult: 'UNSTABLE', stageResult: 'UNSTABLE', catchInterruptions: false) {
+                        timeout(time: 180, unit: 'SECONDS') {
+                            mail to: 'finsecure-operator@example.test',
+                                 from: 'finsecure-ci@example.test',
+                                 subject: "[${resultBeforeNotification}] ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+                                 body: "Local FinSecure CI notification.\nJob: ${env.JOB_NAME}\nBuild: ${env.BUILD_NUMBER}\nResult before notification: ${resultBeforeNotification}\nRevision: ${env.GIT_COMMIT ?: 'unavailable'}\nBuild: ${env.BUILD_URL}\n",
+                                 charset: 'not-a-real-charset', mimeType: 'text/plain'
+                        }
+                    }
+                } else {
+                    echo 'Build notification disabled; no SMTP delivery attempted.'
+                }
+            }
+        }
+    }
+}

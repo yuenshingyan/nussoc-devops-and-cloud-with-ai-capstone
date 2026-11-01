@@ -1,0 +1,86 @@
+[
+  {
+    "_class": "org.jenkinsci.plugins.workflow.job.WorkflowJob",
+    "name": "finsecure-notification-context-20261101065738",
+    "buildable": false,
+    "builds": [
+      {
+        "_class": "org.jenkinsci.plugins.workflow.job.WorkflowRun",
+        "duration": 1022,
+        "number": 1,
+        "result": "SUCCESS",
+        "timestamp": 1793516264164
+      }
+    ]
+  },
+  {
+    "_class": "org.jenkinsci.plugins.workflow.job.WorkflowJob",
+    "name": "finsecure-notification-review-20261101065450",
+    "buildable": false,
+    "builds": [
+      {
+        "_class": "org.jenkinsci.plugins.workflow.job.WorkflowRun",
+        "duration": 788,
+        "number": 1,
+        "result": "FAILURE",
+        "timestamp": 1793516099003
+      }
+    ]
+  },
+  {
+    "_class": "org.jenkinsci.plugins.workflow.job.WorkflowJob",
+    "name": "finsecure-notification-review-20261101065533",
+    "buildable": false,
+    "builds": [
+      {
+        "_class": "org.jenkinsci.plugins.workflow.job.WorkflowRun",
+        "duration": 3043,
+        "number": 1,
+        "result": "SUCCESS",
+        "timestamp": 1793516144033
+      }
+    ]
+  },
+  {
+    "_class": "org.jenkinsci.plugins.workflow.job.WorkflowJob",
+    "name": "finsecure-notification-review-20261101065903",
+    "buildable": false,
+    "builds": [
+      {
+        "_class": "org.jenkinsci.plugins.workflow.job.WorkflowRun",
+        "duration": 1093,
+        "number": 5,
+        "result": "FAILURE",
+        "timestamp": 1793516394350
+      },
+      {
+        "_class": "org.jenkinsci.plugins.workflow.job.WorkflowRun",
+        "duration": 1191,
+        "number": 4,
+        "result": "UNSTABLE",
+        "timestamp": 1793516384333
+      },
+      {
+        "_class": "org.jenkinsci.plugins.workflow.job.WorkflowRun",
+        "duration": 1183,
+        "number": 3,
+        "result": "SUCCESS",
+        "timestamp": 1793516374322
+      },
+      {
+        "_class": "org.jenkinsci.plugins.workflow.job.WorkflowRun",
+        "duration": 1310,
+        "number": 2,
+        "result": "FAILURE",
+        "timestamp": 1793516364307
+      },
+      {
+        "_class": "org.jenkinsci.plugins.workflow.job.WorkflowRun",
+        "duration": 1441,
+        "number": 1,
+        "result": "SUCCESS",
+        "timestamp": 1793516354300
+      }
+    ]
+  }
+]

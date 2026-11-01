@@ -1,0 +1,32 @@
+{
+  "service": "builder",
+  "docker_desktop_verified": true,
+  "expected_source": "<repository>/ops/jenkins/notifications.yaml",
+  "mounts": [
+    {
+      "Type": "volume",
+      "Name": "finsecure-jenkins_builder-socket",
+      "Source": "/var/lib/docker/volumes/finsecure-jenkins_builder-socket/_data",
+      "Destination": "/run/user/1000/buildkit",
+      "Driver": "local",
+      "Mode": "rw",
+      "RW": true,
+      "Propagation": ""
+    },
+    {
+      "Type": "volume",
+      "Name": "finsecure-jenkins_builder-state",
+      "Source": "/var/lib/docker/volumes/finsecure-jenkins_builder-state/_data",
+      "Destination": "/home/user/.local/share/buildkit",
+      "Driver": "local",
+      "Mode": "rw",
+      "RW": true,
+      "Propagation": ""
+    }
+  ],
+  "networks": [
+    "finsecure-jenkins_builder-egress"
+  ],
+  "notification_mount_count": 0,
+  "checks": []
+}

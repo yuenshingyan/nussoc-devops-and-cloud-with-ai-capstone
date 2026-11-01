@@ -2,6 +2,7 @@
 
 from collections.abc import Iterator
 from copy import deepcopy
+from hashlib import sha256
 from io import BytesIO
 from json import dumps, loads
 from pathlib import Path
@@ -382,7 +383,8 @@ def test_observation_failure_replaces_stale_pass_without_leaking_errors(
         "no_opt_in",
     ],
 )
-def test_notification_overlay_requires_exact_opt_in_boundaries(helpers, problem):
+@mark.parametrize("docker_desktop", [False, True])
+def test_notification_overlay_requires_exact_opt_in_boundaries(helpers, problem, docker_desktop):
     info = container_info(helpers, "controller")
     info["NetworkSettings"] = {
         "Networks": {"finsecure-jenkins_default": {}, "finsecure-monitoring_notification": {}}
@@ -407,11 +409,18 @@ def test_notification_overlay_requires_exact_opt_in_boundaries(helpers, problem)
     elif problem == "extra_mount":
         info["Mounts"].append({"Type": "bind", "Destination": "/unapproved", "RW": False})
     if problem is None:
-        helpers["check_container"]("controller", info, "1000", [], notifications=True)
+        helpers["check_container"](
+            "controller", info, "1000", [], notifications=True, docker_desktop=docker_desktop
+        )
     else:
         with raises(ValueError):
             helpers["check_container"](
-                "controller", info, "1000", [], notifications=problem != "no_opt_in"
+                "controller",
+                info,
+                "1000",
+                [],
+                notifications=problem != "no_opt_in",
+                docker_desktop=docker_desktop,
             )
 
 
@@ -426,3 +435,73 @@ def test_other_services_cannot_join_notification_network(helpers, service):
     info["NetworkSettings"]["Networks"]["finsecure-monitoring_notification"] = {}
     with raises(ValueError, match="notification_network_boundary_invalid"):
         helpers["check_container"](service, info, "1000", [], notifications=True)
+
+
+@mark.parametrize("docker_desktop", [False, True])
+@mark.parametrize("representation", ["host", "desktop", "wrong_prefix", "wrong_file"])
+def test_bind_source_alternative_is_exact_and_desktop_only(helpers, docker_desktop, representation):
+    source = str(helpers["ROOT"] / "ops/jenkins/notifications.yaml")
+    sources = {
+        "host": source,
+        "desktop": "/host_mnt" + source,
+        "wrong_prefix": "/other" + source,
+        "wrong_file": "/host_mnt" + source + ".other",
+    }
+    info = container_info(helpers, "controller")
+    info["NetworkSettings"] = {
+        "Networks": {"finsecure-jenkins_default": {}, "finsecure-monitoring_notification": {}}
+    }
+    info["Mounts"].append(
+        {
+            "Type": "bind",
+            "Source": sources[representation],
+            "Destination": "/etc/jenkins/notifications.yaml",
+            "RW": False,
+        }
+    )
+    if representation == "host" or (representation == "desktop" and docker_desktop):
+        helpers["check_container"](
+            "controller", info, "1000", [], notifications=True, docker_desktop=docker_desktop
+        )
+    else:
+        with raises(ValueError, match="notification_configuration_mount_invalid"):
+            helpers["check_container"](
+                "controller", info, "1000", [], notifications=True, docker_desktop=docker_desktop
+            )
+
+
+@mark.parametrize("problem", [None, "digest", "filename", "extra_line", "host_change"])
+def test_notification_file_requires_exact_stable_digest(helpers, monkeypatch, tmp_path, problem):
+    path = tmp_path / "ops/jenkins/notifications.yaml"
+    path.parent.mkdir(parents=True)
+    path.write_bytes(b"synthetic configuration")
+    digest = sha256(path.read_bytes()).hexdigest()
+    check = helpers["verify_notification_file"]
+    monkeypatch.setitem(check.__globals__, "ROOT", tmp_path)
+
+    def observe(arguments: list[str], *, timeout: int) -> str:
+        assert arguments == [
+            "docker",
+            "exec",
+            "synthetic-container",
+            "sha256sum",
+            "/etc/jenkins/notifications.yaml",
+        ]
+        assert timeout == 15
+        if problem == "host_change":
+            path.write_bytes(b"changed configuration")
+        output = digest + "  /etc/jenkins/notifications.yaml"
+        if problem == "digest":
+            return "0" * 64 + "  /etc/jenkins/notifications.yaml"
+        if problem == "filename":
+            return digest + "  /other"
+        if problem == "extra_line":
+            return output + "\nextra"
+        return output
+
+    monkeypatch.setitem(check.__globals__, "command", observe)
+    if problem is None:
+        assert check("synthetic-container") == digest
+    else:
+        with raises(ValueError, match="notification_configuration_digest_invalid"):
+            check("synthetic-container")

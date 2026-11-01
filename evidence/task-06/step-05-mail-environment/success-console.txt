@@ -1,0 +1,25 @@
+Started by user admin
+[Pipeline] Start of Pipeline
+[Pipeline] timeout
+Timeout set to expire in 4 min 0 sec
+[Pipeline] {
+[Pipeline] stage
+[Pipeline] { (Synthetic outcome)
+[Pipeline] echo
+Isolated notification verification; no test/image gate claim
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Declarative: Post Actions)
+[Pipeline] script
+[Pipeline] {
+[Pipeline] echo
+Build notification disabled; no SMTP delivery attempted.
+[Pipeline] }
+[Pipeline] // script
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] }
+[Pipeline] // timeout
+[Pipeline] End of Pipeline
+Finished: SUCCESS

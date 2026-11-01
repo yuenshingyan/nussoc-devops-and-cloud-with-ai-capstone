@@ -1,0 +1,61 @@
+{
+  "total": 2,
+  "unread": 2,
+  "count": 2,
+  "messages_count": 2,
+  "messages_unread": 2,
+  "start": 0,
+  "tags": [],
+  "messages": [
+    {
+      "ID": "1hTs4r4fc16KjUuw9Q9n7A",
+      "MessageID": "1696751265.3.1793516365415@bc2997fb575c",
+      "Read": false,
+      "From": {
+        "Name": "",
+        "Address": "finsecure-ci@example.test"
+      },
+      "To": [
+        {
+          "Name": "",
+          "Address": "finsecure-operator@example.test"
+        }
+      ],
+      "Cc": null,
+      "Bcc": null,
+      "ReplyTo": [],
+      "Subject": "[FAILURE] finsecure-notification-review-20261101065903 #2",
+      "Created": "2026-11-01T06:59:25.419Z",
+      "Username": "",
+      "Tags": [],
+      "Size": 1412,
+      "Attachments": 0,
+      "Snippet": "Local FinSecure CI notification. Job: finsecure-notification-review-20261101065903 Build: 2 Result before notification: FAILURE Revision: unavailable Build: http://127.0.0.1:8080/job/finsecure-notific..."
+    },
+    {
+      "ID": "3BQjp57eMBHuPYSoINs1do",
+      "MessageID": "1243403877.1.1793516355547@bc2997fb575c",
+      "Read": false,
+      "From": {
+        "Name": "",
+        "Address": "finsecure-ci@example.test"
+      },
+      "To": [
+        {
+          "Name": "",
+          "Address": "finsecure-operator@example.test"
+        }
+      ],
+      "Cc": null,
+      "Bcc": null,
+      "ReplyTo": [],
+      "Subject": "[SUCCESS] finsecure-notification-review-20261101065903 #1",
+      "Created": "2026-11-01T06:59:15.632Z",
+      "Username": "",
+      "Tags": [],
+      "Size": 1412,
+      "Attachments": 0,
+      "Snippet": "Local FinSecure CI notification. Job: finsecure-notification-review-20261101065903 Build: 1 Result before notification: SUCCESS Revision: unavailable Build: http://127.0.0.1:8080/job/finsecure-notific..."
+    }
+  ]
+}

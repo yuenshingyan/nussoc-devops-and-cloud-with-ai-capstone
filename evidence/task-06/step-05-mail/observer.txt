@@ -1,0 +1,6 @@
+success SUCCESS inbox 1
+failure FAILURE inbox 2
+disabled SUCCESS inbox 2
+notification_error UNSTABLE inbox 2
+failure_and_notification_error FAILURE inbox 2
+Owned job disabled; main #25 unchanged; raw messages exported

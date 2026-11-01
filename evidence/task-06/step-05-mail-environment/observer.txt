@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "<repository>/reports/step65-mail-tests.py", line 41, in <module>
+    assert inbox['total']==count,(mode,inbox['total'])
+           ^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ('success', 0)
