@@ -98,7 +98,10 @@ Mailpit**, with inspected screenshots and raw-message exports. Restart was reque
 after 122 seconds; all monitoring services were stopped cleanly after evidence capture.
 See the [demonstration evidence](evidence/task-06/step-04-alert-demonstration.md) and
 [runbook](docs/runbooks/alert-demonstration.md). This is local SMTP, not Gmail delivery.
-The demonstration branch awaits review/publication; Jenkins notifications remain pending.
+The demonstration was published as `ab36eb5`; automatic SCM build #25 passed 584 tests,
+all gates and 33 artifact checks ([verification](evidence/task-06/step-04-scm-verification.md)).
+Step 6.5's [notification/logging proposal](docs/runbooks/notifications-logging.md) awaits
+approval; Jenkins notifications and centralized logging remain unimplemented.
 
 ## Quick start
 
