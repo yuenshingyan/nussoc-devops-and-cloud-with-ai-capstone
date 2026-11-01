@@ -1,0 +1,166 @@
+{
+  "boundaries": {
+    "status": "passed",
+    "verified_at_utc": "2026-11-01T08:28:48.869745+00:00",
+    "host_credentials": "owned regular file 0600 in owned directory 0700",
+    "containers": "expected volumes, read-only secret mounts, uid 1000, approved privileges",
+    "network": "loopback-only controller; no agent/builder published ports",
+    "notification_overlay_checked": true,
+    "notification_configuration_sha256": "ac001dffddf34fb074ca4d86f62c46ecb292675d9d6a715ac6137b50b954d702",
+    "docker_desktop_path_alternative_enabled": true,
+    "anonymous_api": "denied",
+    "checkout": "anonymous public repository, trusted main, Jenkinsfile from SCM",
+    "known_credentials_in_argv_environment": false,
+    "limitations": [
+      "Trusted single-operator model; agent builds can read the agent secret.",
+      "Does not verify account inventory, authorization strategy, token scopes or rotation.",
+      "Does not scan source, history, logs or arbitrary unknown credentials.",
+      "No registry, cloud, cluster, service restart or configuration changes."
+    ]
+  },
+  "main_build": 25,
+  "queue_empty": true,
+  "agent": {
+    "_class": "hudson.slaves.SlaveComputer",
+    "idle": true,
+    "offline": false
+  },
+  "running_services": [
+    "finsecure-jenkins-controller-1",
+    "finsecure-monitoring-mailpit-1",
+    "finsecure-jenkins-agent-1",
+    "finsecure-jenkins-builder-1"
+  ],
+  "disabled_owned_jobs": [
+    {
+      "_class": "org.jenkinsci.plugins.workflow.job.WorkflowJob",
+      "name": "finsecure-ci-logging-review-20261101081204",
+      "buildable": false,
+      "builds": [
+        {
+          "_class": "org.jenkinsci.plugins.workflow.job.WorkflowRun",
+          "number": 1,
+          "result": "SUCCESS"
+        }
+      ]
+    },
+    {
+      "_class": "org.jenkinsci.plugins.workflow.job.WorkflowJob",
+      "name": "finsecure-notification-bridge-20261101072200",
+      "buildable": false,
+      "builds": [
+        {
+          "_class": "org.jenkinsci.plugins.workflow.job.WorkflowRun",
+          "number": 1,
+          "result": "SUCCESS"
+        }
+      ]
+    },
+    {
+      "_class": "org.jenkinsci.plugins.workflow.job.WorkflowJob",
+      "name": "finsecure-notification-context-20261101065738",
+      "buildable": false,
+      "builds": [
+        {
+          "_class": "org.jenkinsci.plugins.workflow.job.WorkflowRun",
+          "number": 1,
+          "result": "SUCCESS"
+        }
+      ]
+    },
+    {
+      "_class": "org.jenkinsci.plugins.workflow.job.WorkflowJob",
+      "name": "finsecure-notification-operator-abort-20261101082202",
+      "buildable": false,
+      "builds": [
+        {
+          "_class": "org.jenkinsci.plugins.workflow.job.WorkflowRun",
+          "number": 1,
+          "result": "ABORTED"
+        }
+      ]
+    },
+    {
+      "_class": "org.jenkinsci.plugins.workflow.job.WorkflowJob",
+      "name": "finsecure-notification-review-20261101065450",
+      "buildable": false,
+      "builds": [
+        {
+          "_class": "org.jenkinsci.plugins.workflow.job.WorkflowRun",
+          "number": 1,
+          "result": "FAILURE"
+        }
+      ]
+    },
+    {
+      "_class": "org.jenkinsci.plugins.workflow.job.WorkflowJob",
+      "name": "finsecure-notification-review-20261101065533",
+      "buildable": false,
+      "builds": [
+        {
+          "_class": "org.jenkinsci.plugins.workflow.job.WorkflowRun",
+          "number": 1,
+          "result": "SUCCESS"
+        }
+      ]
+    },
+    {
+      "_class": "org.jenkinsci.plugins.workflow.job.WorkflowJob",
+      "name": "finsecure-notification-review-20261101065903",
+      "buildable": false,
+      "builds": [
+        {
+          "_class": "org.jenkinsci.plugins.workflow.job.WorkflowRun",
+          "number": 5,
+          "result": "FAILURE"
+        },
+        {
+          "_class": "org.jenkinsci.plugins.workflow.job.WorkflowRun",
+          "number": 4,
+          "result": "UNSTABLE"
+        },
+        {
+          "_class": "org.jenkinsci.plugins.workflow.job.WorkflowRun",
+          "number": 3,
+          "result": "SUCCESS"
+        },
+        {
+          "_class": "org.jenkinsci.plugins.workflow.job.WorkflowRun",
+          "number": 2,
+          "result": "FAILURE"
+        },
+        {
+          "_class": "org.jenkinsci.plugins.workflow.job.WorkflowRun",
+          "number": 1,
+          "result": "SUCCESS"
+        }
+      ]
+    },
+    {
+      "_class": "org.jenkinsci.plugins.workflow.job.WorkflowJob",
+      "name": "finsecure-notification-timeout-20261101081851",
+      "buildable": false,
+      "builds": [
+        {
+          "_class": "org.jenkinsci.plugins.workflow.job.WorkflowRun",
+          "number": 1,
+          "result": "ABORTED"
+        }
+      ]
+    }
+  ],
+  "removed_owned_agent_files": [
+    {
+      "path": "/tmp/finsecure-step65-1a1f4a3be0424ac7c0f62549d2ce3820c37fcbd0.bundle",
+      "sha256_verified_before_removal": "96acb2c715e124ffe61143d37aa120e20593601a0c8137ac34696dd05d27908d"
+    },
+    {
+      "path": "/home/jenkins/agent/workspace/finsecure-ci-logging-review-20261101081204/images/finsecure-pay.tar.gz",
+      "sha256_verified_before_removal": "f75a0abb3ad4598195c24c17651d7db39e3885b4e51ed0f805a4ba2a086da682"
+    }
+  ],
+  "host_and_jenkins_archived_image_retained": true,
+  "shared_caches_and_diagnostic_databases_preserved": true,
+  "inbox_total": 4,
+  "application_test_container_removed": true
+}

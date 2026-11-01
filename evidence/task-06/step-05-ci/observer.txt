@@ -1,0 +1,15 @@
+Created finsecure-ci-logging-review-20261101081204
+{
+  "job": "finsecure-ci-logging-review-20261101081204",
+  "result": "SUCCESS",
+  "tests": 654,
+  "artifacts": 33,
+  "image_findings": {
+    "UNKNOWN": 0,
+    "LOW": 0,
+    "MEDIUM": 0,
+    "HIGH": 0,
+    "CRITICAL": 0
+  },
+  "mail_received": true
+}

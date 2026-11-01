@@ -1,0 +1,34 @@
+{
+  "container_id": "4e66232aa2f3bfe771cc12f7a1a807a7b823a0562d489dca9dbc6d3ee3474bf5",
+  "image_id": "sha256:e7afa26d5f7bead9b3f47bb44ad79a6243c80c90343d92b28580b31dbfe668fb",
+  "user": "10001:10001",
+  "command": [
+    "/opt/venv/bin/python",
+    "-m",
+    "uvicorn",
+    "finsecure_pay.main:create_app",
+    "--factory",
+    "--host",
+    "0.0.0.0",
+    "--port",
+    "8000",
+    "--no-access-log",
+    "--log-config",
+    "/app/logging.json"
+  ],
+  "read_only": true,
+  "capabilities_dropped": [
+    "ALL"
+  ],
+  "memory_bytes": 268435456,
+  "nano_cpus": 500000000,
+  "loopback_binding": {
+    "8000/tcp": [
+      {
+        "HostIp": "127.0.0.1",
+        "HostPort": "8000"
+      }
+    ]
+  },
+  "boundaries_verified": true
+}

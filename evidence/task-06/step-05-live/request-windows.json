@@ -1,0 +1,48 @@
+[
+  {
+    "case": "accepted",
+    "started_at_utc": "2026-11-01T08:16:30.624064+00:00",
+    "finished_at_utc": "2026-11-01T08:16:30.715128+00:00",
+    "status": 200,
+    "result": {
+      "valid": true,
+      "errors": []
+    }
+  },
+  {
+    "case": "rejected",
+    "started_at_utc": "2026-11-01T08:16:30.715140+00:00",
+    "finished_at_utc": "2026-11-01T08:16:30.716825+00:00",
+    "status": 200,
+    "result": {
+      "valid": false,
+      "errors": [
+        "AMOUNT_NOT_POSITIVE"
+      ]
+    }
+  },
+  {
+    "case": "invalid",
+    "started_at_utc": "2026-11-01T08:16:30.716831+00:00",
+    "finished_at_utc": "2026-11-01T08:16:30.718390+00:00",
+    "status": 422,
+    "result": {
+      "detail": [
+        {
+          "loc": [
+            "body",
+            "amount"
+          ],
+          "type": "string_type",
+          "msg": "Invalid request value. Check the API contract."
+        }
+      ]
+    }
+  },
+  {
+    "case": "unknown_path",
+    "started_at_utc": "2026-11-01T08:16:30.718399+00:00",
+    "finished_at_utc": "2026-11-01T08:16:30.719485+00:00",
+    "status": 404
+  }
+]

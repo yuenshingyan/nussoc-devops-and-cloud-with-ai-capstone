@@ -1,0 +1,72 @@
+"""Run only the exact gated candidate; preserve logs and remove the owned container."""
+from datetime import UTC,datetime
+from hashlib import sha256
+from json import loads,dumps
+from pathlib import Path
+from subprocess import run
+from time import monotonic,sleep
+from httpx2 import Client,TransportError
+out=Path('reports/step65-live');out.mkdir(exist_ok=True)
+job=Path('reports/step65-gate-job.txt').read_text().strip();source=Path('reports')/job
+proof=loads((source/'verification.json').read_text());gate=proof['image_scan'];archive=source/'images/finsecure-pay.tar.gz'
+assert sha256(archive.read_bytes()).hexdigest()==gate['archive_sha256']
+assert run(['docker','inspect','finsecure-step65-logging'],capture_output=True).returncode!=0
+network=loads(run(['docker','network','inspect','finsecure-monitoring_default'],capture_output=True,text=True,check=True).stdout)[0]
+assert network['Labels']['com.docker.compose.project']=='finsecure-monitoring'
+p=run(['docker','load','--input',str(archive)],capture_output=True,text=True,check=True,timeout=90);(out/'image-load.txt').write_text(p.stdout+p.stderr)
+image=loads(run(['docker','image','inspect',gate['image_id']],capture_output=True,text=True,check=True).stdout)[0]
+assert image['Id']==gate['image_id'] and image['Config']['Labels']['org.opencontainers.image.revision']==proof['candidate_revision']
+(out/'provenance.json').write_text(dumps({'job':job,'build':proof['build'],'revision':proof['candidate_revision'],'archive_sha256':gate['archive_sha256'],'image_id':gate['image_id'],'image_gate':gate['status'],'started_at_utc':datetime.now(UTC).isoformat()},indent=2)+'\n')
+p=run(['docker','run','-d','--pull=never','--name','finsecure-step65-logging','--label','finsecure.purpose=step65-logging-verification','--network','finsecure-monitoring_default','--publish','127.0.0.1:8000:8000','--user','10001:10001','--read-only','--tmpfs','/tmp:rw,noexec,nosuid,size=16m,mode=1777','--cap-drop','ALL','--security-opt','no-new-privileges:true','--cpus','0.5','--memory','256m','--memory-swap','256m',gate['image_id']],capture_output=True,text=True,check=True,timeout=45)
+identifier=p.stdout.strip();requests=[]
+try:
+ info=loads(run(['docker','inspect',identifier],capture_output=True,text=True,check=True).stdout)[0];host=info['HostConfig']
+ assert info['Image']==gate['image_id'] and info['Config']['User']=='10001:10001'
+ assert host['ReadonlyRootfs'] and host['CapDrop']==['ALL'] and not host['CapAdd'] and not host['Privileged']
+ assert host['SecurityOpt']==['no-new-privileges:true'] and host['NanoCpus']==500000000
+ assert host['Memory']==host['MemorySwap']==256*1024**2
+ assert host['PortBindings']=={'8000/tcp':[{'HostIp':'127.0.0.1','HostPort':'8000'}]}
+ assert set(info['NetworkSettings']['Networks'])=={'finsecure-monitoring_default'}
+ assert all(m['Type']=='tmpfs' for m in info['Mounts'])
+ (out/'runtime.json').write_text(dumps({'container_id':identifier,'image_id':info['Image'],'user':info['Config']['User'],'command':info['Config']['Cmd'],'read_only':True,'capabilities_dropped':['ALL'],'memory_bytes':host['Memory'],'nano_cpus':host['NanoCpus'],'loopback_binding':host['PortBindings'],'boundaries_verified':True},indent=2)+'\n')
+ with Client(base_url='http://127.0.0.1:8000',timeout=5,trust_env=False) as c:
+  deadline=monotonic()+60
+  while monotonic()<deadline:
+   try:
+    response=c.get('/health')
+    if response.status_code==200:break
+   except TransportError:pass
+   sleep(1)
+  else:raise RuntimeError('Application readiness timeout')
+  marker='step65-synthetic-private'
+  for label,amount,status in [('accepted','1.00',200),('rejected','-1.00',200),('invalid',1,422)]:
+   started=datetime.now(UTC).isoformat()
+   response=c.post('/validate?token='+marker,headers={'Authorization':marker},json={'transaction_id':marker,'sender_id':marker+'-sender','recipient_id':marker+'-recipient','amount':amount,'currency':'SGD'})
+   assert response.status_code==status
+   body=response.json();assert (body['valid']==(label=='accepted')) if status==200 else 'detail' in body
+   requests.append({'case':label,'started_at_utc':started,'finished_at_utc':datetime.now(UTC).isoformat(),'status':response.status_code,'result':body})
+  started=datetime.now(UTC).isoformat();r=c.get('/'+marker+'?token='+marker);assert r.status_code==404
+  requests.append({'case':'unknown_path','started_at_utc':started,'finished_at_utc':datetime.now(UTC).isoformat(),'status':404})
+  metrics=c.get('/metrics');metrics.raise_for_status();assert marker not in metrics.text
+  for outcome in ['accepted','rejected','invalid']:assert f'finsecure_validation_outcomes_total{{outcome="{outcome}"}} 1.0' in metrics.text
+  (out/'metrics.txt').write_text(metrics.text)
+ (out/'request-windows.json').write_text(dumps(requests,indent=2)+'\n')
+finally:
+ p=run(['docker','stop','--time','30',identifier],capture_output=True,text=True,check=True,timeout=45);(out/'stop.txt').write_text(p.stdout+p.stderr)
+ info=loads(run(['docker','inspect',identifier],capture_output=True,text=True,check=True).stdout)[0]
+ assert info['Config']['Labels']['finsecure.purpose']=='step65-logging-verification'
+ logs=run(['docker','logs',identifier],capture_output=True,text=True,check=True)
+ text=logs.stdout+logs.stderr;(out/'application.jsonl').write_text(text)
+ (out/'cleanup.json').write_text(dumps({'container_id':identifier,'running':info['State']['Running'],'exit_code':info['State']['ExitCode'],'oom_killed':info['State']['OOMKilled'],'finished_at':info['State']['FinishedAt']},indent=2)+'\n')
+ run(['docker','rm',identifier],capture_output=True,text=True,check=True)
+ assert not info['State']['Running'] and not info['State']['OOMKilled'] and info['State']['ExitCode']==0
+records=[loads(line) for line in text.splitlines()]
+assert 'step65-synthetic-private' not in text
+assert [r['outcome'] for r in records if r['event']=='validation_outcome']==['accepted','rejected','invalid']
+http=[r for r in records if r['event']=='http_request_completed']
+assert [r['status_class'] for r in http if r['route']=='/validate']==['2xx','2xx','4xx']
+assert len([r for r in http if r['route']=='other'])==1 and all(r['route']!='/metrics' for r in http)
+assert any(r.get('diagnostic_code')=='APPLICATION_STOPPED' for r in records)
+for r in records:assert datetime.fromisoformat(r['timestamp']).utcoffset().total_seconds()==0
+(out/'verification.json').write_text(dumps({'status':'passed','revision':proof['candidate_revision'],'image_id':gate['image_id'],'json_records':len(records),'http_events':len(http),'outcomes':['accepted','rejected','invalid'],'synthetic_markers_absent':True,'utc_timestamps_verified':True,'metrics_outcomes_each_one':True,'graceful_shutdown':True,'owned_container_removed':True,'request_correlation':'sequential bounded request windows; no unique correlation IDs'},indent=2)+'\n')
+print('Exact gated image: JSON logs and metrics verified; marker absent; exit 0; owned container removed')

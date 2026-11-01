@@ -1,0 +1,40 @@
+Started by user admin
+[Pipeline] Start of Pipeline
+[Pipeline] timeout
+Timeout set to expire in 4 min 0 sec
+[Pipeline] {
+[Pipeline] stage
+[Pipeline] { (Synthetic successful work)
+[Pipeline] echo
+Owned interruption probe; no application gate claim
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Declarative: Post Actions)
+[Pipeline] script
+[Pipeline] {
+[Pipeline] catchError
+[Pipeline] {
+[Pipeline] timeout
+Timeout set to expire in 3 min 0 sec
+[Pipeline] {
+[Pipeline] echo
+notification_interrupt_wait
+[Pipeline] sleep
+Sleeping for 4 min 0 sec
+Cancelling nested steps due to timeout
+[Pipeline] }
+[Pipeline] // timeout
+[Pipeline] }
+Timeout has been exceeded
+org.jenkinsci.plugins.workflow.actions.ErrorAction$ErrorId: 43fcb9cb-e87c-4645-8198-0050ab677a09
+Setting overall build result to ABORTED
+[Pipeline] // catchError
+[Pipeline] }
+[Pipeline] // script
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] }
+[Pipeline] // timeout
+[Pipeline] End of Pipeline
+Finished: ABORTED

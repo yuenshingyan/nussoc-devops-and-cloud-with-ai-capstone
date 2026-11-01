@@ -1,0 +1,17 @@
+{
+  "containerimage.config.digest": "sha256:e7afa26d5f7bead9b3f47bb44ad79a6243c80c90343d92b28580b31dbfe668fb",
+  "containerimage.descriptor": {
+    "mediaType": "application/vnd.oci.image.manifest.v1+json",
+    "digest": "sha256:3161c5b8ec41e996b1292aaad1094c9cfc1c45e965822b02c853b41e0d0645b7",
+    "size": 1996,
+    "annotations": {
+      "org.opencontainers.image.created": "2026-11-01T08:12:54Z"
+    },
+    "platform": {
+      "architecture": "arm64",
+      "os": "linux"
+    }
+  },
+  "containerimage.digest": "sha256:3161c5b8ec41e996b1292aaad1094c9cfc1c45e965822b02c853b41e0d0645b7",
+  "image.name": "docker.io/library/finsecure-pay-ci:jenkins-finsecure-ci-logging-review-20261101081204-1"
+}

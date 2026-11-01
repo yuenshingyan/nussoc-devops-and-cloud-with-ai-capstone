@@ -1,0 +1,7 @@
+{
+  "candidate_revision": "1a1f4a3be0424ac7c0f62549d2ce3820c37fcbd0",
+  "public_base_revision": "ab36eb567abfa617a811e3919fdc3ac0de1f3051",
+  "agent_bundle_path": "/tmp/finsecure-step65-1a1f4a3be0424ac7c0f62549d2ce3820c37fcbd0.bundle",
+  "bundle_sha256": "96acb2c715e124ffe61143d37aa120e20593601a0c8137ac34696dd05d27908d",
+  "expected_tests": 654
+}

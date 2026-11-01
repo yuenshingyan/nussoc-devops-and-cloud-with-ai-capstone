@@ -1,0 +1,9 @@
+{
+  "job": "finsecure-ci-logging-review-20261101081204",
+  "build": 1,
+  "revision": "1a1f4a3be0424ac7c0f62549d2ce3820c37fcbd0",
+  "archive_sha256": "f75a0abb3ad4598195c24c17651d7db39e3885b4e51ed0f805a4ba2a086da682",
+  "image_id": "sha256:e7afa26d5f7bead9b3f47bb44ad79a6243c80c90343d92b28580b31dbfe668fb",
+  "image_gate": "passed",
+  "started_at_utc": "2026-11-01T08:16:27.227243+00:00"
+}

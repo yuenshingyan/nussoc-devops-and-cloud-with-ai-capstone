@@ -1,0 +1,1 @@
+Exact gated image: JSON logs and metrics verified; marker absent; exit 0; owned container removed

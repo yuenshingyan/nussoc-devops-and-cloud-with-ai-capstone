@@ -1,6 +1,6 @@
 # Step 6.5 — Local notifications and structured logs
 
-Status: **partial, unpublished; inherited opt-in and real local mail verified**.
+Status: **approved local subset verified; review/merge/publication pending**.
 Branch: `task-06/step-05-notifications-logging`, from published `ab36eb5`.
 
 654 host tests, Ruff checks, package build and source/dependency gates passed. A real
@@ -20,15 +20,22 @@ resource limits unchanged. One approved recreation passed. A new native probe in
 true in both agentless and Python-agent contexts without environment overrides and
 received another real email (inbox total three). See [bridge evidence](../../evidence/task-06/step-05-environment-bridge.md).
 
-Jenkins and Mailpit remain running, owned review jobs disabled, normal CI still #25.
-Other monitoring services are stopped. Gated candidate-image logging and interruption
-verification remain pending. No cloud collection or Gmail delivery claim.
+Full candidate CI at `1a1f4a3` passed 654 tests, existing gates and 33 artifact checks,
+then delivered a real email. Its exact gated image produced verified JSON logs and
+matching metrics for bounded synthetic traffic and was removed after exit 0. Native
+notification timeout/operator-abort probes both ended ABORTED without sending mail;
+these inserted a wait before SMTP, not a blocked-socket experiment. See the
+[completed local verification](../../evidence/task-06/step-05-notifications-logging.md).
+
+Jenkins and Mailpit remain running, all eight owned review/probe jobs disabled, normal
+CI still #25 on its old published Jenkinsfile. Other monitoring services are stopped.
+No cloud collection or Gmail delivery claim.
 
 The old controller image and a private 0600 root-configuration backup inside its
 existing home volume are retained through review; no private configuration was exported.
 The false default is regression-tested, but a live profile-off restart was not performed.
-Next: full candidate application/image verification and interruption tests, then review
-before publication. Main's old Jenkinsfile does not yet include the new notification hook.
+Next: review before merge/publication, then verify the new normal SCM build and its
+notification. Main's old Jenkinsfile does not yet include the new notification hook.
 
 While the overlay is active, run boundary checks with:
 
@@ -163,8 +170,48 @@ Every application event has `timestamp` (timezone-aware UTC ISO 8601), `level`
 - [Upstream Mailer source](https://github.com/jenkinsci/mailer-plugin/blob/master/src/main/java/hudson/tasks/Mailer.java)
 
 Upstream source is design input; the retained installed-plugin bytecode is separate
-local evidence. SMTP write timeout is configured but live notification cancellation
-and error behavior remain to be verified.
+local evidence. SMTP write timeout is configured. Native encoding-error handling and Pipeline
+interruption propagation were verified; cancellation of an already-blocked SMTP
+socket was not exercised.
+
+## Reproducing the local profile
+
+Follow [base Jenkins setup](local-jenkins.md) and [receiver setup](alerts.md) first.
+These are operator commands, not commands to rerun against a busy controller. Check
+capacity, queue/agent idleness and existing volume/network ownership. Obtain approval
+before another controller recreation and preserve a private rollback configuration.
+Do not prune caches, delete shared volumes or increase resources.
+
+From the repository root, with the pinned receiver image and reviewed controller image
+already available:
+
+```sh
+# Start only the existing local receiver; do not manufacture an application outage.
+docker compose -f ops/monitoring/compose.yaml -f ops/monitoring/alerts.compose.yaml \
+  up -d --no-deps --pull never mailpit
+# Applies the optional profile; recreates the controller if its configuration changed.
+docker compose -f ops/jenkins/compose.yaml -f ops/jenkins/notifications.compose.yaml \
+  up -d --no-deps --no-build --pull never controller
+uv run --locked python ops/jenkins/verify_secrets.py --notifications
+```
+
+The existing local controller image can be built from the reviewed source using
+`docker compose -f ops/jenkins/compose.yaml build controller`, after capacity checks
+and rebuild approval. Compare pinned/plugin inventory before replacement. Wait up to
+180 seconds for controller readiness and agent reconnection; investigate/roll back on
+failure. Do not call an HTTP 200 alone proof of configuration or notification delivery.
+
+Inspect actual mail at `http://127.0.0.1:8025/`. Export raw messages before stopping
+Mailpit; its tmpfs inbox is not durable. Successful email from an inline review job is
+not proof of an automatic SCM-triggered notification. After approved publication,
+verify the normal build's revision, SCM cause, gates and matching received message.
+
+For an approved shutdown, first recreate the controller using **base Compose only**
+with the new `step-06-05` image; its base JCasC defines the flag's false default. Verify
+the effective job setting and baseline boundaries before stopping Mailpit. This
+profile-off sequence was not executed during the one-recreation bridge test. Restoring
+an older image alone is not guaranteed to clear persisted global/Mailer properties.
+Never stop an active CI receiver and silently accept resulting delivery failures.
 
 ## Logging implementation and troubleshooting
 
@@ -183,7 +230,8 @@ before kill-and-wait (five seconds). A forced kill fails the test. Uvicorn re-ra
 SIGTERM outside PID 1 after logging completed shutdown; that host subprocess's expected
 return code is `-SIGTERM`, not a container exit-status claim.
 
-After a gated candidate container has been verified, local troubleshooting uses:
+The exact candidate container was verified and removed after export. For a running
+owned application container, local troubleshooting uses:
 
 ```sh
 docker logs --since 5m --timestamps <owned-application-container>

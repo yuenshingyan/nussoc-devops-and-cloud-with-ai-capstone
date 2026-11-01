@@ -105,9 +105,14 @@ approved. Its unpublished candidate passed 654 host tests and source gates, incl
 real host-process JSON logging. Desktop mount/hash checks and the approved base-JCasC
 opt-in bridge passed live verification. Native jobs delivered three real local messages,
 including one with inherited opt-in and no environment overrides
-([bridge evidence](evidence/task-06/step-05-environment-bridge.md)). Normal CI remains #25
-on the old published Jenkinsfile. Jenkins/Mailpit remain running; other monitoring is
-stopped. Full candidate image gates/logging and centralized cloud logging remain pending.
+([bridge evidence](evidence/task-06/step-05-environment-bridge.md)). Full unpublished
+candidate CI subsequently passed 654 tests, all gates and 33 artifact checks, delivered
+its own email, and supplied the exact image used for verified JSON-log/metric evidence.
+Native notification timeout/abort probes also verified interruption propagation
+([completed local evidence](evidence/task-06/step-05-notifications-logging.md)).
+Review/merge/publication are pending. Normal CI remains #25 on the old published
+Jenkinsfile. Jenkins/Mailpit remain running; owned review jobs are disabled and other
+monitoring/application containers stopped. Centralized cloud logging remains deferred.
 
 ## Quick start
 

@@ -1,0 +1,5 @@
+SOURCE_REVISION=1a1f4a3be0424ac7c0f62549d2ce3820c37fcbd0
+Python 3.14.7
+uv 0.9.21
+git version 2.39.5
+efcb56c34386a1334d1079072997d3fc8fcccb353be46cdcdc97542c6290ea3d  uv.lock

@@ -1,0 +1,25 @@
+[
+  {
+    "mode": "timeout",
+    "job": "finsecure-notification-timeout-20261101081851",
+    "build": 1,
+    "result": "ABORTED",
+    "duration_ms": 181199,
+    "timestamp": 1793521139454,
+    "script_sha256": "b0c50b1b79297f1644517bbe26680010e232ff68f6039b3946bccab3ad71f782",
+    "smtp_step_entered": false,
+    "inbox_total": 4
+  },
+  {
+    "mode": "operator_abort",
+    "job": "finsecure-notification-operator-abort-20261101082202",
+    "build": 1,
+    "result": "ABORTED",
+    "duration_ms": 2189,
+    "timestamp": 1793521329686,
+    "script_sha256": "b0c50b1b79297f1644517bbe26680010e232ff68f6039b3946bccab3ad71f782",
+    "smtp_step_entered": false,
+    "inbox_total": 4,
+    "observation_note": "Stop action accepted; observer refused its HTTP redirect without forwarding credentials. Verified this existing run afterward; no retry."
+  }
+]

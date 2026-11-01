@@ -2,6 +2,14 @@
 
 ## Scope and boundaries
 
+**Step 6.5 notification profile:** the current local candidate uses controller image
+`step-06-05` with unchanged pinned components and a base-JCasC opt-in bridge. The
+optional profile adds one read-only, non-secret configuration-file bind and attaches
+only the controller to Mailpit's bridge. Use the
+[notification runbook](notifications-logging.md) when operating that profile; base-only
+controller recreation disables its opt-in. No new agent/builder privileges or Docker
+socket access were added. The historical setup below describes the base profile.
+
 Step 4.1 created a local Jenkins controller and one Python agent. Its retained
 `finsecure-checkout` job fetches public `main` and prints tool versions; a green result
 there still proves **checkout only**, not application CI or deployment.

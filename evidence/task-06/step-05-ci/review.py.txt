@@ -1,0 +1,84 @@
+"""Execute one unpublished candidate via a hash-checked bundle; never publish or retry."""
+from datetime import UTC,datetime
+from hashlib import sha256
+from json import loads,dumps
+from pathlib import Path
+from subprocess import run
+from urllib.parse import urlencode
+from xml.etree.ElementTree import SubElement,tostring
+from defusedxml.ElementTree import fromstring
+from httpx2 import Client
+from bootstrap import Jenkins,admin_password
+from verify_ci import job_xml,post,run_build,require_passing_tests,require_security_reports,require_image_security_reports,SECURITY_ARTIFACTS,IMAGE_SECURITY_ARTIFACTS
+from image_archive import inspect_image_archive
+info=loads(Path('reports/step65-gate-candidate.json').read_text());revision=info['candidate_revision'];base=info['public_base_revision'];bundle=info['agent_bundle_path']
+candidate=run(['git','show',revision+':Jenkinsfile'],capture_output=True,text=True,check=True).stdout
+prefix="def scm = [$class: 'GitSCM', branches: [[name: '"+base+"']], userRemoteConfigs: [[url: 'https://github.com/yuenshingyan/nussoc-devops-and-cloud-with-ai-capstone.git']], extensions: [[$class: 'CloneOption', timeout: 2]]]\n"
+checkout="""                checkout scm
+                sh '''#!/usr/bin/env bash
+set -euo pipefail
+printf '%s  %s\\n' '%s' '%s' | sha256sum --check -
+git fetch --no-tags '%s' refs/heads/task-06/step-05-notifications-logging
+git checkout --detach '%s'
+test "$(git rev-parse HEAD)" = '%s'
+'''
+                script { env.GIT_COMMIT = '%s' }
+""" % ('%s','%s',info['bundle_sha256'],bundle,bundle,revision,revision,revision)
+assert candidate.count('                checkout scm\n')==1
+script=prefix+candidate.replace('                checkout scm\n',checkout)
+c=Jenkins(admin_password());name='finsecure-ci-logging-review-'+datetime.now(UTC).strftime('%Y%m%d%H%M%S');job='/job/'+name+'/'
+assert not loads(c.request('/queue/api/json'))['items']
+assert loads(c.request('/computer/finsecure-python/api/json?tree=idle'))['idle']
+assert loads(c.request('/job/finsecure-ci/api/json'))['lastBuild']['number']==25
+output=Path('reports')/name;output.mkdir()
+(output/'executed.groovy.txt').write_text(script)
+Path('reports/step65-gate-job.txt').write_text(name+'\n')
+validation=post(c,'/pipeline-model-converter/validate',urlencode({'jenkinsfile':script}).encode(),'application/x-www-form-urlencoded').decode();(output/'pipeline-validation.txt').write_text(validation);assert 'Jenkinsfile successfully validated' in validation
+post(c,'/createItem?'+urlencode({'name':name}),job_xml(script,'Owned unpublished candidate '+revision+' via local bundle; unchanged application gates and inherited local mail opt-in; no publication/deployment.'),'application/xml')
+print('Created',name,flush=True)
+try:
+ number=run_build(c,job);bp=job+str(number)+'/'
+ build=loads(c.request(bp+'api/json'));console=c.request(bp+'consoleText').decode()
+ secret=fromstring(c.request('/computer/finsecure-python/jenkins-agent.jnlp')).findtext('.//argument');sensitive=[admin_password(),secret,c.authorization,c.authorization[6:]]
+ assert not any(v in console for v in sensitive),'Credential in console; refusing export'
+ (output/'console.txt').write_text(console)
+ (output/'build-result.json').write_text(dumps({'number':number,'result':build['result'],'building':build['building'],'timestamp':build['timestamp'],'duration_ms':build['duration'],'artifacts':build['artifacts']},indent=2)+'\n')
+ artifacts={}
+ for item in build['artifacts']:
+  path=item['relativePath'];assert path.startswith(('reports/','images/','dist/')) and '..' not in path.split('/')
+  data=c.request(bp+'artifact/'+path);assert not any(v.encode() in data for v in sensitive),'Credential in artifact'
+  target=output/path;target.parent.mkdir(parents=True,exist_ok=True);target.write_bytes(data)
+  artifacts[path]={'bytes':len(data),'sha256':sha256(data).hexdigest()}
+ (output/'artifact-hashes.json').write_text(dumps(artifacts,indent=2)+'\n')
+ assert not build['building'] and build['result']=='SUCCESS','Candidate failed; retained artifacts, do not retry blindly'
+ assert 'SOURCE_REVISION='+revision in console and 'Running on finsecure-python' in console
+ assert 'Build notification disabled' not in console and '[Pipeline] mail' in console
+ expected={'reports/'+n for n in ['build-metadata.txt','dependencies.txt','lint.txt','format.txt','tests.txt','junit.xml','coverage.xml','package.txt','packages.sha256','buildkit-workers.txt','image-metadata.txt','image-build.txt','buildkit-image.json','image.sha256']}|SECURITY_ARTIFACTS|IMAGE_SECURITY_ARTIFACTS|{'dist/finsecure_pay-0.2.0-py3-none-any.whl','dist/finsecure_pay-0.2.0.tar.gz','images/finsecure-pay.tar.gz'}
+ assert set(artifacts)==expected
+ tests=loads(c.request(bp+'testReport/api/json'));require_passing_tests(tests,info['expected_tests'])
+ coverage=loads(c.request(bp+'coverage/api/json'));assert coverage['qualityGates']['overallResult']=='INACTIVE'
+ xml=fromstring((output/'reports/coverage.xml').read_bytes())
+ source=require_security_reports(output,set(artifacts),False)
+ for path,digest in source['source_sha256'].items():assert sha256(run(['git','show',revision+':'+path],capture_output=True,check=True).stdout).hexdigest()==digest
+ gate=require_image_security_reports(output,set(artifacts),False,revision)
+ assert gate['lock_sha256']==source['lock_sha256']
+ assert gate['archive_sha256']+'  images/finsecure-pay.tar.gz\n'==(output/'reports/image.sha256').read_text()
+ metadata=loads((output/'reports/buildkit-image.json').read_text());assert gate['image_id']==metadata['containerimage.config.digest']
+ assert 0<=gate['database_age_seconds']<=86400 and 0<=gate['database_age_at_finish_seconds']<=86400
+ for line in (output/'reports/packages.sha256').read_text().splitlines():
+  digest,path=line.split('  ',1);assert artifacts[path]['sha256']==digest
+ image=inspect_image_archive(output/'images/finsecure-pay.tar.gz',revision,f'finsecure-pay-ci:jenkins-{name}-{number}',gate['image_id'])
+ with Client(timeout=5,trust_env=False) as h:
+  inbox=h.get('http://127.0.0.1:8025/api/v1/messages').json()
+  messages=[m for m in inbox['messages'] if m['Subject']==f'[SUCCESS] {name} #{number}'];assert len(messages)==1
+  detail=h.get('http://127.0.0.1:8025/api/v1/message/'+messages[0]['ID']);detail.raise_for_status();assert revision in detail.text
+  raw=h.get('http://127.0.0.1:8025/api/v1/message/'+messages[0]['ID']+'/raw');raw.raise_for_status()
+  assert not any(v.encode() in raw.content for v in sensitive)
+  (output/'notification.json').write_text(dumps(detail.json(),indent=2)+'\n');(output/'notification.eml').write_bytes(raw.content)
+ record={'verified_at_utc':datetime.now(UTC).isoformat(),'job':name,'build':number,'result':build['result'],**info,'candidate_jenkinsfile_sha256':sha256(candidate.encode()).hexdigest(),'executed_script_sha256':sha256(script.encode()).hexdigest(),'pipeline_from_scm_verified':False,'source_transport':'public base then hash-checked local bundle; mail revision updated to verified candidate','test_count':info['expected_tests'],'coverage':dict(xml.attrib),'source_scan':source,'image_scan':gate,'artifacts':artifacts,'image_export':image,'inherited_notification_received':True,'published_or_deployed':False}
+ (output/'verification.json').write_text(dumps(record,indent=2)+'\n');(output/'coverage-api.json').write_text(dumps(coverage,indent=2)+'\n')
+ print(dumps({'job':name,'result':build['result'],'tests':info['expected_tests'],'artifacts':len(artifacts),'image_findings':gate['severities'],'mail_received':True},indent=2),flush=True)
+finally:
+ config=fromstring(c.request(job+'config.xml'));disabled=config.find('disabled')
+ if disabled is None:disabled=SubElement(config,'disabled')
+ disabled.text='true';post(c,job+'config.xml',tostring(config),'application/xml')

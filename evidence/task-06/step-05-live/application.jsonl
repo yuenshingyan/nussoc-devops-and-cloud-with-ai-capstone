@@ -1,0 +1,16 @@
+{"timestamp":"2026-11-01T08:16:30.208008+00:00","level":"INFO","event":"server_diagnostic","diagnostic_code":"SERVER_STARTED"}
+{"timestamp":"2026-11-01T08:16:30.208210+00:00","level":"INFO","event":"server_diagnostic","diagnostic_code":"APPLICATION_STARTING"}
+{"timestamp":"2026-11-01T08:16:30.210772+00:00","level":"INFO","event":"server_diagnostic","diagnostic_code":"APPLICATION_STARTED"}
+{"timestamp":"2026-11-01T08:16:30.211003+00:00","level":"INFO","event":"server_diagnostic","diagnostic_code":"UNCLASSIFIED_MESSAGE"}
+{"timestamp":"2026-11-01T08:16:30.623350+00:00","level":"INFO","event":"http_request_completed","route":"/health","method":"GET","status_class":"2xx","duration_seconds":0.0022502909996546805}
+{"timestamp":"2026-11-01T08:16:30.714020+00:00","level":"INFO","event":"validation_outcome","outcome":"accepted","codes":[]}
+{"timestamp":"2026-11-01T08:16:30.714394+00:00","level":"INFO","event":"http_request_completed","route":"/validate","method":"POST","status_class":"2xx","duration_seconds":0.08928979199845344}
+{"timestamp":"2026-11-01T08:16:30.716031+00:00","level":"INFO","event":"validation_outcome","outcome":"rejected","codes":["AMOUNT_NOT_POSITIVE"]}
+{"timestamp":"2026-11-01T08:16:30.716234+00:00","level":"INFO","event":"http_request_completed","route":"/validate","method":"POST","status_class":"2xx","duration_seconds":0.0007210000003396999}
+{"timestamp":"2026-11-01T08:16:30.717603+00:00","level":"INFO","event":"validation_outcome","outcome":"invalid","codes":["INVALID_REQUEST"]}
+{"timestamp":"2026-11-01T08:16:30.717817+00:00","level":"INFO","event":"http_request_completed","route":"/validate","method":"POST","status_class":"4xx","duration_seconds":0.0006860419998702127}
+{"timestamp":"2026-11-01T08:16:30.718986+00:00","level":"INFO","event":"http_request_completed","route":"other","method":"GET","status_class":"4xx","duration_seconds":0.0003386249991308432}
+{"timestamp":"2026-11-01T08:16:30.815150+00:00","level":"INFO","event":"server_diagnostic","diagnostic_code":"SERVER_STOPPING"}
+{"timestamp":"2026-11-01T08:16:30.922397+00:00","level":"INFO","event":"server_diagnostic","diagnostic_code":"APPLICATION_STOPPING"}
+{"timestamp":"2026-11-01T08:16:30.922791+00:00","level":"INFO","event":"server_diagnostic","diagnostic_code":"APPLICATION_STOPPED"}
+{"timestamp":"2026-11-01T08:16:30.923032+00:00","level":"INFO","event":"server_diagnostic","diagnostic_code":"SERVER_STOPPED"}

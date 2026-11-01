@@ -1,0 +1,79 @@
+"""Exercise real Pipeline interruptions inside the notification block, before SMTP."""
+from datetime import UTC,datetime
+from hashlib import sha256
+from json import dumps,loads
+from pathlib import Path
+from time import monotonic,sleep
+from urllib.parse import urlencode
+from urllib.request import Request
+from xml.etree.ElementTree import SubElement,tostring
+from defusedxml.ElementTree import fromstring
+from httpx2 import Client
+from bootstrap import BASE_URL,Jenkins,admin_password
+from verify_ci import job_xml,post,run_build
+out=Path('reports/step65-interruptions');out.mkdir(exist_ok=True);c=Jenkins(admin_password())
+pipeline=Path('Jenkinsfile').read_text();tail=pipeline[pipeline.index('        cleanup {'):]
+needle="                        timeout(time: 180, unit: 'SECONDS') {\n";assert tail.count(needle)==1
+# Keep the actual budget and catchInterruptions policy. Only insert a controlled
+# wait before mail: this is not a claim about cancellation of an SMTP socket.
+tail=tail.replace(needle,needle+"                            echo 'notification_interrupt_wait'\n                            sleep(time: 240, unit: 'SECONDS')\n")
+script="""pipeline {
+ agent none
+ options { timeout(time: 4, unit: 'MINUTES') }
+ stages { stage('Synthetic successful work') { steps { echo 'Owned interruption probe; no application gate claim' } } }
+ post {
+"""+tail
+(out/'executed.groovy.txt').write_text(script)
+validation=post(c,'/pipeline-model-converter/validate',urlencode({'jenkinsfile':script}).encode(),'application/x-www-form-urlencoded').decode();(out/'validation.txt').write_text(validation);assert 'Jenkinsfile successfully validated' in validation
+secret=fromstring(c.request('/computer/finsecure-python/jenkins-agent.jnlp')).findtext('.//argument');sensitive=[admin_password(),secret,c.authorization,c.authorization[6:]]
+results=[]
+with Client(timeout=5,trust_env=False) as h:
+ initial=h.get('http://127.0.0.1:8025/api/v1/messages').json()['total'];assert initial==4
+ for mode in ['timeout','operator_abort']:
+  name='finsecure-notification-'+mode.replace('_','-')+'-'+datetime.now(UTC).strftime('%Y%m%d%H%M%S');job='/job/'+name+'/'
+  post(c,'/createItem?'+urlencode({'name':name}),job_xml(script,'Owned '+mode+' probe within actual 180-second notification block; SMTP step not entered.'),'application/xml')
+  number=None
+  try:
+   if mode=='timeout':number=run_build(c,job)
+   else:
+    crumb=loads(c.request('/crumbIssuer/api/json'))
+    request=Request(BASE_URL+job+'build',data=b'',headers={'Authorization':c.authorization,crumb['crumbRequestField']:crumb['crumb']})
+    with c.opener.open(request,timeout=10) as response:location=response.headers['Location']
+    assert location.startswith(BASE_URL+'/queue/item/')
+    queue=location.removeprefix(BASE_URL);deadline=monotonic()+120
+    while monotonic()<deadline:
+     item=loads(c.request(queue+'api/json'))
+     if 'executable' in item:number=item['executable']['number'];break
+     assert not item.get('cancelled');sleep(1)
+    assert number is not None,'Owned probe not scheduled'
+    deadline=monotonic()+60
+    while monotonic()<deadline:
+     console=c.request(job+str(number)+'/consoleText').decode()
+     if 'notification_interrupt_wait' in console:break
+     sleep(1)
+    else:raise RuntimeError('Notification wait marker absent')
+    post(c,job+str(number)+'/stop',b'','application/x-www-form-urlencoded')
+    deadline=monotonic()+120
+    while monotonic()<deadline:
+     if not loads(c.request(job+str(number)+'/api/json'))['building']:break
+     sleep(1)
+    else:raise RuntimeError('Owned abort did not finish')
+   bp=job+str(number)+'/';b=loads(c.request(bp+'api/json'));console=c.request(bp+'consoleText').decode()
+   assert not any(v in console for v in sensitive)
+   (out/(mode+'-console.txt')).write_text(console)
+   assert b['result']=='ABORTED' and not b['building']
+   assert 'notification_interrupt_wait' in console and '[Pipeline] mail\n' not in console
+   if mode=='timeout':assert 'Cancelling nested steps due to timeout' in console
+   else:assert 'Aborted by admin' in console
+   assert h.get('http://127.0.0.1:8025/api/v1/messages').json()['total']==initial
+   results.append({'mode':mode,'job':name,'build':number,'result':b['result'],'duration_ms':b['duration'],'timestamp':b['timestamp'],'script_sha256':sha256(script.encode()).hexdigest(),'smtp_step_entered':False,'inbox_total':initial})
+   (out/'results.json').write_text(dumps(results,indent=2)+'\n')
+   print(mode,b['result'],b['duration'],'ms; no mail',flush=True)
+  finally:
+   if number is not None and loads(c.request(job+str(number)+'/api/json'))['building']:
+    post(c,job+str(number)+'/stop',b'','application/x-www-form-urlencoded')
+   config=fromstring(c.request(job+'config.xml'));d=config.find('disabled')
+   if d is None:d=SubElement(config,'disabled')
+   d.text='true';post(c,job+'config.xml',tostring(config),'application/xml')
+assert loads(c.request('/job/finsecure-ci/api/json'))['lastBuild']['number']==25
+print('Both owned probes disabled; main #25 unchanged')

@@ -1,0 +1,33 @@
+{
+  "ID": "5S1VqNB0RBTWe3wq7uap13",
+  "MessageID": "406384980.3.1793520860113@00f9f10fbd9e",
+  "From": {
+    "Name": "",
+    "Address": "finsecure-ci@example.test"
+  },
+  "To": [
+    {
+      "Name": "",
+      "Address": "finsecure-operator@example.test"
+    }
+  ],
+  "Cc": [],
+  "Bcc": [],
+  "ReplyTo": [],
+  "ReturnPath": "finsecure-ci@example.test",
+  "Subject": "[SUCCESS] finsecure-ci-logging-review-20261101081204 #1",
+  "ListUnsubscribe": {
+    "Header": "",
+    "Links": [],
+    "Errors": "",
+    "HeaderPost": ""
+  },
+  "Date": "2026-11-01T08:14:20Z",
+  "Tags": [],
+  "Username": "",
+  "Text": "Local FinSecure CI notification.\r\nJob: finsecure-ci-logging-review-20261101081204\r\nBuild: 1\r\nResult before notification: SUCCESS\r\nRevision: 1a1f4a3be0424ac7c0f62549d2ce3820c37fcbd0\r\nBuild: http://127.0.0.1:8080/job/finsecure-ci-logging-review-20261101081204/1/\r\n",
+  "HTML": "",
+  "Size": 1431,
+  "Inline": [],
+  "Attachments": []
+}

@@ -1,0 +1,18 @@
+{
+  "status": "passed",
+  "revision": "1a1f4a3be0424ac7c0f62549d2ce3820c37fcbd0",
+  "image_id": "sha256:e7afa26d5f7bead9b3f47bb44ad79a6243c80c90343d92b28580b31dbfe668fb",
+  "json_records": 16,
+  "http_events": 5,
+  "outcomes": [
+    "accepted",
+    "rejected",
+    "invalid"
+  ],
+  "synthetic_markers_absent": true,
+  "utc_timestamps_verified": true,
+  "metrics_outcomes_each_one": true,
+  "graceful_shutdown": true,
+  "owned_container_removed": true,
+  "request_correlation": "sequential bounded request windows; no unique correlation IDs"
+}

@@ -17,6 +17,21 @@ The application validates synthetic transactions and currently requires **no sec
 Do not add an application secret, Kubernetes Secret or private-registry pull secret
 merely to demonstrate a feature. Public source/image reads do not require credentials.
 
+## Step 6.5 notification-mode extension
+
+When the approved notification overlay is active, use:
+
+```sh
+uv run --locked python ops/jenkins/verify_secrets.py --notifications
+```
+
+This additionally requires the exact controller-only network attachment and read-only
+notification-file bind, including the approved exact Docker Desktop path alternative,
+and matching host/container file hashes. Baseline mode intentionally rejects the
+additional mount. No credential is supplied to Mailpit or exported through the JCasC
+job-environment bridge: that bridge contains only the notification boolean flag.
+See the [notification contract and current evidence](notifications-logging.md).
+
 ## Inventory and actual boundaries
 
 | Credential or capability | Current handling | Verification and limits |

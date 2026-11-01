@@ -1,0 +1,34 @@
+[
+  {
+    "case": "accepted",
+    "window_start": "2026-11-01T08:16:30.624064+00:00",
+    "outcome_time": "2026-11-01T08:16:30.714020+00:00",
+    "completion_time": "2026-11-01T08:16:30.714394+00:00",
+    "window_end": "2026-11-01T08:16:30.715128+00:00",
+    "contained_without_clock_tolerance": true
+  },
+  {
+    "case": "rejected",
+    "window_start": "2026-11-01T08:16:30.715140+00:00",
+    "outcome_time": "2026-11-01T08:16:30.716031+00:00",
+    "completion_time": "2026-11-01T08:16:30.716234+00:00",
+    "window_end": "2026-11-01T08:16:30.716825+00:00",
+    "contained_without_clock_tolerance": true
+  },
+  {
+    "case": "invalid",
+    "window_start": "2026-11-01T08:16:30.716831+00:00",
+    "outcome_time": "2026-11-01T08:16:30.717603+00:00",
+    "completion_time": "2026-11-01T08:16:30.717817+00:00",
+    "window_end": "2026-11-01T08:16:30.718390+00:00",
+    "contained_without_clock_tolerance": true
+  },
+  {
+    "case": "unknown_path",
+    "window_start": "2026-11-01T08:16:30.718399+00:00",
+    "outcome_time": null,
+    "completion_time": "2026-11-01T08:16:30.718986+00:00",
+    "window_end": "2026-11-01T08:16:30.719485+00:00",
+    "contained_without_clock_tolerance": true
+  }
+]

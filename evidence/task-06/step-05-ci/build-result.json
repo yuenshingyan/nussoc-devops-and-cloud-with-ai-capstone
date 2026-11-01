@@ -1,0 +1,174 @@
+{
+  "number": 1,
+  "result": "SUCCESS",
+  "building": false,
+  "timestamp": 1793520734102,
+  "duration_ms": 126167,
+  "artifacts": [
+    {
+      "displayPath": null,
+      "fileName": "finsecure_pay-0.2.0-py3-none-any.whl",
+      "relativePath": "dist/finsecure_pay-0.2.0-py3-none-any.whl"
+    },
+    {
+      "displayPath": null,
+      "fileName": "finsecure_pay-0.2.0.tar.gz",
+      "relativePath": "dist/finsecure_pay-0.2.0.tar.gz"
+    },
+    {
+      "displayPath": null,
+      "fileName": "finsecure-pay.tar.gz",
+      "relativePath": "images/finsecure-pay.tar.gz"
+    },
+    {
+      "displayPath": null,
+      "fileName": "bandit.json",
+      "relativePath": "reports/bandit.json"
+    },
+    {
+      "displayPath": null,
+      "fileName": "bandit.txt",
+      "relativePath": "reports/bandit.txt"
+    },
+    {
+      "displayPath": null,
+      "fileName": "build-metadata.txt",
+      "relativePath": "reports/build-metadata.txt"
+    },
+    {
+      "displayPath": null,
+      "fileName": "buildkit-image.json",
+      "relativePath": "reports/buildkit-image.json"
+    },
+    {
+      "displayPath": null,
+      "fileName": "buildkit-workers.txt",
+      "relativePath": "reports/buildkit-workers.txt"
+    },
+    {
+      "displayPath": null,
+      "fileName": "coverage.xml",
+      "relativePath": "reports/coverage.xml"
+    },
+    {
+      "displayPath": null,
+      "fileName": "dependencies.txt",
+      "relativePath": "reports/dependencies.txt"
+    },
+    {
+      "displayPath": null,
+      "fileName": "format.txt",
+      "relativePath": "reports/format.txt"
+    },
+    {
+      "displayPath": null,
+      "fileName": "image-build.txt",
+      "relativePath": "reports/image-build.txt"
+    },
+    {
+      "displayPath": null,
+      "fileName": "image-metadata.txt",
+      "relativePath": "reports/image-metadata.txt"
+    },
+    {
+      "displayPath": null,
+      "fileName": "image-runtime-requirements.txt",
+      "relativePath": "reports/image-runtime-requirements.txt"
+    },
+    {
+      "displayPath": null,
+      "fileName": "image-security-export.txt",
+      "relativePath": "reports/image-security-export.txt"
+    },
+    {
+      "displayPath": null,
+      "fileName": "image-security-summary.json",
+      "relativePath": "reports/image-security-summary.json"
+    },
+    {
+      "displayPath": null,
+      "fileName": "image-security-tools.txt",
+      "relativePath": "reports/image-security-tools.txt"
+    },
+    {
+      "displayPath": null,
+      "fileName": "image.sha256",
+      "relativePath": "reports/image.sha256"
+    },
+    {
+      "displayPath": null,
+      "fileName": "junit.xml",
+      "relativePath": "reports/junit.xml"
+    },
+    {
+      "displayPath": null,
+      "fileName": "lint.txt",
+      "relativePath": "reports/lint.txt"
+    },
+    {
+      "displayPath": null,
+      "fileName": "package.txt",
+      "relativePath": "reports/package.txt"
+    },
+    {
+      "displayPath": null,
+      "fileName": "packages.sha256",
+      "relativePath": "reports/packages.sha256"
+    },
+    {
+      "displayPath": null,
+      "fileName": "pip-audit.json",
+      "relativePath": "reports/pip-audit.json"
+    },
+    {
+      "displayPath": null,
+      "fileName": "pip-audit.txt",
+      "relativePath": "reports/pip-audit.txt"
+    },
+    {
+      "displayPath": null,
+      "fileName": "runtime-requirements.txt",
+      "relativePath": "reports/runtime-requirements.txt"
+    },
+    {
+      "displayPath": null,
+      "fileName": "security-export.txt",
+      "relativePath": "reports/security-export.txt"
+    },
+    {
+      "displayPath": null,
+      "fileName": "security-summary.json",
+      "relativePath": "reports/security-summary.json"
+    },
+    {
+      "displayPath": null,
+      "fileName": "security-tools.txt",
+      "relativePath": "reports/security-tools.txt"
+    },
+    {
+      "displayPath": null,
+      "fileName": "tests.txt",
+      "relativePath": "reports/tests.txt"
+    },
+    {
+      "displayPath": null,
+      "fileName": "trivy-db.json",
+      "relativePath": "reports/trivy-db.json"
+    },
+    {
+      "displayPath": null,
+      "fileName": "trivy-db.txt",
+      "relativePath": "reports/trivy-db.txt"
+    },
+    {
+      "displayPath": null,
+      "fileName": "trivy.json",
+      "relativePath": "reports/trivy.json"
+    },
+    {
+      "displayPath": null,
+      "fileName": "trivy.txt",
+      "relativePath": "reports/trivy.txt"
+    }
+  ]
+}
