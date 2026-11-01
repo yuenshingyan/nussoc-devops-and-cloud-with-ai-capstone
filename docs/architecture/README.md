@@ -1,6 +1,6 @@
 # Architecture and design-document traceability
 
-Step 7.1 review draft: [four-page PDF](../../submission/design-document.pdf),
+Step 7.1 published as `355ae88`: [four-page PDF](../../submission/design-document.pdf),
 [editable HTML](../../submission/design-document.html), [diagram](end-to-end.svg).
 The PDF is a design document, not the later Step 7.3 presentation.
 
@@ -21,6 +21,12 @@ The PDF is a design document, not the later Step 7.3 presentation.
 | Managed Kubernetes — deferred | `deploy/kubernetes/base/`; [runtime safeguards and limits](../runbooks/runtime-safeguards.md); manifests are not a live cluster |
 | Centralized cloud logs — deferred | No implementation; requires provider, access, retention and cost approval |
 | AI-assisted triage — proposal only | Scope in `PLAN.md` Step 7.2; no deployed assistant or remediation service |
+
+## Proposed AI use case
+
+[Step 7.2 advisory incident triage](ai-assisted-triage.md) describes a possible integration,
+not another deployed diagram component. It includes a synthetic example, risk controls,
+evaluation criteria and decisions required before implementation.
 
 ## Reading the diagram
 

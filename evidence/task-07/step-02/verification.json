@@ -1,0 +1,18 @@
+{
+  "verified_at_utc": "2026-11-01T14:11:43.937527+00:00",
+  "baseline_revision": "355ae88d9a1842649916691d36eaea57bac014cf",
+  "document_sha256": "2cb1813e9f147a30290df2a5cdcc15cbee6477f7515f097eecace168e7b29bc2",
+  "synthetic_json_parses": true,
+  "example_citations_resolve": true,
+  "example_semantics_manually_reviewed": true,
+  "local_links_checked": true,
+  "host_tests_passed": 655,
+  "ruff_check": "passed",
+  "ruff_format_check": "passed",
+  "uv_build": "passed",
+  "model_evaluation_performed": false,
+  "provider_calls_performed": false,
+  "new_service_implemented": false,
+  "infrastructure_changed": false,
+  "new_dependencies": false
+}

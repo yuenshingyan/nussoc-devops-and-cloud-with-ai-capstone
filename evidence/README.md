@@ -21,6 +21,10 @@ and report retention on an isolated failure. Cloud delivery remains unverified.
 
 ## Recorded evidence
 
+- [Step 7.2 — AI-assisted triage proposal](task-07/step-02-ai-use-case.md): documentation,
+  synthetic input/output, safety boundaries and proposed evaluation criteria. No deployed
+  AI service or measured AI result; review/publication pending. Includes baseline #29.
+
 - [Step 7.1 — Design document and architecture](task-07/step-01-design-document.md):
   four-page PDF, editable HTML, SVG, component traceability and actual render review.
   Includes baseline #28 verification; documentation review/publication pending.

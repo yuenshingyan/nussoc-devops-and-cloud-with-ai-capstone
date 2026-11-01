@@ -1,6 +1,15 @@
 # FinSecure Pay — Implementation Plan
 
-## Latest checkpoint — Step 7.1 design-document review
+## Latest checkpoint — Step 7.2 AI use-case review
+
+Step 7.1 is published as `355ae88`; automatic SCM #29 passed 655 tests, all gates,
+33 artifact checks and its matching notification. Step 7.2 now documents a proposed
+advisory triage workflow, input/privacy boundaries, human approval, synthetic example
+and evaluation criteria on `task-07/step-02-ai-use-case`. No model/service/provider
+connection exists. Review/merge/publication pending; do not start Step 7.3 yet.
+See [Step 7.2 evidence](evidence/task-07/step-02-ai-use-case.md).
+
+## Previous checkpoint — Step 7.1 design-document review
 
 Step 6.5 follow-up `040ac4c` is published; automatic #28 passed 655 tests, all gates,
 33 artifact checks and a matching notification. Step 7.1 now has a four-page rendered
@@ -306,6 +315,7 @@ The assignment allows equivalent application, build, and unit-testing tools with
 
 ### Step 7.2 — Document AI-assisted incident triage
 - **Branch:** `task-07/step-02-ai-use-case`
+- **Documentation complete; review/publication pending:** [advisory triage proposal](docs/architecture/ai-assisted-triage.md), labeled synthetic input/output and proposed evaluation gates. No inference, new service or autonomous remediation implemented.
 - Explain the operational problem and why AI-assisted summarization/correlation is appropriate.
 - Define inputs: sanitized alerts, logs, metrics, deployment history, and approved runbooks.
 - Describe proposed integration from Alertmanager to an advisory triage service and human-reviewed incident summary.
