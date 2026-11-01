@@ -1,0 +1,33 @@
+{
+  "ID": "0AM5N57ulxwmWvPyBMWfUB",
+  "MessageID": "643272072.5.1793524687102@00f9f10fbd9e",
+  "From": {
+    "Name": "",
+    "Address": "finsecure-ci@example.test"
+  },
+  "To": [
+    {
+      "Name": "",
+      "Address": "finsecure-operator@example.test"
+    }
+  ],
+  "Cc": [],
+  "Bcc": [],
+  "ReplyTo": [],
+  "ReturnPath": "finsecure-ci@example.test",
+  "Subject": "[SUCCESS] finsecure-ci #26",
+  "ListUnsubscribe": {
+    "Header": "",
+    "Links": [],
+    "Errors": "",
+    "HeaderPost": ""
+  },
+  "Date": "2026-11-01T09:18:07Z",
+  "Tags": [],
+  "Username": "",
+  "Text": "Local FinSecure CI notification.\r\nJob: finsecure-ci\r\nBuild: 26\r\nResult before notification: SUCCESS\r\nRevision: unavailable\r\nBuild: http://127.0.0.1:8080/job/finsecure-ci/26/\r\n",
+  "HTML": "",
+  "Size": 1315,
+  "Inline": [],
+  "Attachments": []
+}

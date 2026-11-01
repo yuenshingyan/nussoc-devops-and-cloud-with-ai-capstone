@@ -1,6 +1,13 @@
 # Step 6.5 — Local notifications and structured logs
 
-Status: **approved local subset verified; review/merge/publication pending**.
+Status: **published as `f4b2c5c`; SCM #26 passed, follow-up remediation pending**.
+
+The actual SCM email says `Revision: unavailable`, and the controller's notification
+file is currently unreadable through its bind mount after the publication checkout.
+Do not treat successful delivery as a passed configuration-boundary check. See
+[SCM follow-up evidence](../../evidence/task-06/step-05-scm-verification.md).
+The earlier verification checkpoint below predates publication; no recovery restart
+or revision-propagation fix has yet been performed.
 Branch: `task-06/step-05-notifications-logging`, from published `ab36eb5`.
 
 654 host tests, Ruff checks, package build and source/dependency gates passed. A real

@@ -21,6 +21,11 @@ and report retention on an isolated failure. Cloud delivery remains unverified.
 
 ## Recorded evidence
 
+- [Step 6.5 — SCM publication and follow-up gaps](task-06/step-05-scm-verification.md):
+  published `f4b2c5c`, automatic #26 SUCCESS, 654 tests/all gates/33 artifacts and real
+  mail. Email revision absent; post-publication configuration-bind read failed.
+  Remediation remains pending; this supersedes the pre-publication checkpoint.
+
 - [Step 6.5 — Completed local verification](task-06/step-05-notifications-logging.md):
   full unpublished candidate CI, 654 tests/all gates/33 artifacts, matching received
   email, exact-image JSON logs and metrics, native interruption outcomes and cleanup.

@@ -1,5 +1,15 @@
 # FinSecure Pay — Implementation Plan
 
+## Latest checkpoint — Step 6.5 publication follow-up
+
+Main `f4b2c5c` is published; automatic SCM #26 passed 654 tests/all gates/33 artifact
+checks. Its real email omitted the known revision, and the post-publication boundary
+check found the controller's notification-file bind unreadable despite the restored
+host file. **Pause for a narrow revision-propagation fix and separately approved
+controller recreation; do not start the next step.** See
+[SCM evidence and limitations](evidence/task-06/step-05-scm-verification.md).
+This supersedes the pre-publication checkpoint below.
+
 ## Agreed structure
 
 - Complete all seven assignment tasks; use the approved budget-aware sequence below.

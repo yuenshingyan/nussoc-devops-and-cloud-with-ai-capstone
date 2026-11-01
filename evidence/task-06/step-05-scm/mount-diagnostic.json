@@ -1,0 +1,21 @@
+{
+  "observed_at_utc": "2026-11-01T09:22:33.437318+00:00",
+  "host_file_exists": true,
+  "host_sha256": "ac001dffddf34fb074ca4d86f62c46ecb292675d9d6a715ac6137b50b954d702",
+  "container_read_exit": 1,
+  "container_read_stdout": "",
+  "container_read_stderr": "sha256sum: /etc/jenkins/notifications.yaml: No such file or directory\n",
+  "mount": [
+    {
+      "Type": "bind",
+      "Source": "/host_mnt<repository>/ops/jenkins/notifications.yaml",
+      "Destination": "/etc/jenkins/notifications.yaml",
+      "Mode": "ro",
+      "RW": false,
+      "Propagation": "rprivate"
+    }
+  ],
+  "controller_running": true,
+  "controller_started_at": "2026-11-01T07:20:17.545393885Z",
+  "restarted_or_recreated": false
+}
