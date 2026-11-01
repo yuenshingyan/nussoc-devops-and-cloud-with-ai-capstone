@@ -1,0 +1,44 @@
+Started by user admin
+[Pipeline] Start of Pipeline
+[Pipeline] timeout
+Timeout set to expire in 4 min 0 sec
+[Pipeline] {
+[Pipeline] stage
+[Pipeline] { (Inherited opt-in without environment overrides)
+[Pipeline] script
+[Pipeline] {
+[Pipeline] echo
+agentless_inherited_opt_in=true
+[Pipeline] node
+Running on finsecure-python in /home/jenkins/agent/workspace/finsecure-notification-bridge-20261101072200
+[Pipeline] {
+[Pipeline] echo
+python_agent_inherited_opt_in=true
+[Pipeline] }
+[Pipeline] // node
+[Pipeline] }
+[Pipeline] // script
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Declarative: Post Actions)
+[Pipeline] script
+[Pipeline] {
+[Pipeline] catchError
+[Pipeline] {
+[Pipeline] timeout
+Timeout set to expire in 3 min 0 sec
+[Pipeline] {
+[Pipeline] mail
+[Pipeline] }
+[Pipeline] // timeout
+[Pipeline] }
+[Pipeline] // catchError
+[Pipeline] }
+[Pipeline] // script
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] }
+[Pipeline] // timeout
+[Pipeline] End of Pipeline
+Finished: SUCCESS

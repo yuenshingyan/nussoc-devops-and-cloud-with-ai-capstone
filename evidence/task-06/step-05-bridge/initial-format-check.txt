@@ -1,0 +1,16 @@
+All checks passed!
+unformatted: File would be reformatted
+  --> tests/unit/test_build_notification_configuration.py:36:12
+   |
+35 |     assert "COPY --chown=jenkins:jenkins jenkins.yaml /usr/share/jenkins/jenkins.yaml" in controller
+   -     assert "image: finsecure-jenkins-controller:step-06-05" in (
+   -         ROOT / "ops/jenkins/compose.yaml"
+   -     ).read_text()
+36 +     assert (
+37 +         "image: finsecure-jenkins-controller:step-06-05"
+38 +         in (ROOT / "ops/jenkins/compose.yaml").read_text()
+39 +     )
+40 |
+   |
+
+1 file would be reformatted, 123 files already formatted

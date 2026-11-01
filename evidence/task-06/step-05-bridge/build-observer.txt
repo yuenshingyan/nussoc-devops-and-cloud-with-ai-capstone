@@ -1,0 +1,1 @@
+Controller image built; 73 reference plugins byte-identical; running controller unchanged

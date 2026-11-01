@@ -3,6 +3,12 @@ jenkins:
   numExecutors: 0
   scmCheckoutRetryCount: 0
   slaveAgentPort: -1
+  # Declare this in the base configuration so removing the overlay resets the flag.
+  globalNodeProperties:
+    - envVars:
+        env:
+          - key: FINSECURE_CI_NOTIFICATIONS
+            value: "${FINSECURE_CI_NOTIFICATIONS:-false}"
   securityRealm:
     local:
       allowsSignup: false

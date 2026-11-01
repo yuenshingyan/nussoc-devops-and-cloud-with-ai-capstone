@@ -1,0 +1,27 @@
+{
+  "completed_at_utc": "2026-11-01T07:20:35.309356+00:00",
+  "new_image_id": "sha256:1cb8838d10c58513bb35c137637954533b744777e1f1d237448fd4f444918d41",
+  "runtime_plugins_unchanged": true,
+  "resource_limits_unchanged": true,
+  "base_jcasc_hash_verified": true,
+  "boundaries": {
+    "status": "passed",
+    "verified_at_utc": "2026-11-01T07:20:36.943546+00:00",
+    "host_credentials": "owned regular file 0600 in owned directory 0700",
+    "containers": "expected volumes, read-only secret mounts, uid 1000, approved privileges",
+    "network": "loopback-only controller; no agent/builder published ports",
+    "notification_overlay_checked": true,
+    "notification_configuration_sha256": "ac001dffddf34fb074ca4d86f62c46ecb292675d9d6a715ac6137b50b954d702",
+    "docker_desktop_path_alternative_enabled": true,
+    "anonymous_api": "denied",
+    "checkout": "anonymous public repository, trusted main, Jenkinsfile from SCM",
+    "known_credentials_in_argv_environment": false,
+    "limitations": [
+      "Trusted single-operator model; agent builds can read the agent secret.",
+      "Does not verify account inventory, authorization strategy, token scopes or rotation.",
+      "Does not scan source, history, logs or arbitrary unknown credentials.",
+      "No registry, cloud, cluster, service restart or configuration changes."
+    ]
+  },
+  "main_build": 25
+}

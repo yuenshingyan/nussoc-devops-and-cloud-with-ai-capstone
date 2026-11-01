@@ -1,0 +1,29 @@
+Mailpit
+25
+50
+100
+200
+1-3 of 3
+FinSecure local test delivery
+Inbox
+ Mark all read
+ Delete all
+ About
+finsecure-ci@example.test
+To: finsecure-operator@example.test
+[SUCCESS] finsecure-notification-bridge-20261101072200 #1
+Local FinSecure CI notification. Job: finsecure-notification-bridge-20261101072200 Build: 1 Result before notification: SUCCESS Revision: unavailable Build: http://127.0.0.1:8080/job/finsecure-notific...
+1.4 kB
+3 minutes ago
+finsecure-ci@example.test
+To: finsecure-operator@example.test
+[FAILURE] finsecure-notification-review-20261101065903 #2
+Local FinSecure CI notification. Job: finsecure-notification-review-20261101065903 Build: 2 Result before notification: FAILURE Revision: unavailable Build: http://127.0.0.1:8080/job/finsecure-notific...
+1.4 kB
+26 minutes ago
+finsecure-ci@example.test
+To: finsecure-operator@example.test
+[SUCCESS] finsecure-notification-review-20261101065903 #1
+Local FinSecure CI notification. Job: finsecure-notification-review-20261101065903 Build: 1 Result before notification: SUCCESS Revision: unavailable Build: http://127.0.0.1:8080/job/finsecure-notific...
+1.4 kB
+26 minutes ago

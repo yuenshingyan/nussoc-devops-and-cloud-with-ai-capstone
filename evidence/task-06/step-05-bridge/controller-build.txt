@@ -1,0 +1,45 @@
+#0 building with "desktop-linux" instance using docker driver
+
+#1 [internal] load build definition from controller.Dockerfile
+#1 transferring dockerfile: 729B 0.0s done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/jenkins/jenkins:lts-jdk21@sha256:a660310e39ade10631f774bacd5219de767dfd08947ea5c32a739b5e5bb382c1
+#2 DONE 2.6s
+
+#3 [internal] load .dockerignore
+#3 transferring context: 187B done
+#3 DONE 0.0s
+
+#4 [1/7] FROM docker.io/jenkins/jenkins:lts-jdk21@sha256:a660310e39ade10631f774bacd5219de767dfd08947ea5c32a739b5e5bb382c1
+#4 DONE 0.0s
+
+#5 [internal] load build context
+#5 transferring context: 4.21kB done
+#5 DONE 0.0s
+
+#6 [2/7] COPY --chown=jenkins:jenkins plugins.txt /usr/share/jenkins/ref/plugins.txt
+#6 CACHED
+
+#7 [3/7] RUN jenkins-plugin-cli --latest=false --plugin-file /usr/share/jenkins/ref/plugins.txt
+#7 CACHED
+
+#8 [4/7] COPY --chown=jenkins:jenkins jenkins.yaml /usr/share/jenkins/jenkins.yaml
+#8 DONE 0.1s
+
+#9 [5/7] COPY --chown=jenkins:jenkins checkout-job.groovy /usr/share/jenkins/checkout-job.groovy
+#9 DONE 0.0s
+
+#10 [6/7] COPY --chown=jenkins:jenkins ci-job.groovy /usr/share/jenkins/ci-job.groovy
+#10 DONE 0.1s
+
+#11 [7/7] COPY --chown=jenkins:jenkins seed-jobs.groovy /usr/share/jenkins/ref/init.groovy.d/finsecure-seed-jobs.groovy.override
+#11 DONE 0.1s
+
+#12 exporting to image
+#12 exporting layers 0.0s done
+#12 writing image sha256:1cb8838d10c58513bb35c137637954533b744777e1f1d237448fd4f444918d41 done
+#12 naming to docker.io/library/finsecure-jenkins-controller:step-06-05 done
+#12 DONE 0.0s
+
+View build details: docker-desktop://dashboard/build/desktop-linux/desktop-linux/zjwvft7jry3ljgtazh81f7txw

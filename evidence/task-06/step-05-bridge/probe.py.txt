@@ -1,0 +1,55 @@
+from datetime import UTC,datetime
+from hashlib import sha256
+from json import dumps,loads
+from pathlib import Path
+from urllib.parse import urlencode
+from xml.etree.ElementTree import SubElement,tostring
+from httpx2 import Client
+from defusedxml.ElementTree import fromstring
+from bootstrap import Jenkins,admin_password
+from verify_ci import post,job_xml,run_build
+out=Path('reports/step65-bridge');c=Jenkins(admin_password())
+name='finsecure-notification-bridge-'+datetime.now(UTC).strftime('%Y%m%d%H%M%S');job='/job/'+name+'/'
+pipeline=Path('Jenkinsfile').read_text();tail=pipeline[pipeline.index('        cleanup {'):]
+script="""pipeline {
+ agent none
+ options { timeout(time: 4, unit: 'MINUTES') }
+ stages {
+  stage('Inherited opt-in without environment overrides') {
+   steps { script {
+    if (env.FINSECURE_CI_NOTIFICATIONS != 'true') { error('Controller job environment bridge missing') }
+    echo 'agentless_inherited_opt_in=true'
+    node('python') {
+     if (env.FINSECURE_CI_NOTIFICATIONS != 'true') { error('Python agent job environment bridge missing') }
+     echo 'python_agent_inherited_opt_in=true'
+    }
+   } }
+  }
+ }
+ post {
+"""+tail
+(out/'probe.groovy.txt').write_text(script)
+validation=post(c,'/pipeline-model-converter/validate',urlencode({'jenkinsfile':script}).encode(),'application/x-www-form-urlencoded').decode();(out/'probe-validation.txt').write_text(validation);assert 'Jenkinsfile successfully validated' in validation
+secret=fromstring(c.request('/computer/finsecure-python/jenkins-agent.jnlp')).findtext('.//argument');secrets=[admin_password(),secret,c.authorization,c.authorization[6:]]
+with Client(timeout=5,trust_env=False) as h:
+ before=h.get('http://127.0.0.1:8025/api/v1/messages').json();ids={m['ID'] for m in before['messages']};assert before['total']==2
+ post(c,'/createItem?'+urlencode({'name':name}),job_xml(script,'Owned bridge verification; no environment overrides; no application gate or SCM claim.'),'application/xml')
+ try:
+  number=run_build(c,job);bp=job+str(number)+'/'
+  b=loads(c.request(bp+'api/json'));console=c.request(bp+'consoleText').decode()
+  assert not any(s in console for s in secrets)
+  (out/'probe-console.txt').write_text(console)
+  assert b['result']=='SUCCESS'
+  assert 'agentless_inherited_opt_in=true' in console and 'python_agent_inherited_opt_in=true' in console
+  after=h.get('http://127.0.0.1:8025/api/v1/messages').json();assert after['total']==3
+  new=[m for m in after['messages'] if m['ID'] not in ids];assert len(new)==1 and name in new[0]['Subject']
+  detail=h.get('http://127.0.0.1:8025/api/v1/message/'+new[0]['ID']);detail.raise_for_status()
+  raw=h.get('http://127.0.0.1:8025/api/v1/message/'+new[0]['ID']+'/raw');raw.raise_for_status()
+  assert not any(s.encode() in raw.content for s in secrets)
+  (out/'inherited-message.json').write_text(dumps(detail.json(),indent=2)+'\n');(out/'inherited.eml').write_bytes(raw.content)
+  (out/'probe-result.json').write_text(dumps({'job':name,'build':number,'result':b['result'],'timestamp':b['timestamp'],'duration_ms':b['duration'],'script_sha256':sha256(script.encode()).hexdigest(),'environment_overrides':False,'agentless_and_python_agent_inheritance_verified':True,'new_message_id':new[0]['ID'],'inbox_total':after['total'],'main_build':loads(c.request('/job/finsecure-ci/api/json'))['lastBuild']['number']},indent=2)+'\n')
+  print('Inherited opt-in verified in both contexts; one actual mail received; inbox total 3')
+ finally:
+  x=fromstring(c.request(job+'config.xml'));d=x.find('disabled')
+  if d is None:d=SubElement(x,'disabled')
+  d.text='true';post(c,job+'config.xml',tostring(x),'application/xml')

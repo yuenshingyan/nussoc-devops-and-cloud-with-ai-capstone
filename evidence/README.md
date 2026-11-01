@@ -16,10 +16,15 @@ and report retention on an isolated failure. Cloud delivery remains unverified.
 | 3 — Kubernetes and cloud | [task-03](task-03/) | Steps 3.1–3.2 merged; cloud execution deferred |
 | 4 — CI/CD | [task-04](task-04/) | Steps 4.1–4.2 merged; Step 4.3 local build/export merged and SCM-verified (245 tests/image smoke); Step 4.4 local SCM/test-gate merged and SCM-verified (260 tests); publishing/deployment pending |
 | 5 — DevSecOps | [task-05](task-05/) | Step 5.1 merged/SCM-verified; Step 5.2 merged/published and SCM-verified (410 tests, passing image gate, 33 verified artifacts) |
-| 6 — Observability | [task-06](task-06/) | Local metrics/dashboard/alert configuration merged; recovery and SCM #24 verified (584 tests, 33 artifacts). Step 6.4 actual firing/recovery SMTP receipt and screenshots published; SCM #25 passed 584 tests/all gates/33 artifact checks. Step 6.5 has real isolated-job Jenkins mail and host JSON logging (653 tests), unpublished; normal CI opt-in, gated-container logs and managed metrics remain pending. |
+| 6 — Observability | [task-06](task-06/) | Local metrics/dashboard/alert configuration merged; recovery and SCM #24 verified (584 tests, 33 artifacts). Step 6.4 actual firing/recovery SMTP receipt and screenshots published; SCM #25 passed 584 tests/all gates/33 artifact checks. Step 6.5 has inherited notification opt-in, real local Jenkins mail and host JSON logging (654 tests), unpublished; candidate image/logging and managed metrics remain pending. |
 | 7 — Documentation and demonstration | [task-07](task-07/) | Pending |
 
 ## Recorded evidence
+
+- [Step 6.5 — JCasC bridge and inherited mail](task-06/step-05-environment-bridge.md):
+  approved same-pins controller rebuild/recreation, 73 byte-identical plugin archives,
+  654 host tests and real delivery without Pipeline environment overrides. Main #25
+  remains on its old Jenkinsfile; candidate application/image verification pending.
 
 - [Step 6.5 — Mount correction and real Jenkins mail](task-06/step-05-local-delivery.md):
   exact Desktop path/hash verification passed; two actual local success/failure emails

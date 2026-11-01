@@ -1,28 +1,34 @@
 # Step 6.5 — Local notifications and structured logs
 
-Status: **partial, unpublished; real isolated-job mail received, normal CI opt-in pending**.
+Status: **partial, unpublished; inherited opt-in and real local mail verified**.
 Branch: `task-06/step-05-notifications-logging`, from published `ab36eb5`.
 
-653 host tests, Ruff checks, package build and source/dependency gates passed. A real
+654 host tests, Ruff checks, package build and source/dependency gates passed. A real
 host Uvicorn subprocess produced privacy-safe JSON. After two documented rollbacks,
 the approved exact Docker Desktop path alternative and mounted-file hash verification
 passed live activation. Read-only/network/privilege checks remain enforced.
 
-Two actual Jenkins success/failure emails were received and inspected in Mailpit.
-Explicit isolated-job opt-in was required: the controller's Docker environment flag
-was not automatically visible to either agentless or Python-agent Pipelines. The
-five-case native matrix verified delivery, disabled behavior and encoding-error
-handling without changing normal CI. See [results and next proposal](../../evidence/task-06/step-05-local-delivery.md).
+The initial five-case native matrix verified success/failure delivery, disabled behavior
+and encoding-error handling with explicit isolated-job opt-in. Its discovery that
+Docker env did not automatically become Pipeline env is retained in the
+[earlier results](../../evidence/task-06/step-05-local-delivery.md).
+
+The subsequently approved base-JCasC bridge now exposes the single notification flag
+with a false default. Local controller `step-06-05` was rebuilt from unchanged pins;
+all 73 reference plugin archives were byte-identical, runtime plugin inventory and
+resource limits unchanged. One approved recreation passed. A new native probe inherited
+true in both agentless and Python-agent contexts without environment overrides and
+received another real email (inbox total three). See [bridge evidence](../../evidence/task-06/step-05-environment-bridge.md).
 
 Jenkins and Mailpit remain running, owned review jobs disabled, normal CI still #25.
 Other monitoring services are stopped. Gated candidate-image logging and interruption
 verification remain pending. No cloud collection or Gmail delivery claim.
 
-The next proposed change needs approval: add a JCasC job-environment bridge to the
-base configuration with a false default, rebuild only the local controller image
-using the same pinned base/plugins, and recreate the controller once while idle.
-Preserve the old image for rollback. Putting the bridge only in optional JCasC could
-leave a persisted enabled property after that file is removed.
+The old controller image and a private 0600 root-configuration backup inside its
+existing home volume are retained through review; no private configuration was exported.
+The false default is regression-tested, but a live profile-off restart was not performed.
+Next: full candidate application/image verification and interruption tests, then review
+before publication. Main's old Jenkinsfile does not yet include the new notification hook.
 
 While the overlay is active, run boundary checks with:
 
@@ -53,7 +59,8 @@ The following scope was approved. The remaining live work must preserve these li
 
 - Add an optional, reproducible Jenkins notification Compose overlay and supplementary
   JCasC configuration. Preserve the existing authentication, secret volumes, agent,
-  builder, memory/CPU limits, controller image and loopback HTTP binding.
+  builder, memory/CPU limits and loopback HTTP binding. The later approved controller
+  rebuild changed base JCasC only, using the same pinned base and byte-identical plugins.
 - Attach **only the controller** to the existing Mailpit notification bridge. This
   changes network reachability: services on that bridge can reach the controller's
   authenticated HTTP listener internally. Do not attach the agent or builder.

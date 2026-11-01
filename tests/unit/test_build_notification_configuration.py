@@ -20,6 +20,25 @@ def test_notification_overlay_changes_only_controller_and_named_network():
     }
 
 
+def test_base_jcasc_explicitly_bridges_only_notification_flag_with_false_default():
+    base = (ROOT / "ops/jenkins/jenkins.yaml").read_text()
+    assert (
+        "  globalNodeProperties:\n"
+        "    - envVars:\n"
+        "        env:\n"
+        "          - key: FINSECURE_CI_NOTIFICATIONS\n"
+        '            value: "${FINSECURE_CI_NOTIFICATIONS:-false}"\n'
+    ) in base
+    optional = loads((ROOT / "ops/jenkins/notifications.yaml").read_text())
+    assert "jenkins" not in optional
+    controller = (ROOT / "ops/jenkins/controller.Dockerfile").read_text()
+    assert "COPY --chown=jenkins:jenkins jenkins.yaml /usr/share/jenkins/jenkins.yaml" in controller
+    assert (
+        "image: finsecure-jenkins-controller:step-06-05"
+        in (ROOT / "ops/jenkins/compose.yaml").read_text()
+    )
+
+
 def test_smtp_configuration_is_local_without_credentials_or_extra_configuration():
     config = loads((ROOT / "ops/jenkins/notifications.yaml").read_text())
     assert config == {

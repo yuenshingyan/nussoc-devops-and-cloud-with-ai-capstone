@@ -1,0 +1,13 @@
+{
+  "inbox": {
+    "url": "http://127.0.0.1:8025/",
+    "screenshot": "inbox.png",
+    "expected_message_text_visible": true
+  },
+  "inherited": {
+    "url": "http://127.0.0.1:8025/view/0p3rOHudB1wdqVwlEcrzQq",
+    "screenshot": "inherited.png",
+    "expected_message_text_visible": true
+  },
+  "isolated_browser_and_profile_removed": true
+}

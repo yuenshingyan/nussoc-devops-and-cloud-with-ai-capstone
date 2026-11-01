@@ -1,0 +1,13 @@
+{
+  "job": "finsecure-notification-bridge-20261101072200",
+  "build": 1,
+  "result": "SUCCESS",
+  "timestamp": 1793517730728,
+  "duration_ms": 4154,
+  "script_sha256": "267f601564dc1165141858dda3ebadcb6538eade087b38d2b1c0ab72ac90043f",
+  "environment_overrides": false,
+  "agentless_and_python_agent_inheritance_verified": true,
+  "new_message_id": "0p3rOHudB1wdqVwlEcrzQq",
+  "inbox_total": 3,
+  "main_build": 25
+}

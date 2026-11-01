@@ -4,7 +4,7 @@ services:
     build:
       context: .
       dockerfile: controller.Dockerfile
-    image: finsecure-jenkins-controller:step-04-04
+    image: finsecure-jenkins-controller:step-06-05
     ports:
       - "127.0.0.1:8080:8080"
     environment:

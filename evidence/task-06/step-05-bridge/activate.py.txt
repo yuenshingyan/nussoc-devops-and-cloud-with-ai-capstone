@@ -1,0 +1,58 @@
+from datetime import UTC,datetime
+from hashlib import sha256
+from json import loads,dumps
+from pathlib import Path
+from subprocess import run
+from time import monotonic,sleep
+from bootstrap import Jenkins,admin_password
+from verify_secrets import verify
+out=Path('reports/step65-bridge');build=loads((out/'build-verification.json').read_text())
+compose=['docker','compose','-f','ops/jenkins/compose.yaml','-f','ops/jenkins/notifications.compose.yaml']
+def command(args: list[str], timeout: int=60) -> str:
+ """Retain command diagnostics without exporting private configuration contents."""
+ p=run(args,capture_output=True,text=True,timeout=timeout)
+ with (out/'activation-commands.txt').open('a') as f:
+  f.write(('Docker inspect retained in memory; only selected fields exported.\n' if args[:2]==['docker','inspect'] else p.stdout)+p.stderr)
+ assert p.returncode==0,'Command failed; inspect retained diagnostic'
+ return p.stdout.strip()
+def ready() -> Jenkins:
+ """Wait at most 180 seconds for controller authentication and existing-agent readiness."""
+ deadline=monotonic()+180
+ while monotonic()<deadline:
+  try:
+   c=Jenkins(admin_password());a=loads(c.request('/computer/finsecure-python/api/json?tree=idle,offline'))
+   if a['idle'] and not a['offline']:return c
+  except Exception:pass
+  sleep(2)
+ raise RuntimeError('Controller/agent readiness exceeded 180 seconds')
+c=Jenkins(admin_password())
+assert not loads(c.request('/queue/api/json'))['items']
+assert loads(c.request('/computer/finsecure-python/api/json?tree=idle,offline'))['idle']
+assert loads(c.request('/job/finsecure-ci/api/json'))['lastBuild']['number']==25
+assert loads(command(['docker','inspect','finsecure-jenkins-controller-1']))[0]['Image']==build['old_image_id']
+for source,target in [('ops/jenkins/checkout-job.groovy','/usr/share/jenkins/checkout-job.groovy'),('ops/jenkins/ci-job.groovy','/usr/share/jenkins/ci-job.groovy'),('ops/jenkins/seed-jobs.groovy','/usr/share/jenkins/ref/init.groovy.d/finsecure-seed-jobs.groovy.override')]:
+ assert command(['docker','exec','finsecure-jenkins-controller-1','sha256sum',target]).split()[0]==sha256(Path(source).read_bytes()).hexdigest()
+# Retain a private, volume-local rollback copy; never copy it into reports or Git.
+backup='/var/jenkins_home/.finsecure-step65-bridge-config.xml.backup'
+mode=command(['docker','exec','finsecure-jenkins-controller-1','stat','-c','%a','/var/jenkins_home/config.xml']);assert mode in {'600','640','644'}
+command(['docker','exec','finsecure-jenkins-controller-1','sh','-c','test ! -e '+backup+' && umask 077 && cp /var/jenkins_home/config.xml '+backup])
+(out/'activation-start.json').write_text(dumps({'started_at_utc':datetime.now(UTC).isoformat(),'main_build':25,'private_backup_in_controller_volume':True,'original_config_mode':mode},indent=2)+'\n')
+try:
+ command(compose+['up','-d','--no-deps','--no-build','--pull','never','controller'],180)
+ c=ready()
+ current=loads(command(['docker','inspect','finsecure-jenkins-controller-1']))[0]
+ assert current['Image']==build['new_image_id']
+ assert {k:current['HostConfig'][k] for k in build['old_limits']}==build['old_limits']
+ inventory=sorted(loads(c.request('/pluginManager/api/json?tree=plugins[shortName,version,active,enabled]'))['plugins'],key=lambda x:x['shortName'])
+ assert inventory==build['runtime_plugins'],'Runtime plugin inventory changed'
+ assert command(['docker','exec','finsecure-jenkins-controller-1','sha256sum','/usr/share/jenkins/jenkins.yaml']).split()[0]==build['source_hashes']['ops/jenkins/jenkins.yaml']
+ assert loads(c.request('/job/finsecure-ci/api/json'))['lastBuild']['number']==25
+ (out/'activation-result.json').write_text(dumps({'completed_at_utc':datetime.now(UTC).isoformat(),'new_image_id':current['Image'],'runtime_plugins_unchanged':True,'resource_limits_unchanged':True,'base_jcasc_hash_verified':True,'boundaries':verify(notifications=True),'main_build':25},indent=2)+'\n')
+ print('New controller ready; plugin inventory/resources unchanged; boundaries passed; main #25')
+except BaseException:
+ command(compose+['stop','--timeout','60','controller'],90)
+ command(['docker','run','--rm','--pull=never','--network','none','--read-only','--cap-drop','ALL','--security-opt','no-new-privileges:true','--user','1000:1000','--cpus','0.5','--memory','256m','--memory-swap','256m','--mount','type=volume,source=finsecure-jenkins_controller-home,target=/restore','--entrypoint','/bin/sh',build['old_image_id'],'-c','cp /restore/.finsecure-step65-bridge-config.xml.backup /restore/config.xml && chmod '+mode+' /restore/config.xml'])
+ rollback=out/'rollback.compose.json';rollback.write_text(dumps({'services':{'controller':{'image':build['old_image_id']}}}))
+ command(compose+['-f',str(rollback),'up','-d','--no-deps','--no-build','--pull','never','controller'],180)
+ ready();(out/'rollback-result.json').write_text(dumps(verify(notifications=True),indent=2)+'\n')
+ raise
