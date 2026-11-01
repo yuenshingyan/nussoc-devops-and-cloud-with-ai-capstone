@@ -1,6 +1,15 @@
 # FinSecure Pay — Implementation Plan
 
-## Latest checkpoint — Step 7.2 AI use-case review
+## Latest checkpoint — Step 7.3 PDF review
+
+Step 7.2 is published as `1b4b4df`; automatic SCM #30 passed 655 tests, all gates,
+33 artifact checks and its matching notification. User selected PDF for Step 7.3.
+The ten-slide presentation, editable HTML, simplified diagram and task/core-case audit
+are locally complete. Actual page count, visual review and anonymous public-link
+checks passed; cloud gaps remain explicit. Review/merge/publication pending. Do not
+start Step 7.4 or cloud work yet. See [evidence](evidence/task-07/step-03-presentation.md).
+
+## Previous checkpoint — Step 7.2 AI use-case review
 
 Step 7.1 is published as `355ae88`; automatic SCM #29 passed 655 tests, all gates,
 33 artifact checks and its matching notification. Step 7.2 now documents a proposed
@@ -325,6 +334,7 @@ The assignment allows equivalent application, build, and unit-testing tools with
 
 ### Step 7.3 — Assemble evidence and presentation
 - **Branch:** `task-07/step-03-presentation`
+- **PDF selected; local review draft complete:** 10 slides with HTML source, architecture, actual screenshot/log/report evidence links and explicit cloud gaps. Page count, visual inspection, links and host checks recorded in [evidence](evidence/task-07/step-03-presentation.md).
 - Audit the evidence index against all seven tasks and the assignment's core test cases.
 - Create an 8–10-slide PowerPoint or PDF with repository/project links, architecture, real results, security reports, recovery, monitoring, and AI discussion.
 - Suggested slides: overview; application/Git; containers/cloud; CI/CD; security; observability; architecture/AI; tests/recovery; lessons; optional additional evidence.

@@ -21,6 +21,10 @@ and report retention on an isolated failure. Cloud delivery remains unverified.
 
 ## Recorded evidence
 
+- [Step 7.3 — PDF presentation and audit](task-07/step-03-presentation.md): ten slides,
+  verified page count, inspected render, 13 reachable public URLs, all-task/core-case
+  audit and explicit cloud gaps. Review/publication and Step 7.4 rehearsal pending.
+
 - [Step 7.2 — AI-assisted triage proposal](task-07/step-02-ai-use-case.md): documentation,
   synthetic input/output, safety boundaries and proposed evaluation criteria. No deployed
   AI service or measured AI result; review/publication pending. Includes baseline #29.

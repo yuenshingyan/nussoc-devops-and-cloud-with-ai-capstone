@@ -2,10 +2,17 @@
 
 A Python/FastAPI transaction-validation API and cloud-native DevOps capstone.
 
+## Presentation
+
+Step 7.3 review draft: [10-slide PDF](submission/presentation.pdf),
+[editable source](submission/presentation.html), and
+[evidence audit/rendering guide](docs/runbooks/presentation.md).
+Missing cloud test cases are explicit; the final demonstration remains pending.
+
 ## AI use case
 
-[AI-assisted incident triage](docs/architecture/ai-assisted-triage.md) is a Step 7.2
-review proposal: evidence-linked summaries and human-reviewed next checks. It includes
+[AI-assisted incident triage](docs/architecture/ai-assisted-triage.md) was published as `1b4b4df` in Step 7.2
+as a proposal: evidence-linked summaries and human-reviewed next checks. It includes
 privacy/injection safeguards, a labeled synthetic example and evaluation criteria.
 No AI service or provider integration is deployed; operating policies remain undecided.
 

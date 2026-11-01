@@ -1,0 +1,26 @@
+Return-Path: <finsecure-ci@example.test>
+Received: from 0b7dc2acf30f (unknown [172.24.0.3])
+        by 52421743cf02 (Mailpit (FinSecure local test delivery)) with SMTP
+        for <finsecure-operator@example.test>; Sun, 1 Nov 2026 14:21:15 +0000 (UTC)
+Date: Sun, 1 Nov 2026 14:21:15 +0000 (UTC)
+From: finsecure-ci@example.test
+To: finsecure-operator@example.test
+Message-ID: <1229854871.11.1793542875372@0b7dc2acf30f>
+Subject: [SUCCESS] finsecure-ci #30
+MIME-Version: 1.0
+Content-Type: multipart/mixed; 
+	boundary="----=_Part_10_742116097.1793542875371"
+X-Instance-Identity: MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA5tAicxab3yCmFbZjqqRqGveHn0AwymdR4acTbETwoLbqZ2E2Xfcz9g+6xddOYYziqBJF5qgRld1+bhenP/LszeQc1Wx+IWiP5AhYOYtdWHECm3+tlKj1kV4OoSqdjz1oi2B+aVngdrZ2mBG+5mQrguGPD1m1mbnzgKwdDvyahzgf1YFSCuSII3ThFbNVAENYcSPNtI9G3F1oVPx8o16zeQVnNqM3OuxkxViM42xCNOGZMUHRG0EhRuQ6hCgZUGDMuTFLqFkiQAkhVcCPkGhtYmpaoxfrCBrHiRvntBN3H812YZ6KOliv755biba0rEPy+vnHM8lGOaGD9Z6T3LexUwIDAQAB
+
+------=_Part_10_742116097.1793542875371
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+
+Local FinSecure CI notification.
+Job: finsecure-ci
+Build: 30
+Result before notification: SUCCESS
+Revision: 1b4b4df3e459befe9f6eaa49e3c10a83cac82b24
+Build: http://127.0.0.1:8080/job/finsecure-ci/30/
+
+------=_Part_10_742116097.1793542875371--

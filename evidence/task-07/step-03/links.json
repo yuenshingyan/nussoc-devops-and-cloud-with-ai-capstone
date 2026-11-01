@@ -1,0 +1,71 @@
+{
+  "checked_at_utc": "2026-11-01T14:28:45.741385+00:00",
+  "authenticated": false,
+  "results": [
+    {
+      "url": "https://github.com/yuenshingyan/nussoc-devops-and-cloud-with-ai-capstone",
+      "status": 200,
+      "final_url": "https://github.com/yuenshingyan/nussoc-devops-and-cloud-with-ai-capstone"
+    },
+    {
+      "url": "https://github.com/yuenshingyan/nussoc-devops-and-cloud-with-ai-capstone/blob/1b4b4df/docs/api-contract.md",
+      "status": 200,
+      "final_url": "https://github.com/yuenshingyan/nussoc-devops-and-cloud-with-ai-capstone/blob/1b4b4df/docs/api-contract.md"
+    },
+    {
+      "url": "https://github.com/yuenshingyan/nussoc-devops-and-cloud-with-ai-capstone/blob/1b4b4df/docs/architecture/README.md",
+      "status": 200,
+      "final_url": "https://github.com/yuenshingyan/nussoc-devops-and-cloud-with-ai-capstone/blob/1b4b4df/docs/architecture/README.md"
+    },
+    {
+      "url": "https://github.com/yuenshingyan/nussoc-devops-and-cloud-with-ai-capstone/blob/1b4b4df/docs/architecture/ai-assisted-triage.md",
+      "status": 200,
+      "final_url": "https://github.com/yuenshingyan/nussoc-devops-and-cloud-with-ai-capstone/blob/1b4b4df/docs/architecture/ai-assisted-triage.md"
+    },
+    {
+      "url": "https://github.com/yuenshingyan/nussoc-devops-and-cloud-with-ai-capstone/blob/1b4b4df/evidence/README.md",
+      "status": 200,
+      "final_url": "https://github.com/yuenshingyan/nussoc-devops-and-cloud-with-ai-capstone/blob/1b4b4df/evidence/README.md"
+    },
+    {
+      "url": "https://github.com/yuenshingyan/nussoc-devops-and-cloud-with-ai-capstone/blob/1b4b4df/evidence/task-03/step-01-image-publication.md",
+      "status": 200,
+      "final_url": "https://github.com/yuenshingyan/nussoc-devops-and-cloud-with-ai-capstone/blob/1b4b4df/evidence/task-03/step-01-image-publication.md"
+    },
+    {
+      "url": "https://github.com/yuenshingyan/nussoc-devops-and-cloud-with-ai-capstone/blob/1b4b4df/evidence/task-04/step-04-trigger-gate.md",
+      "status": 200,
+      "final_url": "https://github.com/yuenshingyan/nussoc-devops-and-cloud-with-ai-capstone/blob/1b4b4df/evidence/task-04/step-04-trigger-gate.md"
+    },
+    {
+      "url": "https://github.com/yuenshingyan/nussoc-devops-and-cloud-with-ai-capstone/blob/1b4b4df/evidence/task-05/step-04-security-demonstration.md",
+      "status": 200,
+      "final_url": "https://github.com/yuenshingyan/nussoc-devops-and-cloud-with-ai-capstone/blob/1b4b4df/evidence/task-05/step-04-security-demonstration.md"
+    },
+    {
+      "url": "https://github.com/yuenshingyan/nussoc-devops-and-cloud-with-ai-capstone/blob/1b4b4df/evidence/task-06/step-04-alert-demonstration.md",
+      "status": 200,
+      "final_url": "https://github.com/yuenshingyan/nussoc-devops-and-cloud-with-ai-capstone/blob/1b4b4df/evidence/task-06/step-04-alert-demonstration.md"
+    },
+    {
+      "url": "https://github.com/yuenshingyan/nussoc-devops-and-cloud-with-ai-capstone/blob/1b4b4df/evidence/task-06/step-05-fix-scm-verification.md",
+      "status": 200,
+      "final_url": "https://github.com/yuenshingyan/nussoc-devops-and-cloud-with-ai-capstone/blob/1b4b4df/evidence/task-06/step-05-fix-scm-verification.md"
+    },
+    {
+      "url": "https://github.com/yuenshingyan/nussoc-devops-and-cloud-with-ai-capstone/blob/1b4b4df/evidence/task-06/step-05-live/application.jsonl",
+      "status": 200,
+      "final_url": "https://github.com/yuenshingyan/nussoc-devops-and-cloud-with-ai-capstone/blob/1b4b4df/evidence/task-06/step-05-live/application.jsonl"
+    },
+    {
+      "url": "https://github.com/yuenshingyan/nussoc-devops-and-cloud-with-ai-capstone/blob/1b4b4df/submission/design-document.pdf",
+      "status": 200,
+      "final_url": "https://github.com/yuenshingyan/nussoc-devops-and-cloud-with-ai-capstone/blob/1b4b4df/submission/design-document.pdf"
+    },
+    {
+      "url": "https://hub.docker.com/r/yuenshingyan/finsecure-pay",
+      "status": 200,
+      "final_url": "https://hub.docker.com/r/yuenshingyan/finsecure-pay"
+    }
+  ]
+}

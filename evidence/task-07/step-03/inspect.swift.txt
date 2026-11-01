@@ -1,0 +1,18 @@
+import Foundation
+import PDFKit
+import AppKit
+let document = PDFDocument(url: URL(fileURLWithPath: "submission/presentation.pdf"))!
+print("pages=\(document.pageCount)")
+var urls = Set<String>()
+for i in 0..<document.pageCount {
+ let page = document.page(at:i)!
+ for annotation in page.annotations {
+  if let action = annotation.action as? PDFActionURL, let url = action.url { urls.insert(url.absoluteString) }
+ }
+ let image = page.thumbnail(of:NSSize(width:1280,height:720),for:.mediaBox)
+ let bitmap = NSBitmapImageRep(data:image.tiffRepresentation!)!
+ try bitmap.representation(using:.png,properties:[:])!.write(to:URL(fileURLWithPath:"reports/step73/page-\(i+1).png"))
+ try (page.string ?? "").write(toFile:"reports/step73/page-\(i+1).txt",atomically:true,encoding:.utf8)
+}
+try JSONSerialization.data(withJSONObject:urls.sorted(),options:[.prettyPrinted]).write(to:URL(fileURLWithPath:"reports/step73/pdf-links.json"))
+if document.pageCount != 10 { exit(1) }

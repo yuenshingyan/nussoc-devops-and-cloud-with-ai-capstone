@@ -1,0 +1,25 @@
+{
+  "verified_at_utc": "2026-11-01T14:32:27.769255+00:00",
+  "baseline_revision": "1b4b4df3e459befe9f6eaa49e3c10a83cac82b24",
+  "slide_count": 10,
+  "all_slides_visually_inspected": true,
+  "initial_crop_grid_overflow_corrected": true,
+  "public_links_anonymous_http_200": 13,
+  "pdf_link_annotations_match_html": true,
+  "all_seven_tasks_audited": true,
+  "all_eight_core_cases_audited": true,
+  "cloud_gaps_explicit": true,
+  "host_tests_passed": 655,
+  "ruff_check": "passed",
+  "ruff_format_check": "passed",
+  "uv_build": "passed",
+  "artifacts": {
+    "submission/presentation.html": "bfd4e79f04a130949134784e5acc5e3a35ac5a20ae41e53563793481e83b3dfb",
+    "submission/presentation.pdf": "b9e1de36cfd835c89fee36b6c67fe7116f9afc4589a726dc30fcee8656a83dbd",
+    "docs/architecture/presentation-flow.svg": "0e31f4baa433a2bc1663b4a6f0ab2ca9b67fc3ff54fe26a6efdb3b1eafebb143"
+  },
+  "new_ci_run": false,
+  "new_dependencies": false,
+  "cloud_or_ai_service_deployed": false,
+  "demonstration_rehearsed": false
+}
