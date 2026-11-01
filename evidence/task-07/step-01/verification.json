@@ -1,0 +1,22 @@
+{
+  "verified_at_utc": "2026-11-01T13:44:33.624892+00:00",
+  "baseline_revision": "040ac4c93adc9eb290d6c3a6e267c4e3b49c1177",
+  "rendered_pages": 4,
+  "all_four_pdf_pages_visually_reviewed": true,
+  "initial_page_count": 6,
+  "initial_layout_corrected": true,
+  "diagram_label_crowding_corrected": true,
+  "host_tests_passed": 655,
+  "ruff_check": "passed",
+  "ruff_format_check": "passed",
+  "uv_build": "passed",
+  "local_markdown_links": "passed",
+  "artifacts": {
+    "submission/design-document.pdf": "10d61fc7c399c0944631033ab4964a6a31776b49142c9a9f42242eb35865bb7a",
+    "submission/design-document.html": "616c21433bbf0b3fac1d2d4a4441642b62d8f35f2b099646239bf35c81b8bf96",
+    "docs/architecture/end-to-end.svg": "091046005d0e5ed95756d115b20fecb1f14ee5efd78f63f2e2af663fc1939015"
+  },
+  "new_native_ci_build": false,
+  "cloud_work_performed": false,
+  "new_dependencies": false
+}

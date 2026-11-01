@@ -1,0 +1,20 @@
+"""Render the reviewed local HTML using an isolated system-Chrome profile."""
+from pathlib import Path
+from subprocess import run
+from tempfile import TemporaryDirectory
+
+with TemporaryDirectory(prefix="finsecure-design-browser-") as profile:
+    result = run(
+        [
+            "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+            "--headless=new", "--no-first-run", "--no-default-browser-check",
+            "--disable-background-networking", "--disable-component-update",
+            "--disable-sync", "--disable-extensions", "--user-data-dir=" + profile,
+            "--no-pdf-header-footer",
+            "--print-to-pdf=" + str(Path("submission/design-document.pdf").resolve()),
+            Path("submission/design-document.html").resolve().as_uri(),
+        ],
+        capture_output=True, text=True, timeout=60,
+    )
+    Path("reports/step71/render.txt").write_text(result.stdout + result.stderr)
+    assert result.returncode == 0

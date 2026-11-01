@@ -1,0 +1,47 @@
+All checks passed!
+132 files already formatted
+============================= test session starts ==============================
+platform darwin -- Python 3.14.7, pytest-9.1.1, pluggy-1.7.0
+rootdir: <repository>
+configfile: pyproject.toml
+testpaths: tests
+plugins: cov-7.1.0, anyio-4.15.1, platformdirs-4.13.5
+collected 655 items
+
+tests/integration/test_application.py ..                                 [  0%]
+tests/integration/test_configuration_api.py ........                     [  1%]
+tests/integration/test_health_api.py ...                                 [  1%]
+tests/integration/test_logging_process.py .                              [  2%]
+tests/integration/test_metrics_api.py ....................               [  5%]
+tests/integration/test_validation_api.py ............................... [  9%]
+...                                                                      [ 10%]
+tests/integration/test_validation_boundaries.py ........................ [ 14%]
+..................................                                       [ 19%]
+tests/unit/test_alert_configuration.py ......                            [ 20%]
+tests/unit/test_build_notification_configuration.py ......               [ 21%]
+tests/unit/test_config.py ...................................            [ 26%]
+tests/unit/test_dashboard_configuration.py .........                     [ 27%]
+tests/unit/test_http_metrics.py ...............                          [ 30%]
+tests/unit/test_image_archive.py .............                           [ 32%]
+tests/unit/test_image_scan.py .......................................... [ 38%]
+......................................                                   [ 44%]
+tests/unit/test_jenkins_bootstrap.py .............                       [ 46%]
+tests/unit/test_jenkins_ci_verification.py ............................. [ 50%]
+.                                                                        [ 50%]
+tests/unit/test_jenkins_trigger_verification.py ..................       [ 53%]
+tests/unit/test_json_logging.py .................................        [ 58%]
+tests/unit/test_monitoring_credentials.py .............................. [ 63%]
+.                                                                        [ 63%]
+tests/unit/test_secret_boundaries.py ................................... [ 68%]
+.....................................................                    [ 76%]
+tests/unit/test_security_scan.py ....................................... [ 82%]
+...........................................                              [ 89%]
+tests/unit/test_transaction_schema.py .................................. [ 94%]
+............                                                             [ 96%]
+tests/unit/test_validation.py ........................                   [100%]
+
+============================= 655 passed in 2.37s ==============================
+Building source distribution...
+Building wheel from source distribution...
+Successfully built dist/finsecure_pay-0.2.0.tar.gz
+Successfully built dist/finsecure_pay-0.2.0-py3-none-any.whl

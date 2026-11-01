@@ -1,6 +1,15 @@
 # FinSecure Pay — Implementation Plan
 
-## Latest checkpoint — Step 6.5 fix published and SCM-verified
+## Latest checkpoint — Step 7.1 design-document review
+
+Step 6.5 follow-up `040ac4c` is published; automatic #28 passed 655 tests, all gates,
+33 artifact checks and a matching notification. Step 7.1 now has a four-page rendered
+PDF, editable HTML, SVG architecture and implementation traceability on its dedicated
+branch. Local rendering/page review completed; review/merge/publication pending.
+See [Step 7.1 evidence](evidence/task-07/step-01-design-document.md). Do not proceed to
+Step 7.2 or cloud work before review.
+
+## Previous checkpoint — Step 6.5 fix published and SCM-verified
 
 Published `bc93c0f`; automatic SCM #27 passed 655 tests, all existing gates and 33
 artifact checks. Its actual Mailpit email contains the exact revision. Publication
@@ -289,6 +298,7 @@ The assignment allows equivalent application, build, and unit-testing tools with
 
 ### Step 7.1 — Write design document and architecture
 - **Branch:** `task-07/step-01-design-document`
+- **Locally complete, awaiting review/publication:** four-page PDF and editable HTML in `submission/`, standalone SVG and traceability in `docs/architecture/`; actual page count and visual review recorded in [evidence](evidence/task-07/step-01-design-document.md).
 - Produce a 3–5-page design document and end-to-end architecture diagram.
 - Explain source-to-deployment flow, tool alternatives, validation behavior, security boundaries, observability, recovery, and rollback.
 - Clearly distinguish implemented features from proposals and limitations.

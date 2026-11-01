@@ -2,6 +2,13 @@
 
 A Python/FastAPI transaction-validation API and cloud-native DevOps capstone.
 
+## Design document
+
+Step 7.1 review draft: [four-page design PDF](submission/design-document.pdf),
+[architecture and traceability](docs/architecture/README.md), and
+[rendering instructions](docs/runbooks/design-document.md). It distinguishes verified
+local operation from deferred cloud delivery; it is not the final presentation.
+
 ## Status
 
 Latest checkpoint: Step 6.5 fix published as `bc93c0f`; automatic SCM #27 passed

@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="650" viewBox="0 0 900 650" role="img" aria-labelledby="title desc">
+<title id="title">FinSecure Pay: verified local architecture and deferred cloud delivery</title>
+<desc id="desc">Solid arrows show implemented paths. Dashed arrows show deferred registry promotion, managed Kubernetes deployment and cloud log collection. Jenkins exports gated images through an isolated BuildKit builder. An operator runs a verified image. Prometheus scrapes the application, Grafana queries Prometheus, Alertmanager sends email to Mailpit. Jenkins also sends local email. Application JSON logs go to container stderr.</desc>
+<defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0L8 4L0 8Z" fill="#334155"/></marker></defs>
+<style>text{font-family:Arial,sans-serif;font-size:13px;fill:#142337} .head{font-weight:bold;font-size:15px} .small{font-size:13px} rect{fill:#eff6ff;stroke:#315b82;stroke-width:1.5;rx:8} .future{fill:#fff7ed;stroke:#9a5800;stroke-dasharray:7 5} .line{fill:none;stroke:#334155;stroke-width:2;marker-end:url(#arrow)} .dash{stroke-dasharray:7 5} .zone{fill:#f8fafc;stroke:#aab7c4} </style>
+<rect class="zone" x="8" y="8" width="884" height="464"/>
+<text class="head" x="24" y="34">Verified local paths — services run only when required for a demonstration</text>
+<rect x="25" y="60" width="170" height="60"/><text class="head" x="40" y="84">GitHub main</text><text x="40" y="106">Reviewed public source</text>
+<rect x="260" y="60" width="260" height="60"/><text class="head" x="276" y="84">Jenkins controller</text><text x="276" y="106">SCM polling • zero executors</text>
+<path class="line" d="M195 90H260"/><text class="small" x="201" y="78">poll</text>
+<rect x="590" y="60" width="280" height="60"/><text class="head" x="606" y="84">Python agent + rootless BuildKit</text><text x="606" y="106">Separate containers; shared builder socket</text>
+<path class="line" d="M520 90H590"/><text class="small" x="526" y="78">schedule</text>
+<rect x="590" y="160" width="280" height="65"/><text class="head" x="606" y="185">Tests → source/image gates</text><text x="606" y="207">Reports + checksummed image archive</text>
+<path class="line" d="M730 120V160"/>
+<rect x="260" y="160" width="260" height="65"/><text class="head" x="276" y="185">Exact gated application image</text><text x="276" y="207">Operator load/run; loopback :8000</text>
+<path class="line" d="M590 192H520"/><text class="small" x="524" y="179">operator</text>
+<rect x="25" y="160" width="170" height="65"/><text class="head" x="40" y="185">Synthetic client</text><text x="40" y="207">/health • /validate</text>
+<path class="line" d="M195 192H260"/>
+<rect x="25" y="290" width="170" height="65"/><text class="head" x="40" y="315">JSON stderr logs</text><text x="40" y="337">Sanitized event fields</text>
+<path class="line" d="M280 225V250H110V290"/>
+<rect x="260" y="290" width="260" height="65"/><text class="head" x="276" y="315">Prometheus + Grafana</text><text x="276" y="337">Scrape /metrics; five-panel dashboard</text>
+<path class="line" d="M390 290V225"/><text class="small" x="402" y="262">scrape</text>
+<rect x="590" y="290" width="280" height="65"/><text class="head" x="606" y="315">Alertmanager</text><text x="606" y="337">Firing and resolved notifications</text>
+<path class="line" d="M520 322H590"/><text class="small" x="529" y="310">alerts</text>
+<rect x="590" y="395" width="280" height="55"/><text class="head" x="606" y="419">Mailpit — local SMTP only</text><text x="606" y="439">Controller / alerts → synthetic recipient</text>
+<path class="line" d="M730 355V395"/>
+<path class="line" d="M520 110H553V421H590"/><text class="small" x="560" y="142">CI mail</text>
+<rect class="future" x="25" y="520" width="245" height="95"/><text class="head" x="40" y="546">Registry promotion</text><text x="40" y="571">Historical public 0.2.0 exists;</text><text x="40" y="594">new CI release flow deferred</text>
+<rect class="future" x="330" y="520" width="245" height="95"/><text class="head" x="345" y="546">Managed Kubernetes</text><text x="345" y="571">Manifests exist; provisioning,</text><text x="345" y="594">rollout and rollback unverified</text>
+<rect class="future" x="635" y="520" width="235" height="95"/><text class="head" x="650" y="546">Centralized cloud logs</text><text x="650" y="571">No collector or managed</text><text x="650" y="594">log service configured</text>
+<path class="line dash" d="M870 192H883V490H147V520"/>
+<path class="line dash" d="M270 566H330"/><path class="line dash" d="M575 566H635"/>
+<text class="small" x="25" y="642">Solid: implemented local path. Dashed boxes/arrows: deferred delivery path, not a working cloud deployment.</text>
+</svg>

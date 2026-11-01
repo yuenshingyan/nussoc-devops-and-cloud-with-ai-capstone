@@ -21,6 +21,10 @@ and report retention on an isolated failure. Cloud delivery remains unverified.
 
 ## Recorded evidence
 
+- [Step 7.1 — Design document and architecture](task-07/step-01-design-document.md):
+  four-page PDF, editable HTML, SVG, component traceability and actual render review.
+  Includes baseline #28 verification; documentation review/publication pending.
+
 - [Step 6.5 — Published fix, automatic SCM #27](task-06/step-05-fix-scm-verification.md):
   655 tests/all gates/33 artifacts, real email with exact published revision, and intact
   configuration bind/boundaries. Approved local publication verification complete;
