@@ -1,5 +1,9 @@
 # Architecture and design-document traceability
 
+[Complete horizontal architecture — dark HTML](full-architecture.html) shows delivery,
+target cloud requests and observability in three horizontal lanes. It is self-contained
+and includes zoom controls. Amber paths remain deferred, not provisioned infrastructure.
+
 Step 7.1 published as `355ae88`: [four-page PDF](../../submission/design-document.pdf),
 [editable HTML](../../submission/design-document.html), [diagram](end-to-end.svg).
 The PDF is a design document, not the later Step 7.3 presentation.
