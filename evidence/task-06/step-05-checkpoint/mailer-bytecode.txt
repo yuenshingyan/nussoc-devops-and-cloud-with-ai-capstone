@@ -1,0 +1,764 @@
+Compiled from "Mailer.java"
+public final class hudson.tasks.Mailer$DescriptorImpl extends hudson.tasks.BuildStepDescriptor<hudson.tasks.Publisher> {
+  private java.lang.String defaultSuffix;
+
+  private java.lang.String hudsonUrl;
+
+  private transient java.lang.String smtpAuthUsername;
+
+  private transient hudson.util.Secret smtpAuthPassword;
+
+  private hudson.tasks.SMTPAuthentication authentication;
+
+  private java.lang.String adminAddress;
+
+  private java.lang.String replyToAddress;
+
+  private java.lang.String smtpHost;
+
+  private boolean useSsl;
+
+  private boolean useTls;
+
+  private java.lang.String smtpPort;
+
+  private java.lang.String charset;
+
+  private static transient java.util.concurrent.atomic.AtomicInteger testEmailCount;
+
+  public hudson.tasks.Mailer$DescriptorImpl();
+    Code:
+       0: aload_0
+       1: invokespecial #1                  // Method hudson/tasks/BuildStepDescriptor."<init>":()V
+       4: aload_0
+       5: invokevirtual #7                  // Method load:()V
+       8: aload_0
+       9: putstatic     #12                 // Field hudson/tasks/Mailer.DESCRIPTOR:Lhudson/tasks/Mailer$DescriptorImpl;
+      12: return
+
+  public hudson.security.Permission getRequiredGlobalConfigPagePermission();
+    Code:
+       0: getstatic     #18                 // Field jenkins/model/Jenkins.MANAGE:Lhudson/security/Permission;
+       3: areturn
+
+  public java.lang.String getDisplayName();
+    Code:
+       0: invokestatic  #24                 // Method jenkins/plugins/mailer/tasks/i18n/Messages.Mailer_DisplayName:()Ljava/lang/String;
+       3: areturn
+
+  public java.lang.String getDefaultSuffix();
+    Code:
+       0: aload_0
+       1: getfield      #30                 // Field defaultSuffix:Ljava/lang/String;
+       4: areturn
+
+  public java.lang.String getReplyToAddress();
+    Code:
+       0: aload_0
+       1: getfield      #34                 // Field replyToAddress:Ljava/lang/String;
+       4: areturn
+
+  public void setReplyToAddress(java.lang.String);
+    Code:
+       0: aload_0
+       1: aload_1
+       2: invokestatic  #37                 // Method hudson/Util.fixEmptyAndTrim:(Ljava/lang/String;)Ljava/lang/String;
+       5: putfield      #34                 // Field replyToAddress:Ljava/lang/String;
+       8: aload_0
+       9: invokevirtual #43                 // Method save:()V
+      12: return
+
+  public jakarta.mail.Session createSession();
+    Code:
+       0: aload_0
+       1: getfield      #46                 // Field smtpHost:Ljava/lang/String;
+       4: aload_0
+       5: getfield      #49                 // Field smtpPort:Ljava/lang/String;
+       8: aload_0
+       9: getfield      #52                 // Field useSsl:Z
+      12: aload_0
+      13: getfield      #56                 // Field useTls:Z
+      16: aload_0
+      17: invokevirtual #59                 // Method getSmtpAuthUserName:()Ljava/lang/String;
+      20: aload_0
+      21: invokevirtual #62                 // Method getSmtpAuthPasswordSecret:()Lhudson/util/Secret;
+      24: invokestatic  #66                 // Method createSession:(Ljava/lang/String;Ljava/lang/String;ZZLjava/lang/String;Lhudson/util/Secret;)Ljakarta/mail/Session;
+      27: areturn
+
+  private static jakarta.mail.Session createSession(java.lang.String, java.lang.String, boolean, boolean, java.lang.String, hudson.util.Secret);
+    Code:
+       0: ldc           #70                 // String mail.smtp.port
+       2: astore        6
+       4: ldc           #72                 // String mail.smtp.socketFactory.port
+       6: astore        7
+       8: ldc           #74                 // String mail.smtp.ssl.enable
+      10: astore        8
+      12: aload_0
+      13: invokestatic  #37                 // Method hudson/Util.fixEmptyAndTrim:(Ljava/lang/String;)Ljava/lang/String;
+      16: astore_0
+      17: aload_1
+      18: invokestatic  #37                 // Method hudson/Util.fixEmptyAndTrim:(Ljava/lang/String;)Ljava/lang/String;
+      21: astore_1
+      22: aload         4
+      24: invokestatic  #37                 // Method hudson/Util.fixEmptyAndTrim:(Ljava/lang/String;)Ljava/lang/String;
+      27: astore        4
+      29: new           #76                 // class java/util/Properties
+      32: dup
+      33: invokestatic  #78                 // Method java/lang/System.getProperties:()Ljava/util/Properties;
+      36: invokespecial #84                 // Method java/util/Properties."<init>":(Ljava/util/Properties;)V
+      39: astore        9
+      41: aload_0
+      42: ifnull        54
+      45: aload         9
+      47: ldc           #87                 // String mail.smtp.host
+      49: aload_0
+      50: invokevirtual #89                 // Method java/util/Properties.put:(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+      53: pop
+      54: aload_1
+      55: ifnull        67
+      58: aload         9
+      60: ldc           #70                 // String mail.smtp.port
+      62: aload_1
+      63: invokevirtual #89                 // Method java/util/Properties.put:(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+      66: pop
+      67: iload_2
+      68: ifeq          175
+      71: aload         9
+      73: ldc           #72                 // String mail.smtp.socketFactory.port
+      75: invokevirtual #93                 // Method java/util/Properties.getProperty:(Ljava/lang/String;)Ljava/lang/String;
+      78: ifnonnull     113
+      81: aload_1
+      82: ifnonnull     90
+      85: ldc           #96                 // String 465
+      87: goto          91
+      90: aload_1
+      91: astore        10
+      93: aload         9
+      95: ldc           #70                 // String mail.smtp.port
+      97: aload         10
+      99: invokevirtual #89                 // Method java/util/Properties.put:(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+     102: pop
+     103: aload         9
+     105: ldc           #72                 // String mail.smtp.socketFactory.port
+     107: aload         10
+     109: invokevirtual #89                 // Method java/util/Properties.put:(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+     112: pop
+     113: aload         9
+     115: ldc           #74                 // String mail.smtp.ssl.enable
+     117: invokevirtual #93                 // Method java/util/Properties.getProperty:(Ljava/lang/String;)Ljava/lang/String;
+     120: ifnonnull     145
+     123: aload         9
+     125: ldc           #74                 // String mail.smtp.ssl.enable
+     127: ldc           #98                 // String true
+     129: invokevirtual #89                 // Method java/util/Properties.put:(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+     132: pop
+     133: aload         9
+     135: ldc           #100                // String mail.smtp.ssl.checkserveridentity
+     137: iconst_1
+     138: invokestatic  #102                // Method java/lang/Boolean.valueOf:(Z)Ljava/lang/Boolean;
+     141: invokevirtual #89                 // Method java/util/Properties.put:(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+     144: pop
+     145: aload         9
+     147: ldc           #108                // String mail.smtp.socketFactory.fallback
+     149: ldc           #110                // String false
+     151: invokevirtual #89                 // Method java/util/Properties.put:(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+     154: pop
+     155: aload         9
+     157: ldc           #100                // String mail.smtp.ssl.checkserveridentity
+     159: invokevirtual #93                 // Method java/util/Properties.getProperty:(Ljava/lang/String;)Ljava/lang/String;
+     162: ifnonnull     175
+     165: aload         9
+     167: ldc           #100                // String mail.smtp.ssl.checkserveridentity
+     169: ldc           #98                 // String true
+     171: invokevirtual #89                 // Method java/util/Properties.put:(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+     174: pop
+     175: iload_3
+     176: ifeq          241
+     179: aload         9
+     181: ldc           #72                 // String mail.smtp.socketFactory.port
+     183: invokevirtual #93                 // Method java/util/Properties.getProperty:(Ljava/lang/String;)Ljava/lang/String;
+     186: ifnonnull     221
+     189: aload_1
+     190: ifnonnull     198
+     193: ldc           #112                // String 587
+     195: goto          199
+     198: aload_1
+     199: astore        10
+     201: aload         9
+     203: ldc           #70                 // String mail.smtp.port
+     205: aload         10
+     207: invokevirtual #89                 // Method java/util/Properties.put:(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+     210: pop
+     211: aload         9
+     213: ldc           #72                 // String mail.smtp.socketFactory.port
+     215: aload         10
+     217: invokevirtual #89                 // Method java/util/Properties.put:(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+     220: pop
+     221: aload         9
+     223: ldc           #114                // String mail.smtp.starttls.enable
+     225: ldc           #98                 // String true
+     227: invokevirtual #89                 // Method java/util/Properties.put:(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+     230: pop
+     231: aload         9
+     233: ldc           #116                // String mail.smtp.starttls.required
+     235: ldc           #98                 // String true
+     237: invokevirtual #89                 // Method java/util/Properties.put:(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+     240: pop
+     241: aload         4
+     243: ifnull        280
+     246: aload         9
+     248: ldc           #118                // String mail.smtp.auth
+     250: ldc           #98                 // String true
+     252: invokevirtual #89                 // Method java/util/Properties.put:(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+     255: pop
+     256: invokestatic  #120                // Method jenkins/security/FIPS140.useCompliantAlgorithms:()Z
+     259: ifeq          280
+     262: iload_2
+     263: ifne          280
+     266: iload_3
+     267: ifne          280
+     270: new           #126                // class java/lang/IllegalStateException
+     273: dup
+     274: ldc           #128                // String SMTP Authentication can only be used when either TLS or SSL is used
+     276: invokespecial #130                // Method java/lang/IllegalStateException."<init>":(Ljava/lang/String;)V
+     279: athrow
+     280: aload         9
+     282: ldc           #133                // String mail.smtp.timeout
+     284: ldc           #135                // String 60000
+     286: invokevirtual #89                 // Method java/util/Properties.put:(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+     289: pop
+     290: aload         9
+     292: ldc           #137                // String mail.smtp.connectiontimeout
+     294: ldc           #135                // String 60000
+     296: invokevirtual #89                 // Method java/util/Properties.put:(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+     299: pop
+     300: aload         9
+     302: aload         4
+     304: aload         5
+     306: invokestatic  #139                // Method hudson/util/Secret.toString:(Lhudson/util/Secret;)Ljava/lang/String;
+     309: invokestatic  #145                // Method getAuthenticator:(Ljava/lang/String;Ljava/lang/String;)Ljakarta/mail/Authenticator;
+     312: invokestatic  #149                // Method jakarta/mail/Session.getInstance:(Ljava/util/Properties;Ljakarta/mail/Authenticator;)Ljakarta/mail/Session;
+     315: areturn
+
+  private static jakarta.mail.Authenticator getAuthenticator(java.lang.String, java.lang.String);
+    Code:
+       0: aload_0
+       1: ifnonnull     6
+       4: aconst_null
+       5: areturn
+       6: new           #155                // class hudson/tasks/Mailer$DescriptorImpl$1
+       9: dup
+      10: aload_0
+      11: aload_1
+      12: invokespecial #157                // Method hudson/tasks/Mailer$DescriptorImpl$1."<init>":(Ljava/lang/String;Ljava/lang/String;)V
+      15: areturn
+
+  public boolean configure(org.kohsuke.stapler.StaplerRequest2, net.sf.json.JSONObject) throws hudson.model.Descriptor$FormException;
+    Code:
+       0: aload_0
+       1: getfield      #160                // Field authentication:Lhudson/tasks/SMTPAuthentication;
+       4: astore_3
+       5: new           #164                // class hudson/BulkChange
+       8: dup
+       9: aload_0
+      10: invokespecial #166                // Method hudson/BulkChange."<init>":(Lhudson/model/Saveable;)V
+      13: astore        4
+      15: aload_0
+      16: aconst_null
+      17: putfield      #160                // Field authentication:Lhudson/tasks/SMTPAuthentication;
+      20: aload_1
+      21: aload_0
+      22: aload_2
+      23: invokeinterface #169,  3          // InterfaceMethod org/kohsuke/stapler/StaplerRequest2.bindJSON:(Ljava/lang/Object;Lnet/sf/json/JSONObject;)V
+      28: aload         4
+      30: invokevirtual #175                // Method hudson/BulkChange.commit:()V
+      33: aload         4
+      35: invokevirtual #178                // Method hudson/BulkChange.close:()V
+      38: goto          63
+      41: astore        5
+      43: aload         4
+      45: invokevirtual #178                // Method hudson/BulkChange.close:()V
+      48: goto          60
+      51: astore        6
+      53: aload         5
+      55: aload         6
+      57: invokevirtual #183                // Method java/lang/Throwable.addSuppressed:(Ljava/lang/Throwable;)V
+      60: aload         5
+      62: athrow
+      63: goto          86
+      66: astore        4
+      68: aload_0
+      69: aload_3
+      70: putfield      #160                // Field authentication:Lhudson/tasks/SMTPAuthentication;
+      73: new           #189                // class hudson/model/Descriptor$FormException
+      76: dup
+      77: ldc           #191                // String Failed to apply configuration
+      79: aload         4
+      81: aconst_null
+      82: invokespecial #193                // Method hudson/model/Descriptor$FormException."<init>":(Ljava/lang/String;Ljava/lang/Throwable;Ljava/lang/String;)V
+      85: athrow
+      86: iconst_1
+      87: ireturn
+    Exception table:
+       from    to  target type
+          15    33    41   Class java/lang/Throwable
+          43    48    51   Class java/lang/Throwable
+           5    63    66   Class java/io/IOException
+
+  private java.lang.String nullify(java.lang.String);
+    Code:
+       0: aload_1
+       1: ifnull        13
+       4: aload_1
+       5: invokevirtual #196                // Method java/lang/String.length:()I
+       8: ifne          13
+      11: aconst_null
+      12: astore_1
+      13: aload_1
+      14: areturn
+
+  public java.lang.String getSmtpHost();
+    Code:
+       0: aload_0
+       1: getfield      #46                 // Field smtpHost:Ljava/lang/String;
+       4: areturn
+
+  public java.lang.String getSmtpServer();
+    Code:
+       0: aload_0
+       1: getfield      #46                 // Field smtpHost:Ljava/lang/String;
+       4: areturn
+
+  public java.lang.String getAdminAddress();
+    Code:
+       0: invokestatic  #202                // Method jenkins/model/JenkinsLocationConfiguration.get:()Ljenkins/model/JenkinsLocationConfiguration;
+       3: invokevirtual #208                // Method jenkins/model/JenkinsLocationConfiguration.getAdminAddress:()Ljava/lang/String;
+       6: areturn
+
+  public java.lang.String getUrl();
+    Code:
+       0: invokestatic  #202                // Method jenkins/model/JenkinsLocationConfiguration.get:()Ljenkins/model/JenkinsLocationConfiguration;
+       3: invokevirtual #211                // Method jenkins/model/JenkinsLocationConfiguration.getUrl:()Ljava/lang/String;
+       6: areturn
+
+  public java.lang.String getSmtpAuthUserName();
+    Code:
+       0: aload_0
+       1: getfield      #160                // Field authentication:Lhudson/tasks/SMTPAuthentication;
+       4: ifnonnull     9
+       7: aconst_null
+       8: areturn
+       9: aload_0
+      10: getfield      #160                // Field authentication:Lhudson/tasks/SMTPAuthentication;
+      13: invokevirtual #214                // Method hudson/tasks/SMTPAuthentication.getUsername:()Ljava/lang/String;
+      16: areturn
+
+  public java.lang.String getSmtpAuthPassword();
+    Code:
+       0: aload_0
+       1: getfield      #160                // Field authentication:Lhudson/tasks/SMTPAuthentication;
+       4: ifnonnull     9
+       7: aconst_null
+       8: areturn
+       9: aload_0
+      10: getfield      #160                // Field authentication:Lhudson/tasks/SMTPAuthentication;
+      13: invokevirtual #219                // Method hudson/tasks/SMTPAuthentication.getPassword:()Lhudson/util/Secret;
+      16: invokestatic  #139                // Method hudson/util/Secret.toString:(Lhudson/util/Secret;)Ljava/lang/String;
+      19: areturn
+
+  public hudson.util.Secret getSmtpAuthPasswordSecret();
+    Code:
+       0: aload_0
+       1: getfield      #160                // Field authentication:Lhudson/tasks/SMTPAuthentication;
+       4: ifnonnull     9
+       7: aconst_null
+       8: areturn
+       9: aload_0
+      10: getfield      #160                // Field authentication:Lhudson/tasks/SMTPAuthentication;
+      13: invokevirtual #219                // Method hudson/tasks/SMTPAuthentication.getPassword:()Lhudson/util/Secret;
+      16: areturn
+
+  public boolean getUseSsl();
+    Code:
+       0: aload_0
+       1: getfield      #52                 // Field useSsl:Z
+       4: ireturn
+
+  public boolean getUseTls();
+    Code:
+       0: aload_0
+       1: getfield      #56                 // Field useTls:Z
+       4: ireturn
+
+  public java.lang.String getSmtpPort();
+    Code:
+       0: aload_0
+       1: getfield      #49                 // Field smtpPort:Ljava/lang/String;
+       4: areturn
+
+  public java.lang.String getCharset();
+    Code:
+       0: aload_0
+       1: getfield      #222                // Field charset:Ljava/lang/String;
+       4: astore_1
+       5: aload_1
+       6: ifnull        16
+       9: aload_1
+      10: invokevirtual #196                // Method java/lang/String.length:()I
+      13: ifne          19
+      16: ldc           #225                // String UTF-8
+      18: astore_1
+      19: aload_1
+      20: areturn
+
+  public void setDefaultSuffix(java.lang.String);
+    Code:
+       0: aload_0
+       1: aload_1
+       2: putfield      #30                 // Field defaultSuffix:Ljava/lang/String;
+       5: aload_0
+       6: invokevirtual #43                 // Method save:()V
+       9: return
+
+  public void setHudsonUrl(java.lang.String);
+    Code:
+       0: invokestatic  #202                // Method jenkins/model/JenkinsLocationConfiguration.get:()Ljenkins/model/JenkinsLocationConfiguration;
+       3: aload_1
+       4: invokevirtual #227                // Method jenkins/model/JenkinsLocationConfiguration.setUrl:(Ljava/lang/String;)V
+       7: return
+
+  public void setAdminAddress(java.lang.String);
+    Code:
+       0: invokestatic  #202                // Method jenkins/model/JenkinsLocationConfiguration.get:()Ljenkins/model/JenkinsLocationConfiguration;
+       3: aload_1
+       4: invokevirtual #230                // Method jenkins/model/JenkinsLocationConfiguration.setAdminAddress:(Ljava/lang/String;)V
+       7: return
+
+  public void setSmtpHost(java.lang.String);
+    Code:
+       0: aload_0
+       1: aload_1
+       2: invokestatic  #37                 // Method hudson/Util.fixEmptyAndTrim:(Ljava/lang/String;)Ljava/lang/String;
+       5: putfield      #46                 // Field smtpHost:Ljava/lang/String;
+       8: aload_0
+       9: invokevirtual #43                 // Method save:()V
+      12: return
+
+  public void setUseSsl(boolean);
+    Code:
+       0: aload_0
+       1: iload_1
+       2: putfield      #52                 // Field useSsl:Z
+       5: aload_0
+       6: invokevirtual #43                 // Method save:()V
+       9: return
+
+  public void setUseTls(boolean);
+    Code:
+       0: aload_0
+       1: iload_1
+       2: putfield      #56                 // Field useTls:Z
+       5: aload_0
+       6: invokevirtual #43                 // Method save:()V
+       9: return
+
+  public void setSmtpPort(java.lang.String);
+    Code:
+       0: aload_0
+       1: aload_1
+       2: invokestatic  #37                 // Method hudson/Util.fixEmptyAndTrim:(Ljava/lang/String;)Ljava/lang/String;
+       5: putfield      #49                 // Field smtpPort:Ljava/lang/String;
+       8: aload_0
+       9: invokevirtual #43                 // Method save:()V
+      12: return
+
+  public void setCharset(java.lang.String);
+    Code:
+       0: aload_1
+       1: ifnull        11
+       4: aload_1
+       5: invokevirtual #196                // Method java/lang/String.length:()I
+       8: ifne          14
+      11: ldc           #225                // String UTF-8
+      13: astore_1
+      14: aload_0
+      15: aload_1
+      16: invokestatic  #37                 // Method hudson/Util.fixEmptyAndTrim:(Ljava/lang/String;)Ljava/lang/String;
+      19: putfield      #222                // Field charset:Ljava/lang/String;
+      22: aload_0
+      23: invokevirtual #43                 // Method save:()V
+      26: return
+
+  public void setAuthentication(hudson.tasks.SMTPAuthentication);
+    Code:
+       0: aload_0
+       1: aload_1
+       2: putfield      #160                // Field authentication:Lhudson/tasks/SMTPAuthentication;
+       5: aload_0
+       6: invokevirtual #43                 // Method save:()V
+       9: return
+
+  public hudson.tasks.SMTPAuthentication getAuthentication();
+    Code:
+       0: aload_0
+       1: getfield      #160                // Field authentication:Lhudson/tasks/SMTPAuthentication;
+       4: areturn
+
+  public void setSmtpAuth(java.lang.String, java.lang.String);
+    Code:
+       0: aload_1
+       1: ifnonnull     16
+       4: aload_2
+       5: ifnonnull     16
+       8: aload_0
+       9: aconst_null
+      10: putfield      #160                // Field authentication:Lhudson/tasks/SMTPAuthentication;
+      13: goto          32
+      16: aload_0
+      17: new           #215                // class hudson/tasks/SMTPAuthentication
+      20: dup
+      21: aload_1
+      22: aload_2
+      23: invokestatic  #233                // Method hudson/util/Secret.fromString:(Ljava/lang/String;)Lhudson/util/Secret;
+      26: invokespecial #237                // Method hudson/tasks/SMTPAuthentication."<init>":(Ljava/lang/String;Lhudson/util/Secret;)V
+      29: putfield      #160                // Field authentication:Lhudson/tasks/SMTPAuthentication;
+      32: return
+
+  public hudson.tasks.Publisher newInstance(org.kohsuke.stapler.StaplerRequest2, net.sf.json.JSONObject) throws hudson.model.Descriptor$FormException;
+    Code:
+       0: aload_0
+       1: aload_1
+       2: aload_2
+       3: invokespecial #240                // Method hudson/tasks/BuildStepDescriptor.newInstance:(Lorg/kohsuke/stapler/StaplerRequest2;Lnet/sf/json/JSONObject;)Lhudson/model/Describable;
+       6: checkcast     #13                 // class hudson/tasks/Mailer
+       9: astore_3
+      10: aload_0
+      11: getfield      #244                // Field hudsonUrl:Ljava/lang/String;
+      14: ifnonnull     29
+      17: aload_0
+      18: aload_1
+      19: invokestatic  #247                // Method hudson/Functions.inferHudsonURL:(Lorg/kohsuke/stapler/StaplerRequest2;)Ljava/lang/String;
+      22: putfield      #244                // Field hudsonUrl:Ljava/lang/String;
+      25: aload_0
+      26: invokevirtual #43                 // Method save:()V
+      29: aload_3
+      30: areturn
+
+  private java.lang.Object readResolve();
+    Code:
+       0: aload_0
+       1: getfield      #253                // Field smtpAuthPassword:Lhudson/util/Secret;
+       4: ifnull        26
+       7: aload_0
+       8: new           #215                // class hudson/tasks/SMTPAuthentication
+      11: dup
+      12: aload_0
+      13: getfield      #257                // Field smtpAuthUsername:Ljava/lang/String;
+      16: aload_0
+      17: getfield      #253                // Field smtpAuthPassword:Lhudson/util/Secret;
+      20: invokespecial #237                // Method hudson/tasks/SMTPAuthentication."<init>":(Ljava/lang/String;Lhudson/util/Secret;)V
+      23: putfield      #160                // Field authentication:Lhudson/tasks/SMTPAuthentication;
+      26: aload_0
+      27: areturn
+
+  public hudson.util.FormValidation doAddressCheck(java.lang.String);
+    Code:
+       0: new           #260                // class jakarta/mail/internet/InternetAddress
+       3: dup
+       4: aload_1
+       5: invokespecial #262                // Method jakarta/mail/internet/InternetAddress."<init>":(Ljava/lang/String;)V
+       8: pop
+       9: invokestatic  #263                // Method hudson/util/FormValidation.ok:()Lhudson/util/FormValidation;
+      12: areturn
+      13: astore_2
+      14: aload_2
+      15: invokevirtual #271                // Method jakarta/mail/internet/AddressException.getMessage:()Ljava/lang/String;
+      18: invokestatic  #274                // Method hudson/util/FormValidation.error:(Ljava/lang/String;)Lhudson/util/FormValidation;
+      21: areturn
+    Exception table:
+       from    to  target type
+           0    12    13   Class jakarta/mail/internet/AddressException
+
+  public hudson.util.FormValidation doCheckSmtpHost(java.lang.String);
+    Code:
+       0: invokestatic  #278                // Method jenkins/model/Jenkins.get:()Ljenkins/model/Jenkins;
+       3: getstatic     #18                 // Field jenkins/model/Jenkins.MANAGE:Lhudson/security/Permission;
+       6: invokevirtual #281                // Method jenkins/model/Jenkins.checkPermission:(Lhudson/security/Permission;)V
+       9: aload_1
+      10: invokestatic  #37                 // Method hudson/Util.fixEmptyAndTrim:(Ljava/lang/String;)Ljava/lang/String;
+      13: ifnull        21
+      16: aload_1
+      17: invokestatic  #285                // Method java/net/InetAddress.getByName:(Ljava/lang/String;)Ljava/net/InetAddress;
+      20: pop
+      21: invokestatic  #263                // Method hudson/util/FormValidation.ok:()Lhudson/util/FormValidation;
+      24: areturn
+      25: astore_2
+      26: invokestatic  #293                // Method jenkins/plugins/mailer/tasks/i18n/Messages.Mailer_Unknown_Host_Name:()Ljava/lang/String;
+      29: aload_1
+      30: invokedynamic #296,  0            // InvokeDynamic #0:makeConcatWithConstants:(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+      35: invokestatic  #274                // Method hudson/util/FormValidation.error:(Ljava/lang/String;)Lhudson/util/FormValidation;
+      38: areturn
+    Exception table:
+       from    to  target type
+           9    24    25   Class java/net/UnknownHostException
+
+  public hudson.util.FormValidation doCheckDefaultSuffix(java.lang.String);
+    Code:
+       0: aload_1
+       1: invokestatic  #37                 // Method hudson/Util.fixEmptyAndTrim:(Ljava/lang/String;)Ljava/lang/String;
+       4: ifnull        17
+       7: aload_1
+       8: ldc_w         #300                // String @[A-Za-z0-9.\\-]+
+      11: invokevirtual #302                // Method java/lang/String.matches:(Ljava/lang/String;)Z
+      14: ifeq          21
+      17: invokestatic  #263                // Method hudson/util/FormValidation.ok:()Lhudson/util/FormValidation;
+      20: areturn
+      21: invokestatic  #306                // Method jenkins/plugins/mailer/tasks/i18n/Messages.Mailer_Suffix_Error:()Ljava/lang/String;
+      24: invokestatic  #274                // Method hudson/util/FormValidation.error:(Ljava/lang/String;)Lhudson/util/FormValidation;
+      27: areturn
+
+  public hudson.util.FormValidation doSendTestMail(java.lang.String, java.lang.String, boolean, java.lang.String, hudson.util.Secret, boolean, boolean, java.lang.String, java.lang.String, java.lang.String) throws java.io.IOException;
+    Code:
+       0: invokestatic  #278                // Method jenkins/model/Jenkins.get:()Ljenkins/model/Jenkins;
+       3: getstatic     #18                 // Field jenkins/model/Jenkins.MANAGE:Lhudson/security/Permission;
+       6: invokevirtual #281                // Method jenkins/model/Jenkins.checkPermission:(Lhudson/security/Permission;)V
+       9: iload_3
+      10: ifne          19
+      13: aconst_null
+      14: astore        4
+      16: aconst_null
+      17: astore        5
+      19: invokestatic  #120                // Method jenkins/security/FIPS140.useCompliantAlgorithms:()Z
+      22: ifeq          46
+      25: iload_3
+      26: ifeq          46
+      29: iload         6
+      31: ifne          46
+      34: iload         7
+      36: ifne          46
+      39: invokestatic  #309                // Method jenkins/plugins/mailer/tasks/i18n/Messages.Mailer_InsecureAuthError:()Ljava/lang/String;
+      42: invokestatic  #274                // Method hudson/util/FormValidation.error:(Ljava/lang/String;)Lhudson/util/FormValidation;
+      45: areturn
+      46: new           #312                // class jakarta/mail/internet/MimeMessage
+      49: dup
+      50: aload_1
+      51: aload         8
+      53: iload         6
+      55: iload         7
+      57: aload         4
+      59: aload         5
+      61: invokestatic  #66                 // Method createSession:(Ljava/lang/String;Ljava/lang/String;ZZLjava/lang/String;Lhudson/util/Secret;)Ljakarta/mail/Session;
+      64: invokespecial #314                // Method jakarta/mail/internet/MimeMessage."<init>":(Ljakarta/mail/Session;)V
+      67: astore        11
+      69: aload         11
+      71: getstatic     #317                // Field testEmailCount:Ljava/util/concurrent/atomic/AtomicInteger;
+      74: invokevirtual #321                // Method java/util/concurrent/atomic/AtomicInteger.incrementAndGet:()I
+      77: invokestatic  #326                // Method java/lang/Integer.valueOf:(I)Ljava/lang/Integer;
+      80: invokestatic  #331                // Method jenkins/plugins/mailer/tasks/i18n/Messages.Mailer_TestMail_Subject:(Ljava/lang/Object;)Ljava/lang/String;
+      83: aload         9
+      85: invokevirtual #335                // Method jakarta/mail/internet/MimeMessage.setSubject:(Ljava/lang/String;Ljava/lang/String;)V
+      88: aload         11
+      90: getstatic     #317                // Field testEmailCount:Ljava/util/concurrent/atomic/AtomicInteger;
+      93: invokevirtual #338                // Method java/util/concurrent/atomic/AtomicInteger.get:()I
+      96: invokestatic  #326                // Method java/lang/Integer.valueOf:(I)Ljava/lang/Integer;
+      99: invokestatic  #278                // Method jenkins/model/Jenkins.get:()Ljenkins/model/Jenkins;
+     102: invokevirtual #340                // Method jenkins/model/Jenkins.getDisplayName:()Ljava/lang/String;
+     105: invokestatic  #343                // Method jenkins/plugins/mailer/tasks/i18n/Messages.Mailer_TestMail_Content:(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/String;
+     108: aload         9
+     110: invokevirtual #347                // Method jakarta/mail/internet/MimeMessage.setText:(Ljava/lang/String;Ljava/lang/String;)V
+     113: aload         11
+     115: aload_2
+     116: aload         9
+     118: invokestatic  #350                // Method hudson/tasks/Mailer.stringToAddress:(Ljava/lang/String;Ljava/lang/String;)Ljakarta/mail/internet/InternetAddress;
+     121: invokevirtual #354                // Method jakarta/mail/internet/MimeMessage.setFrom:(Ljakarta/mail/Address;)V
+     124: aload_0
+     125: getfield      #34                 // Field replyToAddress:Ljava/lang/String;
+     128: ifnull        162
+     131: aload_0
+     132: getfield      #34                 // Field replyToAddress:Ljava/lang/String;
+     135: invokevirtual #358                // Method java/lang/String.isBlank:()Z
+     138: ifne          162
+     141: aload         11
+     143: iconst_1
+     144: anewarray     #361                // class jakarta/mail/Address
+     147: dup
+     148: iconst_0
+     149: aload_0
+     150: getfield      #34                 // Field replyToAddress:Ljava/lang/String;
+     153: aload         9
+     155: invokestatic  #350                // Method hudson/tasks/Mailer.stringToAddress:(Ljava/lang/String;Ljava/lang/String;)Ljakarta/mail/internet/InternetAddress;
+     158: aastore
+     159: invokevirtual #363                // Method jakarta/mail/internet/MimeMessage.setReplyTo:([Ljakarta/mail/Address;)V
+     162: aload         11
+     164: new           #367                // class java/util/Date
+     167: dup
+     168: invokespecial #369                // Method java/util/Date."<init>":()V
+     171: invokevirtual #370                // Method jakarta/mail/internet/MimeMessage.setSentDate:(Ljava/util/Date;)V
+     174: aload         11
+     176: getstatic     #374                // Field jakarta/mail/Message$RecipientType.TO:Ljakarta/mail/Message$RecipientType;
+     179: aload         10
+     181: aload         9
+     183: invokestatic  #350                // Method hudson/tasks/Mailer.stringToAddress:(Ljava/lang/String;Ljava/lang/String;)Ljakarta/mail/internet/InternetAddress;
+     186: invokevirtual #380                // Method jakarta/mail/internet/MimeMessage.setRecipient:(Ljakarta/mail/Message$RecipientType;Ljakarta/mail/Address;)V
+     189: aload         11
+     191: invokestatic  #384                // Method jakarta/mail/Transport.send:(Ljakarta/mail/Message;)V
+     194: invokestatic  #390                // Method jenkins/plugins/mailer/tasks/i18n/Messages.Mailer_EmailSentSuccessfully:()Ljava/lang/String;
+     197: invokestatic  #393                // Method hudson/util/FormValidation.ok:(Ljava/lang/String;)Lhudson/util/FormValidation;
+     200: areturn
+     201: astore        11
+     203: invokestatic  #397                // Method jenkins/plugins/mailer/tasks/i18n/Messages.Mailer_FailedToSendEmail:()Ljava/lang/String;
+     206: aload         11
+     208: invokestatic  #400                // Method hudson/Functions.printThrowable:(Ljava/lang/Throwable;)Ljava/lang/String;
+     211: invokestatic  #404                // Method hudson/Util.escape:(Ljava/lang/String;)Ljava/lang/String;
+     214: invokedynamic #407,  0            // InvokeDynamic #1:makeConcatWithConstants:(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+     219: invokestatic  #408                // Method hudson/util/FormValidation.errorWithMarkup:(Ljava/lang/String;)Lhudson/util/FormValidation;
+     222: areturn
+    Exception table:
+       from    to  target type
+           0    45   201   Class jakarta/mail/MessagingException
+          46   200   201   Class jakarta/mail/MessagingException
+
+  public hudson.util.FormValidation doCheckAuthentication(boolean, boolean, boolean);
+    Code:
+       0: invokestatic  #278                // Method jenkins/model/Jenkins.get:()Ljenkins/model/Jenkins;
+       3: getstatic     #18                 // Field jenkins/model/Jenkins.MANAGE:Lhudson/security/Permission;
+       6: invokevirtual #281                // Method jenkins/model/Jenkins.checkPermission:(Lhudson/security/Permission;)V
+       9: iload_1
+      10: ifeq          21
+      13: iload_2
+      14: ifne          21
+      17: iload_3
+      18: ifeq          25
+      21: invokestatic  #263                // Method hudson/util/FormValidation.ok:()Lhudson/util/FormValidation;
+      24: areturn
+      25: invokestatic  #120                // Method jenkins/security/FIPS140.useCompliantAlgorithms:()Z
+      28: ifeq          38
+      31: invokestatic  #309                // Method jenkins/plugins/mailer/tasks/i18n/Messages.Mailer_InsecureAuthError:()Ljava/lang/String;
+      34: invokestatic  #274                // Method hudson/util/FormValidation.error:(Ljava/lang/String;)Lhudson/util/FormValidation;
+      37: areturn
+      38: invokestatic  #411                // Method jenkins/plugins/mailer/tasks/i18n/Messages.Mailer_InsecureAuthWarning:()Ljava/lang/String;
+      41: invokestatic  #414                // Method hudson/util/FormValidation.warning:(Ljava/lang/String;)Lhudson/util/FormValidation;
+      44: areturn
+
+  public boolean isApplicable(java.lang.Class<? extends hudson.model.AbstractProject>);
+    Code:
+       0: iconst_1
+       1: ireturn
+
+  public hudson.model.Describable newInstance(org.kohsuke.stapler.StaplerRequest2, net.sf.json.JSONObject) throws hudson.model.Descriptor$FormException;
+    Code:
+       0: aload_0
+       1: aload_1
+       2: aload_2
+       3: invokevirtual #417                // Method newInstance:(Lorg/kohsuke/stapler/StaplerRequest2;Lnet/sf/json/JSONObject;)Lhudson/tasks/Publisher;
+       6: areturn
+
+  static {};
+    Code:
+       0: new           #322                // class java/util/concurrent/atomic/AtomicInteger
+       3: dup
+       4: iconst_0
+       5: invokespecial #420                // Method java/util/concurrent/atomic/AtomicInteger."<init>":(I)V
+       8: putstatic     #317                // Field testEmailCount:Ljava/util/concurrent/atomic/AtomicInteger;
+      11: return
+}

@@ -142,5 +142,29 @@ uv run --locked python -m scripts.image_scan \
             archiveArtifacts artifacts: 'reports/build-metadata.txt,reports/dependencies.txt,reports/lint.txt,reports/format.txt,reports/tests.txt,reports/junit.xml,reports/coverage.xml,reports/package.txt,reports/packages.sha256,reports/buildkit-workers.txt,reports/image-metadata.txt,reports/image-build.txt,reports/buildkit-image.json,reports/image.sha256,reports/security-summary.json,reports/security-tools.txt,reports/security-export.txt,reports/runtime-requirements.txt,reports/bandit.json,reports/bandit.txt,reports/pip-audit.json,reports/pip-audit.txt,reports/image-security-summary.json,reports/image-security-tools.txt,reports/image-security-export.txt,reports/image-runtime-requirements.txt,reports/trivy-db.json,reports/trivy-db.txt,reports/trivy.json,reports/trivy.txt',
                              allowEmptyArchive: true
         }
+        cleanup {
+            script {
+                // Controller environment opt-in disappears when its overlay is removed.
+                def notify = env.FINSECURE_CI_NOTIFICATIONS ?: 'false'
+                if (!(notify in ['true', 'false'])) {
+                    error('Invalid FINSECURE_CI_NOTIFICATIONS; expected true or false')
+                }
+                if (notify == 'true') {
+                    def resultBeforeNotification = currentBuild.currentResult
+                    // Keep failed builds failed. Never swallow cancellation/timeouts.
+                    catchError(buildResult: 'UNSTABLE', stageResult: 'UNSTABLE', catchInterruptions: false) {
+                        timeout(time: 180, unit: 'SECONDS') {
+                            mail to: 'finsecure-operator@example.test',
+                                 from: 'finsecure-ci@example.test',
+                                 subject: "[${resultBeforeNotification}] ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+                                 body: "Local FinSecure CI notification.\nJob: ${env.JOB_NAME}\nBuild: ${env.BUILD_NUMBER}\nResult before notification: ${resultBeforeNotification}\nRevision: ${env.GIT_COMMIT ?: 'unavailable'}\nBuild: ${env.BUILD_URL}\n",
+                                 charset: 'UTF-8', mimeType: 'text/plain'
+                        }
+                    }
+                } else {
+                    echo 'Build notification disabled; no SMTP delivery attempted.'
+                }
+            }
+        }
     }
 }

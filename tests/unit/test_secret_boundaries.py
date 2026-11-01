@@ -367,3 +367,62 @@ def test_observation_failure_replaces_stale_pass_without_leaking_errors(
         "reason": "boundary_or_observation_failed",
     }
     assert "s" * 43 not in report.read_text() + capsys.readouterr().out
+
+
+@mark.parametrize(
+    "problem",
+    [
+        None,
+        "writable",
+        "source",
+        "type",
+        "extra_network",
+        "missing_network",
+        "extra_mount",
+        "no_opt_in",
+    ],
+)
+def test_notification_overlay_requires_exact_opt_in_boundaries(helpers, problem):
+    info = container_info(helpers, "controller")
+    info["NetworkSettings"] = {
+        "Networks": {"finsecure-jenkins_default": {}, "finsecure-monitoring_notification": {}}
+    }
+    mount = {
+        "Type": "bind",
+        "Source": str(helpers["ROOT"] / "ops/jenkins/notifications.yaml"),
+        "Destination": "/etc/jenkins/notifications.yaml",
+        "RW": False,
+    }
+    info["Mounts"].append(mount)
+    if problem == "writable":
+        mount["RW"] = True
+    elif problem == "source":
+        mount["Source"] = "/unapproved"
+    elif problem == "type":
+        mount["Type"] = "volume"
+    elif problem == "extra_network":
+        info["NetworkSettings"]["Networks"]["unapproved"] = {}
+    elif problem == "missing_network":
+        del info["NetworkSettings"]["Networks"]["finsecure-monitoring_notification"]
+    elif problem == "extra_mount":
+        info["Mounts"].append({"Type": "bind", "Destination": "/unapproved", "RW": False})
+    if problem is None:
+        helpers["check_container"]("controller", info, "1000", [], notifications=True)
+    else:
+        with raises(ValueError):
+            helpers["check_container"](
+                "controller", info, "1000", [], notifications=problem != "no_opt_in"
+            )
+
+
+@mark.parametrize("service", ["agent", "builder"])
+def test_other_services_cannot_join_notification_network(helpers, service):
+    info = container_info(helpers, service)
+    network = (
+        "finsecure-jenkins_default" if service == "agent" else "finsecure-jenkins_builder-egress"
+    )
+    info["NetworkSettings"] = {"Networks": {network: {}}}
+    helpers["check_container"](service, info, "1000", [], notifications=True)
+    info["NetworkSettings"]["Networks"]["finsecure-monitoring_notification"] = {}
+    with raises(ValueError, match="notification_network_boundary_invalid"):
+        helpers["check_container"](service, info, "1000", [], notifications=True)

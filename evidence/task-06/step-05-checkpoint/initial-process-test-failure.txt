@@ -1,0 +1,117 @@
+All checks passed!
+121 files already formatted
+============================= test session starts ==============================
+platform darwin -- Python 3.14.7, pytest-9.1.1, pluggy-1.7.0
+rootdir: <repository>
+configfile: pyproject.toml
+testpaths: tests
+plugins: cov-7.1.0, anyio-4.15.1, platformdirs-4.13.5
+collected 632 items
+
+tests/integration/test_application.py ..                                 [  0%]
+tests/integration/test_configuration_api.py ........                     [  1%]
+tests/integration/test_health_api.py ...                                 [  2%]
+tests/integration/test_logging_process.py F                              [  2%]
+tests/integration/test_metrics_api.py ....................               [  5%]
+tests/integration/test_validation_api.py ............................... [ 10%]
+...                                                                      [ 10%]
+tests/integration/test_validation_boundaries.py ........................ [ 14%]
+..................................                                       [ 19%]
+tests/unit/test_alert_configuration.py ......                            [ 20%]
+tests/unit/test_build_notification_configuration.py ....                 [ 21%]
+tests/unit/test_config.py ...................................            [ 27%]
+tests/unit/test_dashboard_configuration.py .........                     [ 28%]
+tests/unit/test_http_metrics.py ...............                          [ 30%]
+tests/unit/test_image_archive.py .............                           [ 32%]
+tests/unit/test_image_scan.py .......................................... [ 39%]
+......................................                                   [ 45%]
+tests/unit/test_jenkins_bootstrap.py .............                       [ 47%]
+tests/unit/test_jenkins_ci_verification.py ............................. [ 52%]
+.                                                                        [ 52%]
+tests/unit/test_jenkins_trigger_verification.py ..................       [ 55%]
+tests/unit/test_json_logging.py .................................        [ 60%]
+tests/unit/test_monitoring_credentials.py .............................. [ 65%]
+.                                                                        [ 65%]
+tests/unit/test_secret_boundaries.py ................................... [ 70%]
+................................                                         [ 75%]
+tests/unit/test_security_scan.py ....................................... [ 82%]
+...........................................                              [ 88%]
+tests/unit/test_transaction_schema.py .................................. [ 94%]
+............                                                             [ 96%]
+tests/unit/test_validation.py ........................                   [100%]
+
+=================================== FAILURES ===================================
+_____________ test_real_server_emits_json_without_request_secrets ______________
+
+tmp_path = PosixPath('<temporary-directory>/pytest-of-operator/pytest-36/test_real_server_emits_json_wi0')
+
+    def test_real_server_emits_json_without_request_secrets(tmp_path):
+        log_path = tmp_path / "server.jsonl"
+        # Parent owns the reserved ephemeral port; child borrows its inherited descriptor.
+        with socket(AF_INET, SOCK_STREAM) as listener, log_path.open("w", encoding="utf-8") as output:
+            listener.bind(("127.0.0.1", 0))
+            listener.listen()
+            port = listener.getsockname()[1]
+            with Popen(
+                [
+                    executable,
+                    "-m",
+                    "uvicorn",
+                    "finsecure_pay.main:create_app",
+                    "--factory",
+                    "--fd",
+                    str(listener.fileno()),
+                    "--no-access-log",
+                    "--log-config",
+                    "src/finsecure_pay/observability/logging.json",
+                ],
+                cwd=ROOT,
+                pass_fds=(listener.fileno(),),
+                stdout=output,
+                stderr=STDOUT,
+            ) as process:
+                try:
+                    with Client(
+                        base_url=f"http://127.0.0.1:{port}", timeout=1, trust_env=False
+                    ) as client:
+                        deadline = monotonic() + 10
+                        while monotonic() < deadline:
+                            assert process.poll() is None, "Server failed startup"
+                            try:
+                                if client.get("/health").status_code == 200:
+                                    break
+                            except TransportError:
+                                pass
+                            sleep(0.05)
+                        else:
+                            raise AssertionError("Server startup exceeded ten seconds")
+                        for amount, status in [("1.00", 200), ("-1.00", 200), (1, 422)]:
+                            response = client.post(
+                                "/validate?token=synthetic-private",
+                                headers={"Authorization": "synthetic-private"},
+                                json={
+                                    "transaction_id": "synthetic-private",
+                                    "sender_id": "synthetic-private-sender",
+                                    "recipient_id": "synthetic-private-recipient",
+                                    "amount": amount,
+                                    "currency": "SGD",
+                                },
+                            )
+                            assert response.status_code == status
+                        assert client.get("/synthetic-private").status_code == 404
+                        assert client.get("/metrics").status_code == 200
+                finally:
+                    process.terminate()
+                    try:
+                        process.wait(timeout=5)
+                    except TimeoutExpired:
+                        process.kill()
+                        process.wait(timeout=5)
+>       assert process.returncode == 0
+E       AssertionError: assert -15 == 0
+E        +  where -15 = <Popen: returncode: -15 args: ['/Users/yuenshingyanhindy/vscode/assignment/c...>.returncode
+
+tests/integration/test_logging_process.py:77: AssertionError
+=========================== short test summary info ============================
+FAILED tests/integration/test_logging_process.py::test_real_server_emits_json_without_request_secrets
+======================== 1 failed, 631 passed in 2.30s =========================

@@ -1,0 +1,10 @@
+Traceback (most recent call last):
+  File "<repository>/reports/step65-enable.py", line 45, in <module>
+    (out/'boundary-after.json').write_text(dumps(verify(notifications=True),indent=2)+'\n')
+                                                 ~~~~~~^^^^^^^^^^^^^^^^^^^^
+  File "<repository>/ops/jenkins/verify_secrets.py", line 189, in verify
+    check_container(service, info[0], uid, secrets, notifications=notifications)
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<repository>/ops/jenkins/verify_secrets.py", line 93, in check_container
+    raise ValueError("notification_configuration_mount_invalid")
+ValueError: notification_configuration_mount_invalid

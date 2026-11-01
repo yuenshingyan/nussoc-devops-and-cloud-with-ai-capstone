@@ -51,7 +51,9 @@ def read_password(directory: Path) -> str:
     return password
 
 
-def check_container(service: str, info: dict, uid: str, secrets: list[str]) -> None:
+def check_container(
+    service: str, info: dict, uid: str, secrets: list[str], *, notifications: bool = False
+) -> None:
     """Reject drift from the approved volume, network and privilege boundaries."""
     host = info["HostConfig"]
     labels = info["Config"]["Labels"]
@@ -70,6 +72,26 @@ def check_container(service: str, info: dict, uid: str, secrets: list[str]) -> N
     ):
         raise ValueError("container_identity_or_isolation_invalid")
     mounts = info["Mounts"]
+    if notifications:
+        expected_networks = {
+            "controller": {"finsecure-jenkins_default", "finsecure-monitoring_notification"},
+            "agent": {"finsecure-jenkins_default"},
+            "builder": {"finsecure-jenkins_builder-egress"},
+        }
+        if set(info["NetworkSettings"]["Networks"]) != expected_networks[service]:
+            raise ValueError("notification_network_boundary_invalid")
+        if service == "controller":
+            configuration = [
+                m for m in mounts if m["Destination"] == "/etc/jenkins/notifications.yaml"
+            ]
+            if (
+                len(configuration) != 1
+                or configuration[0]["Type"] != "bind"
+                or configuration[0]["RW"] is not False
+                or configuration[0]["Source"] != str(ROOT / "ops/jenkins/notifications.yaml")
+            ):
+                raise ValueError("notification_configuration_mount_invalid")
+            mounts = [m for m in mounts if m["Destination"] != "/etc/jenkins/notifications.yaml"]
     expected = MOUNTS[service]
     if (
         len(mounts) != len(expected)
@@ -145,7 +167,7 @@ def check_anonymous_access() -> None:
             raise ValueError("anonymous_api_status_unexpected") from None
 
 
-def verify() -> dict:
+def verify(*, notifications: bool = False) -> dict:
     """Inspect existing services only; never trigger builds, restart or rotate secrets."""
     password = read_password(SECRET_DIRECTORY)
     client = Jenkins(password)
@@ -164,7 +186,7 @@ def verify() -> dict:
         if len(info) != 1:
             raise ValueError("container_inspection_invalid")
         uid = command(["docker", "exec", identifier, "id", "-u"], timeout=15)
-        check_container(service, info[0], uid, secrets)
+        check_container(service, info[0], uid, secrets, notifications=notifications)
         if service != "builder":
             filename = "admin_password" if service == "controller" else "agent_secret"
             metadata = command(
@@ -187,6 +209,7 @@ def verify() -> dict:
         "host_credentials": "owned regular file 0600 in owned directory 0700",
         "containers": "expected volumes, read-only secret mounts, uid 1000, approved privileges",
         "network": "loopback-only controller; no agent/builder published ports",
+        "notification_overlay_checked": notifications,
         "anonymous_api": "denied",
         "checkout": "anonymous public repository, trusted main, Jenkinsfile from SCM",
         "known_credentials_in_argv_environment": False,
@@ -201,12 +224,14 @@ def verify() -> dict:
 
 def main() -> None:
     """Write only a safe status report; do not include raw errors/configuration/secrets."""
-    ArgumentParser(description=__doc__).parse_args()
+    parser = ArgumentParser(description=__doc__)
+    parser.add_argument("--notifications", action="store_true")
+    arguments = parser.parse_args()
     report = ROOT / "reports/secret-boundaries.json"
     report.parent.mkdir(exist_ok=True)
     report.write_text('{"status":"incomplete"}\n', encoding="utf-8")
     try:
-        result = verify()
+        result = verify(notifications=arguments.notifications)
     except (
         OSError,
         ValueError,

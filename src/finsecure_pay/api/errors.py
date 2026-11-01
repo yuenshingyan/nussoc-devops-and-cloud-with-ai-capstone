@@ -5,6 +5,7 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 
 from finsecure_pay.api.dependencies import get_application_metrics
+from finsecure_pay.observability.logging import record_validation
 from finsecure_pay.schemas.errors import RequestErrorDetail, RequestErrorResponse
 from finsecure_pay.schemas.transaction import TransactionRequest
 
@@ -15,6 +16,7 @@ async def handle_request_validation_error(
     """Return schema error metadata without echoing arbitrary fields or submitted values."""
     if request.method == "POST" and request.scope["path"] == "/validate":
         get_application_metrics(request).record_validation("invalid")
+        record_validation("invalid", ["INVALID_REQUEST"])
     details = []
     for error in exception.errors():
         location = ["body"]

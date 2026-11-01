@@ -1,0 +1,16 @@
+{
+  "services": {
+    "controller": {
+      "environment": {
+        "FINSECURE_CI_NOTIFICATIONS": "true",
+        "CASC_JENKINS_CONFIG": "/usr/share/jenkins/jenkins.yaml,/etc/jenkins/notifications.yaml",
+        "JENKINS_JAVA_OPTS": "-Xms256m -Xmx512m -Djenkins.install.runSetupWizard=false -Dmail.smtp.writetimeout=60000"
+      },
+      "volumes": ["./notifications.yaml:/etc/jenkins/notifications.yaml:ro"],
+      "networks": ["default", "notification"]
+    }
+  },
+  "networks": {
+    "notification": {"external": true, "name": "finsecure-monitoring_notification"}
+  }
+}

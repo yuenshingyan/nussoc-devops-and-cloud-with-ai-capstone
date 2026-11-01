@@ -1,0 +1,78 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.14.7, pytest-9.1.1, pluggy-1.7.0
+rootdir: <repository>
+configfile: pyproject.toml
+testpaths: tests
+plugins: cov-7.1.0, anyio-4.15.1, platformdirs-4.13.5
+collected 616 items
+
+tests/integration/test_application.py ..                                 [  0%]
+tests/integration/test_configuration_api.py ........                     [  1%]
+tests/integration/test_health_api.py ...                                 [  2%]
+tests/integration/test_metrics_api.py ....................               [  5%]
+tests/integration/test_validation_api.py ............................... [ 10%]
+...                                                                      [ 10%]
+tests/integration/test_validation_boundaries.py ........................ [ 14%]
+..................................                                       [ 20%]
+tests/unit/test_alert_configuration.py ......                            [ 21%]
+tests/unit/test_config.py ...................................            [ 26%]
+tests/unit/test_dashboard_configuration.py .........                     [ 28%]
+tests/unit/test_http_metrics.py ...............                          [ 30%]
+tests/unit/test_image_archive.py .............                           [ 32%]
+tests/unit/test_image_scan.py .......................................... [ 39%]
+......................................                                   [ 45%]
+tests/unit/test_jenkins_bootstrap.py .............                       [ 48%]
+tests/unit/test_jenkins_ci_verification.py ............................. [ 52%]
+.                                                                        [ 52%]
+tests/unit/test_jenkins_trigger_verification.py ..................       [ 55%]
+tests/unit/test_json_logging.py .............F........                   [ 59%]
+tests/unit/test_monitoring_credentials.py .............................. [ 64%]
+.                                                                        [ 64%]
+tests/unit/test_secret_boundaries.py ................................... [ 70%]
+................................                                         [ 75%]
+tests/unit/test_security_scan.py ....................................... [ 81%]
+...........................................                              [ 88%]
+tests/unit/test_transaction_schema.py .................................. [ 94%]
+............                                                             [ 96%]
+tests/unit/test_validation.py ........................                   [100%]
+
+=================================== FAILURES ===================================
+__ test_real_api_outcomes_never_log_transaction_values[-1.00-rejected-codes1] __
+
+caplog = <_pytest.logging.LogCaptureFixture object at 0x10a21cf30>
+amount = '-1.00', outcome = 'rejected', codes = ['AMOUNT_NOT_POSITIVE']
+
+    @mark.parametrize(
+        "amount,outcome,codes",
+        [
+            ("1.00", "accepted", []),
+            ("-1.00", "rejected", ["AMOUNT_NOT_POSITIVE"]),
+            (1, "invalid", ["INVALID_REQUEST"]),
+        ],
+    )
+    def test_real_api_outcomes_never_log_transaction_values(caplog, amount, outcome, codes):
+        caplog.set_level(INFO, logger="finsecure_pay")
+        with TestClient(create_app()) as client:
+            response = client.post(
+                "/validate",
+                json={
+                    "transaction_id": "synthetic-private",
+                    "sender_id": "synthetic-private-sender",
+                    "recipient_id": "synthetic-private-recipient",
+                    "amount": amount,
+                    "currency": "SGD",
+                },
+            )
+        assert response.status_code == (422 if outcome == "invalid" else 200)
+        records = events(caplog)
+>       (result,) = [record for record in records if record["event"] == "validation_outcome"]
+        ^^^^^^^^^
+E       ValueError: not enough values to unpack (expected 1, got 0)
+
+tests/unit/test_json_logging.py:143: ValueError
+------------------------------ Captured log call -------------------------------
+INFO     finsecure_pay:logging.py:109 validation_outcome
+INFO     finsecure_pay:logging.py:155 http_request_completed
+=========================== short test summary info ============================
+FAILED tests/unit/test_json_logging.py::test_real_api_outcomes_never_log_transaction_values[-1.00-rejected-codes1]
+======================== 1 failed, 615 passed in 1.84s =========================

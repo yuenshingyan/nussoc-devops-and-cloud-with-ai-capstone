@@ -1,0 +1,20 @@
+[
+  {
+    "Type": "bind",
+    "Source": "<repository>/ops/jenkins/notifications.yaml",
+    "Destination": "/etc/jenkins/notifications.yaml",
+    "Mode": "",
+    "RW": false,
+    "Propagation": "rprivate"
+  },
+  {
+    "Type": "volume",
+    "Name": "dae1a55f923ee0669b935270caf3f37d7905b8e1e0dd111aaf6e2b614cdf28ad",
+    "Source": "/var/lib/docker/volumes/dae1a55f923ee0669b935270caf3f37d7905b8e1e0dd111aaf6e2b614cdf28ad/_data",
+    "Destination": "/var/jenkins_home",
+    "Driver": "local",
+    "Mode": "",
+    "RW": true,
+    "Propagation": ""
+  }
+]

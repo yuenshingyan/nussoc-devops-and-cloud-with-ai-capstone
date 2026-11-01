@@ -100,8 +100,12 @@ See the [demonstration evidence](evidence/task-06/step-04-alert-demonstration.md
 [runbook](docs/runbooks/alert-demonstration.md). This is local SMTP, not Gmail delivery.
 The demonstration was published as `ab36eb5`; automatic SCM build #25 passed 584 tests,
 all gates and 33 artifact checks ([verification](evidence/task-06/step-04-scm-verification.md)).
-Step 6.5's [notification/logging proposal](docs/runbooks/notifications-logging.md) awaits
-approval; Jenkins notifications and centralized logging remain unimplemented.
+Step 6.5's [local notification/logging scope](docs/runbooks/notifications-logging.md) was
+approved. Its unpublished candidate passed 632 host tests and source gates, including
+real host-process JSON logging. The first controller activation failed a strict mount
+check and rolled back; [details and remaining work](evidence/task-06/step-05-checkpoint.md).
+Actual Jenkins email receipt, gated-container logging and centralized cloud logging
+remain unverified. Normal CI remains at #25; notification opt-in is currently absent.
 
 ## Quick start
 
@@ -110,7 +114,8 @@ Run from this repository's root:
 
 ```sh
 uv sync --locked
-uv run --locked uvicorn finsecure_pay.main:create_app --factory --host 127.0.0.1 --port 8000
+uv run --locked uvicorn finsecure_pay.main:create_app --factory --host 127.0.0.1 --port 8000 \
+  --no-access-log --log-config src/finsecure_pay/observability/logging.json
 ```
 
 Open `http://127.0.0.1:8000/docs` or request `/openapi.json`. Stop with Ctrl-C.

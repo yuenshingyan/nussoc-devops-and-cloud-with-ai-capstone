@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "disable_existing_loggers": false,
+  "formatters": {"safe_json": {"()": "finsecure_pay.observability.logging.JsonEventFormatter"}},
+  "handlers": {"stderr": {"class": "logging.StreamHandler", "formatter": "safe_json", "stream": "ext://sys.stderr"}},
+  "root": {"level": "INFO", "handlers": ["stderr"]},
+  "loggers": {
+    "uvicorn": {"handlers": [], "level": "INFO", "propagate": true},
+    "uvicorn.error": {"handlers": [], "level": "INFO", "propagate": true},
+    "uvicorn.access": {"handlers": [], "level": "INFO", "propagate": true},
+    "finsecure_pay": {"handlers": [], "level": "INFO", "propagate": true}
+  }
+}

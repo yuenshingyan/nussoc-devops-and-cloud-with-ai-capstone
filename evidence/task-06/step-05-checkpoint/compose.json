@@ -1,0 +1,221 @@
+{
+  "name": "finsecure-jenkins",
+  "networks": {
+    "builder-egress": {
+      "name": "finsecure-jenkins_builder-egress",
+      "ipam": {}
+    },
+    "default": {
+      "name": "finsecure-jenkins_default",
+      "ipam": {}
+    },
+    "notification": {
+      "name": "finsecure-monitoring_notification",
+      "ipam": {},
+      "external": true
+    }
+  },
+  "services": {
+    "agent": {
+      "build": {
+        "context": "<repository>/ops/jenkins",
+        "dockerfile": "agent.Dockerfile"
+      },
+      "cap_drop": [
+        "ALL"
+      ],
+      "cpus": 1,
+      "command": [
+        "-url",
+        "http://controller:8080/",
+        "-name",
+        "finsecure-python",
+        "-secret",
+        "@/run/secrets/agent_secret",
+        "-webSocket"
+      ],
+      "depends_on": {
+        "builder": {
+          "condition": "service_healthy",
+          "required": true
+        }
+      },
+      "entrypoint": null,
+      "environment": {
+        "JENKINS_AGENT_WORKDIR": "/home/jenkins/agent",
+        "JENKINS_JAVA_OPTS": "-Xms64m -Xmx256m"
+      },
+      "image": "finsecure-jenkins-agent:step-05-02",
+      "init": true,
+      "mem_limit": "1073741824",
+      "networks": {
+        "default": null
+      },
+      "security_opt": [
+        "no-new-privileges:true"
+      ],
+      "stop_grace_period": "30s",
+      "volumes": [
+        {
+          "type": "volume",
+          "source": "agent-workspace",
+          "target": "/home/jenkins/agent",
+          "volume": {}
+        },
+        {
+          "type": "volume",
+          "source": "agent-secrets",
+          "target": "/run/secrets",
+          "read_only": true,
+          "volume": {}
+        },
+        {
+          "type": "volume",
+          "source": "builder-socket",
+          "target": "/run/buildkit",
+          "read_only": true,
+          "volume": {}
+        }
+      ]
+    },
+    "builder": {
+      "build": {
+        "context": "<repository>/ops/jenkins",
+        "dockerfile": "builder.Dockerfile"
+      },
+      "cap_add": [
+        "SETUID",
+        "SETGID"
+      ],
+      "cap_drop": [
+        "ALL"
+      ],
+      "cpus": 1,
+      "command": [
+        "--addr=unix:///run/user/1000/buildkit/buildkitd.sock",
+        "--oci-worker-snapshotter=native",
+        "--oci-max-parallelism=1",
+        "--oci-worker-gc=false"
+      ],
+      "entrypoint": null,
+      "healthcheck": {
+        "test": [
+          "CMD",
+          "buildctl",
+          "--timeout=5",
+          "debug",
+          "workers"
+        ],
+        "timeout": "6s",
+        "interval": "2s",
+        "retries": 30,
+        "start_period": "5s"
+      },
+      "image": "finsecure-jenkins-builder:step-04-03",
+      "mem_limit": "1073741824",
+      "networks": {
+        "builder-egress": null
+      },
+      "security_opt": [
+        "seccomp=unconfined",
+        "apparmor=unconfined",
+        "systempaths=unconfined"
+      ],
+      "stop_grace_period": "30s",
+      "volumes": [
+        {
+          "type": "volume",
+          "source": "builder-socket",
+          "target": "/run/user/1000/buildkit",
+          "volume": {}
+        },
+        {
+          "type": "volume",
+          "source": "builder-state",
+          "target": "/home/user/.local/share/buildkit",
+          "volume": {}
+        }
+      ]
+    },
+    "controller": {
+      "build": {
+        "context": "<repository>/ops/jenkins",
+        "dockerfile": "controller.Dockerfile"
+      },
+      "cap_drop": [
+        "ALL"
+      ],
+      "cpus": 1,
+      "command": null,
+      "entrypoint": null,
+      "environment": {
+        "CASC_JENKINS_CONFIG": "/usr/share/jenkins/jenkins.yaml,/etc/jenkins/notifications.yaml",
+        "FINSECURE_CI_NOTIFICATIONS": "true",
+        "JENKINS_JAVA_OPTS": "-Xms256m -Xmx512m -Djenkins.install.runSetupWizard=false -Dmail.smtp.writetimeout=60000"
+      },
+      "image": "finsecure-jenkins-controller:step-04-04",
+      "mem_limit": "1073741824",
+      "networks": {
+        "default": null,
+        "notification": null
+      },
+      "ports": [
+        {
+          "mode": "ingress",
+          "host_ip": "127.0.0.1",
+          "target": 8080,
+          "published": "8080",
+          "protocol": "tcp"
+        }
+      ],
+      "security_opt": [
+        "no-new-privileges:true"
+      ],
+      "stop_grace_period": "1m0s",
+      "volumes": [
+        {
+          "type": "volume",
+          "source": "controller-home",
+          "target": "/var/jenkins_home",
+          "volume": {}
+        },
+        {
+          "type": "volume",
+          "source": "controller-secrets",
+          "target": "/run/secrets",
+          "read_only": true,
+          "volume": {}
+        },
+        {
+          "type": "bind",
+          "source": "<repository>/ops/jenkins/notifications.yaml",
+          "target": "/etc/jenkins/notifications.yaml",
+          "read_only": true,
+          "bind": {}
+        }
+      ]
+    }
+  },
+  "volumes": {
+    "agent-secrets": {
+      "name": "finsecure-jenkins-agent-secrets",
+      "external": true
+    },
+    "agent-workspace": {
+      "name": "finsecure-jenkins_agent-workspace"
+    },
+    "builder-socket": {
+      "name": "finsecure-jenkins_builder-socket"
+    },
+    "builder-state": {
+      "name": "finsecure-jenkins_builder-state"
+    },
+    "controller-home": {
+      "name": "finsecure-jenkins_controller-home"
+    },
+    "controller-secrets": {
+      "name": "finsecure-jenkins-controller-secrets",
+      "external": true
+    }
+  }
+}

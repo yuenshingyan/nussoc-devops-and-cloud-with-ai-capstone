@@ -1,0 +1,11 @@
+{
+  "unclassified": {
+    "mailer": {
+      "smtpHost": "mailpit",
+      "smtpPort": "1025",
+      "useSsl": false,
+      "useTls": false,
+      "charset": "UTF-8"
+    }
+  }
+}

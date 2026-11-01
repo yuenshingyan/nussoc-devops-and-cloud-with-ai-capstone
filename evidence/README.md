@@ -21,6 +21,11 @@ and report retention on an isolated failure. Cloud delivery remains unverified.
 
 ## Recorded evidence
 
+- [Step 6.5 — Candidate and rolled-back activation](task-06/step-05-checkpoint.md):
+  632 host tests, real Uvicorn JSON logging, source gates and native Pipeline validation;
+  controller activation failed its exact mount check and rolled back. No email receipt
+  or candidate-image verification yet; further activation requires approval.
+
 - [Step 6.4 — Actual local alert/recovery receipt](task-06/step-04-alert-demonstration.md):
   bounded application interruption, real SMTP firing/resolved emails, inspected Mailpit
   screenshots, timestamp chain and clean shutdown. Published as `ab36eb5`; see

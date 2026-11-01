@@ -1,0 +1,36 @@
+{
+  "baseline_boundaries": {
+    "status": "passed",
+    "verified_at_utc": "2026-11-01T06:39:39.389255+00:00",
+    "host_credentials": "owned regular file 0600 in owned directory 0700",
+    "containers": "expected volumes, read-only secret mounts, uid 1000, approved privileges",
+    "network": "loopback-only controller; no agent/builder published ports",
+    "notification_overlay_checked": false,
+    "anonymous_api": "denied",
+    "checkout": "anonymous public repository, trusted main, Jenkinsfile from SCM",
+    "known_credentials_in_argv_environment": false,
+    "limitations": [
+      "Trusted single-operator model; agent builds can read the agent secret.",
+      "Does not verify account inventory, authorization strategy, token scopes or rotation.",
+      "Does not scan source, history, logs or arbitrary unknown credentials.",
+      "No registry, cloud, cluster, service restart or configuration changes."
+    ]
+  },
+  "notification_opt_in_present": false,
+  "main_build": 25,
+  "queue_empty": true,
+  "agent": {
+    "_class": "hudson.slaves.SlaveComputer",
+    "idle": true,
+    "offline": false
+  },
+  "persisted_mailer_fields": {
+    "smtpHost": "mailpit",
+    "smtpPort": "1025",
+    "useSsl": "false",
+    "useTls": "false",
+    "charset": "UTF-8",
+    "authentication_element_present": false
+  },
+  "monitoring_running": ""
+}

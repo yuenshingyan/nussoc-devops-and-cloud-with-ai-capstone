@@ -9,6 +9,7 @@ from finsecure_pay.api.metrics import metrics_router
 from finsecure_pay.api.validation import validation_router
 from finsecure_pay.config import load_settings
 from finsecure_pay.observability.http import HttpMetricsMiddleware
+from finsecure_pay.observability.logging import HttpLoggingMiddleware
 from finsecure_pay.observability.metrics import ApplicationMetrics
 
 
@@ -24,6 +25,7 @@ def create_app() -> FastAPI:
     metrics = ApplicationMetrics()
     app.state.metrics = metrics
     app.add_middleware(HttpMetricsMiddleware, metrics=metrics)
+    app.add_middleware(HttpLoggingMiddleware)
     app.add_exception_handler(RequestValidationError, handle_request_validation_error)
     app.include_router(health_router)
     app.include_router(validation_router)

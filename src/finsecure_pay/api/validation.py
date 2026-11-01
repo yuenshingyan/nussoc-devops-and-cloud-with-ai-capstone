@@ -6,6 +6,7 @@ from fastapi import APIRouter, Depends
 
 from finsecure_pay.api.dependencies import get_application_metrics, get_settings
 from finsecure_pay.config import Settings
+from finsecure_pay.observability.logging import record_validation
 from finsecure_pay.observability.metrics import ApplicationMetrics
 from finsecure_pay.schemas.errors import RequestErrorResponse
 from finsecure_pay.schemas.transaction import TransactionRequest, ValidationResponse
@@ -26,5 +27,7 @@ async def post_validation(
 ) -> ValidationResponse:
     """Return business validation results; this endpoint never transfers money."""
     result = validate_transaction(transaction, settings=settings)
-    metrics.record_validation("accepted" if result.valid else "rejected")
+    outcome = "accepted" if result.valid else "rejected"
+    metrics.record_validation(outcome)
+    record_validation(outcome, result.errors)
     return result

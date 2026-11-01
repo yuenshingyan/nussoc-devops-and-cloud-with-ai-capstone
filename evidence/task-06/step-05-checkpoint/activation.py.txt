@@ -1,0 +1,51 @@
+from datetime import UTC, datetime
+from json import dumps,loads
+from pathlib import Path
+from subprocess import run
+from time import monotonic,sleep
+from urllib.parse import urlencode
+from httpx2 import Client
+from bootstrap import Jenkins,admin_password
+from verify_ci import post
+from verify_secrets import verify
+out=Path('reports/step65'); base=['docker','compose','-f','ops/jenkins/compose.yaml']; overlay=base+['-f','ops/jenkins/notifications.compose.yaml']; monitoring=['docker','compose','-f','ops/monitoring/compose.yaml','-f','ops/monitoring/alerts.compose.yaml']
+def command(args,timeout=120):
+ p=run(args,capture_output=True,text=True,timeout=timeout)
+ with (out/'enable-commands.txt').open('a') as f:f.write(p.stdout+p.stderr)
+ assert p.returncode==0,'Command failed; inspect retained diagnostic'
+ return p.stdout
+c=Jenkins(admin_password())
+assert not loads(c.request('/queue/api/json'))['items']
+assert loads(c.request('/computer/finsecure-python/api/json?tree=idle,offline'))=={'_class':'hudson.slaves.SlaveComputer','idle':True,'offline':False}
+state=loads(c.request('/job/finsecure-ci/api/json'))
+assert state['lastBuild']['number']==25
+(out/'boundary-before.json').write_text(dumps(verify(),indent=2)+'\n')
+validation=post(c,'/pipeline-model-converter/validate',urlencode({'jenkinsfile':Path('Jenkinsfile').read_text()}).encode(),'application/x-www-form-urlencoded').decode()
+(out/'pipeline-validation.txt').write_text(validation)
+assert 'Jenkinsfile successfully validated' in validation
+network=loads(command(['docker','network','inspect','finsecure-monitoring_notification']))[0]
+assert network['Labels']['com.docker.compose.project']=='finsecure-monitoring'
+assert network['Labels']['com.docker.compose.network']=='notification'
+# Do not export complete controller environment or configuration.
+(out/'restart-start.json').write_text(dumps({'started_at_utc':datetime.now(UTC).isoformat(),'main_build_before':25},indent=2)+'\n')
+command(monitoring+['up','-d','--no-deps','--pull','never','mailpit'])
+try:
+ command(overlay+['up','-d','--no-deps','--no-build','--pull','never','controller'],180)
+ deadline=monotonic()+180
+ while monotonic()<deadline:
+  try:
+   c=Jenkins(admin_password()); agent=loads(c.request('/computer/finsecure-python/api/json?tree=idle,offline'))
+   if agent['idle'] and not agent['offline']:break
+  except Exception:pass
+  sleep(2)
+ else:raise RuntimeError('Controller/agent readiness timed out')
+ with Client(timeout=5,trust_env=False) as h:
+  r=h.get('http://127.0.0.1:8025/api/v1/messages');r.raise_for_status();assert r.json()['total']==0
+ assert loads(c.request('/job/finsecure-ci/api/json'))['lastBuild']['number']==25
+ (out/'boundary-after.json').write_text(dumps(verify(notifications=True),indent=2)+'\n')
+ (out/'restart-result.json').write_text(dumps({'completed_at_utc':datetime.now(UTC).isoformat(),'status':'passed','controller_and_agent_ready':True,'main_build_after':25,'mailpit_empty':True},indent=2)+'\n')
+ print('Controller overlay active; agent online; boundaries passed; main remains #25')
+except BaseException:
+ command(base+['up','-d','--no-deps','--no-build','--pull','never','controller'],180)
+ command(monitoring+['stop','--timeout','30','mailpit'])
+ raise

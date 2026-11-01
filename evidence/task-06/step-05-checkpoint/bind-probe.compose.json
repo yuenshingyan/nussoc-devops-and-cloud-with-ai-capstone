@@ -1,0 +1,1 @@
+{"services": {"probe": {"image": "finsecure-jenkins-controller:step-04-04", "entrypoint": ["/bin/true"], "network_mode": "none", "read_only": true, "user": "1000:1000", "cap_drop": ["ALL"], "security_opt": ["no-new-privileges:true"], "volumes": ["<repository>/ops/jenkins/notifications.yaml:/etc/jenkins/notifications.yaml:ro"]}}}

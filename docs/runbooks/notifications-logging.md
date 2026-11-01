@@ -1,7 +1,22 @@
-# Step 6.5 — Local notifications and structured logs: proposed scope
+# Step 6.5 — Local notifications and structured logs
 
-Status: **proposal awaiting approval; not implemented**. Branch:
+Status: **scope approved; candidate implemented, live verification blocked**. Branch:
 `task-06/step-05-notifications-logging`, from published `ab36eb5`.
+
+632 host tests, Ruff checks, package build and source/dependency gates passed. A real
+host Uvicorn subprocess produced privacy-safe JSON for synthetic requests. Native
+Jenkins Pipeline validation passed. The first controller activation failed the exact
+notification-file mount check after controller/agent readiness. The safety handler
+restored the baseline controller and stopped Mailpit. Baseline boundaries passed;
+normal CI remains at #25. The actual failing mount metadata was not captured before
+rollback; isolated bind probes did not reproduce the mismatch. Do not infer a cause
+or loosen the check. Another controller restart requires approval with diagnostics
+captured before rollback. See [checkpoint evidence](../../evidence/task-06/step-05-checkpoint.md).
+
+No Jenkins email receipt or gated candidate-container log proof is claimed yet.
+The Mailer descriptor's `mailpit:1025` settings persisted in Jenkins home, but the
+controller notification opt-in and extra network/mount were removed on rollback.
+Restoring Compose does not restore every persisted Jenkins setting.
 
 Step 6.4 is published. Automatic SCM build #25 passed 584 tests, all gates and
 33 artifact checks. That build did not demonstrate Jenkins email delivery.
@@ -15,7 +30,7 @@ This is a local subset: centralized cloud logging remains pending, not implement
 by Docker log access. The assignment allows notification alternatives; instructor
 acceptance of local Mailpit delivery is not established.
 
-Approval is requested for the following changes and bounded local verification.
+The following scope was approved. The remaining live work must preserve these limits.
 
 ### Jenkins notification delivery
 
@@ -43,9 +58,11 @@ Approval is requested for the following changes and bounded local verification.
 - Make notification opt-in explicit in the notification-enabled controller's job
   environment. Baseline Jenkins without that overlay must not attempt SMTP delivery;
   disabled notification status must be visible, not reported as delivery success.
-- One send attempt, no automatic retries. Propose a 180-second Pipeline notification
+- One send attempt, no automatic retries. Use a 180-second Pipeline notification
   budget, 60-second SMTP connect/read limits and 60-second write limit. Verify the
-  installed Mailer's actual timeout behavior before implementation: upstream Mailer
+  installed Mailer's actual timeout behavior: retained installed-plugin bytecode
+  confirms the system-property defaults and hard-coded 60-second connect/read limits.
+  Upstream Mailer
   source overrides connect/read properties to 60000 ms, so setting smaller JVM
   properties alone is not proof of smaller timeouts. Pipeline cancellation alone is
   not proof that a blocked socket has closed.
@@ -121,4 +138,42 @@ Every application event has `timestamp` (timezone-aware UTC ISO 8601), `level`
 - [Pipeline Basic Steps](https://www.jenkins.io/doc/pipeline/steps/workflow-basic-steps/)
 - [Upstream Mailer source](https://github.com/jenkinsci/mailer-plugin/blob/master/src/main/java/hudson/tasks/Mailer.java)
 
-Upstream source is design input, not proof of the installed plugin's behavior.
+Upstream source is design input; the retained installed-plugin bytecode is separate
+local evidence. SMTP write timeout is configured but live notification cancellation
+and error behavior remain to be verified.
+
+## Logging implementation and troubleshooting
+
+`JsonEventFormatter` accepts only the fixed event fields above. Unknown runtime/server
+messages remain visible as `runtime_diagnostic` or `server_diagnostic` at their original
+standard severity, with `UNCLASSIFIED_MESSAGE`. Exception records use `UNEXPECTED_ERROR`.
+Known Uvicorn startup/shutdown, invalid-HTTP and unsupported-upgrade templates map to
+fixed codes in `SERVER_MESSAGES`. Raw message arguments and exception text are omitted
+for privacy, not silently discarded as warnings. This reduces diagnostic detail;
+unknown messages need investigation using reviewed synthetic reproductions, not raw
+customer-data logging. No application settings or HTTP contracts changed.
+
+The real-process test reserves an ephemeral loopback socket, allows ten seconds for
+startup, uses one-second HTTP timeouts, and allows five seconds for graceful shutdown
+before kill-and-wait (five seconds). A forced kill fails the test. Uvicorn re-raises
+SIGTERM outside PID 1 after logging completed shutdown; that host subprocess's expected
+return code is `-SIGTERM`, not a container exit-status claim.
+
+After a gated candidate container has been verified, local troubleshooting uses:
+
+```sh
+docker logs --since 5m --timestamps <owned-application-container>
+```
+
+Docker's timestamp prefix is transport metadata; application JSON has its own UTC
+`timestamp`. Correlate a bounded synthetic request by its request window and event
+order. Do not claim unique per-request correlation under concurrent traffic.
+
+Future cluster commands (not executed; no cluster or cloud log collector configured):
+
+```sh
+kubectl -n <approved-namespace> logs deployment/<approved-deployment> --all-pods=true --since=5m --timestamps
+kubectl -n <approved-namespace> logs <pod> --previous --timestamps
+```
+
+Cloud collection, provider queries, retention and evaluator access remain pending.
