@@ -1,0 +1,11 @@
+Traceback (most recent call last):
+  File "<repository>/reports/step65-diagnostic.py", line 55, in <module>
+    result=verify(notifications=True)
+  File "<repository>/ops/jenkins/verify_secrets.py", line 189, in verify
+    check_container(service, info[0], uid, secrets, notifications=notifications)
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<repository>/reports/step65-diagnostic.py", line 52, in capture_check
+    return original_check(service,info,uid,secrets,**kwargs)
+  File "<repository>/ops/jenkins/verify_secrets.py", line 93, in check_container
+    raise ValueError("notification_configuration_mount_invalid")
+ValueError: notification_configuration_mount_invalid

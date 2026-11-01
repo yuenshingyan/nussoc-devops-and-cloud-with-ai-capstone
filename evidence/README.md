@@ -21,6 +21,10 @@ and report retention on an isolated failure. Cloud delivery remains unverified.
 
 ## Recorded evidence
 
+- [Step 6.5 — Diagnostic activation](task-06/step-05-diagnostic.md): unchanged checks
+  rejected Docker Desktop's `/host_mnt` bind-source representation; baseline restored.
+  Exact-path/hash correction and further activation await approval.
+
 - [Step 6.5 — Candidate and rolled-back activation](task-06/step-05-checkpoint.md):
   632 host tests, real Uvicorn JSON logging, source gates and native Pipeline validation;
   controller activation failed its exact mount check and rolled back. No email receipt

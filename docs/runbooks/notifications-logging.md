@@ -10,8 +10,13 @@ notification-file mount check after controller/agent readiness. The safety handl
 restored the baseline controller and stopped Mailpit. Baseline boundaries passed;
 normal CI remains at #25. The actual failing mount metadata was not captured before
 rollback; isolated bind probes did not reproduce the mismatch. Do not infer a cause
-or loosen the check. Another controller restart requires approval with diagnostics
-captured before rollback. See [checkpoint evidence](../../evidence/task-06/step-05-checkpoint.md).
+or loosen the check. An additional diagnostic restart was approved and captured an exact-source mismatch:
+Docker Desktop reported the same path with `/host_mnt` prefixed. The unchanged check
+rejected it and the controller was rolled back again. See the
+[diagnostic evidence and proposed narrow correction](../../evidence/task-06/step-05-diagnostic.md).
+Accepting that exact Docker Desktop representation plus mounted-file hash verification,
+and one further activation, require approval. No boundary check has been relaxed.
+See also the [original checkpoint](../../evidence/task-06/step-05-checkpoint.md).
 
 No Jenkins email receipt or gated candidate-container log proof is claimed yet.
 The Mailer descriptor's `mailpit:1025` settings persisted in Jenkins home, but the
