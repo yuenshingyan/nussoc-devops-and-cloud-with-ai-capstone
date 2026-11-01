@@ -21,6 +21,11 @@ and report retention on an isolated failure. Cloud delivery remains unverified.
 
 ## Recorded evidence
 
+- [Step 6.5 — Published fix, automatic SCM #27](task-06/step-05-fix-scm-verification.md):
+  655 tests/all gates/33 artifacts, real email with exact published revision, and intact
+  configuration bind/boundaries. Approved local publication verification complete;
+  cloud logging remains deferred. Supersedes earlier pending-remediation checkpoints.
+
 - [Step 6.5 — Approved local remediation](task-06/step-05-remediation.md): explicit
   checkout-revision persistence, 655 host tests, native revision/fallback receipts and
   one same-image controller recreation. Boundary checks restored; original observer

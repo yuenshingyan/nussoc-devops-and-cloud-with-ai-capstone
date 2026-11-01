@@ -1,6 +1,11 @@
 # Step 6.5 — Local notifications and structured logs
 
-Status: **published baseline `f4b2c5c`; approved local remediation awaits review/publication**.
+Status: **fix published as `bc93c0f`, automatic SCM #27 verified**.
+
+655 tests, existing gates and 33 artifacts passed. The actual SCM email contains the
+exact revision; post-publication configuration-bind and boundary checks also passed.
+See [final SCM evidence](../../evidence/task-06/step-05-fix-scm-verification.md).
+The following remediation and candidate checkpoints describe earlier states.
 
 SCM #26 passed but its email omitted the revision; the configuration bind also became
 unreadable after checkout. The approved one-controller recreation restored the bind

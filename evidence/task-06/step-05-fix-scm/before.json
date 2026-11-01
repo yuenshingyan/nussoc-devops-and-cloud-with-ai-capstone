@@ -1,0 +1,33 @@
+{
+  "after_build": 26,
+  "expected_revision": "bc93c0f9d9cadbb259aa349cf31123ef6aa68e8d",
+  "mailpit_ids_before": [
+    "4zXuOoGr74JatsFaax2GX7",
+    "2OpShfXxpH5supP2XLD3ZA",
+    "0AM5N57ulxwmWvPyBMWfUB",
+    "5S1VqNB0RBTWe3wq7uap13",
+    "0p3rOHudB1wdqVwlEcrzQq",
+    "1hTs4r4fc16KjUuw9Q9n7A",
+    "3BQjp57eMBHuPYSoINs1do"
+  ],
+  "boundary_before": {
+    "status": "passed",
+    "verified_at_utc": "2026-11-01T12:26:41.314067+00:00",
+    "host_credentials": "owned regular file 0600 in owned directory 0700",
+    "containers": "expected volumes, read-only secret mounts, uid 1000, approved privileges",
+    "network": "loopback-only controller; no agent/builder published ports",
+    "notification_overlay_checked": true,
+    "notification_configuration_sha256": "ac001dffddf34fb074ca4d86f62c46ecb292675d9d6a715ac6137b50b954d702",
+    "docker_desktop_path_alternative_enabled": true,
+    "anonymous_api": "denied",
+    "checkout": "anonymous public repository, trusted main, Jenkinsfile from SCM",
+    "known_credentials_in_argv_environment": false,
+    "limitations": [
+      "Trusted single-operator model; agent builds can read the agent secret.",
+      "Does not verify account inventory, authorization strategy, token scopes or rotation.",
+      "Does not scan source, history, logs or arbitrary unknown credentials.",
+      "No registry, cloud, cluster, service restart or configuration changes."
+    ]
+  },
+  "publication_method": "fast-forward main ref without working-tree checkout"
+}

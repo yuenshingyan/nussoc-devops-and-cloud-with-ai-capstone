@@ -1,0 +1,54 @@
+Mailpit
+Mark unreadDelete
+Download
+FinSecure local test delivery
+ Return to inbox
+finsecure-ci@example.test
+a few seconds ago
+To: finsecure-operator@example.test
+[SUCCESS] finsecure-ci #27
+finsecure-ci@example.test
+10 minutes ago
+To: finsecure-operator@example.test
+[FAILURE] finsecure-revision-before_checkout-20261101122116 #1
+finsecure-ci@example.test
+10 minutes ago
+To: finsecure-operator@example.test
+[SUCCESS] finsecure-revision-checkout-20261101122057 #1
+finsecure-ci@example.test
+3 hours ago
+To: finsecure-operator@example.test
+[SUCCESS] finsecure-ci #26
+finsecure-ci@example.test
+4 hours ago
+To: finsecure-operator@example.test
+[SUCCESS] finsecure-ci-logging-review-20261101081204 #1
+finsecure-ci@example.test
+5 hours ago
+To: finsecure-operator@example.test
+[SUCCESS] finsecure-notification-bridge-20261101072200 #1
+finsecure-ci@example.test
+6 hours ago
+To: finsecure-operator@example.test
+[FAILURE] finsecure-notification-review-20261101065903 #2
+finsecure-ci@example.test
+6 hours ago
+To: finsecure-operator@example.test
+[SUCCESS] finsecure-notification-review-20261101065903 #1
+ About
+From	<finsecure-ci@example.test>
+To	<finsecure-operator@example.test>
+Subject	[SUCCESS] finsecure-ci #27
+Date	Sun, 1 Nov 2026, 8:31 pm (1.3 kB)
+Tags	
+Text
+Headers
+Raw
+Link Check
+Local FinSecure CI notification.
+Job: finsecure-ci
+Build: 27
+Result before notification: SUCCESS
+Revision: bc93c0f9d9cadbb259aa349cf31123ef6aa68e8d
+Build: http://127.0.0.1:8080/job/finsecure-ci/27/
+

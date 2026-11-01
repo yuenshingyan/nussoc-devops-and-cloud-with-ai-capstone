@@ -1,6 +1,15 @@
 # FinSecure Pay — Implementation Plan
 
-## Latest checkpoint — Step 6.5 publication follow-up
+## Latest checkpoint — Step 6.5 fix published and SCM-verified
+
+Published `bc93c0f`; automatic SCM #27 passed 655 tests, all existing gates and 33
+artifact checks. Its actual Mailpit email contains the exact revision. Publication
+preserved the working tree; post-publication bind/hash and boundary checks passed.
+See [final SCM evidence](evidence/task-06/step-05-fix-scm-verification.md).
+The approved local subset is complete; cloud logging remains deferred. Pause before
+starting the next step. Earlier checkpoints below are historical.
+
+## Previous checkpoint — Step 6.5 publication follow-up
 
 Main `f4b2c5c` is published; automatic SCM #26 passed 654 tests/all gates/33 artifact
 checks. Its missing email revision and unreadable configuration bind are preserved in

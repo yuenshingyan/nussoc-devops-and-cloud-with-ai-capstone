@@ -4,6 +4,12 @@ A Python/FastAPI transaction-validation API and cloud-native DevOps capstone.
 
 ## Status
 
+Latest checkpoint: Step 6.5 fix published as `bc93c0f`; automatic SCM #27 passed
+655 tests, all existing gates and 33 artifact checks. Its actual local email includes
+the exact revision, and configuration-boundary checks passed. See
+[SCM evidence](evidence/task-06/step-05-fix-scm-verification.md).
+Cloud logging remains deferred. Earlier step-specific checkpoints below are historical.
+
 Tasks 1–2 and Steps 3.1–3.2 are reviewed, merged, and published. Kubernetes resources
 pin public ARM64/AMD64 release 0.2.0; 210 application tests pass. Local Jenkins setup
 and repository checkout are reviewed and merged in Step 4.1. Step 4.2 is merged:
