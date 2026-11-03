@@ -2,6 +2,15 @@
 
 A Python/FastAPI transaction-validation API and cloud-native DevOps capstone.
 
+## Cloud preparation
+
+GKE preparation has resumed under a **trial-only, no-out-of-pocket** constraint.
+The [deployment runbook](docs/runbooks/gke-deployment.md) and read-only
+`scripts/gke_preflight.py` are implemented; the SDK is not installed and no live
+eligibility check or provisioning has occurred. The earliest agreed setup date is
+3 November. A newly gated AMD64-compatible image is needed for the proposed E2 nodes;
+existing ARM64 exports and the historical public image are not substitutes.
+
 ## Presentation
 
 Step 7.3 review draft: [10-slide PDF](submission/presentation.pdf),

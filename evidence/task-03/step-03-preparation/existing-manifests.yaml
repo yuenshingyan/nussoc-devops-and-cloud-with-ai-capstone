@@ -1,0 +1,131 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  labels:
+    app.kubernetes.io/name: finsecure-pay
+    environment: demo
+  name: finsecure-pay
+---
+apiVersion: v1
+data:
+  FINSECURE_MAX_TRANSACTION_AMOUNT: "10000"
+  FINSECURE_SUPPORTED_CURRENCIES: SGD,USD,HKD
+kind: ConfigMap
+metadata:
+  labels:
+    app.kubernetes.io/name: finsecure-pay
+  name: finsecure-pay-config-fg4th549cg
+  namespace: finsecure-pay
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app.kubernetes.io/name: finsecure-pay
+  name: finsecure-pay
+  namespace: finsecure-pay
+spec:
+  ports:
+  - name: http
+    port: 80
+    protocol: TCP
+    targetPort: http
+  selector:
+    app.kubernetes.io/name: finsecure-pay
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app.kubernetes.io/name: finsecure-pay
+  name: finsecure-pay
+  namespace: finsecure-pay
+spec:
+  minReadySeconds: 5
+  progressDeadlineSeconds: 600
+  replicas: 2
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: finsecure-pay
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: finsecure-pay
+        app.kubernetes.io/version: 0.2.0
+    spec:
+      automountServiceAccountToken: false
+      containers:
+      - envFrom:
+        - configMapRef:
+            name: finsecure-pay-config-fg4th549cg
+        image: docker.io/yuenshingyan/finsecure-pay@sha256:48ee0ef91737fd2ee1d2efea93cf9a94e840eec6908bde6ed3af7afede884e99
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /health
+            port: http
+            scheme: HTTP
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 2
+        name: api
+        ports:
+        - containerPort: 8000
+          name: http
+          protocol: TCP
+        readinessProbe:
+          failureThreshold: 2
+          httpGet:
+            path: /health
+            port: http
+            scheme: HTTP
+          periodSeconds: 5
+          successThreshold: 1
+          timeoutSeconds: 2
+        resources:
+          limits:
+            cpu: 500m
+            memory: 256Mi
+          requests:
+            cpu: 100m
+            memory: 128Mi
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+          readOnlyRootFilesystem: true
+        startupProbe:
+          failureThreshold: 30
+          httpGet:
+            path: /health
+            port: http
+            scheme: HTTP
+          periodSeconds: 2
+          successThreshold: 1
+          timeoutSeconds: 2
+        volumeMounts:
+        - mountPath: /tmp
+          name: tmp
+      nodeSelector:
+        kubernetes.io/os: linux
+      securityContext:
+        fsGroup: 10001
+        runAsGroup: 10001
+        runAsNonRoot: true
+        runAsUser: 10001
+        seccompProfile:
+          type: RuntimeDefault
+      terminationGracePeriodSeconds: 30
+      volumes:
+      - emptyDir:
+          medium: Memory
+          sizeLimit: 16Mi
+        name: tmp

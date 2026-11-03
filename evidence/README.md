@@ -21,6 +21,10 @@ and report retention on an isolated failure. Cloud delivery remains unverified.
 
 ## Recorded evidence
 
+- [Step 3.3 — GKE preparation checkpoint](task-03/step-03-gke-preparation.md): GET-only
+  preflight, 49 new tests (704 total), passing host/source gates and expected offline
+  SDK-missing result. No live cloud check, API activation, provisioning or paid upgrade.
+
 - [Step 7.3 — PDF presentation and audit](task-07/step-03-presentation.md): ten slides,
   verified page count, inspected render, 13 reachable public URLs, all-task/core-case
   audit and explicit cloud gaps. Review/publication and Step 7.4 rehearsal pending.

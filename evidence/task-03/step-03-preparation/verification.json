@@ -1,0 +1,23 @@
+{
+  "verified_at_utc": "2026-11-03T13:24:05.658539+00:00",
+  "baseline_revision": "f22628a9f635da0085a812a46f0669972e74d630",
+  "host_tests_passed": 704,
+  "new_preflight_cases": 49,
+  "ruff_check": "passed",
+  "ruff_format_check": "passed",
+  "uv_build": "passed",
+  "source_gates": "passed",
+  "bandit_low_findings": 31,
+  "manifest_render_only": true,
+  "offline_preflight_code": "GCLOUD_NOT_INSTALLED",
+  "google_cloud_cli_installed": false,
+  "live_google_api_checks": false,
+  "cloud_resources_created": false,
+  "paid_billing_upgrade": false,
+  "deployment_authorized": false,
+  "files": {
+    "scripts/gke_preflight.py": "cf2eb88f215dc3564ec0379d64c29d321dcf6136d46576eff4ddc2ae7b8b81b8",
+    "tests/unit/test_gke_preflight.py": "b00465c5230e2102176d1f5e45f073743dc66911243ec58dc9a62ba02d5361f3",
+    "docs/runbooks/gke-deployment.md": "c13d4875c0e8327e3e1b8092a408eef9c0107fcdab454eb9e093b53e6e635037"
+  }
+}

@@ -1,6 +1,23 @@
 # FinSecure Pay — Implementation Plan
 
-## Latest checkpoint — Step 7.3 PDF review
+## Latest checkpoint — GKE preparation resumed; no cloud resources
+
+User selected GKE subject to no out-of-pocket charges and no paid-account upgrade.
+User reports Free Trial, unused displayed $385 credit and expiry 2 February 2027;
+currency and live eligibility remain unverified. Prepare now; no provisioning before
+3 November. Target evaluator availability through 18 November and teardown review
+on 19 November. Silent video is the working format, not an officially confirmed format.
+
+Resumed `task-03/step-03-cloud-deployment` from published `f22628a`, retaining the
+user-requested horizontal diagram follow-up. Read-only technical preflight and 49 new
+tests are implemented: 704 host tests, lint/format/build and source gates passed.
+Google Cloud CLI is absent; no login, Google API call, API activation, cloud provisioning
+or paid upgrade occurred. Current ARM64 archives cannot be substituted for a newly
+gated AMD64 release on proposed E2 nodes. See [runbook](docs/runbooks/gke-deployment.md)
+and [preparation evidence](evidence/task-03/step-03-gke-preparation.md).
+Review this checkpoint before SDK installation/authentication or deployment work.
+
+## Previous checkpoint — Step 7.3 PDF review
 
 Step 7.2 is published as `1b4b4df`; automatic SCM #30 passed 655 tests, all gates,
 33 artifact checks and its matching notification. User selected PDF for Step 7.3.
@@ -182,7 +199,7 @@ The assignment allows equivalent application, build, and unit-testing tools with
 - **Verify:** Validate configuration; verify actual probe behavior after deployment in Step 3.3.
 
 ### Step 3.3 — Deploy to managed cloud Kubernetes
-- **Status:** Deferred for budget/account approval; no provisioning or cluster access yet.
+- **Status:** GKE preparation resumed under trial-only/no-out-of-pocket constraint; read-only preflight implemented and host-tested. Live eligibility, SDK setup, compatible image release and exposure policy remain pending. No provisioning before 3 November and no cluster access yet.
 - **Branch:** `task-03/step-03-cloud-deployment`
 - Confirm provider, region, account, cost budget, exposure controls, and teardown plan before provisioning.
 - Provision or connect to EKS, AKS, or GKE using reproducible configuration where feasible.
