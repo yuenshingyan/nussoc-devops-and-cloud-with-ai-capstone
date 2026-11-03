@@ -21,6 +21,11 @@ and report retention on an isolated failure. Cloud delivery remains unverified.
 
 ## Recorded evidence
 
+- [Step 3.3 — AMD64 gate follow-up](task-03/step-03-amd64-gate.md): approved explicit
+  target support preserving ARM64 defaults/identity policy; 770 tests, real AMD64
+  build/smoke and image gate passed with zero reported vulnerabilities. Local only;
+  no publication, cluster or billing change. Earlier rejection remains preserved.
+
 - [Step 3.3 — live GKE preparation and AMD64 candidate](task-03/step-03-gke-live-preparation.md):
   project/APIs ready, SGD confirmed, live technical checks passed; 0.3.0 AMD64 operator
   build/smoke passed, but image gate stopped at its ARM64-only input guard. No image

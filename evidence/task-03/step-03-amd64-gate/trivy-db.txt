@@ -1,0 +1,5 @@
+2026-11-03T14:25:24Z	INFO	Loaded	file_path="/tmp/finsecure-image-scan-_ie0frtt/config.yaml"
+2026-11-03T14:25:24Z	INFO	[vulndb] Need to update DB
+2026-11-03T14:25:24Z	INFO	[vulndb] Downloading vulnerability DB...
+2026-11-03T14:25:24Z	INFO	[vulndb] Downloading artifact...	repo="ghcr.io/aquasecurity/trivy-db:2"
+2026-11-03T14:26:11Z	INFO	[vulndb] Artifact successfully downloaded	repo="ghcr.io/aquasecurity/trivy-db:2"

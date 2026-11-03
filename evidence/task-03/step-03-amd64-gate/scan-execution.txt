@@ -1,0 +1,1 @@
+Image gate: passed; see reports/image-security-summary.json

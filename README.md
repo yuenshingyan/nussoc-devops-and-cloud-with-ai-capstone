@@ -11,9 +11,10 @@ and four approved APIs are ready. Live technical checks passed on 3 November; bi
 currency is SGD. Trial balance/expiry/state remain user-confirmed, not API-certified.
 No cluster, VM or load balancer has been created. Review the
 [resource/access proposal](deploy/infrastructure/gke-proposal.md) before provisioning.
-Version 0.3.0 is a local release candidate, not a published image. AMD64 image gates
-and publication remain necessary; old ARM64 exports and the historical public image
-are not substitutes.
+Version 0.3.0 candidate `4b243e2` passed local AMD64 runtime smoke and the image gate
+(zero reported vulnerabilities); 770 host tests passed. It is not published or deployed.
+The ARM64 default and all gate identity checks remain intact. Publication and cloud
+approval are still necessary; old exports and the historical public image are not substitutes.
 
 ## Presentation
 

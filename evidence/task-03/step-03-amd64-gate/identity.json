@@ -1,0 +1,14 @@
+{
+  "source_revision": "4b243e278ee749c4d08bc713cd803bdd77b7e132",
+  "tag": "finsecure-pay-ci:gke-0.3.0-amd64-4b243e278ee7",
+  "platform": "linux/amd64",
+  "publication_authorized": false,
+  "build_exit_code": 0,
+  "agent_scan_directory": "/tmp/finsecure-gke-scan-UQfxDv",
+  "archive_sha256": "d81de74c46fbea010585434060fccf30f74e050a1815751ab6f34f9fe5dc809e",
+  "image_gate_exit_code": 0,
+  "image_gate_status": "passed",
+  "actual_archive_default_rejected_amd64": true,
+  "actual_archive_explicit_amd64_accepted": true,
+  "owned_agent_scan_workspace_removed": true
+}

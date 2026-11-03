@@ -15,10 +15,12 @@ After separate approvals, CLI 591.0.0 was installed, the user signed in, a dedic
 project was created/linked, and Compute/GKE/Logging/Monitoring APIs were enabled.
 Live technical checks passed: CPU headroom 100 regional, 24 E2, 12 global; disk/IP
 quotas also have headroom. No cluster, VM, load balancer or paid upgrade was requested.
-Version 0.3.0 candidate `33d4770` built for AMD64 and passed local smoke testing under
-emulation. The image gate stopped at its ARM64-only input validator; no vulnerability
-scan ran and the gate was not bypassed. Explicit AMD64 target support needs review.
-No source/image publication or cluster provisioning is implied.
+Version 0.3.0 candidate `33d4770` hit the preserved ARM64-only gate rejection. After
+explicit approval, `4b243e2` added selected-platform support without changing the ARM64
+default or weakening identity/security checks. Its fresh AMD64 candidate passed runtime
+smoke and the real image gate (zero reported vulnerabilities). All 770 tests, lint,
+formatting, build and source gates passed. No source/image publication or cluster
+provisioning occurred. See [gate evidence](evidence/task-03/step-03-amd64-gate.md).
 See [runbook](docs/runbooks/gke-deployment.md), [resource proposal](deploy/infrastructure/gke-proposal.md)
 and [initial preparation evidence](evidence/task-03/step-03-gke-preparation.md).
 Approve the concrete resource/exposure profile before provisioning.
@@ -205,7 +207,7 @@ The assignment allows equivalent application, build, and unit-testing tools with
 - **Verify:** Validate configuration; verify actual probe behavior after deployment in Step 3.3.
 
 ### Step 3.3 — Deploy to managed cloud Kubernetes
-- **Status:** GKE project, approved APIs and SDK are ready; live technical preflight passed. Trial balance/state remain user-confirmed. Compatible image gates/publication and final resource/exposure approval remain pending. No cluster access yet.
+- **Status:** GKE project, approved APIs and SDK are ready; live technical preflight passed. Trial balance/state remain user-confirmed. Local AMD64 image gates passed; publication and final resource/exposure approval remain pending. No cluster access yet.
 - **Branch:** `task-03/step-03-cloud-deployment`
 - Confirm provider, region, account, cost budget, exposure controls, and teardown plan before provisioning.
 - Provision or connect to EKS, AKS, or GKE using reproducible configuration where feasible.

@@ -90,9 +90,12 @@ anonymous pull verification. Preserve unsuccessful attempts and stop on gate fai
 
 The first local AMD64 candidate (`33d4770`) built and passed the container smoke test.
 The image gate rejected its architecture during input validation: the current validator
-explicitly accepts only ARM64. No vulnerability scan ran. Supporting an explicitly
-selected AMD64 target needs approval, tests, and a new gated candidate; accepting any
-architecture automatically is not proposed. The failed attempt is retained as evidence.
+explicitly accepted only ARM64. No vulnerability scan ran on that attempt. The user
+subsequently approved explicit target support; fresh candidate `4b243e2` passed the
+actual AMD64 image gate with zero reported vulnerabilities and passed runtime smoke.
+All 770 host tests passed. ARM64 is still the default; automatic architecture acceptance
+was not introduced. The failed attempt is retained as evidence. No publication or
+cluster creation is authorized by this local verification.
 
 Host storage was 4.2 GiB free before preparation, while the Docker backing filesystem
 had about 10.5 GiB free. They are separate constraints. Check both before builds/scans;
