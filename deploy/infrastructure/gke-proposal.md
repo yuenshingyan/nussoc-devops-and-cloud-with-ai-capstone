@@ -3,7 +3,8 @@
 This is a proposed resource inventory, **not applied infrastructure**. On 3 November
 2026 the dedicated project was created, linked to the sole visible open billing
 account and selected locally. Four APIs were enabled with permission. No cluster,
-VM, load balancer or published application release has been created by this preparation.
+VM or load balancer has been created by this preparation. The separately approved
+AMD64 0.3.0 image is now published and verified; this does not authorize infrastructure.
 
 ## Verified inputs
 
@@ -94,8 +95,9 @@ explicitly accepted only ARM64. No vulnerability scan ran on that attempt. The u
 subsequently approved explicit target support; fresh candidate `4b243e2` passed the
 actual AMD64 image gate with zero reported vulnerabilities and passed runtime smoke.
 All 770 host tests passed. ARM64 is still the default; automatic architecture acceptance
-was not introduced. The failed attempt is retained as evidence. No publication or
-cluster creation is authorized by this local verification.
+was not introduced. The failed attempt is retained as evidence. Source and the exact
+AMD64 image were subsequently published with separate approval; anonymous pull and
+post-pull smoke passed. Cluster creation still requires approval.
 
 Host storage was 4.2 GiB free before preparation, while the Docker backing filesystem
 had about 10.5 GiB free. They are separate constraints. Check both before builds/scans;

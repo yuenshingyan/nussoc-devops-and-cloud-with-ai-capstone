@@ -11,10 +11,13 @@ and four approved APIs are ready. Live technical checks passed on 3 November; bi
 currency is SGD. Trial balance/expiry/state remain user-confirmed, not API-certified.
 No cluster, VM or load balancer has been created. Review the
 [resource/access proposal](deploy/infrastructure/gke-proposal.md) before provisioning.
-Version 0.3.0 candidate `4b243e2` passed local AMD64 runtime smoke and the image gate
-(zero reported vulnerabilities); 770 host tests passed. It is not published or deployed.
-The ARM64 default and all gate identity checks remain intact. Publication and cloud
-approval are still necessary; old exports and the historical public image are not substitutes.
+Version **0.3.0 is published for AMD64 only**, from exact tested source `4b243e2`;
+[image identity and pull instructions](docs/runbooks/image-publication.md). Runtime smoke,
+770 host tests, source gates and the actual image gate passed (zero reported vulnerabilities).
+Anonymous registry access/pull and post-pull smoke passed. Source publication `22048c8`
+also passed automatic Jenkins #32 with 770 tests/all gates/33 artifacts. Its ARM64 CI
+archive is distinct from the published AMD64 image. No cluster deployment has occurred;
+resource/exposure approval is still required. Existing Kubernetes manifests still pin 0.2.0.
 
 ## Presentation
 

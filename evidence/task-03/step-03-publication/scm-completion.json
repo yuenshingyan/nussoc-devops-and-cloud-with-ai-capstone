@@ -1,0 +1,23 @@
+{
+  "verified_at_utc": "2026-11-03T14:38:05.227695+00:00",
+  "build": 32,
+  "result": "SUCCESS",
+  "passed": 770,
+  "artifacts": 33,
+  "mail_revision_matches": true,
+  "mail_recipient_matches": true,
+  "notification_bind_and_secret_boundaries": "passed",
+  "anonymous_source_checks": {
+    "22048c8c0cfd90b204945df5c1e842c9577e892b": {
+      "anonymous_http_status": 200,
+      "dockerfile_sha256": "c2fc8fc780f857f06a4cc7cd23e45a895b54c54855dbab5d0c3881a86f70f337"
+    },
+    "4b243e278ee749c4d08bc713cd803bdd77b7e132": {
+      "anonymous_http_status": 200,
+      "dockerfile_sha256": "c2fc8fc780f857f06a4cc7cd23e45a895b54c54855dbab5d0c3881a86f70f337"
+    }
+  },
+  "image_push_attempted": false,
+  "image_publication_blocker": "Docker Hub login absent from credential store",
+  "cluster_created": false
+}

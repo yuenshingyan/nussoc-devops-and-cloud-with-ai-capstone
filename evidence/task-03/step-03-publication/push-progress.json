@@ -1,0 +1,13 @@
+{
+  "started_at_utc": "2026-11-03T14:43:12.822431+00:00",
+  "source_revision": "4b243e278ee749c4d08bc713cd803bdd77b7e132",
+  "image_id": "sha256:798fcb8de76aa2c6e15393911bb4edb51a5bd5f6c0bf4dd169d9dca3fa1714d8",
+  "pushed": [
+    "docker.io/yuenshingyan/finsecure-pay:0.3.0",
+    "docker.io/yuenshingyan/finsecure-pay:sha-4b243e2-amd64"
+  ],
+  "rebuilt": false,
+  "cluster_created": false,
+  "last_push_exit_code": 0,
+  "finished_at_utc": "2026-11-03T14:43:29.446804+00:00"
+}

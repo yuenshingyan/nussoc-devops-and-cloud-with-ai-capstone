@@ -21,6 +21,11 @@ and report retention on an isolated failure. Cloud delivery remains unverified.
 
 ## Recorded evidence
 
+- [Step 3.3 — release publication](task-03/step-03-release-publication.md): source
+  published, automatic #32 passed 770 tests/all gates/33 artifacts and exact-revision
+  local mail; exact tested AMD64 0.3.0 image published, anonymously pulled and smoke-tested.
+  Historical tags unchanged. No cluster or application deployment.
+
 - [Step 3.3 — AMD64 gate follow-up](task-03/step-03-amd64-gate.md): approved explicit
   target support preserving ARM64 defaults/identity policy; 770 tests, real AMD64
   build/smoke and image gate passed with zero reported vulnerabilities. Local only;

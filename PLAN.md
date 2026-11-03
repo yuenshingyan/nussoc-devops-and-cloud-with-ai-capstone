@@ -19,8 +19,11 @@ Version 0.3.0 candidate `33d4770` hit the preserved ARM64-only gate rejection. A
 explicit approval, `4b243e2` added selected-platform support without changing the ARM64
 default or weakening identity/security checks. Its fresh AMD64 candidate passed runtime
 smoke and the real image gate (zero reported vulnerabilities). All 770 tests, lint,
-formatting, build and source gates passed. No source/image publication or cluster
-provisioning occurred. See [gate evidence](evidence/task-03/step-03-amd64-gate.md).
+formatting, build and source gates passed. With approval, source `22048c8` was published;
+automatic #32 passed 770 tests/all gates/33 artifacts and exact-revision notification.
+The exact AMD64 image from `4b243e2` was published as 0.3.0 and anonymously verified,
+with post-pull smoke passing. Historical release digests are unchanged. No cluster
+provisioning occurred. See [publication evidence](evidence/task-03/step-03-release-publication.md).
 See [runbook](docs/runbooks/gke-deployment.md), [resource proposal](deploy/infrastructure/gke-proposal.md)
 and [initial preparation evidence](evidence/task-03/step-03-gke-preparation.md).
 Approve the concrete resource/exposure profile before provisioning.
@@ -207,7 +210,7 @@ The assignment allows equivalent application, build, and unit-testing tools with
 - **Verify:** Validate configuration; verify actual probe behavior after deployment in Step 3.3.
 
 ### Step 3.3 — Deploy to managed cloud Kubernetes
-- **Status:** GKE project, approved APIs and SDK are ready; live technical preflight passed. Trial balance/state remain user-confirmed. Local AMD64 image gates passed; publication and final resource/exposure approval remain pending. No cluster access yet.
+- **Status:** GKE project, approved APIs and SDK are ready; live technical preflight passed. Trial balance/state remain user-confirmed. AMD64 0.3.0 is published and verified; final resource/exposure approval and cluster provisioning remain pending. No cluster access yet.
 - **Branch:** `task-03/step-03-cloud-deployment`
 - Confirm provider, region, account, cost budget, exposure controls, and teardown plan before provisioning.
 - Provision or connect to EKS, AKS, or GKE using reproducible configuration where feasible.

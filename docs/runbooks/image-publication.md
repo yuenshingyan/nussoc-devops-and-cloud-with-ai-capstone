@@ -1,6 +1,41 @@
 # Container image publication
 
-## Current release — 0.2.0
+## Current release — 0.3.0 (AMD64 only)
+
+Published on 3 November 2026 to the existing public repository, without rebuilding
+between verification and push. Tags: `0.3.0` and `sha-4b243e2-amd64`.
+
+- Source: `4b243e278ee749c4d08bc713cd803bdd77b7e132` (public Git history).
+- Platform: **linux/amd64 only**; unlike historical releases, this is not a multi-platform index.
+- Image ID: `sha256:798fcb8de76aa2c6e15393911bb4edb51a5bd5f6c0bf4dd169d9dca3fa1714d8`.
+- Registry manifest: `sha256:1fc3362f15ba91f4161b8fccab644631ccc0733e9b9675bb7e2cb88e7aea5b4c`.
+- Adds the previously implemented metrics, structured logs and hardened runtime to the
+  public release. Transaction schemas/status rules are unchanged; OpenAPI version is 0.3.0.
+- 770 host tests and source gates passed; exact AMD64 archive gate reported zero known
+  vulnerabilities. Local runtime smoke passed before push and after anonymous pull.
+  AMD64 execution used emulation on the ARM64 host, not a native cloud node.
+
+```sh
+docker pull --platform linux/amd64 \
+  docker.io/yuenshingyan/finsecure-pay@sha256:1fc3362f15ba91f4161b8fccab644631ccc0733e9b9675bb7e2cb88e7aea5b4c
+uv run --locked python scripts/smoke_test.py --image \
+  docker.io/yuenshingyan/finsecure-pay@sha256:1fc3362f15ba91f4161b8fccab644631ccc0733e9b9675bb7e2cb88e7aea5b4c
+```
+
+Both tags resolve to the same manifest, whose configuration digest matches the exact
+smoke-tested/scanned image. Anonymous manifest/config reads and an anonymous Docker pull
+were verified; the pull reused local layer cache and is not a clean-node download test.
+Historical 0.1.0 and 0.2.0 tag digests were verified unchanged. No cluster was created and
+the existing Kubernetes pin remains historical 0.2.0 until deployment preparation.
+
+Source publication `22048c8` includes the image source commit as an ancestor. Its automatic
+Jenkins #32 passed 770 tests/all gates/33 artifacts and exact-revision local notification.
+That CI artifact is ARM64 from `22048c8`, **not** the published AMD64 operator artifact
+from `4b243e2`. Do not conflate their source revisions or image identities.
+
+See [publication evidence](../../evidence/task-03/step-03-release-publication.md).
+
+## Historical release — 0.2.0
 
 - Repository: [yuenshingyan/finsecure-pay](https://hub.docker.com/r/yuenshingyan/finsecure-pay), public.
 - Tags: `0.2.0` and `sha-ada935d`.

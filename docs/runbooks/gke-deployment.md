@@ -82,7 +82,10 @@ The subsequently approved explicit-platform change preserves the ARM64 default a
 all identity checks. Fresh AMD64 candidate `4b243e2` passed runtime smoke and the actual
 image gate with zero reported vulnerabilities. All 770 host tests and source gates
 passed. See [gate follow-up](../../evidence/task-03/step-03-amd64-gate.md).
-Publication, cluster approval and native GKE execution remain pending.
+The exact image was subsequently published with approval as AMD64-only `0.3.0`,
+with anonymous pull and post-pull smoke verified. See the
+[release record](image-publication.md). Cluster approval, deployment manifest updates
+and native GKE execution remain pending.
 
 ## Technical preflight behavior
 
@@ -128,4 +131,5 @@ quota, billing, capacity or entitlement proof. An offline CLI check demonstrates
 initial missing-SDK failure path without contacting a cloud account. Subsequent authorized
 live checks passed: regional CPU headroom 100, E2 headroom 24, global headroom 12;
 SGD billing currency; unused regional disk/IP quotas. Quota is not reserved capacity.
-Image release, final exposure/resource approval and cluster provisioning remain pending.
+AMD64 image release is complete. Final exposure/resource approval, deployment manifest
+updates and cluster provisioning remain pending.
