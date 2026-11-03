@@ -10,6 +10,7 @@ from runpy import run_path
 from subprocess import CompletedProcess, TimeoutExpired
 from tarfile import TarFile, TarInfo
 from typing import Any
+from unittest.mock import Mock
 
 from pytest import MonkeyPatch, fixture, mark, raises
 
@@ -63,9 +64,16 @@ def report() -> dict:
     }
 
 
-def evaluate(helpers: dict, data: dict, status: int = 0) -> dict:
+def evaluate(helpers: dict, data: dict, status: int = 0, platform: str = "linux/arm64") -> dict:
     return helpers["image_result"](
-        data, status, IMAGE, REVISION, {"sample": "1", "finsecure-pay": "0.2.0"}, NOW, NOW
+        data,
+        status,
+        IMAGE,
+        REVISION,
+        {"sample": "1", "finsecure-pay": "0.2.0"},
+        NOW,
+        NOW,
+        platform=platform,
     )
 
 
@@ -73,10 +81,12 @@ def evaluate(helpers: dict, data: dict, status: int = 0) -> dict:
     "severity,blocking", [("UNKNOWN", 0), ("LOW", 0), ("MEDIUM", 0), ("HIGH", 1), ("CRITICAL", 1)]
 )
 @mark.parametrize("fixed", ["", "2"])
+@mark.parametrize("platform", ["linux/arm64", "linux/amd64"])
 def test_gate_reports_all_severities_and_blocks_high_critical_including_unfixed(
-    helpers, severity, blocking, fixed
+    helpers, severity, blocking, fixed, platform
 ):
     data = report()
+    data["Metadata"]["ImageConfig"]["architecture"] = platform.split("/")[1]
     data["Results"][0]["Vulnerabilities"] = [
         {
             "VulnerabilityID": "CVE-synthetic",
@@ -86,7 +96,7 @@ def test_gate_reports_all_severities_and_blocks_high_critical_including_unfixed(
             "FixedVersion": fixed,
         }
     ]
-    result = evaluate(helpers, data)
+    result = evaluate(helpers, data, platform=platform)
     assert result["blocking_findings"] == blocking
     assert result["severities"][severity] == 1
 
@@ -266,9 +276,10 @@ def test_invalid_debian_version_components_fail_closed(helpers, epoch, release):
         helpers["installed_version"]({"Version": "1", "Epoch": epoch, "Release": release}, "debian")
 
 
-def create_export(root: Path) -> str:
+def create_export(root: Path, platform: str = "linux/arm64") -> str:
     """Use a real tiny Docker archive to exercise provenance checks without Docker."""
     config = report()["Metadata"]["ImageConfig"]
+    config["architecture"] = platform.split("/")[1]
     content = dumps(config).encode()
     digest = "sha256:" + sha256(content).hexdigest()
     (root / "images").mkdir()
@@ -317,12 +328,16 @@ def create_export(root: Path) -> str:
         ("bad-report", 2),
         ("changed-archive", 2),
         ("changed-lock", 2),
+        ("wrong-report-platform", 2),
+        ("wrong-archive-platform", 2),
     ],
 )
+@mark.parametrize("platform", ["linux/arm64", "linux/amd64"])
 def test_orchestration_retains_diagnostics_and_never_retries(
-    helpers, monkeypatch, tmp_path, mode, expected
+    helpers, monkeypatch, tmp_path, mode, expected, platform
 ):
-    digest = create_export(tmp_path)
+    other = "linux/amd64" if platform == "linux/arm64" else "linux/arm64"
+    digest = create_export(tmp_path, other if mode == "wrong-archive-platform" else platform)
     fake = tmp_path / "trivy"
     fake.write_bytes(b"synthetic executable")
     globals_ = helpers["scan"].__globals__
@@ -376,6 +391,9 @@ def test_orchestration_retains_diagnostics_and_never_retries(
         if mode == "scan-timeout":
             raise TimeoutExpired(args, 300)
         data = report()
+        data["Metadata"]["ImageConfig"]["architecture"] = (
+            other if mode == "wrong-report-platform" else platform
+        ).split("/")[1]
         data["CreatedAt"] = datetime.now(UTC).isoformat()
         data["Metadata"]["ImageID"] = digest
         if mode == "high-unfixed":
@@ -398,11 +416,74 @@ def test_orchestration_retains_diagnostics_and_never_retries(
         return CompletedProcess(args, 2 if mode == "eol" else 1 if mode == "scan-exit" else 0)
 
     monkeypatch.setitem(globals_, "run", process)
-    assert helpers["scan"](tmp_path, REVISION, TAG) == expected
+    assert helpers["scan"](tmp_path, REVISION, TAG, platform=platform) == expected
     summary = loads((tmp_path / "reports/image-security-summary.json").read_text())
+    assert summary["expected_platform"] == platform
+    if mode == "wrong-archive-platform":
+        assert calls == []
     assert summary["status"] == {0: "passed", 1: "blocked", 2: "error"}[expected]
     assert all(not path.exists() for path in scratch)
     assert sum("--download-db-only" in args for args in calls) <= 1
     assert sum("--input" in args for args in calls) <= 1
     for name, checksum in summary["report_sha256"].items():
         assert sha256((tmp_path / "reports" / name).read_bytes()).hexdigest() == checksum
+
+
+@mark.parametrize("platform", ["linux/arm64", "linux/amd64"])
+@mark.parametrize("change", ["digest", "user", "revision", "os"])
+def test_scan_report_identity_is_required_on_both_platforms(helpers, platform, change):
+    data = report()
+    config = data["Metadata"]["ImageConfig"]
+    config["architecture"] = platform.split("/")[1]
+    if change == "digest":
+        data["Metadata"]["ImageID"] = "sha256:" + "0" * 64
+    elif change == "user":
+        config["config"]["User"] = "0:0"
+    elif change == "revision":
+        config["config"]["Labels"]["org.opencontainers.image.revision"] = "b" * 40
+    else:
+        config["os"] = "windows"
+    with raises(ValueError, match="exact non-root"):
+        evaluate(helpers, data, platform=platform)
+
+
+def test_report_default_does_not_auto_accept_amd64(helpers):
+    data = report()
+    data["Metadata"]["ImageConfig"]["architecture"] = "amd64"
+    with raises(ValueError):
+        helpers["image_result"](data, 0, IMAGE, REVISION, {"sample": "1"}, NOW, NOW)
+
+
+@mark.parametrize("platform", ["auto", "linux/386", "windows/amd64"])
+def test_report_rejects_unsupported_target(helpers, platform):
+    with raises(ValueError, match="Unsupported target platform"):
+        evaluate(helpers, report(), platform=platform)
+
+
+@mark.parametrize(
+    "arguments,expected", [([], "linux/arm64"), (["--platform", "linux/amd64"], "linux/amd64")]
+)
+def test_cli_defaults_to_arm64_and_forwards_explicit_target(
+    helpers, monkeypatch, arguments, expected
+):
+    scanner = Mock(return_value=0)
+    monkeypatch.setitem(helpers["main"].__globals__, "scan", scanner)
+    monkeypatch.setattr(
+        "sys.argv", ["image_scan", "--revision", REVISION, "--tag", TAG, *arguments]
+    )
+    with raises(SystemExit) as stopped:
+        helpers["main"]()
+    assert stopped.value.code == 0
+    assert scanner.call_args.kwargs == {"platform": expected}
+
+
+def test_cli_rejects_unsupported_platform_without_scanning(helpers, monkeypatch):
+    scanner = Mock()
+    monkeypatch.setitem(helpers["main"].__globals__, "scan", scanner)
+    monkeypatch.setattr(
+        "sys.argv", ["image_scan", "--revision", REVISION, "--tag", TAG, "--platform", "auto"]
+    )
+    with raises(SystemExit) as stopped:
+        helpers["main"]()
+    assert stopped.value.code == 2
+    scanner.assert_not_called()

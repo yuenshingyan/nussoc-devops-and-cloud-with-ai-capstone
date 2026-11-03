@@ -6,6 +6,8 @@ from pathlib import Path
 from re import fullmatch
 from tarfile import TarFile
 
+SUPPORTED_PLATFORMS = ("linux/arm64", "linux/amd64")
+
 
 def read_archive_json(archive: TarFile, name: str) -> bytes:
     """Read one small, unique regular JSON member; reject links and ambiguous entries."""
@@ -17,9 +19,15 @@ def read_archive_json(archive: TarFile, name: str) -> bytes:
 
 
 def inspect_image_archive(
-    path: Path, revision: str, tag: str, config_digest: str
+    path: Path,
+    revision: str,
+    tag: str,
+    config_digest: str,
+    platform: str = "linux/arm64",
 ) -> dict[str, str]:
-    """Check one ARM64 application image against its build metadata before operator loading."""
+    """Verify one explicitly targeted application image; preserve ARM64 as the default."""
+    if platform not in SUPPORTED_PLATFORMS:
+        raise ValueError("Unsupported target platform")
     if not fullmatch(r"sha256:[a-f0-9]{64}", config_digest):
         raise RuntimeError("Invalid image configuration digest")
     with TarFile.open(path, mode="r:gz") as archive:
@@ -33,10 +41,10 @@ def inspect_image_archive(
     if digest != config_digest:
         raise RuntimeError("Image configuration digest does not match BuildKit metadata")
     data = loads(config)
-    if (data.get("os"), data.get("architecture")) != ("linux", "arm64"):
-        raise RuntimeError("Expected the explicitly selected linux/arm64 platform")
+    if (data.get("os"), data.get("architecture")) != tuple(platform.split("/")):
+        raise RuntimeError(f"Expected the explicitly selected {platform} platform")
     if data["config"].get("User") != "10001:10001":
         raise RuntimeError("Exported image must use the application non-root identity")
     if data["config"].get("Labels", {}).get("org.opencontainers.image.revision") != revision:
         raise RuntimeError("Exported image source label does not match the checkout")
-    return {"image_id": digest, "platform": "linux/arm64", "local_tag": tag}
+    return {"image_id": digest, "platform": platform, "local_tag": tag}

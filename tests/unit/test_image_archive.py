@@ -101,3 +101,38 @@ def test_unsafe_json_members_are_rejected(archive_helpers, tmp_path, kind):
                 archive.addfile(member, BytesIO(data))
     with TarFile.open(path, "r:gz") as archive, raises(RuntimeError, match="regular JSON"):
         archive_helpers["read_archive_json"](archive, "manifest.json")
+
+
+@mark.parametrize("platform", ["linux/arm64", "linux/amd64"])
+@mark.parametrize("change", ["none", "digest", "tag", "user", "revision", "architecture", "os"])
+def test_explicit_platform_preserves_all_identity_checks(
+    archive_helpers, image_config, tmp_path, platform, change
+):
+    image_config["architecture"] = platform.split("/")[1]
+    if change == "user":
+        image_config["config"]["User"] = "0:0"
+    elif change == "revision":
+        image_config["config"]["Labels"]["org.opencontainers.image.revision"] = "b" * 40
+    elif change == "architecture":
+        image_config["architecture"] = "amd64" if platform == "linux/arm64" else "arm64"
+    elif change == "os":
+        image_config["os"] = "windows"
+    path, digest = write_image(tmp_path, image_config, ["other:tag"] if change == "tag" else [TAG])
+    if change == "digest":
+        digest = "sha256:" + "0" * 64
+    if change == "none":
+        result = archive_helpers["inspect_image_archive"](
+            path, REVISION, TAG, digest, platform=platform
+        )
+        assert result == {"image_id": digest, "platform": platform, "local_tag": TAG}
+    else:
+        with raises(RuntimeError):
+            archive_helpers["inspect_image_archive"](path, REVISION, TAG, digest, platform=platform)
+
+
+@mark.parametrize("platform", ["linux/386", "windows/amd64", "linux/arm64,linux/amd64", "", "auto"])
+def test_unsupported_target_is_rejected_before_archive_access(archive_helpers, tmp_path, platform):
+    with raises(ValueError, match="Unsupported target platform"):
+        archive_helpers["inspect_image_archive"](
+            tmp_path / "absent", REVISION, TAG, "sha256:" + "0" * 64, platform=platform
+        )

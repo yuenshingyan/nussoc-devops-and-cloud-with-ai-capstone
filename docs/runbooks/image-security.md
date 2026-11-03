@@ -14,6 +14,29 @@ run; Alpine passed with 33 artifacts, the controlled Debian comparison blocked 6
 with reports/packages but no image. See [actual evidence](../../evidence/task-05/step-02-image-gates.md).
 These were unpublished inline candidate jobs, not normal SCM-loaded/triggered proof.
 
+## Explicit AMD64 operator scans (3 November follow-up)
+
+The user approved adding `--platform linux/amd64` to `scripts/image_scan.py` for
+GKE release preparation. Omission still selects `linux/arm64`; the existing Jenkins
+pipeline and its ARM64 build selection are unchanged. Only these two Linux targets
+are accepted, never auto-detected as an alternative to checking the selected target.
+Both the exported configuration and Trivy report must match that exact platform.
+Tag, digest, source revision, non-root user, complete locked inventory, DB freshness,
+scanner identity, EOL and HIGH/CRITICAL checks remain mandatory.
+
+Run the approved scanner in the existing agent against the prepared exact export:
+
+```sh
+python3 -m scripts.image_scan --revision "$REVISION" --tag "$LOCAL_TAG" \
+  --platform linux/amd64
+```
+
+The scanner executable remains the pinned Linux ARM64 tool: scanning an AMD64 archive
+is not the same as executing AMD64 application code. Runtime smoke testing uses local
+emulation; native GKE execution and normal SCM-to-cloud delivery remain separate checks.
+The first AMD64 attempt's rejection is retained in
+[Step 3.3 evidence](../../evidence/task-03/step-03-gke-live-preparation.md), not rewritten.
+
 ## Approved policy
 
 - Pin Trivy **0.76.1** and verify its release signatures before installing it. Use

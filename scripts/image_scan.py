@@ -13,7 +13,7 @@ from tempfile import TemporaryDirectory
 from time import monotonic
 from tomllib import load
 
-from ops.jenkins.image_archive import inspect_image_archive
+from ops.jenkins.image_archive import SUPPORTED_PLATFORMS, inspect_image_archive
 from scripts.security_scan import runtime_pins
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -102,8 +102,11 @@ def image_result(
     pins: dict[str, str],
     started: datetime,
     finished: datetime,
+    platform: str = "linux/arm64",
 ) -> dict:
     """Validate image identity, complete inventories and findings before applying policy."""
+    if platform not in SUPPORTED_PLATFORMS:
+        raise ValueError("Unsupported target platform")
     if (
         type(report.get("SchemaVersion")) is not int
         or report["SchemaVersion"] != 2
@@ -116,11 +119,11 @@ def image_result(
     config = metadata["ImageConfig"]
     if (
         metadata.get("ImageID") != image_id
-        or (config.get("os"), config.get("architecture")) != ("linux", "arm64")
+        or (config.get("os"), config.get("architecture")) != tuple(platform.split("/"))
         or config["config"].get("User") != "10001:10001"
         or config["config"].get("Labels", {}).get("org.opencontainers.image.revision") != revision
     ):
-        raise ValueError("Scan does not describe this exact non-root ARM64 export")
+        raise ValueError(f"Scan does not describe this exact non-root {platform} export")
     os_info = metadata["OS"]
     # These are the explicitly tested image families; other families need a scope review.
     if os_info.get("Family") not in {"alpine", "debian"} or not fullmatch(
@@ -208,7 +211,7 @@ def run_tool(arguments: list[str], log: Path, deadline: float, cwd: Path, env: d
         ).returncode
 
 
-def scan(root: Path, revision: str, tag: str) -> int:
+def scan(root: Path, revision: str, tag: str, platform: str = "linux/arm64") -> int:
     """Return 0 only for a complete pass, 1 for policy findings/EOL, 2 for handled errors."""
     started = monotonic()
     reports = root / "reports"
@@ -219,6 +222,7 @@ def scan(root: Path, revision: str, tag: str) -> int:
         "started_at_utc": datetime.now(UTC).isoformat(),
         "status": "incomplete",
         "source_revision": revision,
+        "expected_platform": platform,
         "local_tag": tag,
         "database_repository": DB_REPOSITORY,
         "operation_budget_seconds": OPERATION_SECONDS,
@@ -240,7 +244,7 @@ def scan(root: Path, revision: str, tag: str) -> int:
             raise ValueError("Export checksum mismatch")
         metadata = read_json(reports / "buildkit-image.json")
         image = inspect_image_archive(
-            archive, revision, tag, metadata["containerimage.config.digest"]
+            archive, revision, tag, metadata["containerimage.config.digest"], platform=platform
         )
         summary.update(image)
         summary["archive_sha256"] = digest
@@ -365,6 +369,7 @@ def scan(root: Path, revision: str, tag: str) -> int:
                 pins,
                 scan_started,
                 datetime.now(UTC),
+                platform=platform,
             )
             summary["database_age_at_finish_seconds"] = database_age(db, datetime.now(UTC))
             if checksum(archive) != digest or checksum(root / "uv.lock") != summary["lock_sha256"]:
@@ -402,8 +407,9 @@ def main() -> None:
     parser = ArgumentParser(description=__doc__)
     parser.add_argument("--revision", required=True)
     parser.add_argument("--tag", required=True)
+    parser.add_argument("--platform", choices=SUPPORTED_PLATFORMS, default="linux/arm64")
     args = parser.parse_args()
-    raise SystemExit(scan(ROOT, args.revision, args.tag))
+    raise SystemExit(scan(ROOT, args.revision, args.tag, platform=args.platform))
 
 
 if __name__ == "__main__":
