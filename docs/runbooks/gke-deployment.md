@@ -1,17 +1,20 @@
-# GKE deployment preparation — no resources created
+# GKE deployment preparation — project ready, no cluster
 
-Status: preparation only. The working tool is the **read-only preflight**, not a
-provisioning pipeline. Existing Kubernetes manifests remain unchanged. This document
-is not executable infrastructure configuration and does not authorize deployment.
+Status: the dedicated project is active, linked to the selected billing account, and
+four approved APIs are enabled. Google Cloud CLI 591.0.0 and browser authentication
+are available; the live technical preflight passed on 3 November. No cluster, VM or
+load balancer has been created. Existing Kubernetes manifests remain unchanged.
+The [concrete resource proposal](../../deploy/infrastructure/gke-proposal.md) requires
+approval before provisioning; neither document authorizes deployment.
 
 ## Agreed constraints
 
 - Provider direction: Google Kubernetes Engine; Singapore region `asia-southeast1`.
 - No out-of-pocket charges and **no upgrade to paid billing**. A budget alert is not
   a spending cap. Stop if the necessary resources require an upgrade.
-- User reports Free Trial, zero of the displayed `$385` credits used, expiry
-  **2 February 2027**. Currency and eligibility for this exact deployment have not
-  been independently verified. Do not reinterpret that balance as USD.
+- User reports Free Trial, zero of **S$385** credits used, expiry **2 February 2027**.
+  The billing API independently confirms SGD; credit balance, expiry and trial state
+  remain user-reported. No paid-account upgrade has been requested.
 - Do not provision before **3 November 2026**. Submission is 4 November; support
   reported grading within 14 days from that date. Plan availability through
   18 November, with teardown planned for 19 November after status/evidence checks.
@@ -77,7 +80,9 @@ No image has been newly built, scanned, pushed or deployed in this preparation s
 
 Implementation: `scripts/gke_preflight.py`, invoked with existing locked development
 dependencies (HTTPX2 is already in the project). Google Cloud CLI is a separate operator
-prerequisite; it was **not installed** on the host at this checkpoint.
+prerequisite. It was absent at the initial checkpoint and is now installed (591.0.0).
+Homebrew also installed OpenSSL 4 and updated CA certificates; post-install checks
+passed (704 tests, lint, formatting and packaging).
 
 From the repository root, after separately approved SDK setup and browser sign-in,
 supply the project and zone locally:
@@ -112,5 +117,7 @@ verification unconfirmed. No provisioning function exists in this helper.
 
 Unit tests exercise Google/SDK boundaries with synthetic fixtures; they are not live
 quota, billing, capacity or entitlement proof. An offline CLI check demonstrates the
-missing-SDK failure path without contacting a cloud account. Installation, authentication,
-actual preflight, image release and provisioning remain pending.
+initial missing-SDK failure path without contacting a cloud account. Subsequent authorized
+live checks passed: regional CPU headroom 100, E2 headroom 24, global headroom 12;
+SGD billing currency; unused regional disk/IP quotas. Quota is not reserved capacity.
+Image release, final exposure/resource approval and cluster provisioning remain pending.
