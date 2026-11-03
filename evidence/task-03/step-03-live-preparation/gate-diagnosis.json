@@ -1,0 +1,8 @@
+{
+  "image_gate_status": "error",
+  "phase": "input",
+  "actual_cause": "Expected the explicitly selected linux/arm64 platform",
+  "candidate_platform": "linux/amd64",
+  "vulnerability_scan_ran": false,
+  "gate_bypassed": false
+}

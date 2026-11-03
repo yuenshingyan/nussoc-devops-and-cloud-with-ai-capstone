@@ -74,7 +74,12 @@ local Jenkins exports are ARM64, while the proposed E2 nodes are **AMD64**.
 Do not silently deploy an ARM64-only archive to E2 nodes, use an ungated rebuild, or
 present the old 0.2.0 image as containing later observability features. Keep the current
 pin unchanged until an approved compatible release passes its gates and is published.
-No image has been newly built, scanned, pushed or deployed in this preparation step.
+A local 0.3.0 AMD64 candidate from `33d4770` was subsequently built and smoke-tested
+under emulation. The image gate stopped at input validation because its current archive
+validator explicitly requires ARM64. No vulnerability scan, push or deployment occurred.
+Do not bypass that check: explicit AMD64 target support requires review and regression
+coverage while retaining the current ARM64 default and all identity/digest checks.
+See [live preparation evidence](../../evidence/task-03/step-03-gke-live-preparation.md).
 
 ## Technical preflight behavior
 

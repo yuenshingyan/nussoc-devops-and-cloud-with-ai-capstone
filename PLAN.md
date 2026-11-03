@@ -15,7 +15,10 @@ After separate approvals, CLI 591.0.0 was installed, the user signed in, a dedic
 project was created/linked, and Compute/GKE/Logging/Monitoring APIs were enabled.
 Live technical checks passed: CPU headroom 100 regional, 24 E2, 12 global; disk/IP
 quotas also have headroom. No cluster, VM, load balancer or paid upgrade was requested.
-Version 0.3.0 is being prepared locally for AMD64; no image publication is implied.
+Version 0.3.0 candidate `33d4770` built for AMD64 and passed local smoke testing under
+emulation. The image gate stopped at its ARM64-only input validator; no vulnerability
+scan ran and the gate was not bypassed. Explicit AMD64 target support needs review.
+No source/image publication or cluster provisioning is implied.
 See [runbook](docs/runbooks/gke-deployment.md), [resource proposal](deploy/infrastructure/gke-proposal.md)
 and [initial preparation evidence](evidence/task-03/step-03-gke-preparation.md).
 Approve the concrete resource/exposure profile before provisioning.

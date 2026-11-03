@@ -21,6 +21,11 @@ and report retention on an isolated failure. Cloud delivery remains unverified.
 
 ## Recorded evidence
 
+- [Step 3.3 — live GKE preparation and AMD64 candidate](task-03/step-03-gke-live-preparation.md):
+  project/APIs ready, SGD confirmed, live technical checks passed; 0.3.0 AMD64 operator
+  build/smoke passed, but image gate stopped at its ARM64-only input guard. No image
+  vulnerability scan, publication or cluster deployment. Failure preserved.
+
 - [Step 3.3 — GKE preparation checkpoint](task-03/step-03-gke-preparation.md): GET-only
   preflight, 49 new tests (704 total), passing host/source gates and expected offline
   SDK-missing result. No live cloud check, API activation, provisioning or paid upgrade.

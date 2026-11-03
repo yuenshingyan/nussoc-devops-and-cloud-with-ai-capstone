@@ -1,0 +1,15 @@
+{
+  "started_at_utc": "2026-11-03T14:16:44.169497+00:00",
+  "status": "error",
+  "source_revision": "33d47709391efcc516e19759e67cc2c632af0f78",
+  "local_tag": "finsecure-pay-ci:gke-0.3.0-amd64-33d47709391e",
+  "database_repository": "ghcr.io/aquasecurity/trivy-db:2",
+  "operation_budget_seconds": 300,
+  "max_database_age_seconds": 86400,
+  "phase": "input",
+  "trivy_version": "0.76.1",
+  "reason": "execution_identity_or_report_invalid",
+  "finished_at_utc": "2026-11-03T14:16:44.416235+00:00",
+  "elapsed_seconds": 0.2473120420036139,
+  "report_sha256": {}
+}

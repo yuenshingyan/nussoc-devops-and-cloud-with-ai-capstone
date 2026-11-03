@@ -3,7 +3,7 @@
 This is a proposed resource inventory, **not applied infrastructure**. On 3 November
 2026 the dedicated project was created, linked to the sole visible open billing
 account and selected locally. Four APIs were enabled with permission. No cluster,
-VM, load balancer or application release has been created by this preparation.
+VM, load balancer or published application release has been created by this preparation.
 
 ## Verified inputs
 
@@ -87,6 +87,12 @@ security gates on that exact candidate. Do not claim emulated testing proves act
 GKE-node behavior. Publish only after review, without replacing historical 0.1.0/0.2.0
 images. Update Kubernetes version labels and image digest only after publication and
 anonymous pull verification. Preserve unsuccessful attempts and stop on gate failures.
+
+The first local AMD64 candidate (`33d4770`) built and passed the container smoke test.
+The image gate rejected its architecture during input validation: the current validator
+explicitly accepts only ARM64. No vulnerability scan ran. Supporting an explicitly
+selected AMD64 target needs approval, tests, and a new gated candidate; accepting any
+architecture automatically is not proposed. The failed attempt is retained as evidence.
 
 Host storage was 4.2 GiB free before preparation, while the Docker backing filesystem
 had about 10.5 GiB free. They are separate constraints. Check both before builds/scans;

@@ -1,0 +1,29 @@
+{
+  "checked_at_utc": "2026-11-03T14:07:49.448377+00:00",
+  "billing_currency": "SGD",
+  "billing_account_open": true,
+  "regional_quotas": [
+    {
+      "metric": "DISKS_TOTAL_GB",
+      "limit": 2048,
+      "usage": 0
+    },
+    {
+      "metric": "STATIC_ADDRESSES",
+      "limit": 8,
+      "usage": 0
+    },
+    {
+      "metric": "IN_USE_ADDRESSES",
+      "limit": 8,
+      "usage": 0
+    }
+  ],
+  "regular_release_channel": [
+    {
+      "channel": "REGULAR",
+      "defaultVersion": "1.36.4-gke.2046003"
+    }
+  ],
+  "resource_mutations": false
+}
