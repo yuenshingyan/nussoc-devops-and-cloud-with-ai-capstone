@@ -21,6 +21,11 @@ and report retention on an isolated failure. Cloud delivery remains unverified.
 
 ## Recorded evidence
 
+- [Step 3.4 — one-pod recovery](task-03/step-04-recovery.md): exactly one approved
+  UID-preconditioned deletion, Ready replacement and two available replicas observed
+  within 16.14 seconds; 21 successful health samples and before/after synthetic API
+  checks. Deployment/Service/nodes unchanged; no node-failure or rollout claim.
+
 - [Step 3.3 — actual managed deployment](task-03/step-03-managed-deployment.md): approved
   zonal GKE with two Ready AMD64 nodes/two Ready pods, pinned 0.3.0, public HTTP cases,
   runtime hardening, resource census and real Cloud Logging samples. 781 host tests;

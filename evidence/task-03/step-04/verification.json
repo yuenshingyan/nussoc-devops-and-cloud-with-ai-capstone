@@ -1,0 +1,929 @@
+{
+  "started_at_utc": "2026-11-03T16:01:22.488738+00:00",
+  "deletion_requests": 1,
+  "force_used": false,
+  "nodes_or_billing_modified": false,
+  "status": "recovery_verified",
+  "before_pods": [
+    {
+      "name": "finsecure-pay-cdb4569cc-4gwtw",
+      "uid": "d6a455c7-1a55-457c-b34d-edeb4cf3eff9",
+      "created_at": "2026-11-03T15:14:41Z",
+      "node": "gke-finsecure-pay-demo-default-pool-08d23f11-v4mt",
+      "phase": "Running",
+      "ready": true,
+      "terminating": false,
+      "owner_uids": [
+        "8d9a82f4-b5b2-4729-b192-86b597c46a94"
+      ],
+      "image": "docker.io/yuenshingyan/finsecure-pay@sha256:1fc3362f15ba91f4161b8fccab644631ccc0733e9b9675bb7e2cb88e7aea5b4c",
+      "containers": [
+        {
+          "ready": true,
+          "restartCount": 0,
+          "imageID": "docker.io/yuenshingyan/finsecure-pay@sha256:1fc3362f15ba91f4161b8fccab644631ccc0733e9b9675bb7e2cb88e7aea5b4c"
+        }
+      ]
+    },
+    {
+      "name": "finsecure-pay-cdb4569cc-zg8v4",
+      "uid": "67692746-e7a6-4929-bcbd-ef91199520ad",
+      "created_at": "2026-11-03T15:14:41Z",
+      "node": "gke-finsecure-pay-demo-default-pool-08d23f11-93zl",
+      "phase": "Running",
+      "ready": true,
+      "terminating": false,
+      "owner_uids": [
+        "8d9a82f4-b5b2-4729-b192-86b597c46a94"
+      ],
+      "image": "docker.io/yuenshingyan/finsecure-pay@sha256:1fc3362f15ba91f4161b8fccab644631ccc0733e9b9675bb7e2cb88e7aea5b4c",
+      "containers": [
+        {
+          "ready": true,
+          "restartCount": 0,
+          "imageID": "docker.io/yuenshingyan/finsecure-pay@sha256:1fc3362f15ba91f4161b8fccab644631ccc0733e9b9675bb7e2cb88e7aea5b4c"
+        }
+      ]
+    }
+  ],
+  "target_name": "finsecure-pay-cdb4569cc-4gwtw",
+  "target_uid": "d6a455c7-1a55-457c-b34d-edeb4cf3eff9",
+  "survivor_uid": "67692746-e7a6-4929-bcbd-ef91199520ad",
+  "deployment_spec_sha256": "158af9a81aa2cf64a3252a974a3627f3f6134c5f1cbf0a9e1178550bff3b39bb",
+  "before_api_checks": [
+    {
+      "case": "health",
+      "status": 200,
+      "body": {
+        "status": "healthy"
+      }
+    },
+    {
+      "case": "accepted",
+      "status": 200,
+      "body": {
+        "valid": true,
+        "errors": []
+      }
+    },
+    {
+      "case": "rejected",
+      "status": 200,
+      "body": {
+        "valid": false,
+        "errors": [
+          "AMOUNT_NOT_POSITIVE"
+        ]
+      }
+    },
+    {
+      "case": "invalid_type",
+      "status": 422,
+      "body": {
+        "detail": [
+          {
+            "loc": [
+              "body",
+              "amount"
+            ],
+            "type": "string_type",
+            "msg": "Invalid request value. Check the API contract."
+          }
+        ]
+      }
+    }
+  ],
+  "external_url": "http://35.198.197.186",
+  "delete_at_utc": "2026-11-03T16:01:27.429729+00:00",
+  "delete_http_status": 200,
+  "observations": [
+    {
+      "at_utc": "2026-11-03T16:01:27.918985+00:00",
+      "elapsed_seconds": 0.489298584026983,
+      "pods": [
+        {
+          "name": "finsecure-pay-cdb4569cc-4gwtw",
+          "uid": "d6a455c7-1a55-457c-b34d-edeb4cf3eff9",
+          "created_at": "2026-11-03T15:14:41Z",
+          "node": "gke-finsecure-pay-demo-default-pool-08d23f11-v4mt",
+          "phase": "Running",
+          "ready": false,
+          "terminating": true,
+          "owner_uids": [
+            "8d9a82f4-b5b2-4729-b192-86b597c46a94"
+          ],
+          "image": "docker.io/yuenshingyan/finsecure-pay@sha256:1fc3362f15ba91f4161b8fccab644631ccc0733e9b9675bb7e2cb88e7aea5b4c",
+          "containers": [
+            {
+              "ready": true,
+              "restartCount": 0,
+              "imageID": "docker.io/yuenshingyan/finsecure-pay@sha256:1fc3362f15ba91f4161b8fccab644631ccc0733e9b9675bb7e2cb88e7aea5b4c"
+            }
+          ]
+        },
+        {
+          "name": "finsecure-pay-cdb4569cc-775hq",
+          "uid": "c878c97b-552a-4c4c-aa4f-9d0b01a71346",
+          "created_at": "2026-11-03T16:01:27Z",
+          "node": "gke-finsecure-pay-demo-default-pool-08d23f11-v4mt",
+          "phase": "Pending",
+          "ready": false,
+          "terminating": false,
+          "owner_uids": [
+            "8d9a82f4-b5b2-4729-b192-86b597c46a94"
+          ],
+          "image": "docker.io/yuenshingyan/finsecure-pay@sha256:1fc3362f15ba91f4161b8fccab644631ccc0733e9b9675bb7e2cb88e7aea5b4c",
+          "containers": []
+        },
+        {
+          "name": "finsecure-pay-cdb4569cc-zg8v4",
+          "uid": "67692746-e7a6-4929-bcbd-ef91199520ad",
+          "created_at": "2026-11-03T15:14:41Z",
+          "node": "gke-finsecure-pay-demo-default-pool-08d23f11-93zl",
+          "phase": "Running",
+          "ready": true,
+          "terminating": false,
+          "owner_uids": [
+            "8d9a82f4-b5b2-4729-b192-86b597c46a94"
+          ],
+          "image": "docker.io/yuenshingyan/finsecure-pay@sha256:1fc3362f15ba91f4161b8fccab644631ccc0733e9b9675bb7e2cb88e7aea5b4c",
+          "containers": [
+            {
+              "ready": true,
+              "restartCount": 0,
+              "imageID": "docker.io/yuenshingyan/finsecure-pay@sha256:1fc3362f15ba91f4161b8fccab644631ccc0733e9b9675bb7e2cb88e7aea5b4c"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "at_utc": "2026-11-03T16:01:29.214012+00:00",
+      "elapsed_seconds": 1.784285292000277,
+      "pods": [
+        {
+          "name": "finsecure-pay-cdb4569cc-4gwtw",
+          "uid": "d6a455c7-1a55-457c-b34d-edeb4cf3eff9",
+          "created_at": "2026-11-03T15:14:41Z",
+          "node": "gke-finsecure-pay-demo-default-pool-08d23f11-v4mt",
+          "phase": "Succeeded",
+          "ready": false,
+          "terminating": true,
+          "owner_uids": [
+            "8d9a82f4-b5b2-4729-b192-86b597c46a94"
+          ],
+          "image": "docker.io/yuenshingyan/finsecure-pay@sha256:1fc3362f15ba91f4161b8fccab644631ccc0733e9b9675bb7e2cb88e7aea5b4c",
+          "containers": [
+            {
+              "ready": false,
+              "restartCount": 0,
+              "imageID": "docker.io/yuenshingyan/finsecure-pay@sha256:1fc3362f15ba91f4161b8fccab644631ccc0733e9b9675bb7e2cb88e7aea5b4c"
+            }
+          ]
+        },
+        {
+          "name": "finsecure-pay-cdb4569cc-775hq",
+          "uid": "c878c97b-552a-4c4c-aa4f-9d0b01a71346",
+          "created_at": "2026-11-03T16:01:27Z",
+          "node": "gke-finsecure-pay-demo-default-pool-08d23f11-v4mt",
+          "phase": "Running",
+          "ready": false,
+          "terminating": false,
+          "owner_uids": [
+            "8d9a82f4-b5b2-4729-b192-86b597c46a94"
+          ],
+          "image": "docker.io/yuenshingyan/finsecure-pay@sha256:1fc3362f15ba91f4161b8fccab644631ccc0733e9b9675bb7e2cb88e7aea5b4c",
+          "containers": [
+            {
+              "ready": false,
+              "restartCount": 0,
+              "imageID": "docker.io/yuenshingyan/finsecure-pay@sha256:1fc3362f15ba91f4161b8fccab644631ccc0733e9b9675bb7e2cb88e7aea5b4c"
+            }
+          ]
+        },
+        {
+          "name": "finsecure-pay-cdb4569cc-zg8v4",
+          "uid": "67692746-e7a6-4929-bcbd-ef91199520ad",
+          "created_at": "2026-11-03T15:14:41Z",
+          "node": "gke-finsecure-pay-demo-default-pool-08d23f11-93zl",
+          "phase": "Running",
+          "ready": true,
+          "terminating": false,
+          "owner_uids": [
+            "8d9a82f4-b5b2-4729-b192-86b597c46a94"
+          ],
+          "image": "docker.io/yuenshingyan/finsecure-pay@sha256:1fc3362f15ba91f4161b8fccab644631ccc0733e9b9675bb7e2cb88e7aea5b4c",
+          "containers": [
+            {
+              "ready": true,
+              "restartCount": 0,
+              "imageID": "docker.io/yuenshingyan/finsecure-pay@sha256:1fc3362f15ba91f4161b8fccab644631ccc0733e9b9675bb7e2cb88e7aea5b4c"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "at_utc": "2026-11-03T16:01:31.472017+00:00",
+      "elapsed_seconds": 4.0422695000015665,
+      "pods": [
+        {
+          "name": "finsecure-pay-cdb4569cc-775hq",
+          "uid": "c878c97b-552a-4c4c-aa4f-9d0b01a71346",
+          "created_at": "2026-11-03T16:01:27Z",
+          "node": "gke-finsecure-pay-demo-default-pool-08d23f11-v4mt",
+          "phase": "Running",
+          "ready": false,
+          "terminating": false,
+          "owner_uids": [
+            "8d9a82f4-b5b2-4729-b192-86b597c46a94"
+          ],
+          "image": "docker.io/yuenshingyan/finsecure-pay@sha256:1fc3362f15ba91f4161b8fccab644631ccc0733e9b9675bb7e2cb88e7aea5b4c",
+          "containers": [
+            {
+              "ready": false,
+              "restartCount": 0,
+              "imageID": "docker.io/yuenshingyan/finsecure-pay@sha256:1fc3362f15ba91f4161b8fccab644631ccc0733e9b9675bb7e2cb88e7aea5b4c"
+            }
+          ]
+        },
+        {
+          "name": "finsecure-pay-cdb4569cc-zg8v4",
+          "uid": "67692746-e7a6-4929-bcbd-ef91199520ad",
+          "created_at": "2026-11-03T15:14:41Z",
+          "node": "gke-finsecure-pay-demo-default-pool-08d23f11-93zl",
+          "phase": "Running",
+          "ready": true,
+          "terminating": false,
+          "owner_uids": [
+            "8d9a82f4-b5b2-4729-b192-86b597c46a94"
+          ],
+          "image": "docker.io/yuenshingyan/finsecure-pay@sha256:1fc3362f15ba91f4161b8fccab644631ccc0733e9b9675bb7e2cb88e7aea5b4c",
+          "containers": [
+            {
+              "ready": true,
+              "restartCount": 0,
+              "imageID": "docker.io/yuenshingyan/finsecure-pay@sha256:1fc3362f15ba91f4161b8fccab644631ccc0733e9b9675bb7e2cb88e7aea5b4c"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "at_utc": "2026-11-03T16:01:32.703478+00:00",
+      "elapsed_seconds": 5.273718167009065,
+      "pods": [
+        {
+          "name": "finsecure-pay-cdb4569cc-775hq",
+          "uid": "c878c97b-552a-4c4c-aa4f-9d0b01a71346",
+          "created_at": "2026-11-03T16:01:27Z",
+          "node": "gke-finsecure-pay-demo-default-pool-08d23f11-v4mt",
+          "phase": "Running",
+          "ready": false,
+          "terminating": false,
+          "owner_uids": [
+            "8d9a82f4-b5b2-4729-b192-86b597c46a94"
+          ],
+          "image": "docker.io/yuenshingyan/finsecure-pay@sha256:1fc3362f15ba91f4161b8fccab644631ccc0733e9b9675bb7e2cb88e7aea5b4c",
+          "containers": [
+            {
+              "ready": false,
+              "restartCount": 0,
+              "imageID": "docker.io/yuenshingyan/finsecure-pay@sha256:1fc3362f15ba91f4161b8fccab644631ccc0733e9b9675bb7e2cb88e7aea5b4c"
+            }
+          ]
+        },
+        {
+          "name": "finsecure-pay-cdb4569cc-zg8v4",
+          "uid": "67692746-e7a6-4929-bcbd-ef91199520ad",
+          "created_at": "2026-11-03T15:14:41Z",
+          "node": "gke-finsecure-pay-demo-default-pool-08d23f11-93zl",
+          "phase": "Running",
+          "ready": true,
+          "terminating": false,
+          "owner_uids": [
+            "8d9a82f4-b5b2-4729-b192-86b597c46a94"
+          ],
+          "image": "docker.io/yuenshingyan/finsecure-pay@sha256:1fc3362f15ba91f4161b8fccab644631ccc0733e9b9675bb7e2cb88e7aea5b4c",
+          "containers": [
+            {
+              "ready": true,
+              "restartCount": 0,
+              "imageID": "docker.io/yuenshingyan/finsecure-pay@sha256:1fc3362f15ba91f4161b8fccab644631ccc0733e9b9675bb7e2cb88e7aea5b4c"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "at_utc": "2026-11-03T16:01:33.921671+00:00",
+      "elapsed_seconds": 6.49191433400847,
+      "pods": [
+        {
+          "name": "finsecure-pay-cdb4569cc-775hq",
+          "uid": "c878c97b-552a-4c4c-aa4f-9d0b01a71346",
+          "created_at": "2026-11-03T16:01:27Z",
+          "node": "gke-finsecure-pay-demo-default-pool-08d23f11-v4mt",
+          "phase": "Running",
+          "ready": false,
+          "terminating": false,
+          "owner_uids": [
+            "8d9a82f4-b5b2-4729-b192-86b597c46a94"
+          ],
+          "image": "docker.io/yuenshingyan/finsecure-pay@sha256:1fc3362f15ba91f4161b8fccab644631ccc0733e9b9675bb7e2cb88e7aea5b4c",
+          "containers": [
+            {
+              "ready": false,
+              "restartCount": 0,
+              "imageID": "docker.io/yuenshingyan/finsecure-pay@sha256:1fc3362f15ba91f4161b8fccab644631ccc0733e9b9675bb7e2cb88e7aea5b4c"
+            }
+          ]
+        },
+        {
+          "name": "finsecure-pay-cdb4569cc-zg8v4",
+          "uid": "67692746-e7a6-4929-bcbd-ef91199520ad",
+          "created_at": "2026-11-03T15:14:41Z",
+          "node": "gke-finsecure-pay-demo-default-pool-08d23f11-93zl",
+          "phase": "Running",
+          "ready": true,
+          "terminating": false,
+          "owner_uids": [
+            "8d9a82f4-b5b2-4729-b192-86b597c46a94"
+          ],
+          "image": "docker.io/yuenshingyan/finsecure-pay@sha256:1fc3362f15ba91f4161b8fccab644631ccc0733e9b9675bb7e2cb88e7aea5b4c",
+          "containers": [
+            {
+              "ready": true,
+              "restartCount": 0,
+              "imageID": "docker.io/yuenshingyan/finsecure-pay@sha256:1fc3362f15ba91f4161b8fccab644631ccc0733e9b9675bb7e2cb88e7aea5b4c"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "at_utc": "2026-11-03T16:01:35.247126+00:00",
+      "elapsed_seconds": 7.817359459004365,
+      "pods": [
+        {
+          "name": "finsecure-pay-cdb4569cc-775hq",
+          "uid": "c878c97b-552a-4c4c-aa4f-9d0b01a71346",
+          "created_at": "2026-11-03T16:01:27Z",
+          "node": "gke-finsecure-pay-demo-default-pool-08d23f11-v4mt",
+          "phase": "Running",
+          "ready": false,
+          "terminating": false,
+          "owner_uids": [
+            "8d9a82f4-b5b2-4729-b192-86b597c46a94"
+          ],
+          "image": "docker.io/yuenshingyan/finsecure-pay@sha256:1fc3362f15ba91f4161b8fccab644631ccc0733e9b9675bb7e2cb88e7aea5b4c",
+          "containers": [
+            {
+              "ready": false,
+              "restartCount": 0,
+              "imageID": "docker.io/yuenshingyan/finsecure-pay@sha256:1fc3362f15ba91f4161b8fccab644631ccc0733e9b9675bb7e2cb88e7aea5b4c"
+            }
+          ]
+        },
+        {
+          "name": "finsecure-pay-cdb4569cc-zg8v4",
+          "uid": "67692746-e7a6-4929-bcbd-ef91199520ad",
+          "created_at": "2026-11-03T15:14:41Z",
+          "node": "gke-finsecure-pay-demo-default-pool-08d23f11-93zl",
+          "phase": "Running",
+          "ready": true,
+          "terminating": false,
+          "owner_uids": [
+            "8d9a82f4-b5b2-4729-b192-86b597c46a94"
+          ],
+          "image": "docker.io/yuenshingyan/finsecure-pay@sha256:1fc3362f15ba91f4161b8fccab644631ccc0733e9b9675bb7e2cb88e7aea5b4c",
+          "containers": [
+            {
+              "ready": true,
+              "restartCount": 0,
+              "imageID": "docker.io/yuenshingyan/finsecure-pay@sha256:1fc3362f15ba91f4161b8fccab644631ccc0733e9b9675bb7e2cb88e7aea5b4c"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "at_utc": "2026-11-03T16:01:36.465226+00:00",
+      "elapsed_seconds": 9.035419625026407,
+      "pods": [
+        {
+          "name": "finsecure-pay-cdb4569cc-775hq",
+          "uid": "c878c97b-552a-4c4c-aa4f-9d0b01a71346",
+          "created_at": "2026-11-03T16:01:27Z",
+          "node": "gke-finsecure-pay-demo-default-pool-08d23f11-v4mt",
+          "phase": "Running",
+          "ready": false,
+          "terminating": false,
+          "owner_uids": [
+            "8d9a82f4-b5b2-4729-b192-86b597c46a94"
+          ],
+          "image": "docker.io/yuenshingyan/finsecure-pay@sha256:1fc3362f15ba91f4161b8fccab644631ccc0733e9b9675bb7e2cb88e7aea5b4c",
+          "containers": [
+            {
+              "ready": false,
+              "restartCount": 0,
+              "imageID": "docker.io/yuenshingyan/finsecure-pay@sha256:1fc3362f15ba91f4161b8fccab644631ccc0733e9b9675bb7e2cb88e7aea5b4c"
+            }
+          ]
+        },
+        {
+          "name": "finsecure-pay-cdb4569cc-zg8v4",
+          "uid": "67692746-e7a6-4929-bcbd-ef91199520ad",
+          "created_at": "2026-11-03T15:14:41Z",
+          "node": "gke-finsecure-pay-demo-default-pool-08d23f11-93zl",
+          "phase": "Running",
+          "ready": true,
+          "terminating": false,
+          "owner_uids": [
+            "8d9a82f4-b5b2-4729-b192-86b597c46a94"
+          ],
+          "image": "docker.io/yuenshingyan/finsecure-pay@sha256:1fc3362f15ba91f4161b8fccab644631ccc0733e9b9675bb7e2cb88e7aea5b4c",
+          "containers": [
+            {
+              "ready": true,
+              "restartCount": 0,
+              "imageID": "docker.io/yuenshingyan/finsecure-pay@sha256:1fc3362f15ba91f4161b8fccab644631ccc0733e9b9675bb7e2cb88e7aea5b4c"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "at_utc": "2026-11-03T16:01:37.654256+00:00",
+      "elapsed_seconds": 10.22445575002348,
+      "pods": [
+        {
+          "name": "finsecure-pay-cdb4569cc-775hq",
+          "uid": "c878c97b-552a-4c4c-aa4f-9d0b01a71346",
+          "created_at": "2026-11-03T16:01:27Z",
+          "node": "gke-finsecure-pay-demo-default-pool-08d23f11-v4mt",
+          "phase": "Running",
+          "ready": false,
+          "terminating": false,
+          "owner_uids": [
+            "8d9a82f4-b5b2-4729-b192-86b597c46a94"
+          ],
+          "image": "docker.io/yuenshingyan/finsecure-pay@sha256:1fc3362f15ba91f4161b8fccab644631ccc0733e9b9675bb7e2cb88e7aea5b4c",
+          "containers": [
+            {
+              "ready": false,
+              "restartCount": 0,
+              "imageID": "docker.io/yuenshingyan/finsecure-pay@sha256:1fc3362f15ba91f4161b8fccab644631ccc0733e9b9675bb7e2cb88e7aea5b4c"
+            }
+          ]
+        },
+        {
+          "name": "finsecure-pay-cdb4569cc-zg8v4",
+          "uid": "67692746-e7a6-4929-bcbd-ef91199520ad",
+          "created_at": "2026-11-03T15:14:41Z",
+          "node": "gke-finsecure-pay-demo-default-pool-08d23f11-93zl",
+          "phase": "Running",
+          "ready": true,
+          "terminating": false,
+          "owner_uids": [
+            "8d9a82f4-b5b2-4729-b192-86b597c46a94"
+          ],
+          "image": "docker.io/yuenshingyan/finsecure-pay@sha256:1fc3362f15ba91f4161b8fccab644631ccc0733e9b9675bb7e2cb88e7aea5b4c",
+          "containers": [
+            {
+              "ready": true,
+              "restartCount": 0,
+              "imageID": "docker.io/yuenshingyan/finsecure-pay@sha256:1fc3362f15ba91f4161b8fccab644631ccc0733e9b9675bb7e2cb88e7aea5b4c"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "at_utc": "2026-11-03T16:01:38.928839+00:00",
+      "elapsed_seconds": 11.499027500016382,
+      "pods": [
+        {
+          "name": "finsecure-pay-cdb4569cc-775hq",
+          "uid": "c878c97b-552a-4c4c-aa4f-9d0b01a71346",
+          "created_at": "2026-11-03T16:01:27Z",
+          "node": "gke-finsecure-pay-demo-default-pool-08d23f11-v4mt",
+          "phase": "Running",
+          "ready": true,
+          "terminating": false,
+          "owner_uids": [
+            "8d9a82f4-b5b2-4729-b192-86b597c46a94"
+          ],
+          "image": "docker.io/yuenshingyan/finsecure-pay@sha256:1fc3362f15ba91f4161b8fccab644631ccc0733e9b9675bb7e2cb88e7aea5b4c",
+          "containers": [
+            {
+              "ready": true,
+              "restartCount": 0,
+              "imageID": "docker.io/yuenshingyan/finsecure-pay@sha256:1fc3362f15ba91f4161b8fccab644631ccc0733e9b9675bb7e2cb88e7aea5b4c"
+            }
+          ]
+        },
+        {
+          "name": "finsecure-pay-cdb4569cc-zg8v4",
+          "uid": "67692746-e7a6-4929-bcbd-ef91199520ad",
+          "created_at": "2026-11-03T15:14:41Z",
+          "node": "gke-finsecure-pay-demo-default-pool-08d23f11-93zl",
+          "phase": "Running",
+          "ready": true,
+          "terminating": false,
+          "owner_uids": [
+            "8d9a82f4-b5b2-4729-b192-86b597c46a94"
+          ],
+          "image": "docker.io/yuenshingyan/finsecure-pay@sha256:1fc3362f15ba91f4161b8fccab644631ccc0733e9b9675bb7e2cb88e7aea5b4c",
+          "containers": [
+            {
+              "ready": true,
+              "restartCount": 0,
+              "imageID": "docker.io/yuenshingyan/finsecure-pay@sha256:1fc3362f15ba91f4161b8fccab644631ccc0733e9b9675bb7e2cb88e7aea5b4c"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "at_utc": "2026-11-03T16:01:40.387876+00:00",
+      "elapsed_seconds": 12.958057584008202,
+      "pods": [
+        {
+          "name": "finsecure-pay-cdb4569cc-775hq",
+          "uid": "c878c97b-552a-4c4c-aa4f-9d0b01a71346",
+          "created_at": "2026-11-03T16:01:27Z",
+          "node": "gke-finsecure-pay-demo-default-pool-08d23f11-v4mt",
+          "phase": "Running",
+          "ready": true,
+          "terminating": false,
+          "owner_uids": [
+            "8d9a82f4-b5b2-4729-b192-86b597c46a94"
+          ],
+          "image": "docker.io/yuenshingyan/finsecure-pay@sha256:1fc3362f15ba91f4161b8fccab644631ccc0733e9b9675bb7e2cb88e7aea5b4c",
+          "containers": [
+            {
+              "ready": true,
+              "restartCount": 0,
+              "imageID": "docker.io/yuenshingyan/finsecure-pay@sha256:1fc3362f15ba91f4161b8fccab644631ccc0733e9b9675bb7e2cb88e7aea5b4c"
+            }
+          ]
+        },
+        {
+          "name": "finsecure-pay-cdb4569cc-zg8v4",
+          "uid": "67692746-e7a6-4929-bcbd-ef91199520ad",
+          "created_at": "2026-11-03T15:14:41Z",
+          "node": "gke-finsecure-pay-demo-default-pool-08d23f11-93zl",
+          "phase": "Running",
+          "ready": true,
+          "terminating": false,
+          "owner_uids": [
+            "8d9a82f4-b5b2-4729-b192-86b597c46a94"
+          ],
+          "image": "docker.io/yuenshingyan/finsecure-pay@sha256:1fc3362f15ba91f4161b8fccab644631ccc0733e9b9675bb7e2cb88e7aea5b4c",
+          "containers": [
+            {
+              "ready": true,
+              "restartCount": 0,
+              "imageID": "docker.io/yuenshingyan/finsecure-pay@sha256:1fc3362f15ba91f4161b8fccab644631ccc0733e9b9675bb7e2cb88e7aea5b4c"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "at_utc": "2026-11-03T16:01:41.799107+00:00",
+      "elapsed_seconds": 14.36926291702548,
+      "pods": [
+        {
+          "name": "finsecure-pay-cdb4569cc-775hq",
+          "uid": "c878c97b-552a-4c4c-aa4f-9d0b01a71346",
+          "created_at": "2026-11-03T16:01:27Z",
+          "node": "gke-finsecure-pay-demo-default-pool-08d23f11-v4mt",
+          "phase": "Running",
+          "ready": true,
+          "terminating": false,
+          "owner_uids": [
+            "8d9a82f4-b5b2-4729-b192-86b597c46a94"
+          ],
+          "image": "docker.io/yuenshingyan/finsecure-pay@sha256:1fc3362f15ba91f4161b8fccab644631ccc0733e9b9675bb7e2cb88e7aea5b4c",
+          "containers": [
+            {
+              "ready": true,
+              "restartCount": 0,
+              "imageID": "docker.io/yuenshingyan/finsecure-pay@sha256:1fc3362f15ba91f4161b8fccab644631ccc0733e9b9675bb7e2cb88e7aea5b4c"
+            }
+          ]
+        },
+        {
+          "name": "finsecure-pay-cdb4569cc-zg8v4",
+          "uid": "67692746-e7a6-4929-bcbd-ef91199520ad",
+          "created_at": "2026-11-03T15:14:41Z",
+          "node": "gke-finsecure-pay-demo-default-pool-08d23f11-93zl",
+          "phase": "Running",
+          "ready": true,
+          "terminating": false,
+          "owner_uids": [
+            "8d9a82f4-b5b2-4729-b192-86b597c46a94"
+          ],
+          "image": "docker.io/yuenshingyan/finsecure-pay@sha256:1fc3362f15ba91f4161b8fccab644631ccc0733e9b9675bb7e2cb88e7aea5b4c",
+          "containers": [
+            {
+              "ready": true,
+              "restartCount": 0,
+              "imageID": "docker.io/yuenshingyan/finsecure-pay@sha256:1fc3362f15ba91f4161b8fccab644631ccc0733e9b9675bb7e2cb88e7aea5b4c"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "at_utc": "2026-11-03T16:01:43.312851+00:00",
+      "elapsed_seconds": 15.88299370900495,
+      "pods": [
+        {
+          "name": "finsecure-pay-cdb4569cc-775hq",
+          "uid": "c878c97b-552a-4c4c-aa4f-9d0b01a71346",
+          "created_at": "2026-11-03T16:01:27Z",
+          "node": "gke-finsecure-pay-demo-default-pool-08d23f11-v4mt",
+          "phase": "Running",
+          "ready": true,
+          "terminating": false,
+          "owner_uids": [
+            "8d9a82f4-b5b2-4729-b192-86b597c46a94"
+          ],
+          "image": "docker.io/yuenshingyan/finsecure-pay@sha256:1fc3362f15ba91f4161b8fccab644631ccc0733e9b9675bb7e2cb88e7aea5b4c",
+          "containers": [
+            {
+              "ready": true,
+              "restartCount": 0,
+              "imageID": "docker.io/yuenshingyan/finsecure-pay@sha256:1fc3362f15ba91f4161b8fccab644631ccc0733e9b9675bb7e2cb88e7aea5b4c"
+            }
+          ]
+        },
+        {
+          "name": "finsecure-pay-cdb4569cc-zg8v4",
+          "uid": "67692746-e7a6-4929-bcbd-ef91199520ad",
+          "created_at": "2026-11-03T15:14:41Z",
+          "node": "gke-finsecure-pay-demo-default-pool-08d23f11-93zl",
+          "phase": "Running",
+          "ready": true,
+          "terminating": false,
+          "owner_uids": [
+            "8d9a82f4-b5b2-4729-b192-86b597c46a94"
+          ],
+          "image": "docker.io/yuenshingyan/finsecure-pay@sha256:1fc3362f15ba91f4161b8fccab644631ccc0733e9b9675bb7e2cb88e7aea5b4c",
+          "containers": [
+            {
+              "ready": true,
+              "restartCount": 0,
+              "imageID": "docker.io/yuenshingyan/finsecure-pay@sha256:1fc3362f15ba91f4161b8fccab644631ccc0733e9b9675bb7e2cb88e7aea5b4c"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "replacement": {
+    "name": "finsecure-pay-cdb4569cc-775hq",
+    "uid": "c878c97b-552a-4c4c-aa4f-9d0b01a71346",
+    "created_at": "2026-11-03T16:01:27Z",
+    "node": "gke-finsecure-pay-demo-default-pool-08d23f11-v4mt",
+    "phase": "Running",
+    "ready": true,
+    "terminating": false,
+    "owner_uids": [
+      "8d9a82f4-b5b2-4729-b192-86b597c46a94"
+    ],
+    "image": "docker.io/yuenshingyan/finsecure-pay@sha256:1fc3362f15ba91f4161b8fccab644631ccc0733e9b9675bb7e2cb88e7aea5b4c",
+    "containers": [
+      {
+        "ready": true,
+        "restartCount": 0,
+        "imageID": "docker.io/yuenshingyan/finsecure-pay@sha256:1fc3362f15ba91f4161b8fccab644631ccc0733e9b9675bb7e2cb88e7aea5b4c"
+      }
+    ]
+  },
+  "after_pods": [
+    {
+      "name": "finsecure-pay-cdb4569cc-775hq",
+      "uid": "c878c97b-552a-4c4c-aa4f-9d0b01a71346",
+      "created_at": "2026-11-03T16:01:27Z",
+      "node": "gke-finsecure-pay-demo-default-pool-08d23f11-v4mt",
+      "phase": "Running",
+      "ready": true,
+      "terminating": false,
+      "owner_uids": [
+        "8d9a82f4-b5b2-4729-b192-86b597c46a94"
+      ],
+      "image": "docker.io/yuenshingyan/finsecure-pay@sha256:1fc3362f15ba91f4161b8fccab644631ccc0733e9b9675bb7e2cb88e7aea5b4c",
+      "containers": [
+        {
+          "ready": true,
+          "restartCount": 0,
+          "imageID": "docker.io/yuenshingyan/finsecure-pay@sha256:1fc3362f15ba91f4161b8fccab644631ccc0733e9b9675bb7e2cb88e7aea5b4c"
+        }
+      ]
+    },
+    {
+      "name": "finsecure-pay-cdb4569cc-zg8v4",
+      "uid": "67692746-e7a6-4929-bcbd-ef91199520ad",
+      "created_at": "2026-11-03T15:14:41Z",
+      "node": "gke-finsecure-pay-demo-default-pool-08d23f11-93zl",
+      "phase": "Running",
+      "ready": true,
+      "terminating": false,
+      "owner_uids": [
+        "8d9a82f4-b5b2-4729-b192-86b597c46a94"
+      ],
+      "image": "docker.io/yuenshingyan/finsecure-pay@sha256:1fc3362f15ba91f4161b8fccab644631ccc0733e9b9675bb7e2cb88e7aea5b4c",
+      "containers": [
+        {
+          "ready": true,
+          "restartCount": 0,
+          "imageID": "docker.io/yuenshingyan/finsecure-pay@sha256:1fc3362f15ba91f4161b8fccab644631ccc0733e9b9675bb7e2cb88e7aea5b4c"
+        }
+      ]
+    }
+  ],
+  "replacement_available_observed_seconds": 16.137309334008023,
+  "deployment_spec_unchanged": true,
+  "deployment_generation_unchanged": true,
+  "after_api_checks": [
+    {
+      "case": "health",
+      "status": 200,
+      "body": {
+        "status": "healthy"
+      }
+    },
+    {
+      "case": "accepted",
+      "status": 200,
+      "body": {
+        "valid": true,
+        "errors": []
+      }
+    },
+    {
+      "case": "rejected",
+      "status": 200,
+      "body": {
+        "valid": false,
+        "errors": [
+          "AMOUNT_NOT_POSITIVE"
+        ]
+      }
+    },
+    {
+      "case": "invalid_type",
+      "status": 422,
+      "body": {
+        "detail": [
+          {
+            "loc": [
+              "body",
+              "amount"
+            ],
+            "type": "string_type",
+            "msg": "Invalid request value. Check the API contract."
+          }
+        ]
+      }
+    }
+  ],
+  "nodes_unchanged_and_ready": true,
+  "service_unchanged": true,
+  "health_samples": [
+    {
+      "at_utc": "2026-11-03T16:01:25.021471+00:00",
+      "elapsed_seconds": 2.5323570420150645,
+      "status": 200,
+      "healthy": true
+    },
+    {
+      "at_utc": "2026-11-03T16:01:26.055157+00:00",
+      "elapsed_seconds": 3.566047250002157,
+      "status": 200,
+      "healthy": true
+    },
+    {
+      "at_utc": "2026-11-03T16:01:27.070386+00:00",
+      "elapsed_seconds": 4.581248583999695,
+      "status": 200,
+      "healthy": true
+    },
+    {
+      "at_utc": "2026-11-03T16:01:28.087160+00:00",
+      "elapsed_seconds": 5.598013584007276,
+      "status": 200,
+      "healthy": true
+    },
+    {
+      "at_utc": "2026-11-03T16:01:29.103005+00:00",
+      "elapsed_seconds": 6.6138494170154445,
+      "status": 200,
+      "healthy": true
+    },
+    {
+      "at_utc": "2026-11-03T16:01:30.209103+00:00",
+      "elapsed_seconds": 7.719974584004376,
+      "status": 200,
+      "healthy": true
+    },
+    {
+      "at_utc": "2026-11-03T16:01:31.231420+00:00",
+      "elapsed_seconds": 8.742263959022239,
+      "status": 200,
+      "healthy": true
+    },
+    {
+      "at_utc": "2026-11-03T16:01:32.249449+00:00",
+      "elapsed_seconds": 9.760392292024335,
+      "status": 200,
+      "healthy": true
+    },
+    {
+      "at_utc": "2026-11-03T16:01:33.266791+00:00",
+      "elapsed_seconds": 10.777601209003478,
+      "status": 200,
+      "healthy": true
+    },
+    {
+      "at_utc": "2026-11-03T16:01:34.288754+00:00",
+      "elapsed_seconds": 11.79955541700474,
+      "status": 200,
+      "healthy": true
+    },
+    {
+      "at_utc": "2026-11-03T16:01:35.315158+00:00",
+      "elapsed_seconds": 12.825938209018204,
+      "status": 200,
+      "healthy": true
+    },
+    {
+      "at_utc": "2026-11-03T16:01:36.336846+00:00",
+      "elapsed_seconds": 13.847611042001517,
+      "status": 200,
+      "healthy": true
+    },
+    {
+      "at_utc": "2026-11-03T16:01:37.351355+00:00",
+      "elapsed_seconds": 14.862126792024355,
+      "status": 200,
+      "healthy": true
+    },
+    {
+      "at_utc": "2026-11-03T16:01:38.378552+00:00",
+      "elapsed_seconds": 15.889305917022284,
+      "status": 200,
+      "healthy": true
+    },
+    {
+      "at_utc": "2026-11-03T16:01:39.405573+00:00",
+      "elapsed_seconds": 16.916320334014017,
+      "status": 200,
+      "healthy": true
+    },
+    {
+      "at_utc": "2026-11-03T16:01:40.421619+00:00",
+      "elapsed_seconds": 17.932341709005414,
+      "status": 200,
+      "healthy": true
+    },
+    {
+      "at_utc": "2026-11-03T16:01:41.439556+00:00",
+      "elapsed_seconds": 18.950280834018486,
+      "status": 200,
+      "healthy": true
+    },
+    {
+      "at_utc": "2026-11-03T16:01:42.460958+00:00",
+      "elapsed_seconds": 19.9716816250002,
+      "status": 200,
+      "healthy": true
+    },
+    {
+      "at_utc": "2026-11-03T16:01:43.488512+00:00",
+      "elapsed_seconds": 20.999215000018012,
+      "status": 200,
+      "healthy": true
+    },
+    {
+      "at_utc": "2026-11-03T16:01:44.535674+00:00",
+      "elapsed_seconds": 22.046367375005502,
+      "status": 200,
+      "healthy": true
+    },
+    {
+      "at_utc": "2026-11-03T16:01:45.584594+00:00",
+      "elapsed_seconds": 23.09527237500879,
+      "status": 200,
+      "healthy": true
+    }
+  ],
+  "sampler_errors": [],
+  "sampler_stopped": true,
+  "finished_at_utc": "2026-11-03T16:01:46.052434+00:00",
+  "unhealthy_samples": 0
+}

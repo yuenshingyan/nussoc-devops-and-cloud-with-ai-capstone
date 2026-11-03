@@ -1,0 +1,9 @@
+{
+  "status": "recovery_verified",
+  "deletion_requests": 1,
+  "delete_http_status": 200,
+  "replacement_available_observed_seconds": 16.137309334008023,
+  "unhealthy_samples": 0,
+  "sampler_stopped": true,
+  "error_type": null
+}

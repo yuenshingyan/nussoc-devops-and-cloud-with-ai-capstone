@@ -1,6 +1,23 @@
 # FinSecure Pay — Implementation Plan
 
-## Latest checkpoint — Step 3.3 live GKE deployment verified
+## Latest checkpoint — Step 3.4 one-pod recovery verified
+
+Step 3.3 was merged/published as `7e37eaa`; automatic #33 passed 781 tests/all gates,
+33 artifacts and exact-revision local notification. With explicit approval, exactly
+one application pod was normally deleted with a UID precondition. The ReplicaSet
+created a different Ready pod; old UID disappeared and two replicas were available
+again within an observed 16.14 seconds. All 21 sampled public health requests succeeded;
+this is not a claim of continuous availability. Synthetic validation passed before/after.
+Deployment, Service and node identities/configuration were unchanged as checked by the
+harness. No force, repeated DELETE, node operation, paid upgrade or teardown occurred.
+
+Runbook and evidence are local on `task-03/step-04-recovery-demonstration`, pending
+review/publication. All 781 host tests, lint/format/build and harness style checks passed.
+See [recovery evidence](evidence/task-03/step-04-recovery.md) and
+[troubleshooting/cleanup runbook](docs/runbooks/pod-recovery.md).
+Do not begin deferred cloud CI/rollout/monitoring steps before this review.
+
+## Previous checkpoint — Step 3.3 live GKE deployment verified
 
 With explicit approval, `2b2afee` created the fixed zonal Singapore cluster and deployed
 AMD64 0.3.0 by its published digest. Public health: http://35.198.197.186/health.
@@ -235,7 +252,7 @@ The assignment allows equivalent application, build, and unit-testing tools with
 - **Verify:** Validate configuration; verify actual probe behavior after deployment in Step 3.3.
 
 ### Step 3.3 — Deploy to managed cloud Kubernetes
-- **Status:** Implemented and live-verified on 3 November: fixed zonal GKE, two Ready nodes/two Ready pods, pinned AMD64 0.3.0 and public HTTP access. Local creation/evidence updates await review/publication. No paid upgrade; trial credit monitoring and later cloud/demo steps remain pending.
+- **Status:** Implemented, live-verified and published as `7e37eaa`; automatic #33 passed 781 tests/all gates. Fixed zonal GKE, two Ready nodes/two Ready pods, pinned AMD64 0.3.0 and public HTTP access. No paid upgrade; manual credit monitoring and later cloud/demo steps remain pending.
 - **Branch:** `task-03/step-03-cloud-deployment`
 - Confirm provider, region, account, cost budget, exposure controls, and teardown plan before provisioning.
 - Provision or connect to EKS, AKS, or GKE using reproducible configuration where feasible.
@@ -243,6 +260,7 @@ The assignment allows equivalent application, build, and unit-testing tools with
 - **Verify:** At least two application pods are Running and Ready; rollout and probes succeed.
 
 ### Step 3.4 — Demonstrate access and recovery
+- **Status:** One explicitly approved normal Pod deletion verified; new UID/same owner/image, two Ready pods restored, 21 successful health samples and before/after validation. Local evidence/runbook await review/publication; no node-failure or new-version rollout claim.
 - **Branch:** `task-03/step-04-recovery-demonstration`
 - Verify external health and transaction-validation requests.
 - With confirmation, delete one application pod and observe its replacement.

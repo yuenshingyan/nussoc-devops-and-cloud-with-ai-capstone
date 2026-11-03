@@ -1,0 +1,323 @@
+"""One approved pod deletion; bounded observation, no force/retries or node changes."""
+
+from datetime import UTC, datetime
+from hashlib import sha256
+from json import dumps, loads
+from os import environ
+from pathlib import Path
+from runpy import run_path
+from shutil import which
+from subprocess import run
+from threading import Event, Thread
+from time import monotonic, sleep
+from traceback import extract_tb
+from urllib.parse import urlsplit
+
+from httpx2 import Client, HTTPError, HTTPTransport
+from yaml import safe_load
+
+OUT = Path("reports/gke-recovery")
+PRIVATE = Path.home() / ".config/finsecure-pay/gke"
+ENV = {
+    **environ,
+    "KUBECONFIG": str(PRIVATE / "kubeconfig"),
+    "PATH": str(Path(which("gcloud")).resolve().parent) + ":" + environ["PATH"],
+}
+BASE = "http://35.198.197.186"
+IMAGE = (
+    "docker.io/yuenshingyan/finsecure-pay@"
+    "sha256:1fc3362f15ba91f4161b8fccab644631ccc0733e9b9675bb7e2cb88e7aea5b4c"
+)
+SELECTOR = "app.kubernetes.io/name=finsecure-pay"
+record = {
+    "started_at_utc": datetime.now(UTC).isoformat(),
+    "deletion_requests": 0,
+    "force_used": False,
+    "nodes_or_billing_modified": False,
+    "status": "preflight",
+}
+
+
+def save() -> None:
+    (OUT / "verification.json").write_text(dumps(record, indent=2) + "\n")
+
+
+def kube(arguments: list[str]) -> dict:
+    result = run(
+        ["kubectl", "--request-timeout=20s", *arguments, "-o", "json"],
+        env=ENV,
+        capture_output=True,
+        text=True,
+        timeout=30,
+        check=False,
+    )
+    if result.returncode:
+        raise RuntimeError("KUBERNETES_READ_FAILED")
+    return loads(result.stdout)
+
+
+def ready(pod: dict) -> bool:
+    return (
+        not pod["metadata"].get("deletionTimestamp")
+        and pod["status"].get("phase") == "Running"
+        and any(
+            c["type"] == "Ready" and c["status"] == "True"
+            for c in pod["status"].get("conditions", [])
+        )
+        and bool(pod["status"].get("containerStatuses"))
+        and all(c["ready"] for c in pod["status"]["containerStatuses"])
+    )
+
+
+def describe(pod: dict) -> dict:
+    return {
+        "name": pod["metadata"]["name"],
+        "uid": pod["metadata"]["uid"],
+        "created_at": pod["metadata"]["creationTimestamp"],
+        "node": pod["spec"].get("nodeName"),
+        "phase": pod["status"].get("phase"),
+        "ready": ready(pod),
+        "terminating": bool(pod["metadata"].get("deletionTimestamp")),
+        "owner_uids": [o["uid"] for o in pod["metadata"].get("ownerReferences", [])],
+        "image": pod["spec"]["containers"][0]["image"],
+        "containers": [
+            {k: c.get(k) for k in ["ready", "restartCount", "imageID"]}
+            for c in pod["status"].get("containerStatuses", [])
+        ],
+    }
+
+
+def spec_hash(deployment: dict) -> str:
+    return sha256(dumps(deployment["spec"], sort_keys=True).encode()).hexdigest()
+
+
+def api_cases() -> list[dict]:
+    payload = {
+        "transaction_id": "recovery-synthetic-001",
+        "sender_id": "synthetic-sender",
+        "recipient_id": "synthetic-recipient",
+        "amount": "125.50",
+        "currency": "SGD",
+    }
+    results = []
+    with Client(timeout=5, trust_env=False, follow_redirects=False) as client:
+        health = client.get(BASE + "/health")
+        assert health.status_code == 200 and health.json() == {"status": "healthy"}
+        results.append({"case": "health", "status": health.status_code, "body": health.json()})
+        for name, body, status, expected in [
+            ("accepted", payload, 200, {"valid": True, "errors": []}),
+            (
+                "rejected",
+                {**payload, "amount": "0"},
+                200,
+                {"valid": False, "errors": ["AMOUNT_NOT_POSITIVE"]},
+            ),
+            (
+                "invalid_type",
+                {**payload, "amount": 125},
+                422,
+                {
+                    "detail": [
+                        {
+                            "loc": ["body", "amount"],
+                            "type": "string_type",
+                            "msg": "Invalid request value. Check the API contract.",
+                        }
+                    ]
+                },
+            ),
+        ]:
+            response = client.post(BASE + "/validate", json=body)
+            assert response.status_code == status and response.json() == expected
+            results.append({"case": name, "status": response.status_code, "body": response.json()})
+    return results
+
+
+stop = Event()
+samples = []
+sampler_errors = []
+origin = monotonic()
+
+
+def sample_health() -> None:
+    try:
+        with Client(timeout=3, trust_env=False, follow_redirects=False) as client:
+            while not stop.is_set():
+                sample = {
+                    "at_utc": datetime.now(UTC).isoformat(),
+                    "elapsed_seconds": monotonic() - origin,
+                }
+                try:
+                    response = client.get(BASE + "/health")
+                    sample["status"] = response.status_code
+                    sample["healthy"] = response.status_code == 200 and response.json() == {
+                        "status": "healthy"
+                    }
+                except (HTTPError, ValueError) as error:
+                    sample.update(healthy=False, error_type=type(error).__name__)
+                samples.append(sample)
+                stop.wait(1)
+    except Exception as error:
+        sampler_errors.append(type(error).__name__)
+
+
+thread = None
+save()
+try:
+    config = safe_load((PRIVATE / "kubeconfig").read_text())
+    assert len(config["clusters"]) == 1
+    server = config["clusters"][0]["cluster"]["server"]
+    assert urlsplit(server).scheme == "https" and urlsplit(server).hostname.endswith(".gke.goog")
+    assert config["current-context"].endswith("_asia-southeast1-a_finsecure-pay-demo")
+    service = kube(["-n", "finsecure-pay", "get", "service", "finsecure-pay"])
+    ingress = service["status"]["loadBalancer"]["ingress"]
+    assert len(ingress) == 1 and ingress[0]["ip"] == urlsplit(BASE).hostname
+    deployment = kube(["-n", "finsecure-pay", "get", "deployment", "finsecure-pay"])
+    assert deployment["spec"]["replicas"] == deployment["status"]["availableReplicas"] == 2
+    nodes_before = kube(["get", "nodes"])["items"]
+    assert len(nodes_before) == 2 and all(
+        any(c["type"] == "Ready" and c["status"] == "True" for c in n["status"]["conditions"])
+        for n in nodes_before
+    )
+    pods = kube(["-n", "finsecure-pay", "get", "pods", "-l", SELECTOR])["items"]
+    assert len(pods) == 2 and all(
+        ready(p) and p["spec"]["containers"][0]["image"] == IMAGE for p in pods
+    )
+    target, survivor = sorted(pods, key=lambda p: p["metadata"]["name"])
+    target_uid, survivor_uid = target["metadata"]["uid"], survivor["metadata"]["uid"]
+    record.update(
+        before_pods=[describe(p) for p in pods],
+        target_name=target["metadata"]["name"],
+        target_uid=target_uid,
+        survivor_uid=survivor_uid,
+        deployment_spec_sha256=spec_hash(deployment),
+        before_api_checks=api_cases(),
+        external_url=BASE,
+    )
+    thread = Thread(target=sample_health, name="owned-health-sampler")
+    thread.start()
+    sleep(2)
+    assert samples and samples[-1]["healthy"] and not sampler_errors
+    token = run_path("scripts/gke_preflight.py")["access_token"]()
+    started = monotonic()
+    record.update(
+        status="deletion_requested",
+        deletion_requests=1,
+        delete_at_utc=datetime.now(UTC).isoformat(),
+    )
+    save()
+    options = {"apiVersion": "v1", "kind": "DeleteOptions", "preconditions": {"uid": target_uid}}
+    # Separate authenticated HTTPS client: never send Google credentials to the public HTTP API.
+    with Client(
+        headers={"Authorization": "Bearer " + token},
+        timeout=20,
+        transport=HTTPTransport(retries=0, trust_env=False),
+        trust_env=False,
+        follow_redirects=False,
+    ) as client:
+        response = client.request(
+            "DELETE",
+            server.rstrip("/")
+            + "/api/v1/namespaces/finsecure-pay/pods/"
+            + target["metadata"]["name"],
+            json=options,
+        )
+        record["delete_http_status"] = response.status_code
+        assert response.status_code in (200, 202), "DELETE_NOT_ACCEPTED_NO_RETRY"
+    record["status"] = "observing"
+    save()
+    history = []
+    deadline = started + 300
+    while monotonic() < deadline:
+        current = kube(["-n", "finsecure-pay", "get", "pods", "-l", SELECTOR])["items"]
+        history.append(
+            {
+                "at_utc": datetime.now(UTC).isoformat(),
+                "elapsed_seconds": monotonic() - started,
+                "pods": [describe(p) for p in current],
+            }
+        )
+        record["observations"] = history
+        save()
+        replacements = [
+            p for p in current if p["metadata"]["uid"] not in {target_uid, survivor_uid}
+        ]
+        if (
+            len(current) == 2
+            and len(replacements) == 1
+            and all(ready(p) for p in current)
+            and survivor_uid in {p["metadata"]["uid"] for p in current}
+            and target_uid not in {p["metadata"]["uid"] for p in current}
+        ):
+            after = kube(["-n", "finsecure-pay", "get", "deployment", "finsecure-pay"])
+            if after["status"].get("availableReplicas") == 2:
+                break
+        sleep(1)
+    else:
+        raise TimeoutError("REPLACEMENT_NOT_AVAILABLE_WITHIN_300_SECONDS")
+    assert spec_hash(after) == spec_hash(deployment)
+    assert after["metadata"]["uid"] == deployment["metadata"]["uid"]
+    assert after["metadata"]["generation"] == deployment["metadata"]["generation"]
+    assert all(p["spec"]["containers"][0]["image"] == IMAGE for p in current)
+    assert describe(replacements[0])["owner_uids"] == describe(target)["owner_uids"]
+    record.update(
+        replacement=describe(replacements[0]),
+        after_pods=[describe(p) for p in current],
+        replacement_available_observed_seconds=monotonic() - started,
+        deployment_spec_unchanged=True,
+        deployment_generation_unchanged=True,
+        after_api_checks=api_cases(),
+    )
+    nodes_after = kube(["get", "nodes"])["items"]
+    assert {n["metadata"]["uid"] for n in nodes_before} == {
+        n["metadata"]["uid"] for n in nodes_after
+    }
+    assert all(
+        any(c["type"] == "Ready" and c["status"] == "True" for c in n["status"]["conditions"])
+        for n in nodes_after
+    )
+    after_service = kube(["-n", "finsecure-pay", "get", "service", "finsecure-pay"])
+    assert service["metadata"]["uid"] == after_service["metadata"]["uid"]
+    assert service["spec"] == after_service["spec"] and service["status"] == after_service["status"]
+    record.update(
+        nodes_unchanged_and_ready=True, service_unchanged=True, status="recovery_verified"
+    )
+    sleep(2)
+except Exception as error:
+    record.update(
+        status="failed_or_incomplete",
+        error_type=type(error).__name__,
+        error_at_line=extract_tb(error.__traceback__)[-1].lineno,
+    )
+finally:
+    stop.set()
+    if thread is not None:
+        thread.join(timeout=10)
+    record.update(
+        health_samples=samples,
+        sampler_errors=sampler_errors,
+        sampler_stopped=thread is None or not thread.is_alive(),
+        finished_at_utc=datetime.now(UTC).isoformat(),
+    )
+    if sampler_errors or (thread is not None and thread.is_alive()):
+        record["status"] = "failed_or_incomplete"
+    record["unhealthy_samples"] = sum(not s["healthy"] for s in samples)
+    save()
+print(
+    dumps(
+        {
+            k: record.get(k)
+            for k in [
+                "status",
+                "deletion_requests",
+                "delete_http_status",
+                "replacement_available_observed_seconds",
+                "unhealthy_samples",
+                "sampler_stopped",
+                "error_type",
+            ]
+        },
+        indent=2,
+    )
+)
+raise SystemExit(0 if record["status"] == "recovery_verified" else 1)

@@ -24,7 +24,11 @@ infrastructure files. Its ARM64 artifact is distinct from the deployed AMD64 ima
 The account currency is SGD; trial state/credit remain user-confirmed. No paid upgrade
 was requested. Running resources consume trial credit; S$225 is a planning envelope,
 not a cap. Plan availability through 18 November and review teardown on 19 November.
-Cloud dashboards/alerts, recovery demonstrations and automatic CI deployment remain
+A subsequently approved one-pod deletion demonstrated actual replacement: two available
+replicas were observed again after 16.14 seconds, with all 21 sampled public health
+requests succeeding. See [recovery evidence](evidence/task-03/step-04-recovery.md).
+This is not proof of continuous availability or node-failure tolerance. Cloud
+dashboards/alerts, new-version rollout/rollback and automatic CI deployment remain
 pending. Actual JSON entries were received in Cloud Logging, but that alone does not
 complete cloud observability.
 

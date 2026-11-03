@@ -1,0 +1,16 @@
+{
+  "verified_at_utc": "2026-11-03T15:52:21.046841+00:00",
+  "revision": "7e37eaa56c494a6506bf6ca3cab58604eae16045",
+  "main_and_feature_remote_match": true,
+  "working_tree_clean": true,
+  "build": 33,
+  "result": "SUCCESS",
+  "tests_passed": 781,
+  "artifacts": 33,
+  "automatic_scm_verified": true,
+  "notification_revision_verified": true,
+  "notification_and_secret_boundaries": "passed",
+  "anonymous_source_access_verified": true,
+  "public_health_status": 200,
+  "cloud_deployment_changed_by_this_publication": false
+}

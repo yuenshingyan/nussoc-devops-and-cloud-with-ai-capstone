@@ -1,0 +1,178 @@
+[
+  {
+    "object_kind": "Pod",
+    "object_name": "finsecure-pay-cdb4569cc-4gwtw",
+    "object_uid": "d6a455c7-1a55-457c-b34d-edeb4cf3eff9",
+    "reason": "Scheduled",
+    "message": "Successfully assigned finsecure-pay/finsecure-pay-cdb4569cc-4gwtw to gke-finsecure-pay-demo-default-pool-08d23f11-v4mt",
+    "first_timestamp": "2026-11-03T15:14:41Z",
+    "last_timestamp": "2026-11-03T15:14:41Z",
+    "count": 1,
+    "source_component": "default-scheduler"
+  },
+  {
+    "object_kind": "Pod",
+    "object_name": "finsecure-pay-cdb4569cc-4gwtw",
+    "object_uid": "d6a455c7-1a55-457c-b34d-edeb4cf3eff9",
+    "reason": "Pulling",
+    "message": "Pulling image \"docker.io/yuenshingyan/finsecure-pay@sha256:1fc3362f15ba91f4161b8fccab644631ccc0733e9b9675bb7e2cb88e7aea5b4c\"",
+    "first_timestamp": "2026-11-03T15:14:42Z",
+    "last_timestamp": "2026-11-03T15:14:42Z",
+    "count": 1,
+    "source_component": "kubelet"
+  },
+  {
+    "object_kind": "Pod",
+    "object_name": "finsecure-pay-cdb4569cc-4gwtw",
+    "object_uid": "d6a455c7-1a55-457c-b34d-edeb4cf3eff9",
+    "reason": "Pulled",
+    "message": "Successfully pulled image \"docker.io/yuenshingyan/finsecure-pay@sha256:1fc3362f15ba91f4161b8fccab644631ccc0733e9b9675bb7e2cb88e7aea5b4c\" in 9.372s (9.372s including waiting). Image size: 21528932 bytes.",
+    "first_timestamp": "2026-11-03T15:14:51Z",
+    "last_timestamp": "2026-11-03T15:14:51Z",
+    "count": 1,
+    "source_component": "kubelet"
+  },
+  {
+    "object_kind": "Pod",
+    "object_name": "finsecure-pay-cdb4569cc-4gwtw",
+    "object_uid": "d6a455c7-1a55-457c-b34d-edeb4cf3eff9",
+    "reason": "Created",
+    "message": "Container created",
+    "first_timestamp": "2026-11-03T15:14:51Z",
+    "last_timestamp": "2026-11-03T15:14:51Z",
+    "count": 1,
+    "source_component": "kubelet"
+  },
+  {
+    "object_kind": "Pod",
+    "object_name": "finsecure-pay-cdb4569cc-4gwtw",
+    "object_uid": "d6a455c7-1a55-457c-b34d-edeb4cf3eff9",
+    "reason": "Started",
+    "message": "Container started",
+    "first_timestamp": "2026-11-03T15:14:52Z",
+    "last_timestamp": "2026-11-03T15:14:52Z",
+    "count": 1,
+    "source_component": "kubelet"
+  },
+  {
+    "object_kind": "Pod",
+    "object_name": "finsecure-pay-cdb4569cc-4gwtw",
+    "object_uid": "d6a455c7-1a55-457c-b34d-edeb4cf3eff9",
+    "reason": "Unhealthy",
+    "message": "Startup probe failed: Get \"http://10.44.1.6:8000/health\": dial tcp 10.44.1.6:8000: connect: connection refused",
+    "first_timestamp": "2026-11-03T15:14:52Z",
+    "last_timestamp": "2026-11-03T15:15:00Z",
+    "count": 5,
+    "source_component": "kubelet"
+  },
+  {
+    "object_kind": "Pod",
+    "object_name": "finsecure-pay-cdb4569cc-4gwtw",
+    "object_uid": "d6a455c7-1a55-457c-b34d-edeb4cf3eff9",
+    "reason": "Killing",
+    "message": "Stopping container api",
+    "first_timestamp": "2026-11-03T16:01:27Z",
+    "last_timestamp": "2026-11-03T16:01:27Z",
+    "count": 1,
+    "source_component": "kubelet"
+  },
+  {
+    "object_kind": "Pod",
+    "object_name": "finsecure-pay-cdb4569cc-775hq",
+    "object_uid": "c878c97b-552a-4c4c-aa4f-9d0b01a71346",
+    "reason": "LoadBalancerNegReady",
+    "message": "Pod does not belong to any NEG. Marking condition \"cloud.google.com/load-balancer-neg-ready\" to True.",
+    "first_timestamp": "2026-11-03T16:01:27Z",
+    "last_timestamp": "2026-11-03T16:01:27Z",
+    "count": 1,
+    "source_component": "neg-readiness-reflector"
+  },
+  {
+    "object_kind": "Pod",
+    "object_name": "finsecure-pay-cdb4569cc-775hq",
+    "object_uid": "c878c97b-552a-4c4c-aa4f-9d0b01a71346",
+    "reason": "Scheduled",
+    "message": "Successfully assigned finsecure-pay/finsecure-pay-cdb4569cc-775hq to gke-finsecure-pay-demo-default-pool-08d23f11-v4mt",
+    "first_timestamp": "2026-11-03T16:01:27Z",
+    "last_timestamp": "2026-11-03T16:01:27Z",
+    "count": 1,
+    "source_component": "default-scheduler"
+  },
+  {
+    "object_kind": "Pod",
+    "object_name": "finsecure-pay-cdb4569cc-775hq",
+    "object_uid": "c878c97b-552a-4c4c-aa4f-9d0b01a71346",
+    "reason": "Pulled",
+    "message": "Container image \"docker.io/yuenshingyan/finsecure-pay@sha256:1fc3362f15ba91f4161b8fccab644631ccc0733e9b9675bb7e2cb88e7aea5b4c\" already present on machine and can be accessed by the pod",
+    "first_timestamp": "2026-11-03T16:01:28Z",
+    "last_timestamp": "2026-11-03T16:01:28Z",
+    "count": 1,
+    "source_component": "kubelet"
+  },
+  {
+    "object_kind": "Pod",
+    "object_name": "finsecure-pay-cdb4569cc-775hq",
+    "object_uid": "c878c97b-552a-4c4c-aa4f-9d0b01a71346",
+    "reason": "Created",
+    "message": "Container created",
+    "first_timestamp": "2026-11-03T16:01:28Z",
+    "last_timestamp": "2026-11-03T16:01:28Z",
+    "count": 1,
+    "source_component": "kubelet"
+  },
+  {
+    "object_kind": "Pod",
+    "object_name": "finsecure-pay-cdb4569cc-775hq",
+    "object_uid": "c878c97b-552a-4c4c-aa4f-9d0b01a71346",
+    "reason": "Started",
+    "message": "Container started",
+    "first_timestamp": "2026-11-03T16:01:28Z",
+    "last_timestamp": "2026-11-03T16:01:28Z",
+    "count": 1,
+    "source_component": "kubelet"
+  },
+  {
+    "object_kind": "Pod",
+    "object_name": "finsecure-pay-cdb4569cc-775hq",
+    "object_uid": "c878c97b-552a-4c4c-aa4f-9d0b01a71346",
+    "reason": "Unhealthy",
+    "message": "Startup probe failed: Get \"http://10.44.1.7:8000/health\": dial tcp 10.44.1.7:8000: connect: connection refused",
+    "first_timestamp": "2026-11-03T16:01:30Z",
+    "last_timestamp": "2026-11-03T16:01:36Z",
+    "count": 4,
+    "source_component": "kubelet"
+  },
+  {
+    "object_kind": "ReplicaSet",
+    "object_name": "finsecure-pay-cdb4569cc",
+    "object_uid": "8d9a82f4-b5b2-4729-b192-86b597c46a94",
+    "reason": "SuccessfulCreate",
+    "message": "Created pod: finsecure-pay-cdb4569cc-zg8v4",
+    "first_timestamp": "2026-11-03T15:14:41Z",
+    "last_timestamp": "2026-11-03T15:14:41Z",
+    "count": 1,
+    "source_component": "replicaset-controller"
+  },
+  {
+    "object_kind": "ReplicaSet",
+    "object_name": "finsecure-pay-cdb4569cc",
+    "object_uid": "8d9a82f4-b5b2-4729-b192-86b597c46a94",
+    "reason": "SuccessfulCreate",
+    "message": "Created pod: finsecure-pay-cdb4569cc-4gwtw",
+    "first_timestamp": "2026-11-03T15:14:41Z",
+    "last_timestamp": "2026-11-03T15:14:41Z",
+    "count": 1,
+    "source_component": "replicaset-controller"
+  },
+  {
+    "object_kind": "ReplicaSet",
+    "object_name": "finsecure-pay-cdb4569cc",
+    "object_uid": "8d9a82f4-b5b2-4729-b192-86b597c46a94",
+    "reason": "SuccessfulCreate",
+    "message": "Created pod: finsecure-pay-cdb4569cc-775hq",
+    "first_timestamp": "2026-11-03T16:01:27Z",
+    "last_timestamp": "2026-11-03T16:01:27Z",
+    "count": 1,
+    "source_component": "replicaset-controller"
+  }
+]
