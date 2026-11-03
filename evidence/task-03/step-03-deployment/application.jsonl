@@ -1,0 +1,92 @@
+{"timestamp": "2026-11-03T15:15:00.748892+00:00", "level": "INFO", "event": "server_diagnostic", "diagnostic_code": "SERVER_STARTED"}
+{"timestamp": "2026-11-03T15:15:00.749409+00:00", "level": "INFO", "event": "server_diagnostic", "diagnostic_code": "APPLICATION_STARTING"}
+{"timestamp": "2026-11-03T15:15:00.757066+00:00", "level": "INFO", "event": "server_diagnostic", "diagnostic_code": "APPLICATION_STARTED"}
+{"timestamp": "2026-11-03T15:15:00.757954+00:00", "level": "INFO", "event": "server_diagnostic", "diagnostic_code": "UNCLASSIFIED_MESSAGE"}
+{"timestamp": "2026-11-03T15:15:02.140802+00:00", "level": "INFO", "event": "http_request_completed", "route": "/health", "method": "GET", "status_class": "2xx", "duration_seconds": 0.003577092000000448}
+{"timestamp": "2026-11-03T15:15:02.148418+00:00", "level": "INFO", "event": "http_request_completed", "route": "/health", "method": "GET", "status_class": "2xx", "duration_seconds": 0.00258328199998914}
+{"timestamp": "2026-11-03T15:15:07.148044+00:00", "level": "INFO", "event": "http_request_completed", "route": "/health", "method": "GET", "status_class": "2xx", "duration_seconds": 0.0019251949999556928}
+{"timestamp": "2026-11-03T15:15:12.137426+00:00", "level": "INFO", "event": "http_request_completed", "route": "/health", "method": "GET", "status_class": "2xx", "duration_seconds": 0.0007808380000255966}
+{"timestamp": "2026-11-03T15:15:12.147119+00:00", "level": "INFO", "event": "http_request_completed", "route": "/health", "method": "GET", "status_class": "2xx", "duration_seconds": 0.0008842049999771007}
+{"timestamp": "2026-11-03T15:15:17.147211+00:00", "level": "INFO", "event": "http_request_completed", "route": "/health", "method": "GET", "status_class": "2xx", "duration_seconds": 0.0010914270000057513}
+{"timestamp": "2026-11-03T15:15:22.137786+00:00", "level": "INFO", "event": "http_request_completed", "route": "/health", "method": "GET", "status_class": "2xx", "duration_seconds": 0.0009117229999446863}
+{"timestamp": "2026-11-03T15:15:22.147693+00:00", "level": "INFO", "event": "http_request_completed", "route": "/health", "method": "GET", "status_class": "2xx", "duration_seconds": 0.0009176419999903374}
+{"timestamp": "2026-11-03T15:15:27.147439+00:00", "level": "INFO", "event": "http_request_completed", "route": "/health", "method": "GET", "status_class": "2xx", "duration_seconds": 0.0009614820000365398}
+{"timestamp": "2026-11-03T15:15:32.137204+00:00", "level": "INFO", "event": "http_request_completed", "route": "/health", "method": "GET", "status_class": "2xx", "duration_seconds": 0.0007883719999881578}
+{"timestamp": "2026-11-03T15:15:32.147299+00:00", "level": "INFO", "event": "http_request_completed", "route": "/health", "method": "GET", "status_class": "2xx", "duration_seconds": 0.0008202349999919534}
+{"timestamp": "2026-11-03T15:15:37.147000+00:00", "level": "INFO", "event": "http_request_completed", "route": "/health", "method": "GET", "status_class": "2xx", "duration_seconds": 0.0009111310000093908}
+{"timestamp": "2026-11-03T15:15:42.138312+00:00", "level": "INFO", "event": "http_request_completed", "route": "/health", "method": "GET", "status_class": "2xx", "duration_seconds": 0.0008672970000134228}
+{"timestamp": "2026-11-03T15:15:42.146876+00:00", "level": "INFO", "event": "http_request_completed", "route": "/health", "method": "GET", "status_class": "2xx", "duration_seconds": 0.000899807999985569}
+{"timestamp": "2026-11-03T15:15:47.146947+00:00", "level": "INFO", "event": "http_request_completed", "route": "/health", "method": "GET", "status_class": "2xx", "duration_seconds": 0.001069964999999229}
+{"timestamp": "2026-11-03T15:15:52.137908+00:00", "level": "INFO", "event": "http_request_completed", "route": "/health", "method": "GET", "status_class": "2xx", "duration_seconds": 0.0010876970000026631}
+{"timestamp": "2026-11-03T15:15:52.146442+00:00", "level": "INFO", "event": "http_request_completed", "route": "/health", "method": "GET", "status_class": "2xx", "duration_seconds": 0.0009283850000088023}
+{"timestamp": "2026-11-03T15:15:57.147507+00:00", "level": "INFO", "event": "http_request_completed", "route": "/health", "method": "GET", "status_class": "2xx", "duration_seconds": 0.0010375869999847964}
+{"timestamp": "2026-11-03T15:16:02.139217+00:00", "level": "INFO", "event": "http_request_completed", "route": "/health", "method": "GET", "status_class": "2xx", "duration_seconds": 0.0014568870000175593}
+{"timestamp": "2026-11-03T15:16:02.149153+00:00", "level": "INFO", "event": "http_request_completed", "route": "/health", "method": "GET", "status_class": "2xx", "duration_seconds": 0.00151271300001099}
+{"timestamp": "2026-11-03T15:16:07.147920+00:00", "level": "INFO", "event": "http_request_completed", "route": "/health", "method": "GET", "status_class": "2xx", "duration_seconds": 0.0009906299999897783}
+{"timestamp": "2026-11-03T15:16:12.137443+00:00", "level": "INFO", "event": "http_request_completed", "route": "/health", "method": "GET", "status_class": "2xx", "duration_seconds": 0.0008395340000220131}
+{"timestamp": "2026-11-03T15:16:12.146965+00:00", "level": "INFO", "event": "http_request_completed", "route": "/health", "method": "GET", "status_class": "2xx", "duration_seconds": 0.0008851029999732418}
+{"timestamp": "2026-11-03T15:16:17.148159+00:00", "level": "INFO", "event": "http_request_completed", "route": "/health", "method": "GET", "status_class": "2xx", "duration_seconds": 0.00159863400000404}
+{"timestamp": "2026-11-03T15:16:22.138060+00:00", "level": "INFO", "event": "http_request_completed", "route": "/health", "method": "GET", "status_class": "2xx", "duration_seconds": 0.0011359250000282373}
+{"timestamp": "2026-11-03T15:16:22.147204+00:00", "level": "INFO", "event": "http_request_completed", "route": "/health", "method": "GET", "status_class": "2xx", "duration_seconds": 0.0010902359999818145}
+{"timestamp": "2026-11-03T15:16:27.148199+00:00", "level": "INFO", "event": "http_request_completed", "route": "/health", "method": "GET", "status_class": "2xx", "duration_seconds": 0.0010527489999958561}
+{"timestamp": "2026-11-03T15:16:32.137419+00:00", "level": "INFO", "event": "http_request_completed", "route": "/health", "method": "GET", "status_class": "2xx", "duration_seconds": 0.0011649930000317}
+{"timestamp": "2026-11-03T15:16:32.147089+00:00", "level": "INFO", "event": "http_request_completed", "route": "/health", "method": "GET", "status_class": "2xx", "duration_seconds": 0.001072311000029913}
+{"timestamp": "2026-11-03T15:16:37.148231+00:00", "level": "INFO", "event": "http_request_completed", "route": "/health", "method": "GET", "status_class": "2xx", "duration_seconds": 0.000990193999996336}
+{"timestamp": "2026-11-03T15:16:42.138345+00:00", "level": "INFO", "event": "http_request_completed", "route": "/health", "method": "GET", "status_class": "2xx", "duration_seconds": 0.0011742500000195832}
+{"timestamp": "2026-11-03T15:16:42.146975+00:00", "level": "INFO", "event": "http_request_completed", "route": "/health", "method": "GET", "status_class": "2xx", "duration_seconds": 0.0008488670000019738}
+{"timestamp": "2026-11-03T15:16:47.147172+00:00", "level": "INFO", "event": "http_request_completed", "route": "/health", "method": "GET", "status_class": "2xx", "duration_seconds": 0.001102064999997765}
+{"timestamp": "2026-11-03T15:16:52.137294+00:00", "level": "INFO", "event": "http_request_completed", "route": "/health", "method": "GET", "status_class": "2xx", "duration_seconds": 0.0010323690000291208}
+{"timestamp": "2026-11-03T15:16:52.147018+00:00", "level": "INFO", "event": "http_request_completed", "route": "/health", "method": "GET", "status_class": "2xx", "duration_seconds": 0.0008203890000118008}
+{"timestamp": "2026-11-03T15:16:57.147177+00:00", "level": "INFO", "event": "http_request_completed", "route": "/health", "method": "GET", "status_class": "2xx", "duration_seconds": 0.0009308349999628263}
+{"timestamp": "2026-11-03T15:17:01.933102+00:00", "level": "INFO", "event": "http_request_completed", "route": "/health", "method": "GET", "status_class": "2xx", "duration_seconds": 0.001010627999960434}
+{"timestamp": "2026-11-03T15:17:02.248068+00:00", "level": "INFO", "event": "http_request_completed", "route": "/health", "method": "GET", "status_class": "2xx", "duration_seconds": 0.0010541879999550474}
+{"timestamp": "2026-11-03T15:17:02.249674+00:00", "level": "INFO", "event": "http_request_completed", "route": "/health", "method": "GET", "status_class": "2xx", "duration_seconds": 0.0010253580000494367}
+{"timestamp": "2026-11-03T15:17:02.251890+00:00", "level": "INFO", "event": "validation_outcome", "outcome": "accepted", "codes": []}
+{"timestamp": "2026-11-03T15:17:02.253227+00:00", "level": "INFO", "event": "http_request_completed", "route": "/validate", "method": "POST", "status_class": "2xx", "duration_seconds": 0.3088368460000197}
+{"timestamp": "2026-11-03T15:17:02.369525+00:00", "level": "INFO", "event": "validation_outcome", "outcome": "rejected", "codes": ["AMOUNT_NOT_POSITIVE"]}
+{"timestamp": "2026-11-03T15:17:02.370456+00:00", "level": "INFO", "event": "http_request_completed", "route": "/validate", "method": "POST", "status_class": "2xx", "duration_seconds": 0.0025216800000293915}
+{"timestamp": "2026-11-03T15:17:02.384735+00:00", "level": "INFO", "event": "validation_outcome", "outcome": "invalid", "codes": ["INVALID_REQUEST"]}
+{"timestamp": "2026-11-03T15:17:02.385690+00:00", "level": "INFO", "event": "http_request_completed", "route": "/validate", "method": "POST", "status_class": "4xx", "duration_seconds": 0.002518748999989384}
+{"timestamp": "2026-11-03T15:17:02.429039+00:00", "level": "INFO", "event": "http_request_completed", "route": "other", "method": "GET", "status_class": "2xx", "duration_seconds": 0.03198932200001536}
+{"timestamp": "2026-11-03T15:15:01.402453+00:00", "level": "INFO", "event": "server_diagnostic", "diagnostic_code": "SERVER_STARTED"}
+{"timestamp": "2026-11-03T15:15:01.402887+00:00", "level": "INFO", "event": "server_diagnostic", "diagnostic_code": "APPLICATION_STARTING"}
+{"timestamp": "2026-11-03T15:15:01.410344+00:00", "level": "INFO", "event": "server_diagnostic", "diagnostic_code": "APPLICATION_STARTED"}
+{"timestamp": "2026-11-03T15:15:01.411036+00:00", "level": "INFO", "event": "server_diagnostic", "diagnostic_code": "UNCLASSIFIED_MESSAGE"}
+{"timestamp": "2026-11-03T15:15:02.100530+00:00", "level": "INFO", "event": "http_request_completed", "route": "/health", "method": "GET", "status_class": "2xx", "duration_seconds": 0.0038694619999546376}
+{"timestamp": "2026-11-03T15:15:02.106821+00:00", "level": "INFO", "event": "http_request_completed", "route": "/health", "method": "GET", "status_class": "2xx", "duration_seconds": 0.0018462450000242825}
+{"timestamp": "2026-11-03T15:15:07.106493+00:00", "level": "INFO", "event": "http_request_completed", "route": "/health", "method": "GET", "status_class": "2xx", "duration_seconds": 0.0009302130000037323}
+{"timestamp": "2026-11-03T15:15:12.096289+00:00", "level": "INFO", "event": "http_request_completed", "route": "/health", "method": "GET", "status_class": "2xx", "duration_seconds": 0.0010523639999746592}
+{"timestamp": "2026-11-03T15:15:12.106620+00:00", "level": "INFO", "event": "http_request_completed", "route": "/health", "method": "GET", "status_class": "2xx", "duration_seconds": 0.0010935909999716387}
+{"timestamp": "2026-11-03T15:15:17.107303+00:00", "level": "INFO", "event": "http_request_completed", "route": "/health", "method": "GET", "status_class": "2xx", "duration_seconds": 0.0012694870000018454}
+{"timestamp": "2026-11-03T15:15:22.097355+00:00", "level": "INFO", "event": "http_request_completed", "route": "/health", "method": "GET", "status_class": "2xx", "duration_seconds": 0.0010064530000022387}
+{"timestamp": "2026-11-03T15:15:22.106349+00:00", "level": "INFO", "event": "http_request_completed", "route": "/health", "method": "GET", "status_class": "2xx", "duration_seconds": 0.0010077090000208955}
+{"timestamp": "2026-11-03T15:15:27.106225+00:00", "level": "INFO", "event": "http_request_completed", "route": "/health", "method": "GET", "status_class": "2xx", "duration_seconds": 0.001045820999991065}
+{"timestamp": "2026-11-03T15:15:32.096318+00:00", "level": "INFO", "event": "http_request_completed", "route": "/health", "method": "GET", "status_class": "2xx", "duration_seconds": 0.0007996000000503045}
+{"timestamp": "2026-11-03T15:15:32.105921+00:00", "level": "INFO", "event": "http_request_completed", "route": "/health", "method": "GET", "status_class": "2xx", "duration_seconds": 0.000880854999991243}
+{"timestamp": "2026-11-03T15:15:37.106947+00:00", "level": "INFO", "event": "http_request_completed", "route": "/health", "method": "GET", "status_class": "2xx", "duration_seconds": 0.001031781999984105}
+{"timestamp": "2026-11-03T15:15:42.096723+00:00", "level": "INFO", "event": "http_request_completed", "route": "/health", "method": "GET", "status_class": "2xx", "duration_seconds": 0.000971893999974327}
+{"timestamp": "2026-11-03T15:15:42.107191+00:00", "level": "INFO", "event": "http_request_completed", "route": "/health", "method": "GET", "status_class": "2xx", "duration_seconds": 0.001678846999993766}
+{"timestamp": "2026-11-03T15:15:47.106117+00:00", "level": "INFO", "event": "http_request_completed", "route": "/health", "method": "GET", "status_class": "2xx", "duration_seconds": 0.001089513000010811}
+{"timestamp": "2026-11-03T15:15:52.096399+00:00", "level": "INFO", "event": "http_request_completed", "route": "/health", "method": "GET", "status_class": "2xx", "duration_seconds": 0.000919897999949626}
+{"timestamp": "2026-11-03T15:15:52.106337+00:00", "level": "INFO", "event": "http_request_completed", "route": "/health", "method": "GET", "status_class": "2xx", "duration_seconds": 0.0009077180000076623}
+{"timestamp": "2026-11-03T15:15:57.106618+00:00", "level": "INFO", "event": "http_request_completed", "route": "/health", "method": "GET", "status_class": "2xx", "duration_seconds": 0.0010490010000125949}
+{"timestamp": "2026-11-03T15:16:02.096658+00:00", "level": "INFO", "event": "http_request_completed", "route": "/health", "method": "GET", "status_class": "2xx", "duration_seconds": 0.001006939000035345}
+{"timestamp": "2026-11-03T15:16:02.110924+00:00", "level": "INFO", "event": "http_request_completed", "route": "/health", "method": "GET", "status_class": "2xx", "duration_seconds": 0.003243297999972583}
+{"timestamp": "2026-11-03T15:16:07.107558+00:00", "level": "INFO", "event": "http_request_completed", "route": "/health", "method": "GET", "status_class": "2xx", "duration_seconds": 0.0017361269999582873}
+{"timestamp": "2026-11-03T15:16:12.097238+00:00", "level": "INFO", "event": "http_request_completed", "route": "/health", "method": "GET", "status_class": "2xx", "duration_seconds": 0.0011649790000092253}
+{"timestamp": "2026-11-03T15:16:12.105792+00:00", "level": "INFO", "event": "http_request_completed", "route": "/health", "method": "GET", "status_class": "2xx", "duration_seconds": 0.0008719190000192611}
+{"timestamp": "2026-11-03T15:16:17.106617+00:00", "level": "INFO", "event": "http_request_completed", "route": "/health", "method": "GET", "status_class": "2xx", "duration_seconds": 0.0010152189999530492}
+{"timestamp": "2026-11-03T15:16:22.095879+00:00", "level": "INFO", "event": "http_request_completed", "route": "/health", "method": "GET", "status_class": "2xx", "duration_seconds": 0.0009348940000108996}
+{"timestamp": "2026-11-03T15:16:22.106730+00:00", "level": "INFO", "event": "http_request_completed", "route": "/health", "method": "GET", "status_class": "2xx", "duration_seconds": 0.001008095000031517}
+{"timestamp": "2026-11-03T15:16:27.106604+00:00", "level": "INFO", "event": "http_request_completed", "route": "/health", "method": "GET", "status_class": "2xx", "duration_seconds": 0.0010522930000433917}
+{"timestamp": "2026-11-03T15:16:32.097531+00:00", "level": "INFO", "event": "http_request_completed", "route": "/health", "method": "GET", "status_class": "2xx", "duration_seconds": 0.0010859159999654366}
+{"timestamp": "2026-11-03T15:16:32.105875+00:00", "level": "INFO", "event": "http_request_completed", "route": "/health", "method": "GET", "status_class": "2xx", "duration_seconds": 0.000984832999961327}
+{"timestamp": "2026-11-03T15:16:37.106599+00:00", "level": "INFO", "event": "http_request_completed", "route": "/health", "method": "GET", "status_class": "2xx", "duration_seconds": 0.0011155729999927644}
+{"timestamp": "2026-11-03T15:16:42.096820+00:00", "level": "INFO", "event": "http_request_completed", "route": "/health", "method": "GET", "status_class": "2xx", "duration_seconds": 0.001131202999999914}
+{"timestamp": "2026-11-03T15:16:42.105821+00:00", "level": "INFO", "event": "http_request_completed", "route": "/health", "method": "GET", "status_class": "2xx", "duration_seconds": 0.0010377520000020013}
+{"timestamp": "2026-11-03T15:16:47.106070+00:00", "level": "INFO", "event": "http_request_completed", "route": "/health", "method": "GET", "status_class": "2xx", "duration_seconds": 0.0010532659999853422}
+{"timestamp": "2026-11-03T15:16:52.097373+00:00", "level": "INFO", "event": "http_request_completed", "route": "/health", "method": "GET", "status_class": "2xx", "duration_seconds": 0.0009124530000121922}
+{"timestamp": "2026-11-03T15:16:52.106434+00:00", "level": "INFO", "event": "http_request_completed", "route": "/health", "method": "GET", "status_class": "2xx", "duration_seconds": 0.0011823399999570938}
+{"timestamp": "2026-11-03T15:16:57.106735+00:00", "level": "INFO", "event": "http_request_completed", "route": "/health", "method": "GET", "status_class": "2xx", "duration_seconds": 0.0010192489999667487}
+{"timestamp": "2026-11-03T15:17:02.096539+00:00", "level": "INFO", "event": "http_request_completed", "route": "/health", "method": "GET", "status_class": "2xx", "duration_seconds": 0.0010002399999962108}
+{"timestamp": "2026-11-03T15:17:02.106901+00:00", "level": "INFO", "event": "http_request_completed", "route": "/health", "method": "GET", "status_class": "2xx", "duration_seconds": 0.0011545859999841923}

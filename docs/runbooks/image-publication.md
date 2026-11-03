@@ -25,8 +25,10 @@ uv run --locked python scripts/smoke_test.py --image \
 Both tags resolve to the same manifest, whose configuration digest matches the exact
 smoke-tested/scanned image. Anonymous manifest/config reads and an anonymous Docker pull
 were verified; the pull reused local layer cache and is not a clean-node download test.
-Historical 0.1.0 and 0.2.0 tag digests were verified unchanged. No cluster was created and
-the existing Kubernetes pin remains historical 0.2.0 until deployment preparation.
+Historical 0.1.0 and 0.2.0 tag digests were verified unchanged. Publication itself did
+not create a cluster. The subsequently approved GKE overlay now deploys this exact
+AMD64 digest; historical base/demo manifests retain 0.2.0. See the
+[native deployment record](gke-creation.md).
 
 Source publication `22048c8` includes the image source commit as an ancestor. Its automatic
 Jenkins #32 passed 770 tests/all gates/33 artifacts and exact-revision local notification.

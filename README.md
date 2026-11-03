@@ -2,22 +2,31 @@
 
 A Python/FastAPI transaction-validation API and cloud-native DevOps capstone.
 
-## Cloud preparation
+## Live cloud demo — synthetic data only
 
-GKE preparation has resumed under a **trial-only, no-out-of-pocket** constraint.
-The [deployment runbook](docs/runbooks/gke-deployment.md) and read-only
-`scripts/gke_preflight.py` are implemented. The SDK is installed; the dedicated project
-and four approved APIs are ready. Live technical checks passed on 3 November; billing
-currency is SGD. Trial balance/expiry/state remain user-confirmed, not API-certified.
-No cluster, VM or load balancer has been created. Review the
-[resource/access proposal](deploy/infrastructure/gke-proposal.md) before provisioning.
-Version **0.3.0 is published for AMD64 only**, from exact tested source `4b243e2`;
-[image identity and pull instructions](docs/runbooks/image-publication.md). Runtime smoke,
-770 host tests, source gates and the actual image gate passed (zero reported vulnerabilities).
-Anonymous registry access/pull and post-pull smoke passed. Source publication `22048c8`
-also passed automatic Jenkins #32 with 770 tests/all gates/33 artifacts. Its ARM64 CI
-archive is distinct from the published AMD64 image. No cluster deployment has occurred;
-resource/exposure approval is still required. Existing Kubernetes manifests still pin 0.2.0.
+**Health:** [http://35.198.197.186/health](http://35.198.197.186/health) ·
+**API docs:** [http://35.198.197.186/docs](http://35.198.197.186/docs)
+
+On 3 November, the approved Singapore GKE cluster reached RUNNING with two Ready AMD64
+E2 nodes and two Running/Ready application pods on separate nodes. Native runtime and
+external health/validation checks passed. **HTTP is unencrypted: use synthetic data
+only, never customer/payment-card data or credentials.** No money is transferred.
+
+The GKE overlay pins published AMD64 **0.3.0**; historical base/demo pins remain 0.2.0.
+See [image identity](docs/runbooks/image-publication.md),
+[creation/access runbook](docs/runbooks/gke-creation.md),
+[approved resource profile](deploy/infrastructure/gke-proposal.md) and
+[actual deployment evidence](evidence/task-03/step-03-managed-deployment.md).
+Creation/overlay checks passed with **781 host tests**. Automatic #32 previously passed
+770 tests/all gates/33 artifacts at source `22048c8`; it did not test these later
+infrastructure files. Its ARM64 artifact is distinct from the deployed AMD64 image.
+
+The account currency is SGD; trial state/credit remain user-confirmed. No paid upgrade
+was requested. Running resources consume trial credit; S$225 is a planning envelope,
+not a cap. Plan availability through 18 November and review teardown on 19 November.
+Cloud dashboards/alerts, recovery demonstrations and automatic CI deployment remain
+pending. Actual JSON entries were received in Cloud Logging, but that alone does not
+complete cloud observability.
 
 ## Presentation
 

@@ -1,0 +1,137 @@
+{
+  "verified_at_utc": "2026-11-03T15:21:43.999455+00:00",
+  "actual_cloud_logging_entries_received": 10,
+  "samples": [
+    {
+      "timestamp": "2026-11-03T15:21:32.151319477Z",
+      "pod": "finsecure-pay-cdb4569cc-4gwtw",
+      "json_payload": {
+        "duration_seconds": 0.002404835000106686,
+        "route": "/health",
+        "timestamp": "2026-11-03T15:21:32.150563+00:00",
+        "level": "INFO",
+        "status_class": "2xx",
+        "method": "GET",
+        "event": "http_request_completed"
+      }
+    },
+    {
+      "timestamp": "2026-11-03T15:21:32.140203955Z",
+      "pod": "finsecure-pay-cdb4569cc-4gwtw",
+      "json_payload": {
+        "status_class": "2xx",
+        "route": "/health",
+        "method": "GET",
+        "duration_seconds": 0.002333274000079655,
+        "level": "INFO",
+        "event": "http_request_completed",
+        "timestamp": "2026-11-03T15:21:32.139580+00:00"
+      }
+    },
+    {
+      "timestamp": "2026-11-03T15:21:32.107804408Z",
+      "pod": "finsecure-pay-cdb4569cc-zg8v4",
+      "json_payload": {
+        "event": "http_request_completed",
+        "level": "INFO",
+        "duration_seconds": 0.0008690980000665149,
+        "status_class": "2xx",
+        "timestamp": "2026-11-03T15:21:32.107487+00:00",
+        "method": "GET",
+        "route": "/health"
+      }
+    },
+    {
+      "timestamp": "2026-11-03T15:21:32.097831984Z",
+      "pod": "finsecure-pay-cdb4569cc-zg8v4",
+      "json_payload": {
+        "method": "GET",
+        "timestamp": "2026-11-03T15:21:32.097434+00:00",
+        "event": "http_request_completed",
+        "duration_seconds": 0.001202984000087781,
+        "level": "INFO",
+        "route": "/health",
+        "status_class": "2xx"
+      }
+    },
+    {
+      "timestamp": "2026-11-03T15:21:27.147905925Z",
+      "pod": "finsecure-pay-cdb4569cc-4gwtw",
+      "json_payload": {
+        "status_class": "2xx",
+        "route": "/health",
+        "timestamp": "2026-11-03T15:21:27.147369+00:00",
+        "duration_seconds": 0.0009573009999712667,
+        "method": "GET",
+        "event": "http_request_completed",
+        "level": "INFO"
+      }
+    },
+    {
+      "timestamp": "2026-11-03T15:21:27.107184056Z",
+      "pod": "finsecure-pay-cdb4569cc-zg8v4",
+      "json_payload": {
+        "status_class": "2xx",
+        "duration_seconds": 0.0009800550000136354,
+        "route": "/health",
+        "timestamp": "2026-11-03T15:21:27.106656+00:00",
+        "event": "http_request_completed",
+        "level": "INFO",
+        "method": "GET"
+      }
+    },
+    {
+      "timestamp": "2026-11-03T15:21:22.148175463Z",
+      "pod": "finsecure-pay-cdb4569cc-4gwtw",
+      "json_payload": {
+        "status_class": "2xx",
+        "method": "GET",
+        "level": "INFO",
+        "duration_seconds": 0.001042134000044825,
+        "event": "http_request_completed",
+        "timestamp": "2026-11-03T15:21:22.147430+00:00",
+        "route": "/health"
+      }
+    },
+    {
+      "timestamp": "2026-11-03T15:21:22.138690150Z",
+      "pod": "finsecure-pay-cdb4569cc-4gwtw",
+      "json_payload": {
+        "duration_seconds": 0.001060375999941243,
+        "level": "INFO",
+        "method": "GET",
+        "event": "http_request_completed",
+        "status_class": "2xx",
+        "route": "/health",
+        "timestamp": "2026-11-03T15:21:22.138180+00:00"
+      }
+    },
+    {
+      "timestamp": "2026-11-03T15:21:22.106425393Z",
+      "pod": "finsecure-pay-cdb4569cc-zg8v4",
+      "json_payload": {
+        "status_class": "2xx",
+        "method": "GET",
+        "duration_seconds": 0.0008582270000943026,
+        "timestamp": "2026-11-03T15:21:22.106088+00:00",
+        "level": "INFO",
+        "event": "http_request_completed",
+        "route": "/health"
+      }
+    },
+    {
+      "timestamp": "2026-11-03T15:21:22.097693963Z",
+      "pod": "finsecure-pay-cdb4569cc-zg8v4",
+      "json_payload": {
+        "route": "/health",
+        "method": "GET",
+        "status_class": "2xx",
+        "duration_seconds": 0.001617495999994389,
+        "event": "http_request_completed",
+        "timestamp": "2026-11-03T15:21:22.097256+00:00",
+        "level": "INFO"
+      }
+    }
+  ],
+  "monitoring_dashboard_or_alert_delivery_verified": false
+}

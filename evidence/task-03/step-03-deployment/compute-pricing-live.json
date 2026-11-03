@@ -1,0 +1,123 @@
+{
+  "checked_at_utc": "2026-11-03T14:59:46.514604+00:00",
+  "status": "catalog_complete",
+  "pages_read": 7,
+  "currency": "SGD",
+  "source": "Google Cloud Billing Catalog API: Compute Engine",
+  "matches": [
+    {
+      "skuId": "0572-568A-4FC4",
+      "description": "Storage PD Capacity in Singapore",
+      "category": {
+        "serviceDisplayName": "Compute Engine",
+        "resourceFamily": "Storage",
+        "resourceGroup": "PDStandard",
+        "usageType": "OnDemand"
+      },
+      "serviceRegions": [
+        "asia-southeast1"
+      ],
+      "pricingInfo": [
+        {
+          "summary": "",
+          "pricingExpression": {
+            "usageUnit": "GiBy.mo",
+            "displayQuantity": 1,
+            "tieredRates": [
+              {
+                "startUsageAmount": 0,
+                "unitPrice": {
+                  "currencyCode": "SGD",
+                  "units": "0",
+                  "nanos": 56441000
+                }
+              }
+            ],
+            "usageUnitDescription": "gibibyte month",
+            "baseUnit": "By.s",
+            "baseUnitDescription": "byte second",
+            "baseUnitConversionFactor": 2787004278374400.0
+          },
+          "currencyConversionRate": 1.282750000000499,
+          "effectiveTime": "2026-11-03T08:00:00Z"
+        }
+      ]
+    },
+    {
+      "skuId": "7102-B9AA-2ACF",
+      "description": "E2 Instance Core running in Singapore",
+      "category": {
+        "serviceDisplayName": "Compute Engine",
+        "resourceFamily": "Compute",
+        "resourceGroup": "CPU",
+        "usageType": "OnDemand"
+      },
+      "serviceRegions": [
+        "asia-southeast1"
+      ],
+      "pricingInfo": [
+        {
+          "summary": "",
+          "pricingExpression": {
+            "usageUnit": "h",
+            "displayQuantity": 1,
+            "tieredRates": [
+              {
+                "startUsageAmount": 0,
+                "unitPrice": {
+                  "currencyCode": "SGD",
+                  "units": "0",
+                  "nanos": 34517917
+                }
+              }
+            ],
+            "usageUnitDescription": "hour",
+            "baseUnit": "s",
+            "baseUnitDescription": "second",
+            "baseUnitConversionFactor": 3600
+          },
+          "currencyConversionRate": 1.282750000000499,
+          "effectiveTime": "2026-11-03T08:00:00Z"
+        }
+      ]
+    },
+    {
+      "skuId": "E277-7DC2-2C7D",
+      "description": "E2 Instance Ram running in Singapore",
+      "category": {
+        "serviceDisplayName": "Compute Engine",
+        "resourceFamily": "Compute",
+        "resourceGroup": "RAM",
+        "usageType": "OnDemand"
+      },
+      "serviceRegions": [
+        "asia-southeast1"
+      ],
+      "pricingInfo": [
+        {
+          "summary": "",
+          "pricingExpression": {
+            "usageUnit": "GiBy.h",
+            "displayQuantity": 1,
+            "tieredRates": [
+              {
+                "startUsageAmount": 0,
+                "unitPrice": {
+                  "currencyCode": "SGD",
+                  "units": "0",
+                  "nanos": 4625519
+                }
+              }
+            ],
+            "usageUnitDescription": "gibibyte hour",
+            "baseUnit": "By.s",
+            "baseUnitDescription": "byte second",
+            "baseUnitConversionFactor": 3865470566400
+          },
+          "currencyConversionRate": 1.282750000000499,
+          "effectiveTime": "2026-11-03T08:00:00Z"
+        }
+      ]
+    }
+  ]
+}

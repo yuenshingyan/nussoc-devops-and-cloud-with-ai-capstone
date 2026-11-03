@@ -59,13 +59,18 @@ After verifying the actual cluster profile, node identity and control-plane sett
 ```sh
 gcloud container clusters get-credentials finsecure-pay-demo \
   --project="$PROJECT_ID" --zone=asia-southeast1-a --dns-endpoint
+kubectl apply -f deploy/kubernetes/overlays/demo/namespace.yaml
+kubectl apply --dry-run=server -k deploy/kubernetes/overlays/gke
 kubectl apply -k deploy/kubernetes/overlays/gke
 kubectl -n finsecure-pay rollout status deployment/finsecure-pay --timeout=600s
 ```
 
 The commands above require the explicitly isolated `KUBECONFIG` and plugin PATH in
 the calling environment. Verify that context points to the approved cluster before
-applying. Render locally first; server-side dry run precedes actual apply. The overlay
+applying. Render locally first; bootstrap only the namespace, then server-side dry run
+precedes workload/Service apply. A dry-run namespace is not persisted for following
+namespaced resources; the first attempt exposed this ordering issue and is preserved.
+The overlay
 preserves the base security/probe/resource configuration, selects AMD64 and pins the
 published 0.3.0 digest. Only the application Service becomes a single IPv4 LoadBalancer;
 port 80 is inherited from the base. Other overlays and historical image pins are unchanged.
@@ -73,8 +78,32 @@ port 80 is inherited from the base. Other overlays and historical image pins are
 Observe the external IP for up to 15 minutes; stop and inspect if it remains pending.
 Verify two Ready nodes and two Running/Ready application pods, actual image digests,
 non-root identity, health/validation behavior, safe JSON logs and external HTTP access.
-Use only synthetic data. Do not treat a public `/health` response alone as proof of
+Public health readiness is observed for at most 120 seconds, with five-second polling
+and ten-second HTTP phase timeouts. Business-case checks run once after readiness;
+failures are not automatically retried. Use only synthetic data. Do not treat a public
+`/health` response alone as proof of
 all validation, pod recovery, automatic rollout or CI deployment-gate requirements.
+
+## Actual deployment
+
+On 3 November the cluster reached RUNNING. Two Ready AMD64 E2 nodes each host one
+Running/Ready application pod, with zero observed restarts. The live 0.3.0 image digest
+matches the published release. Non-root UID, root filesystem read-only flags and zero
+effective capabilities were checked inside both containers.
+
+Public health: **http://35.198.197.186/health**. Accepted/rejected/invalid synthetic
+requests, OpenAPI 0.3.0 and metrics access passed. Ten actual JSON application entries
+were read back from Cloud Logging. No cloud dashboard, Prometheus deployment, alerts,
+pod deletion or new-version rollout demonstration has been performed in this step.
+
+The resource census found two VMs, two 30 GB standard boot disks, one external TCP/80
+forwarding rule, no Cloud NAT/router, and no user-managed node service-account keys.
+A first firewall observer incorrectly counted a generated DENY rule as an ALLOW rule;
+corrected action-aware inspection confirmed one public allow rule, scoped to the LB IP
+and TCP/80, without changing any firewall rule. This is configuration inspection, not
+a penetration test or a guarantee about every possible network path.
+
+See [deployment evidence](../../evidence/task-03/step-03-managed-deployment.md).
 
 ## Retention and teardown
 

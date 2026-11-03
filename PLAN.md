@@ -1,6 +1,31 @@
 # FinSecure Pay — Implementation Plan
 
-## Latest checkpoint — GKE project/APIs ready; no cluster
+## Latest checkpoint — Step 3.3 live GKE deployment verified
+
+With explicit approval, `2b2afee` created the fixed zonal Singapore cluster and deployed
+AMD64 0.3.0 by its published digest. Public health: http://35.198.197.186/health.
+Two Ready nodes and two Running/Ready pods on separate nodes were verified, with zero
+restarts, non-root UID, read-only root filesystems and zero effective capabilities.
+External accepted/rejected/invalid requests passed; real JSON entries reached Cloud Logging.
+The resource census matches two E2-standard-2 VMs, two 30 GB standard boot disks and
+one TCP/80 LoadBalancer. No NAT, node key export, paid upgrade or public admin UI.
+
+Host checks passed with 781 tests. The initial Bash 3.2 approval-guard test failure,
+namespace dry-run ordering issue and firewall-observer DENY/ALLOW confusion were fixed
+or reconciled before their corresponding claims, with diagnostics retained. Actual
+Cloud Billing SGD lookup now prices baseline compute at about S$81.44 per 384 hours;
+S$225 remains a whole-window planning envelope, not a quote/cap. Trial state/remaining
+credit are user-confirmed, not independently API-certified. Resources consume trial
+credit; maintain the no-paid-upgrade constraint and review credits daily.
+
+Creation/evidence updates are local pending review/publication. Automatic #32 at
+published `22048c8` tested the earlier 770-test source, not the new infrastructure files.
+See [actual deployment evidence](evidence/task-03/step-03-managed-deployment.md) and
+[operator runbook](docs/runbooks/gke-creation.md). Step 3.4 disruption/recovery,
+new-version rollout, cloud dashboards/alerts and cloud CI delivery remain pending.
+Do not perform a disruptive demo before review and explicit approval.
+
+## Previous checkpoint — GKE project/APIs ready; no cluster
 
 User selected GKE subject to no out-of-pocket charges and no paid-account upgrade.
 User reports Free Trial, unused S$385 credit and expiry 2 February 2027;
@@ -210,7 +235,7 @@ The assignment allows equivalent application, build, and unit-testing tools with
 - **Verify:** Validate configuration; verify actual probe behavior after deployment in Step 3.3.
 
 ### Step 3.3 — Deploy to managed cloud Kubernetes
-- **Status:** GKE project, approved APIs and SDK are ready; live technical preflight passed. Trial balance/state remain user-confirmed. AMD64 0.3.0 is published and verified; final resource/exposure approval and cluster provisioning remain pending. No cluster access yet.
+- **Status:** Implemented and live-verified on 3 November: fixed zonal GKE, two Ready nodes/two Ready pods, pinned AMD64 0.3.0 and public HTTP access. Local creation/evidence updates await review/publication. No paid upgrade; trial credit monitoring and later cloud/demo steps remain pending.
 - **Branch:** `task-03/step-03-cloud-deployment`
 - Confirm provider, region, account, cost budget, exposure controls, and teardown plan before provisioning.
 - Provision or connect to EKS, AKS, or GKE using reproducible configuration where feasible.

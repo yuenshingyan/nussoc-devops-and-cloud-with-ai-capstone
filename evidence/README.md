@@ -21,6 +21,11 @@ and report retention on an isolated failure. Cloud delivery remains unverified.
 
 ## Recorded evidence
 
+- [Step 3.3 — actual managed deployment](task-03/step-03-managed-deployment.md): approved
+  zonal GKE with two Ready AMD64 nodes/two Ready pods, pinned 0.3.0, public HTTP cases,
+  runtime hardening, resource census and real Cloud Logging samples. 781 host tests;
+  initial guard/dry-run/observer issues retained. No paid upgrade or disruptive demo.
+
 - [Step 3.3 — release publication](task-03/step-03-release-publication.md): source
   published, automatic #32 passed 770 tests/all gates/33 artifacts and exact-revision
   local mail; exact tested AMD64 0.3.0 image published, anonymously pulled and smoke-tested.

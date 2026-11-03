@@ -1,0 +1,91 @@
+{
+  "verified_at_utc": "2026-11-03T15:17:03.058630+00:00",
+  "external_url": "http://35.198.197.186",
+  "public_http_only": true,
+  "native_node_architecture": "amd64",
+  "application_version": "0.3.0",
+  "pod_count": 2,
+  "pods": [
+    {
+      "name": "finsecure-pay-cdb4569cc-4gwtw",
+      "node": "gke-finsecure-pay-demo-default-pool-08d23f11-v4mt",
+      "phase": "Running",
+      "ready": true,
+      "restart_count": 0,
+      "image_id": "docker.io/yuenshingyan/finsecure-pay@sha256:1fc3362f15ba91f4161b8fccab644631ccc0733e9b9675bb7e2cb88e7aea5b4c",
+      "runtime_checks": {
+        "uid": 10001,
+        "root_read_only": true,
+        "effective_capabilities_zero": true,
+        "temporary_file_closed": true
+      }
+    },
+    {
+      "name": "finsecure-pay-cdb4569cc-zg8v4",
+      "node": "gke-finsecure-pay-demo-default-pool-08d23f11-93zl",
+      "phase": "Running",
+      "ready": true,
+      "restart_count": 0,
+      "image_id": "docker.io/yuenshingyan/finsecure-pay@sha256:1fc3362f15ba91f4161b8fccab644631ccc0733e9b9675bb7e2cb88e7aea5b4c",
+      "runtime_checks": {
+        "uid": 10001,
+        "root_read_only": true,
+        "effective_capabilities_zero": true,
+        "temporary_file_closed": true
+      }
+    }
+  ],
+  "readiness_observations": [
+    {
+      "status": 200
+    }
+  ],
+  "http_checks": [
+    {
+      "case": "health",
+      "status": 200,
+      "body": {
+        "status": "healthy"
+      }
+    },
+    {
+      "case": "accepted",
+      "status": 200,
+      "body": {
+        "valid": true,
+        "errors": []
+      }
+    },
+    {
+      "case": "business_rejection",
+      "status": 200,
+      "body": {
+        "valid": false,
+        "errors": [
+          "AMOUNT_NOT_POSITIVE"
+        ]
+      }
+    },
+    {
+      "case": "wrong_amount_type",
+      "status": 422,
+      "body": {
+        "detail": [
+          {
+            "loc": [
+              "body",
+              "amount"
+            ],
+            "type": "string_type",
+            "msg": "Invalid request value. Check the API contract."
+          }
+        ]
+      }
+    }
+  ],
+  "json_log_records": 92,
+  "synthetic_request_identifiers_absent_from_logs": true,
+  "monitoring_stack_installed": false,
+  "pod_deletion_or_upgrade_demo_performed": false,
+  "paid_billing_upgrade_requested": false
+}

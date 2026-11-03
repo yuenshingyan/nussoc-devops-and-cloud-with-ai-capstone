@@ -1,0 +1,8 @@
+{
+  "services": {
+    "cloudresourcemanager.googleapis.com": "ENABLED",
+    "cloudbilling.googleapis.com": "ENABLED"
+  },
+  "billing_upgrade_requested": false,
+  "cluster_creation_requested": false
+}

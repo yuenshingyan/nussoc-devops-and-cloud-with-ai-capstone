@@ -1,10 +1,13 @@
-# GKE resource proposal — approval required before creation
+# GKE resource profile — approved and deployed
 
-This is a proposed resource inventory, **not applied infrastructure**. On 3 November
-2026 the dedicated project was created, linked to the sole visible open billing
-account and selected locally. Four APIs were enabled with permission. No cluster,
-VM or load balancer has been created by this preparation. The separately approved
-AMD64 0.3.0 image is now published and verified; this does not authorize infrastructure.
+The user approved this profile on 3 November 2026. The zonal cluster, two fixed E2
+nodes and application HTTP LoadBalancer are now deployed and verified. The dedicated
+project/billing linkage and initial four APIs had separate prior approval; Cloud Resource
+Manager and Cloud Billing APIs were subsequently enabled for the node-role grant and
+live SGD price lookup. No paid billing upgrade was requested.
+See the [creation/runbook record](../../docs/runbooks/gke-creation.md) and
+[actual evidence](../../evidence/task-03/step-03-managed-deployment.md).
+Monitoring storage/installations in the table remain deferred, not created.
 
 ## Verified inputs
 
@@ -44,7 +47,7 @@ HTTP is deliberately **not** production financial security. No real customer,
 payment-card, credential or transaction data may be sent. If TLS is required, agree
 a different ingress/certificate plan before exposure; do not use an unapproved DNS
 service, certificate workaround or domain purchase. Network and IAM details above
-require explicit approval before resources or grants are created.
+were approved before resources and grants were created. Changes still require review.
 
 The monitoring rows describe later deferred monitoring work; they are included for
 whole-window costing, not implemented in this checkpoint. Cloud CI deployment identity,
@@ -58,10 +61,12 @@ prove automatic SCM-to-cloud deployment or a deployment-blocking security gate.
   It includes two nodes, 60 GB boot disks, up to 10 GiB monitoring disks, one load
   balancer, node public IPs, modest traffic/logs, and contingency for a management fee
   if the eligible zonal-cluster credit is unavailable or already consumed elsewhere.
-- Previous compute estimate was about US$0.0827/node-hour, **not a newly verified
-  account-currency tariff**. The authenticated Compute SKU catalog request was denied;
-  do not label that estimate as a live Google quote or infer an exchange rate from
-  the trial-credit amount. Verify the Console's current estimate before creation.
+- The initial SKU catalog request was denied. After enabling the supporting Cloud
+  Billing API, the authenticated current SGD catalog was read before creation: two
+  nodes for 384 hours cost approximately S$81.44 in compute; 60 GiB boot disks add
+  approximately S$1.78 using a 730-hour month. Other resources/fees remain additional.
+  These verified component prices replace the earlier unverified US$0.0827/node-hour
+  estimate; S$225 is still a provisional whole-window envelope, not a full quote/cap.
 - Google documents a US$74.40 monthly management credit for an eligible zonal Standard
   cluster; this does not cover worker nodes, disks or networking. Do not assume other
   projects have left the entire allowance unused.
@@ -97,7 +102,9 @@ actual AMD64 image gate with zero reported vulnerabilities and passed runtime sm
 All 770 host tests passed. ARM64 is still the default; automatic architecture acceptance
 was not introduced. The failed attempt is retained as evidence. Source and the exact
 AMD64 image were subsequently published with separate approval; anonymous pull and
-post-pull smoke passed. Cluster creation still requires approval.
+post-pull smoke passed. The user subsequently approved cluster creation; the deployed
+GKE overlay now pins that exact digest and selects AMD64. Historical base/demo pins
+remain unchanged.
 
 Host storage was 4.2 GiB free before preparation, while the Docker backing filesystem
 had about 10.5 GiB free. They are separate constraints. Check both before builds/scans;

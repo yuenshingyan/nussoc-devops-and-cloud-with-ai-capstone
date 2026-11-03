@@ -1,0 +1,10 @@
+{
+  "currency": "SGD",
+  "hours": 384,
+  "two_nodes_per_hour": "0.212079972",
+  "two_nodes_for_384_hours": "81.438709248",
+  "boot_disks_estimate_using_730_hours_per_month": "1.781370739726027397260273973",
+  "monthly_disk_rate_per_gib": "0.056441",
+  "remaining_items": "load balancing, public IPs, monitoring disks, traffic/logs, potential management fee and tax/contingency",
+  "planning_envelope_not_cap": "225"
+}

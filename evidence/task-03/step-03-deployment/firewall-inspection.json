@@ -1,0 +1,111 @@
+{
+  "initial_exact_representation_assertion_failed": true,
+  "rules": [
+    {
+      "name": "gke-finsecure-pay-demo-f1babf56-all",
+      "direction": "INGRESS",
+      "allowed": [
+        {
+          "IPProtocol": "udp"
+        },
+        {
+          "IPProtocol": "icmp"
+        },
+        {
+          "IPProtocol": "esp"
+        },
+        {
+          "IPProtocol": "ah"
+        },
+        {
+          "IPProtocol": "sctp"
+        },
+        {
+          "IPProtocol": "tcp"
+        }
+      ],
+      "sourceRanges": [
+        "10.44.0.0/20"
+      ],
+      "destinationRanges": null,
+      "disabled": false
+    },
+    {
+      "name": "gke-finsecure-pay-demo-f1babf56-vms",
+      "direction": "INGRESS",
+      "allowed": [
+        {
+          "IPProtocol": "icmp"
+        },
+        {
+          "IPProtocol": "tcp",
+          "ports": [
+            "1-65535"
+          ]
+        },
+        {
+          "IPProtocol": "udp",
+          "ports": [
+            "1-65535"
+          ]
+        }
+      ],
+      "sourceRanges": [
+        "10.40.0.0/24"
+      ],
+      "destinationRanges": null,
+      "disabled": false
+    },
+    {
+      "name": "k8s2-8wwlkt7w-finsecure-pay-finsecure-pay-kiem563p",
+      "direction": "INGRESS",
+      "allowed": [
+        {
+          "IPProtocol": "tcp",
+          "ports": [
+            "80"
+          ]
+        }
+      ],
+      "sourceRanges": [
+        "0.0.0.0/0"
+      ],
+      "destinationRanges": [
+        "35.198.197.186"
+      ],
+      "disabled": false
+    },
+    {
+      "name": "k8s2-8wwlkt7w-finsecure-pay-finsecure-pay-kiem563p-deny",
+      "direction": "INGRESS",
+      "allowed": null,
+      "sourceRanges": [
+        "0.0.0.0/0"
+      ],
+      "destinationRanges": [
+        "35.198.197.186"
+      ],
+      "disabled": false
+    },
+    {
+      "name": "k8s2-8wwlkt7w-l4-shared-hc-fw",
+      "direction": "INGRESS",
+      "allowed": [
+        {
+          "IPProtocol": "tcp",
+          "ports": [
+            "10256"
+          ]
+        }
+      ],
+      "sourceRanges": [
+        "130.211.0.0/22",
+        "35.191.0.0/16",
+        "209.85.152.0/22",
+        "209.85.204.0/22"
+      ],
+      "destinationRanges": null,
+      "disabled": false
+    }
+  ]
+}

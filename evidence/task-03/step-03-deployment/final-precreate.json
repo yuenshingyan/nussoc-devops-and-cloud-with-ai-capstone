@@ -1,0 +1,40 @@
+{
+  "required_api_states": {
+    "iam.googleapis.com": "ENABLED",
+    "cloudresourcemanager.googleapis.com": "DISABLED",
+    "compute.googleapis.com": "ENABLED",
+    "container.googleapis.com": "ENABLED"
+  },
+  "existing_cluster_count": 0,
+  "proposed_ranges_overlap_existing": false,
+  "pricing_catalog_status": 403,
+  "pricing_catalog_reasons": [
+    "SERVICE_DISABLED"
+  ],
+  "technical_preflight": {
+    "checked_at_utc": "2026-11-03T14:56:49.268068+00:00",
+    "status": "technical_checks_passed",
+    "region": "asia-southeast1",
+    "zone": "asia-southeast1-a",
+    "machine_type": "e2-standard-2",
+    "cpu_headroom": {
+      "regional_cpus": 100,
+      "regional_e2_cpus": 24,
+      "global_cpus": 12
+    },
+    "required_cpu_headroom": 6,
+    "required_apis_enabled": true,
+    "billing_enabled": true,
+    "gke_server_config_readable": true,
+    "machine_shape_matches": true,
+    "deployment_authorized": false,
+    "trial_credit_currency_expiry_verified_by_this_tool": false,
+    "limitations": [
+      "Billing enabled does not establish a free-trial account or remaining credit.",
+      "A listed machine type and quota do not guarantee zonal capacity or creation rights.",
+      "Missing quota metrics require review; this tool does not treat them as unlimited.",
+      "Address, disk and other quotas need checking against the approved final network plan.",
+      "No resource creation, API enablement, IAM change or paid upgrade is performed."
+    ]
+  }
+}

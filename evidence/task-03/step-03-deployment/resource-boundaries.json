@@ -1,0 +1,21 @@
+{
+  "verified_at_utc": "2026-11-03T15:19:45.820993+00:00",
+  "running_vm_count": 2,
+  "machine_type": "e2-standard-2",
+  "zone": "asia-southeast1-a",
+  "boot_disk_count": 2,
+  "boot_disk_total_gb": 60,
+  "boot_disk_type": "pd-standard",
+  "external_forwarding_rule_count": 1,
+  "external_protocol": "TCP",
+  "external_ports": [
+    "80"
+  ],
+  "public_ingress_allow_rule_count": 1,
+  "public_ingress_restricted_to_lb_ip": true,
+  "public_ssh_rdp_allow_rules_on_cluster_network": false,
+  "regional_cloud_routers_or_nat": false,
+  "node_service_account_user_managed_keys": 0,
+  "monitoring_persistent_disks_created": false,
+  "initial_observer_correction": "An initial observer counted a generated DENY rule as an ALLOW rule. The corrected inspection distinguishes actions; no firewall rules were changed."
+}

@@ -1,0 +1,87 @@
+{
+  "operation_type": "CREATE_CLUSTER",
+  "status": "DONE",
+  "cluster_status": "RUNNING",
+  "history": [
+    {
+      "observed_at_utc": "2026-11-03T15:08:24.316885+00:00",
+      "status": "RUNNING",
+      "error_code": null
+    },
+    {
+      "observed_at_utc": "2026-11-03T15:08:39.512721+00:00",
+      "status": "RUNNING",
+      "error_code": null
+    },
+    {
+      "observed_at_utc": "2026-11-03T15:08:55.680699+00:00",
+      "status": "RUNNING",
+      "error_code": null
+    },
+    {
+      "observed_at_utc": "2026-11-03T15:09:10.761202+00:00",
+      "status": "RUNNING",
+      "error_code": null
+    },
+    {
+      "observed_at_utc": "2026-11-03T15:09:25.855512+00:00",
+      "status": "RUNNING",
+      "error_code": null
+    },
+    {
+      "observed_at_utc": "2026-11-03T15:09:40.980987+00:00",
+      "status": "RUNNING",
+      "error_code": null
+    },
+    {
+      "observed_at_utc": "2026-11-03T15:09:56.094813+00:00",
+      "status": "RUNNING",
+      "error_code": null
+    },
+    {
+      "observed_at_utc": "2026-11-03T15:10:11.417870+00:00",
+      "status": "RUNNING",
+      "error_code": null
+    },
+    {
+      "observed_at_utc": "2026-11-03T15:10:26.514913+00:00",
+      "status": "RUNNING",
+      "error_code": null
+    },
+    {
+      "observed_at_utc": "2026-11-03T15:10:41.666265+00:00",
+      "status": "RUNNING",
+      "error_code": null
+    },
+    {
+      "observed_at_utc": "2026-11-03T15:10:56.854175+00:00",
+      "status": "RUNNING",
+      "error_code": null
+    },
+    {
+      "observed_at_utc": "2026-11-03T15:11:11.985632+00:00",
+      "status": "RUNNING",
+      "error_code": null
+    },
+    {
+      "observed_at_utc": "2026-11-03T15:11:27.066961+00:00",
+      "status": "RUNNING",
+      "error_code": null
+    },
+    {
+      "observed_at_utc": "2026-11-03T15:11:42.159108+00:00",
+      "status": "RUNNING",
+      "error_code": null
+    },
+    {
+      "observed_at_utc": "2026-11-03T15:11:57.259601+00:00",
+      "status": "RUNNING",
+      "error_code": null
+    },
+    {
+      "observed_at_utc": "2026-11-03T15:12:12.362202+00:00",
+      "status": "DONE",
+      "error_code": null
+    }
+  ]
+}

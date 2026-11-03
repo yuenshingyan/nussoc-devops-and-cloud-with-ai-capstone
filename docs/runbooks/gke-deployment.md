@@ -1,11 +1,13 @@
-# GKE deployment preparation — project ready, no cluster
+# GKE deployment — live cluster and preparation history
 
-Status: the dedicated project is active, linked to the selected billing account, and
-four approved APIs are enabled. Google Cloud CLI 591.0.0 and browser authentication
-are available; the live technical preflight passed on 3 November. No cluster, VM or
-load balancer has been created. Existing Kubernetes manifests remain unchanged.
-The [concrete resource proposal](../../deploy/infrastructure/gke-proposal.md) requires
-approval before provisioning; neither document authorizes deployment.
+Status: the user approved the resource profile; the Singapore cluster now runs two
+Ready AMD64 nodes and two Ready application pods. Public health:
+http://35.198.197.186/health (synthetic data only, unencrypted HTTP).
+See the [creation/access runbook](gke-creation.md) and
+[actual evidence](../../evidence/task-03/step-03-managed-deployment.md).
+No paid upgrade was requested. The GKE overlay pins 0.3.0; historical base/demo pins
+are unchanged. Monitoring installation, disruptions and cloud CI are separate steps.
+The sections below retain the preparation decisions and constraints.
 
 ## Agreed constraints
 
@@ -84,8 +86,8 @@ image gate with zero reported vulnerabilities. All 770 host tests and source gat
 passed. See [gate follow-up](../../evidence/task-03/step-03-amd64-gate.md).
 The exact image was subsequently published with approval as AMD64-only `0.3.0`,
 with anonymous pull and post-pull smoke verified. See the
-[release record](image-publication.md). Cluster approval, deployment manifest updates
-and native GKE execution remain pending.
+[release record](image-publication.md). The user then approved cluster creation;
+`deploy/kubernetes/overlays/gke` pins that digest and native GKE checks passed.
 
 ## Technical preflight behavior
 
@@ -131,5 +133,6 @@ quota, billing, capacity or entitlement proof. An offline CLI check demonstrates
 initial missing-SDK failure path without contacting a cloud account. Subsequent authorized
 live checks passed: regional CPU headroom 100, E2 headroom 24, global headroom 12;
 SGD billing currency; unused regional disk/IP quotas. Quota is not reserved capacity.
-AMD64 image release is complete. Final exposure/resource approval, deployment manifest
-updates and cluster provisioning remain pending.
+AMD64 image release, resource/exposure approval and native GKE deployment are now
+complete for Step 3.3. Recovery demonstrations, monitoring installation and cloud CI
+remain pending; successful initial deployment does not establish those capabilities.

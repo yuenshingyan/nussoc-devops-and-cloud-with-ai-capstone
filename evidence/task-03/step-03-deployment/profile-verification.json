@@ -1,0 +1,35 @@
+{
+  "cluster_status": "RUNNING",
+  "zone": "asia-southeast1-a",
+  "node_count_configured": 2,
+  "node_pool_count": 1,
+  "machine_type": "e2-standard-2",
+  "disk_size_gb": 30,
+  "disk_type": "pd-standard",
+  "release_channel": "REGULAR",
+  "current_master_version": "1.36.4-gke.2046003",
+  "ip_endpoint_enabled": false,
+  "dns_iam_access": true,
+  "dns_kubernetes_tokens_or_certificates_enabled": false,
+  "node_account_roles": [
+    "roles/container.defaultNodeServiceAccount"
+  ],
+  "workload_identity_enabled": true,
+  "workload_metadata_mode": "GKE_METADATA",
+  "autoscaling_enabled": false,
+  "node_autoprovisioning_enabled": false,
+  "managed_prometheus_enabled": false,
+  "logging_components": [
+    "SYSTEM_COMPONENTS",
+    "WORKLOADS"
+  ],
+  "monitoring_components": [
+    "SYSTEM_COMPONENTS"
+  ],
+  "auto_monitoring_configuration": {},
+  "upgrade_surge": 1,
+  "upgrade_unavailable": 0,
+  "cluster_edition": "STANDARD",
+  "autopilot_mode": false,
+  "fleet_registered": false
+}

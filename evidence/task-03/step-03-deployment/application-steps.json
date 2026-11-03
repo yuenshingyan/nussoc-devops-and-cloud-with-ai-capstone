@@ -1,0 +1,18 @@
+[
+  {
+    "step": "namespace",
+    "exit_code": 0
+  },
+  {
+    "step": "server-dry-run-after-namespace",
+    "exit_code": 0
+  },
+  {
+    "step": "apply",
+    "exit_code": 0
+  },
+  {
+    "step": "rollout",
+    "exit_code": 0
+  }
+]
