@@ -570,9 +570,53 @@ approval remains pending, with zero approved scripts. Scheduling v1 still exclud
 No release worker startup, job update, approval, trigger, upload or cloud mutation occurred.
 See [Pipeline candidate evidence](../../evidence/task-04/step-03-release-pipeline.md).
 
+## Image-only patch planner and uploader blocker — 4 November 2026
+
+`scripts/release_deployment.py` now provides pure planning and response-check functions,
+not a network client or authorization gate. The caller must supply the independently
+approved Deployment UID and full-spec SHA-256 from trusted control state, and a manifest
+digest whose registry provenance has been separately verified. Computing the approval
+hash from the same unreviewed GET would defeat this check. The hash encoding deliberately
+matches existing checkpoint `json.dumps(spec, sort_keys=True)` UTF-8 output; non-JSON
+values, coerced keys and non-finite numbers are rejected.
+
+The fixed target is `apps/v1` Deployment `finsecure-pay` in namespace `finsecure-pay`,
+with one container named `api`. The existing and proposed images must be digest-pinned
+in `docker.io/yuenshingyan/finsecure-pay`. Deleting/paused or malformed targets and any
+spec drift are rejected. UID/resource-version strings remain opaque and case-sensitive.
+The generated JSON Patch tests UID, resourceVersion, generation, container name and old
+image, then performs **one replace of the image field**. Nothing patches labels,
+annotations, replicas, resources or security settings. In particular, version labels are
+not silently updated; a future version-label change needs a separately agreed approach.
+
+Response checking requires the same target/UID, a changed opaque resourceVersion,
+generation incremented by one, and exactly the expected full spec. This checks an API
+response's spec, not a completed rollout, readiness, stable managed metadata or HTTP smoke.
+A mismatch can describe an already-applied write: stop for inspection, never automatically
+rollback. An unchanged image is rejected, not interpreted as proof of previous success.
+A conflict must not automatically re-read/rebase/retry. No executor implements these actions yet.
+
+All 57 planner cases and all 1,140 host tests passed, together with Ruff, packaging,
+source/dependency and secret-boundary checks. One actual read-only Deployment GET matched
+the previously reviewed UID/spec hash. Its patch and response cases used a **synthetic
+registry digest entirely in memory**; no PATCH or server dry-run was sent.
+
+**Uploader policy blocker:** the existing pinned crane binary reports `v0.22.1`, and its
+`push --help` advertises no retry-disable flag. Those commands ran in temporary, removed,
+network-disabled/credential-free containers, not the stopped release-agent service.
+Version-tagged upstream `pkg/v1/remote/options.go` enables retry transport/default backoff;
+`pkg/v1/remote/write.go` wraps blob and manifest upload paths in `retry.Retry`. This is a
+source review, not registry fault injection. Omitting Jenkins `retry` does not disable
+these internal retries on selected transient failures. The approved no-automatic-retry
+policy therefore remains in force and crane upload is **not wired**. Choose explicitly
+between a reviewed no-retry uploader and a revised internal-retry contract before proceeding;
+no library/dependency, credential, policy or infrastructure change was made to work around it.
+See [planner and retry evidence](../../evidence/task-04/step-03-release-deployment.md).
+
 ## Remaining verification
 
-Immutable upload and image-only deployment implementation; reviewed installation/scheduling
+Uploader choice consistent with retry policy, immutable upload and deployment execution;
+reviewed installation/scheduling
 and actual execution of the fixed Pipeline with an eligible normal-main AMD64 build;
 reviewed publication and
 normal SCM AMD64 proof; real downstream triggering, serialization, timeout/cancellation

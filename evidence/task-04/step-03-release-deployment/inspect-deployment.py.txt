@@ -1,0 +1,43 @@
+"""One live read-only GET; patch planning and response cases remain synthetic/in memory."""
+from copy import deepcopy
+from datetime import UTC,datetime
+from json import dumps,loads
+from os import environ
+from pathlib import Path
+from subprocess import run
+from scripts.release_deployment import image_patch,verify_patch_response
+
+baseline=loads(Path('evidence/task-04/step-03-release-agent/final-state.json').read_text())['application']
+env={**environ,'PATH':'/opt/homebrew/share/google-cloud-sdk/bin:'+environ['PATH']}
+command=['kubectl','--kubeconfig',str(Path.home()/'.config/finsecure-pay/gke/kubeconfig'),
+ '--request-timeout=20s','-n','finsecure-pay','get','deployment/finsecure-pay','-o','json']
+result=run(command,env=env,capture_output=True,text=True,timeout=30)
+assert result.returncode==0,'Read-only deployment inspection failed'
+before=loads(result.stdout);original=deepcopy(before)
+digest='sha256:'+'b'*64
+patch=image_patch(before,baseline['deployment_uid'],baseline['spec_sha256'],digest)
+assert len(patch)==6 and [op['op'] for op in patch]==['test']*5+['replace']
+assert before==original
+assert patch[-1]['path']=='/spec/template/spec/containers/0/image'
+after=deepcopy(before)
+after['metadata']['resourceVersion']='synthetic-response-only'
+after['metadata']['generation']+=1
+after['spec']['template']['spec']['containers'][0]['image']=patch[-1]['value']
+verify_patch_response(before,after,baseline['deployment_uid'],baseline['spec_sha256'],digest)
+after['spec']['replicas']=3
+try:
+ verify_patch_response(before,after,baseline['deployment_uid'],baseline['spec_sha256'],digest)
+except ValueError as error:
+ assert str(error)=='DEPLOYMENT_RESPONSE_SPEC_CHANGED'
+else:
+ raise AssertionError('Unexpected spec mutation accepted')
+record={'status':'verified','observed_at_utc':datetime.now(UTC).isoformat(),
+ 'live_operation':'one_read_only_deployment_get','baseline':'previous_reviewed_agent_checkpoint',
+ 'trusted_baseline_matches':True,'synthetic_registry_digest':True,'patch_operations':len(patch),
+ 'mutating_operations':1,'only_mutating_path':patch[-1]['path'],
+ 'test_paths':[op['path'] for op in patch[:-1]],'input_unchanged':before==original,
+ 'response_cases':'synthetic_in_memory_only','additional_spec_mutation_rejected':True,
+ 'server_patch_or_dry_run_sent':False,'credentials_bound_to_release_worker':False,
+ 'registry_contacted':False,'publishing_authorized':False,'deployment_authorized':False}
+Path('reports/release-deployment/inspection.json').write_text(dumps(record,indent=2)+'\n')
+print(dumps(record))

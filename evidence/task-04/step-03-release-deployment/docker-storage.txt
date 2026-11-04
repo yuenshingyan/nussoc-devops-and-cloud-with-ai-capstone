@@ -1,0 +1,2 @@
+Filesystem      Size  Used Avail Use% Mounted on
+/dev/vda1        59G   48G  7.6G  87% /var/jenkins_home

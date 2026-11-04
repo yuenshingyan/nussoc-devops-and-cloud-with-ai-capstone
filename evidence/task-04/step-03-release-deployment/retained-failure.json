@@ -1,0 +1,6 @@
+{
+  "phase": "observer_import",
+  "reason": "repository_root_missing_from_python_path",
+  "live_get_started": false,
+  "corrected_invocation": "PYTHONPATH=. uv run --locked python reports/release-deployment/inspect-deployment.py"
+}

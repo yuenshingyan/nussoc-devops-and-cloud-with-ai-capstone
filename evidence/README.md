@@ -202,6 +202,10 @@ and report retention on an isolated failure. Cloud delivery remains unverified.
   published accessible reports, and provided packages with verified download hashes.
   The build was manually triggered; no source-trigger, release, or deployment gate is claimed.
 
+- [Step 4.3 — Image-only patch planner and uploader blocker](task-04/step-03-release-deployment.md):
+  57 pure planner cases and 1,140 host tests passed; live GET matched the approved baseline,
+  but proposed images/responses were synthetic and no PATCH was sent. Pinned crane source
+  uses internal upload retries; uploader choice requires review, with existing policy retained.
 - [Step 4.3 — Fixed verification Pipeline candidate](task-04/step-03-release-pipeline.md):
   assembled trusted helpers/tooling and verification-only flow compiled with Jenkins CPS;
   native result/bundle checks and recording-DSL cases passed, plus 1,083 host tests and

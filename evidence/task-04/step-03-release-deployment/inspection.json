@@ -1,0 +1,26 @@
+{
+  "status": "verified",
+  "observed_at_utc": "2026-11-04T11:01:59.050101+00:00",
+  "live_operation": "one_read_only_deployment_get",
+  "baseline": "previous_reviewed_agent_checkpoint",
+  "trusted_baseline_matches": true,
+  "synthetic_registry_digest": true,
+  "patch_operations": 6,
+  "mutating_operations": 1,
+  "only_mutating_path": "/spec/template/spec/containers/0/image",
+  "test_paths": [
+    "/metadata/uid",
+    "/metadata/resourceVersion",
+    "/metadata/generation",
+    "/spec/template/spec/containers/0/name",
+    "/spec/template/spec/containers/0/image"
+  ],
+  "input_unchanged": true,
+  "response_cases": "synthetic_in_memory_only",
+  "additional_spec_mutation_rejected": true,
+  "server_patch_or_dry_run_sent": false,
+  "credentials_bound_to_release_worker": false,
+  "registry_contacted": false,
+  "publishing_authorized": false,
+  "deployment_authorized": false
+}

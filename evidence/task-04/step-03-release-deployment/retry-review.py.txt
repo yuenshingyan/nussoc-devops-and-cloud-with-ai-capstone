@@ -1,0 +1,32 @@
+"""Retain bounded public version-tagged source as data; do not execute it or contact a registry."""
+from hashlib import sha256
+from json import dumps
+from pathlib import Path
+from urllib.request import ProxyHandler,Request,build_opener
+
+base=Path('reports/release-deployment')
+paths=['pkg/v1/remote/options.go','pkg/v1/remote/write.go','pkg/crane/options.go']
+records=[]
+opener=build_opener(ProxyHandler({}))
+for path in paths:
+ url='https://raw.githubusercontent.com/google/go-containerregistry/v0.22.1/'+path
+ with opener.open(Request(url,headers={'User-Agent':'finsecure-release-review'}),timeout=15) as response:
+  assert response.status==200
+  content=response.read(65537);assert len(content)<=65536
+ text=content.decode('utf-8')
+ (base/('upstream-'+path.replace('/','-'))).write_bytes(content)
+ lines=text.splitlines();passages=[]
+ markers=['var defaultRetryBackoff','retry.Retry(tryUpload','transport.NewRetry(', 'func makeOptions(']
+ for index,line in enumerate(lines):
+  if any(marker in line for marker in markers):
+   start=max(0,index-1);end=min(len(lines),index+9)
+   passages.append({'first_line':start+1,'last_line':end,'text':'\n'.join(lines[start:end])})
+ records.append({'url':url,'sha256':sha256(content).hexdigest(),'passages':passages})
+assert 'retry.Retry(tryUpload, w.predicate, w.backoff)' in (base/'upstream-pkg-v1-remote-write.go').read_text()
+record={'status':'policy_conflict_identified','version':(base/'crane-version.txt').read_text().strip(),
+ 'help_inspected_without_network_or_credentials':True,'retry_disable_flag_advertised':False,
+ 'source_review':'version_tagged_upstream_not_runtime_fault_injection',
+ 'automatic_upload_retries_present_in_upstream':True,'policy_changed':False,
+ 'uploader_wired_or_executed':False,'sources':records}
+(base/'retry-review.json').write_text(dumps(record,indent=2)+'\n')
+print('Version-tagged upstream source retained; internal retry policy conflict documented.')

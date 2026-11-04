@@ -1,0 +1,60 @@
+{
+  "status": "policy_conflict_identified",
+  "version": "0.22.1",
+  "help_inspected_without_network_or_credentials": true,
+  "retry_disable_flag_advertised": false,
+  "source_review": "version_tagged_upstream_not_runtime_fault_injection",
+  "automatic_upload_retries_present_in_upstream": true,
+  "policy_changed": false,
+  "uploader_wired_or_executed": false,
+  "sources": [
+    {
+      "url": "https://raw.githubusercontent.com/google/go-containerregistry/v0.22.1/pkg/v1/remote/options.go",
+      "sha256": "758a246f24b8060e198fa99ab085a587d75a94a2cf6162be08888e40f47f25ba",
+      "passages": [
+        {
+          "first_line": 79,
+          "last_line": 88,
+          "text": "// Try this three times, waiting 1s after first failure, 3s after second.\nvar defaultRetryBackoff = Backoff{\n\tDuration: 1.0 * time.Second,\n\tFactor:   3.0,\n\tJitter:   0.1,\n\tSteps:    3,\n}\n\n// Useful for tests\nvar fastBackoff = Backoff{"
+        },
+        {
+          "first_line": 132,
+          "last_line": 141,
+          "text": "\nfunc makeOptions(opts ...Option) (*options, error) {\n\to := &options{\n\t\ttransport:            DefaultTransport,\n\t\tplatform:             defaultPlatform,\n\t\tcontext:              context.Background(),\n\t\tjobs:                 defaultJobs,\n\t\tpageSize:             defaultPageSize,\n\t\tretryPredicate:       defaultRetryPredicate,\n\t\tretryBackoff:         defaultRetryBackoff,"
+        },
+        {
+          "first_line": 178,
+          "last_line": 187,
+          "text": "\t\t// Wrap the transport in something that can retry network flakes.\n\t\to.transport = transport.NewRetry(o.transport, transport.WithRetryBackoff(o.retryBackoff), transport.WithRetryPredicate(predicate), transport.WithRetryStatusCodes(o.retryStatusCodes...))\n\t\t// Wrap this last to prevent transport.New from double-wrapping.\n\t\tif o.userAgent != \"\" {\n\t\t\to.transport = transport.NewUserAgent(o.transport, o.userAgent)\n\t\t}\n\t}\n\n\treturn o, nil\n}"
+        }
+      ]
+    },
+    {
+      "url": "https://raw.githubusercontent.com/google/go-containerregistry/v0.22.1/pkg/v1/remote/write.go",
+      "sha256": "022726257384a39fd0d16942fce88c9b698ec675d42f533ad4afd5b3de86a084",
+      "passages": [
+        {
+          "first_line": 468,
+          "last_line": 477,
+          "text": "\n\treturn retry.Retry(tryUpload, w.predicate, w.backoff)\n}\n\ntype withMediaType interface {\n\tMediaType() (types.MediaType, error)\n}\n\n// This is really silly, but go interfaces don't let me satisfy remote.Taggable\n// with remote.Descriptor because of name collisions between method names and"
+        },
+        {
+          "first_line": 679,
+          "last_line": 688,
+          "text": "\n\treturn retry.Retry(tryUpload, w.predicate, w.backoff)\n}\n\nfunc scopesForUploadingImage(repo name.Repository, layers []v1.Layer) []string {\n\t// use a map as set to remove duplicates scope strings\n\tscopeSet := map[string]struct{}{}\n\n\tfor _, l := range layers {\n\t\tif ml, ok := l.(*MountableLayer); ok {"
+        }
+      ]
+    },
+    {
+      "url": "https://raw.githubusercontent.com/google/go-containerregistry/v0.22.1/pkg/crane/options.go",
+      "sha256": "5e1027003cd24def208b69f672b666e8cbfa2a4d26b25d8d860a5c3ccb4191c8",
+      "passages": [
+        {
+          "first_line": 50,
+          "last_line": 59,
+          "text": "\nfunc makeOptions(opts ...Option) Options {\n\topt := Options{\n\t\tRemote: []remote.Option{\n\t\t\tremote.WithAuthFromKeychain(authn.DefaultKeychain),\n\t\t},\n\t\tKeychain: authn.DefaultKeychain,\n\t\tjobs:     4,\n\t\tctx:      context.Background(),\n\t}"
+        }
+      ]
+    }
+  ]
+}
