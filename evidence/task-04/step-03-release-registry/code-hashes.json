@@ -1,0 +1,4 @@
+{
+  "scripts/release_registry.py": "b924c408348cccdbdfefeb1b3851730804a9925315f2ea3b229e2dbefbd8b724",
+  "tests/unit/test_release_registry.py": "b5d19027ad24d00a5db2913fc2f20528be7eca0a809db5db5874b109b8a1d8b0"
+}

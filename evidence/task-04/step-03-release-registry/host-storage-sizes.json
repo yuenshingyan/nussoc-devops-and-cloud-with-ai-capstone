@@ -1,0 +1,14 @@
+{
+  "uv_cache": {
+    "MiB": 1678.2
+  },
+  "pip_cache": {
+    "MiB": 0.1
+  },
+  "homebrew_cache": {
+    "MiB": 55.8
+  },
+  "docker_vm_data": {
+    "MiB": 48432.6
+  }
+}

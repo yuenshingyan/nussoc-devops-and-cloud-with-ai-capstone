@@ -695,9 +695,55 @@ at closure, while Docker backing remained 7.6 GiB; the cause of host growth is u
 Review headroom before further storage-intensive execution; no shared-cache pruning was
 performed. See [input evidence](../../evidence/task-04/step-03-release-input.md).
 
+## Private registry profile and readback adapter — 4 November 2026
+
+`scripts/release_registry.py` accepts only the trusted Docker Hub file binding supplied by
+fixed controller code. `registry_profile` checks the canonical owned private single-link
+binding without trimming its opaque value. It creates a private 0700 temporary directory
+and mode-0600 Docker config for `https://index.docker.io/v1/`, user `yuenshingyan`. The
+binding remains caller-owned and is never overwritten/deleted. Only Jenkins process-tree
+cookies survive from the inherited environment; HOME/DOCKER_CONFIG/TMPDIR and PATH are
+explicit. Ambient proxy, cloud auth, alternate Docker config/helpers and CA overrides are
+not inherited. The token cannot already appear in inherited environment values. Profile
+contents and unvalidated command stdout must never be logged. Normal/error cleanup is
+verified; hard-kill/restart cleanup and credential privilege remain separate concerns.
+
+`readback_image` performs three distinct bounded crane invocations: read the fixed
+`docker.io/yuenshingyan/finsecure-pay:sha-<revision>-amd64` tag digest, then read the manifest
+and config using the exact digest-pinned reference. Each gets the same worker-local
+remaining deadline; there is no relaunch/retry loop. A failure stops the sequence and closes
+the profile. Pinned crane internal retries remain permitted within the shared budget.
+The tag observation is point-in-time, not server-enforced tag immutability.
+
+The trusted expected digest must come from local crane interpretation of the already-gated
+archive, and expected config ID/revision from the original verified candidate—not from the
+registry response. Raw manifest/config bytes are hashed without trimming/reformatting.
+Crane v0.22.1's [digest command](https://github.com/google/go-containerregistry/blob/v0.22.1/cmd/crane/cmd/digest.go)
+prints a newline; its [manifest](https://github.com/google/go-containerregistry/blob/v0.22.1/cmd/crane/cmd/manifest.go)
+and [config](https://github.com/google/go-containerregistry/blob/v0.22.1/cmd/crane/cmd/config.go)
+commands print raw bytes without adding a newline. Source inspection established this CLI
+contract; real registry transport has not yet been exercised here. Strict JSON checks reject
+duplicates, malformed/foreign descriptors, excess bounds and wrong config identity/platform/
+user/revision. This reads manifest/config, not every remote layer blob; rollout and smoke
+checks remain necessary. Successful readback still returns `publishing_authorized:false`.
+
+All 67 focused and 1,259 total host cases passed, with Ruff/build/security/secret boundaries
+(45 LOW, zero blocking, 15 clean dependencies). Actual pinned crane resolved a **synthetic**
+credential from the profile with external networking disabled; no raw credential result was
+published. Normal/error cleanup and borrowed-binding preservation passed. Small retained
+local config/manifest fixtures passed, but were **not registry responses**. The integrated
+three-command adapter used mocked process boundaries in tests. No real registry credential use,
+upload, fresh image scan, application execution or Pipeline execution is claimed.
+
+Installed job/approval/scheduling and cloud stayed unchanged. No large archive copies or
+image builds occurred. Host storage nevertheless fell from 2.7 to 1.8 GiB; Docker backing
+remained 7.6 GiB. Host VM/swap currently occupies 5 GiB, but there is no causal baseline.
+No caches/volumes/diagnostics were pruned. Review headroom before storage-intensive work.
+See [registry evidence](../../evidence/task-04/step-03-release-registry.md).
+
 ## Remaining verification
 
-Production crane profile/readback integration, immutable upload and deployment execution;
+Actual registry integration/proof, immutable upload and deployment execution;
 reviewed installation/scheduling
 and actual execution of the fixed Pipeline with an eligible normal-main AMD64 build;
 reviewed publication and

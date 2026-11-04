@@ -1,0 +1,37 @@
+"""Read the retained public image once; save only small local manifest/config fixtures."""
+from hashlib import sha256,file_digest
+from json import dumps,loads
+from pathlib import Path
+from tarfile import TarFile
+
+source=Path('reports/finsecure-ci-amd64-review-20261104041956/images/finsecure-pay.tar.gz')
+with source.open('rb') as stream:
+ assert file_digest(stream,'sha256').hexdigest()=='c7173b149f2821d3baba3521397eee791dd53f1b9e33c42b07a91eb2e13a0cf0'
+image_id='d4c23d06faf317e704f3732cb8af970a7b896556d1b8e5c90ac65e3ab744ac10'
+blobs={};config=None;docker=None
+with TarFile.open(source,'r|gz') as tar:
+ for entry in tar:
+  if not entry.isfile():continue
+  if entry.name=='manifest.json':
+   assert entry.size<1048576
+   with tar.extractfile(entry) as stream:docker=loads(stream.read())
+  elif entry.name.startswith('blobs/sha256/'):
+   with tar.extractfile(entry) as stream:
+    digest=sha256();selected=bytearray() if entry.name.endswith('/'+image_id) else None
+    while data:=stream.read(65536):
+     digest.update(data)
+     if selected is not None:
+      selected.extend(data);assert len(selected)<=1048576
+   blobs[entry.name]={'size':entry.size,'digest':'sha256:'+digest.hexdigest()}
+   if selected is not None:config=bytes(selected)
+assert len(docker)==1 and config is not None
+entry=docker[0]
+manifest={'schemaVersion':2,'mediaType':'application/vnd.docker.distribution.manifest.v2+json',
+ 'config':{'mediaType':'application/vnd.docker.container.image.v1+json',**blobs[entry['Config']]},
+ 'layers':[{'mediaType':'application/vnd.docker.image.rootfs.diff.tar.gzip',**blobs[name]} for name in entry['Layers']]}
+body=dumps(manifest,separators=(',',':')).encode()
+assert sha256(body).hexdigest()=='a5fc5aad54f4aa7d8a93154f2c63b704bbde36a8fb552547ac7ccc3c39ff4cb0'
+assert sha256(config).hexdigest()==image_id
+Path('reports/release-registry/manifest-fixture.json').write_bytes(body)
+Path('reports/release-registry/config-fixture.json').write_bytes(config)
+print('Small local fixtures match prior native crane/config identities; not registry responses.')

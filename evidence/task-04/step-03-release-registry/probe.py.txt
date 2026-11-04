@@ -1,0 +1,43 @@
+"""Synthetic credentials and small local image fixtures only; no registry responses."""
+from hashlib import sha256
+from json import dumps,loads
+from pathlib import Path
+from sys import path
+from tempfile import TemporaryDirectory
+from time import monotonic
+path.insert(0,'/review')
+from scripts.release_registry import registry_profile,manifest_readback,config_readback,USERNAME
+from scripts.release_command import run_command
+
+token='synthetic-only-not-a-provider-credential'
+with TemporaryDirectory(prefix='registry-proof-') as temporary:
+ root=Path(temporary);root.chmod(0o700)
+ key=root/'bound-synthetic';key.write_text(token);key.chmod(0o600)
+ with registry_profile(key,root,{'JENKINS_NODE_COOKIE':'synthetic-cookie','HTTP_PROXY':'http://ignored.example'}) as environment:
+  profile=Path(environment['DOCKER_CONFIG'])
+  result=run_command(['/usr/local/bin/crane','auth','get','index.docker.io'],environment,monotonic()+15)
+  assert result.returncode==0,'Synthetic local credential lookup failed'
+  credentials=loads(result.stdout)
+  assert credentials=={'Username':USERNAME,'Secret':token},'Credential lookup mismatch'
+  assert token not in str(environment) and 'HTTP_PROXY' not in environment
+ assert not profile.exists() and key.read_text()==token
+ try:
+  with registry_profile(key,root,{}) as environment:
+   failed_profile=Path(environment['DOCKER_CONFIG'])
+   raise RuntimeError('synthetic-operation-failure')
+ except RuntimeError as error: assert str(error)=='synthetic-operation-failure'
+ assert not failed_profile.exists() and key.exists()
+ manifest_body=Path('/fixture/manifest.json').read_bytes()
+ config_body=Path('/fixture/config.json').read_bytes()
+ digest='sha256:a5fc5aad54f4aa7d8a93154f2c63b704bbde36a8fb552547ac7ccc3c39ff4cb0'
+ image_id='sha256:d4c23d06faf317e704f3732cb8af970a7b896556d1b8e5c90ac65e3ab744ac10'
+ manifest=manifest_readback(manifest_body,digest,digest,image_id)
+ config_readback(config_body,manifest,image_id,'dc7ffe5a2884f8aeb833f9befd0f1be30d608739')
+assert not root.exists()
+print(dumps({'status':'verified','scope':'native_local_auth_and_local_image_fixtures_only',
+ 'synthetic_credential_resolved_by_pinned_crane':True,'raw_credential_output_disclosed':False,
+ 'normal_and_exception_profile_cleanup_verified':True,'borrowed_binding_preserved':True,
+ 'owned_scratch_removed':True,'network_enabled':False,'real_credentials_used':False,
+ 'registry_response_observed':False,'publishing_authorized':False,'local_manifest_bytes':len(manifest_body),
+ 'local_config_bytes':len(config_body),'layers':len(manifest['layers']),
+ 'source_sha256':{name:sha256(Path('/review/scripts',name).read_bytes()).hexdigest() for name in ['release_registry.py','release_command.py','release_input.py','release_credentials.py','release_archive.py']}}))
