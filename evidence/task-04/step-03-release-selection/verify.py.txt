@@ -1,0 +1,108 @@
+"""Compile and test fixed selection code in Jenkins; never run the Pipeline body."""
+
+from base64 import b64encode
+from hashlib import sha256
+from json import dumps, loads
+from pathlib import Path
+
+from bootstrap import BASE_URL, admin_password
+from httpx2 import BasicAuth, Client
+
+source = Path('ops/jenkins/release-job.groovy').read_text()
+job = Path('reports/amd64-ci/job.txt').read_text().strip()
+reports = Path('reports')/job/'reports'
+source_gate = loads((reports/'security-summary.json').read_text())
+image_gate = loads((reports/'image-security-summary.json').read_text())
+fixture = {'source':source_gate,'image':image_gate,'head':image_gate['source_revision'],
+ 'provenance':{'job':'finsecure-ci','build':1,'building':False,'result':'SUCCESS','repository':'https://github.com/yuenshingyan/nussoc-devops-and-cloud-with-ai-capstone.git','branch':'refs/remotes/origin/main','revision':image_gate['source_revision'],'tests':961,'failures':0,'skipped':0}}
+code = '''
+def loader = new GroovyClassLoader(jenkins.model.Jenkins.get().pluginManager.uberClassLoader)
+loader.parseClass(new String(Base64.decoder.decode('__POLICY_SOURCE_BASE64__'), 'UTF-8'))
+def selector = loader.loadClass('FinsecureCandidateSelection')
+def fixture = new groovy.json.JsonSlurperClassic().parseText(new String(Base64.decoder.decode('__FIXTURE_BASE64__'),'UTF-8'))
+def accepted = selector.validate(fixture.provenance,fixture.source,fixture.image,fixture.head)
+assert accepted.artifact_verification_required && !accepted.deployment_enabled
+assert accepted.tag == 'sha-' + fixture.head + '-amd64'
+def cases = [
+ ['provenance','job','other','RELEASE_UPSTREAM_JOB_DENIED'],
+ ['provenance','build',true,'RELEASE_BUILD_INVALID'],
+ ['provenance','building',true,'RELEASE_UPSTREAM_NOT_SUCCESS'],
+ ['provenance','result','UNSTABLE','RELEASE_UPSTREAM_NOT_SUCCESS'],
+ ['provenance','repository','https://example.test/fork','RELEASE_SOURCE_NOT_MAIN'],
+ ['provenance','branch','origin/feature','RELEASE_SOURCE_NOT_MAIN'],
+ ['provenance','branch','origin/main','RELEASE_SOURCE_NOT_MAIN'],
+ ['provenance','revision','b'*40,'RELEASE_STALE_REVISION'],
+ ['provenance','revision','invalid','RELEASE_REVISION_INVALID'],
+ ['provenance','tests',0,'RELEASE_TESTS_NOT_PASSING'],
+ ['provenance','failures',1,'RELEASE_TESTS_NOT_PASSING'],
+ ['provenance','skipped',1,'RELEASE_TESTS_NOT_PASSING'],
+ ['provenance','failures',false,'RELEASE_TESTS_NOT_PASSING'],
+ ['source','status','blocked','RELEASE_SOURCE_GATE_INVALID'],
+ ['source','bandit.HIGH',1,'RELEASE_SOURCE_GATE_INVALID'],
+ ['source','bandit.MEDIUM',1,'RELEASE_SOURCE_GATE_INVALID'],
+ ['source','dependencies.blocking_findings',1,'RELEASE_DEPENDENCY_GATE_INVALID'],
+ ['source','dependencies.dependencies_audited',0,'RELEASE_DEPENDENCY_GATE_INVALID'],
+ ['image','severities.CRITICAL',1,'RELEASE_IMAGE_GATE_INVALID'],
+ ['image','severities.HIGH',false,'RELEASE_IMAGE_GATE_INVALID'],
+ ['source','lock_sha256','c'*64,'RELEASE_LOCK_MISMATCH'],
+ ['image','expected_platform','linux/arm64','RELEASE_PLATFORM_DENIED'],
+ ['image','platform','linux/arm64','RELEASE_PLATFORM_DENIED'],
+ ['image','end_of_life',true,'RELEASE_IMAGE_GATE_INVALID'],
+ ['image','blocking_findings',1,'RELEASE_IMAGE_GATE_INVALID'],
+ ['image','source_revision','b'*40,'RELEASE_IMAGE_GATE_INVALID'],
+ ['image','archive_sha256','../archive','RELEASE_ARCHIVE_ID_INVALID'],
+ ['image','image_id','invalid','RELEASE_IMAGE_ID_INVALID']
+]
+cases.each { row ->
+ def data = new groovy.json.JsonSlurperClassic().parseText(groovy.json.JsonOutput.toJson(fixture))
+ def target = data[row[0]]
+ def keys = row[1].tokenize('.')
+ keys.dropRight(1).each { target = target[it] }
+ target[keys.last()] = row[2]
+ String reason = null
+ try { selector.validate(data.provenance,data.source,data.image,data.head) }
+ catch (IllegalStateException error) { reason = error.message }
+ assert reason == row[3]
+}
+def parserCases = [
+ ['sensitive-invalid-json','RELEASE_REPORT_INVALID'],
+ ['[]','RELEASE_REPORT_NOT_OBJECT'],
+ ['x'*(1024*1024+1),'RELEASE_REPORT_TOO_LARGE']
+]
+parserCases.each { row ->
+ def stream = new ByteArrayInputStream(row[0].getBytes('UTF-8'))
+ String reason = null
+ try { selector.parseReport(stream) } catch (IllegalStateException error) { reason=error.message }
+ finally { stream.close() }
+ assert reason == row[1]
+}
+String manualReason = null
+try { selector.select(new Expando(causes:[])) }
+catch (IllegalStateException error) { manualReason=error.message }
+assert manualReason == 'RELEASE_UPSTREAM_CAUSE_REQUIRED'
+manualReason = null
+try { selector.select(new Expando(causes:[new hudson.model.Cause.UserIdCause()])) }
+catch (IllegalStateException error) { manualReason=error.message }
+assert manualReason == 'RELEASE_UPSTREAM_CAUSE_REQUIRED'
+def parent = jenkins.model.Jenkins.get().getItemByFullName('finsecure-ci').getBuildByNumber(34)
+String actualReason = null
+try { selector.select(new Expando(causes:[new hudson.model.Cause.UpstreamCause(parent)])) }
+catch (IllegalStateException error) { actualReason=error.message }
+assert actualReason in ['RELEASE_PLATFORM_DENIED','RELEASE_STALE_REVISION']
+println(groovy.json.JsonOutput.toJson([
+ compiled:true,synthetic_authority_fixture:true,positive_selection_requires_artifact_verification:true,
+ validation_rejections:cases.size(),bounded_parser_cases:parserCases.size(),manual_cause_rejected:true,
+ real_main_build:34,real_main_rejection:actualReason,pipeline_body_executed:false,
+ publishing_attempted:false,deployment_attempted:false
+]))
+'''.replace('__POLICY_SOURCE_BASE64__',b64encode(source.encode()).decode()).replace('__FIXTURE_BASE64__',b64encode(dumps(fixture).encode()).decode())
+# Exact placeholder replacement must not alter error-code identifiers.
+with Client(auth=BasicAuth('admin',admin_password()),timeout=60,trust_env=False,follow_redirects=False) as client:
+ crumb=client.get(BASE_URL+'/crumbIssuer/api/json').json()
+ response=client.post(BASE_URL+'/scriptText',data={'script':code},headers={crumb['crumbRequestField']:crumb['crumb']})
+ response.raise_for_status()
+ Path('reports/release-job/native-response.txt').write_text(response.text)
+ record=loads(response.text)
+ record['script_sha256']=sha256(source.encode()).hexdigest()
+ Path('reports/release-job/verification.json').write_text(dumps(record,indent=2)+'\n')
+ print(dumps(record,indent=2))

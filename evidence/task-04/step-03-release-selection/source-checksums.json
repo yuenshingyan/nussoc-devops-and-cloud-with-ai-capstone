@@ -1,0 +1,5 @@
+{
+  "ops/jenkins/release-job.groovy": "78192f53c275bf58d8e8def12ed097c133bcff7b7c3541b2136938bbc9a800cf",
+  "ops/jenkins/release_job.py": "0b9f4ca69dd070118cee13531eba25f01a5c0b1484d1da31de34b94421cb1992",
+  "tests/unit/test_release_job.py": "a65e2943e6790d434f8ebcb1ff8c0f78c629bfaa0c49da15c3bae2e6e5d83e3c"
+}

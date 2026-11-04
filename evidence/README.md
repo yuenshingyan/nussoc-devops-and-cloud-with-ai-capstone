@@ -202,6 +202,10 @@ and report retention on an isolated failure. Cloud delivery remains unverified.
   published accessible reports, and provided packages with verified download hashes.
   The build was manually triggered; no source-trigger, release, or deployment gate is claimed.
 
+- [Step 4.3 — Disabled fixed release selection](task-04/step-03-release-selection.md):
+  administrator-owned definition installed without approving/enabling it. 975 host
+  tests and native selection checks passed. Real main #34 metadata rejected as ARM64;
+  no genuine downstream trigger, artifact transfer or release action.
 - [Step 4.3 — Manual AMD64 CI candidate](task-04/step-03-amd64-ci.md):
   961 tests, all gates, 33 verified artifacts and zero image findings; matching local
   notification. Explicit AMD64 archive verified; no publishing/deployment or normal

@@ -1,0 +1,14 @@
+{
+  "compiled": true,
+  "synthetic_authority_fixture": true,
+  "positive_selection_requires_artifact_verification": true,
+  "validation_rejections": 28,
+  "bounded_parser_cases": 3,
+  "manual_cause_rejected": true,
+  "real_main_build": 34,
+  "real_main_rejection": "RELEASE_PLATFORM_DENIED",
+  "pipeline_body_executed": false,
+  "publishing_attempted": false,
+  "deployment_attempted": false,
+  "script_sha256": "78192f53c275bf58d8e8def12ed097c133bcff7b7c3541b2136938bbc9a800cf"
+}

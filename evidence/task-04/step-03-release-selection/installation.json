@@ -1,0 +1,16 @@
+{
+  "job": "finsecure-release/delivery",
+  "disabled": true,
+  "sandbox": false,
+  "serialized": true,
+  "triggers": [],
+  "script_sha256": "78192f53c275bf58d8e8def12ed097c133bcff7b7c3541b2136938bbc9a800cf",
+  "publishing_implemented": false,
+  "deployment_implemented": false,
+  "global_script_approvals_unchanged": true,
+  "pending_approval_count_before": 0,
+  "pending_approval_count_after": 1,
+  "never_built": true,
+  "release_worker_still_stopped": true,
+  "source_sha256": "78192f53c275bf58d8e8def12ed097c133bcff7b7c3541b2136938bbc9a800cf"
+}

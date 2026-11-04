@@ -23,8 +23,10 @@ probes and read-only registry/GKE access passed. The subsequent scheduling guard
 live allow/deny tests. The worker is now deliberately stopped and diagnostic jobs are
 disabled. See the checkpoints below.
 
-**Not yet implemented:** production release jobs,
-registry upload or cloud deployment stages. The feature-branch Jenkinsfile now exports
+**Partially implemented:** the fixed, disabled `finsecure-release/delivery` definition
+now performs candidate-selection checks. It has never built and its non-sandboxed script
+is pending approval. Artifact transfer/full verification, registry upload and cloud
+deployment stages are not implemented. The feature-branch Jenkinsfile now exports
 and scans AMD64 explicitly. A manual Jenkins candidate passed 961 tests and all gates;
 its AMD64 archive was independently verified. Normal main #34 remains the earlier
 ARM64 build until reviewed publication and a new SCM run. Neither pipeline publishes
@@ -347,9 +349,55 @@ The candidate job is disabled; release worker remains stopped; normal main remai
 headroom before another image build; do not prune shared caches or retained scanner
 diagnostics without approval.
 
+## Fixed release selection — installed disabled, not a working deployment pipeline
+
+The operator approved a fixed administrator-owned, non-sandboxed controller definition
+rather than putting Jenkins admin credentials on the worker or relaxing sandbox rules
+globally. The agreed policy is one release at a time, a ten-minute overall Jenkins
+budget, current-main successful AMD64 artifacts only, and no automatic release retries
+or rollback. Publishing/deployment must remain disabled through verification and review.
+
+`ops/jenkins/release-job.groovy` implements only the first selection stage. It requires
+one authoritative upstream cause for `finsecure-ci`, the fixed Git repository and
+`*/main` SCM definition, a completed SUCCESS run, native JUnit counts without failures
+or skips, and the recorded Git revision/branch. The installed Git plugin records
+`refs/remotes/origin/main`; other spellings are not silently normalized. A fixed HTTPS
+GitHub request checks the current main SHA with no credentials, proxy or redirects and
+five-second connect/read limits. Source/image gate summaries must report the required
+passing policy and consistent revision, AMD64 platform, lock and digest shapes.
+
+Fixed report names are read on the controller with a one-MiB limit and owned stream
+cleanup. Malformed JSON details are not echoed. **These are selection checks, not full
+artifact authentication:** strict artifact parsing, checksum inventory, actual archive
+bytes/config identity and database freshness at release time still require verification.
+The returned candidate explicitly marks artifact verification required and deployment
+disabled. The Pipeline always stops before delivery, even after a positive selection.
+It has no worker allocation, credential binding, upload or deployment command.
+
+`release_job.py` creates this job once in the existing owned folder, with no parameters
+or triggers, disabled, serialized without aborting an active predecessor, and with an
+exact script match check. It refuses an existing/uncertain job rather than replacing it.
+The installed non-sandboxed definition remains **pending script approval**; global script
+approvals/signature permissions were unchanged. The scheduling guard remains version 1
+and does not allow this job onto the release worker. No image rebuild was needed.
+
+Native controller checks compiled the exact script, accepted a clearly synthetic
+main-authority fixture around the real candidate reports, and passed 28 rejection cases,
+three bounded-parser cases and absent/manual-cause checks. A simulated upstream envelope
+around real main #34 exercised the actual SCM/JUnit/artifact APIs and rejected its ARM64
+image. This was not a genuine downstream trigger or Pipeline-body execution. The job
+has never built; the ten-minute cancellation behavior has not been demonstrated.
+
+See [selection evidence](../../evidence/task-04/step-03-release-selection.md). Next work
+must implement and test the controller-owned artifact transfer and independent validation
+before any credential binding, then the immutable upload and image-only deployment.
+Recheck current main immediately before external actions; a selection-time observation
+alone cannot make GitHub and Kubernetes updates atomic. Do not approve/enable this
+incomplete definition as a release pipeline.
+
 ## Remaining verification
 
 Reviewed publication and normal SCM AMD64 verification;
-trusted-main release selection; serialization/stale-build policy; immutable upload
+artifact transfer and independent verification; serialization/stale-build execution checks; immutable upload
 identity; deployment timeout/failure behavior; healthy rollout and smoke checks; retained
 failure reports. Full delivery is pending until all of these run successfully.
