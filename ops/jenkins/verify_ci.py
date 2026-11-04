@@ -143,9 +143,16 @@ IMAGE_SECURITY_ARTIFACTS = {
 
 
 def require_image_security_reports(
-    output: Path, artifacts: set[str], skipped: bool, revision: str
+    output: Path,
+    artifacts: set[str],
+    skipped: bool,
+    revision: str,
+    *,
+    platform: str = "linux/arm64",
 ) -> dict | None:
-    """Bind a complete passing image gate to its downloaded reports, archive and source."""
+    """Bind a complete passing image gate to its reports, archive, source and target."""
+    if platform not in {"linux/arm64", "linux/amd64"}:
+        raise ValueError("Unsupported verification platform")
     if skipped:
         if IMAGE_SECURITY_ARTIFACTS.intersection(artifacts):
             raise RuntimeError("Image security ran after an earlier failed stage")
@@ -156,6 +163,7 @@ def require_image_security_reports(
     if (
         report.get("status") != "passed"
         or report.get("source_revision") != revision
+        or report.get("expected_platform") != platform
         or type(report.get("blocking_findings")) is not int
         or report["blocking_findings"] != 0
         or report.get("end_of_life") is not False
@@ -179,8 +187,13 @@ def require_image_security_reports(
     if report.get("lock_sha256", "missing") + "  uv.lock" not in metadata.splitlines():
         raise RuntimeError("Image scan lock differs from the build")
     raw = loads((output / "reports/trivy.json").read_text())
-    if raw.get("Metadata", {}).get("ImageID") != report.get("image_id"):
-        raise RuntimeError("Image scan/report identity mismatch")
+    metadata = raw.get("Metadata", {})
+    config = metadata.get("ImageConfig", {})
+    if metadata.get("ImageID") != report.get("image_id") or (
+        config.get("os"),
+        config.get("architecture"),
+    ) != tuple(platform.split("/")):
+        raise RuntimeError("Image scan/report identity or platform mismatch")
     return report
 
 
@@ -316,7 +329,7 @@ def verify(
         )
         image_security = (
             require_image_security_reports(
-                output, set(artifacts), fail_after_tests, source_revision
+                output, set(artifacts), fail_after_tests, source_revision, platform="linux/amd64"
             )
             if expects_image_security
             else None
@@ -371,7 +384,7 @@ def verify(
                     raise RuntimeError("Downloaded image archive checksum mismatch")
                 tag = f"finsecure-pay-ci:jenkins-{job_name}-{number}"
                 expected_metadata = (
-                    f"SOURCE_REVISION={source_revision}\nLOCAL_TAG={tag}\nPLATFORM=linux/arm64\n"
+                    f"SOURCE_REVISION={source_revision}\nLOCAL_TAG={tag}\nPLATFORM=linux/amd64\n"
                 )
                 if (output / "reports/image-metadata.txt").read_text() != expected_metadata:
                     raise RuntimeError("Image export provenance does not match this build")
@@ -381,6 +394,7 @@ def verify(
                     source_revision,
                     tag,
                     metadata["containerimage.config.digest"],
+                    platform="linux/amd64",
                 )
         record = {
             "verified_at_utc": datetime.now(UTC).isoformat(),

@@ -113,9 +113,14 @@ def test_image_reports_must_not_exist_after_an_earlier_failed_stage(ci_helpers, 
         "archive",
         "lock",
         "image",
+        "platform",
+        "raw-platform",
     ],
 )
-def test_image_verification_requires_bound_reports_and_archive(ci_helpers, tmp_path, problem):
+@mark.parametrize("platform", ["linux/arm64", "linux/amd64"])
+def test_image_verification_requires_bound_reports_and_archive(
+    ci_helpers, tmp_path, problem, platform
+):
     reports = tmp_path / "reports"
     reports.mkdir()
     (tmp_path / "images").mkdir()
@@ -124,10 +129,23 @@ def test_image_verification_requires_bound_reports_and_archive(ci_helpers, tmp_p
     paths = ci_helpers["IMAGE_SECURITY_ARTIFACTS"].copy()
     for name in paths:
         (tmp_path / name).write_text("synthetic diagnostic")
-    (reports / "trivy.json").write_text(dumps({"Metadata": {"ImageID": "sha256:test"}}))
+    architecture = platform.split("/")[1]
+    if problem == "raw-platform":
+        architecture = "amd64" if architecture == "arm64" else "arm64"
+    (reports / "trivy.json").write_text(
+        dumps(
+            {
+                "Metadata": {
+                    "ImageID": "sha256:test",
+                    "ImageConfig": {"os": "linux", "architecture": architecture},
+                }
+            }
+        )
+    )
     record = {
         "status": "passed",
         "source_revision": "a" * 40,
+        "expected_platform": "linux/386" if problem == "platform" else platform,
         "blocking_findings": 0,
         "end_of_life": False,
         "temporary_cache_removed": True,
@@ -166,8 +184,13 @@ def test_image_verification_requires_bound_reports_and_archive(ci_helpers, tmp_p
     (reports / "image-security-summary.json").write_text(dumps(record))
     if problem is None:
         assert (
-            ci_helpers["require_image_security_reports"](tmp_path, paths, False, "a" * 40) == record
+            ci_helpers["require_image_security_reports"](
+                tmp_path, paths, False, "a" * 40, platform=platform
+            )
+            == record
         )
     else:
         with raises(RuntimeError):
-            ci_helpers["require_image_security_reports"](tmp_path, paths, False, "a" * 40)
+            ci_helpers["require_image_security_reports"](
+                tmp_path, paths, False, "a" * 40, platform=platform
+            )

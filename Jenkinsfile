@@ -114,11 +114,11 @@ DOCKER_CONFIG=$(mktemp -d)
 trap 'rm -rf -- "$DOCKER_CONFIG"' EXIT
 buildctl --version > reports/buildkit-workers.txt
 buildctl --addr=unix:///run/buildkit/buildkitd.sock --timeout=5 debug workers --verbose >> reports/buildkit-workers.txt
-printf 'SOURCE_REVISION=%s\\nLOCAL_TAG=%s\\nPLATFORM=linux/arm64\\n' "$revision" "$image_name" > reports/image-metadata.txt
+printf 'SOURCE_REVISION=%s\\nLOCAL_TAG=%s\\nPLATFORM=linux/amd64\\n' "$revision" "$image_name" > reports/image-metadata.txt
 timeout --signal=TERM --kill-after=15s 9m \
     buildctl --addr=unix:///run/buildkit/buildkitd.sock --timeout=5 build \
     --frontend=dockerfile.v0 --local context=. --local dockerfile=. \
-    --opt platform=linux/arm64 --opt "label:org.opencontainers.image.revision=$revision" \
+    --opt platform=linux/amd64 --opt "label:org.opencontainers.image.revision=$revision" \
     --output "type=docker,name=$image_name,dest=images/finsecure-pay.tar" \
     --metadata-file reports/buildkit-image.json --progress=plain \
     2>&1 | tee reports/image-build.txt
@@ -133,7 +133,8 @@ sha256sum images/finsecure-pay.tar.gz > reports/image.sha256
                 sh '''#!/usr/bin/env bash
 set -euo pipefail
 uv run --locked python -m scripts.image_scan \
-    --revision "$(git rev-parse HEAD)" --tag "finsecure-pay-ci:${BUILD_TAG}"
+    --revision "$(git rev-parse HEAD)" --tag "finsecure-pay-ci:${BUILD_TAG}" \
+    --platform linux/amd64
 '''
                 // A scanner error or policy block must never reach image archival.
                 archiveArtifacts artifacts: 'images/finsecure-pay.tar.gz',
