@@ -20,7 +20,8 @@ def test_controller_installs_administrator_owned_startup_policy():
     assert "Collections.unmodifiableSet" in policy
     assert "'finsecure-release/verify-boundaries'" in policy
     assert "'finsecure-release/verify-scheduling'" in policy
-    assert "'finsecure-release/delivery'" not in policy
+    assert "'finsecure-release/delivery'" in policy
+    assert "POLICY_VERSION = '2'" in policy
 
 
 @mark.parametrize(

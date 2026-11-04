@@ -10,7 +10,7 @@ def test_openapi_metadata(client: TestClient) -> None:
 
     assert response.status_code == 200
     assert response.json()["info"]["title"] == "FinSecure Pay"
-    assert response.json()["info"]["version"] == "0.3.0"
+    assert response.json()["info"]["version"] == "0.4.0"
 
 
 def test_factory_creates_independent_instances() -> None:

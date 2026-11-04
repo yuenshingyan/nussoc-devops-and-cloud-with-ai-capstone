@@ -13,6 +13,8 @@ external health/validation checks passed. **HTTP is unencrypted: use synthetic d
 only, never customer/payment-card data or credentials.** No money is transferred.
 
 The GKE overlay pins published AMD64 **0.3.0**; historical base/demo pins remain 0.2.0.
+The 0.4.0 source candidate integrates automated delivery, but its rollout is not yet verified.
+The installed delivery Pipeline currently permits verification/preflight only, not mutations.
 See [image identity](docs/runbooks/image-publication.md),
 [creation/access runbook](docs/runbooks/gke-creation.md),
 [approved resource profile](deploy/infrastructure/gke-proposal.md) and

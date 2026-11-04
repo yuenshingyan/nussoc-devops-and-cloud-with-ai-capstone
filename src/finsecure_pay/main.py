@@ -18,7 +18,7 @@ def create_app() -> FastAPI:
     settings = load_settings()
     app = FastAPI(
         title="FinSecure Pay",
-        version="0.3.0",
+        version="0.4.0",
         description="Transaction-validation API for the FinSecure Pay DevOps capstone.",
     )
     app.state.settings = settings

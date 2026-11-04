@@ -15,11 +15,12 @@ class FinsecureReleaseBlockage extends CauseOfBlockage {
 }
 
 class FinsecureReleaseDispatcher extends QueueTaskDispatcher {
-    static final String POLICY_VERSION = '1'
+    static final String POLICY_VERSION = '2'
     static final String RELEASE_NODE = 'finsecure-release'
     static final Set<String> TRUSTED_JOBS = Collections.unmodifiableSet([
         'finsecure-release/verify-boundaries',
         'finsecure-release/verify-scheduling',
+        'finsecure-release/delivery',
     ] as Set)
 
     static String rejection(String nodeName, String ownerName, boolean flyweight) {
@@ -53,4 +54,4 @@ class FinsecureReleaseDispatcher extends QueueTaskDispatcher {
 def dispatchers = ExtensionList.lookup(QueueTaskDispatcher.class)
 assert !dispatchers.any { it.class.name == 'FinsecureReleaseDispatcher' }
 dispatchers.add(new FinsecureReleaseDispatcher())
-println('FinSecure release scheduling policy v1 installed')
+println('FinSecure release scheduling policy v2 installed')

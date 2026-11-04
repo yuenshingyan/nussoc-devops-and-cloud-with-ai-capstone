@@ -21,6 +21,20 @@ TOOLS = (
     "scripts/security_scan.py",
     "ops/jenkins/image_archive.py",
 )
+DELIVERY_TOOLS = (
+    "scripts/release_worker.py",
+    "scripts/release_input.py",
+    "scripts/release_command.py",
+    "scripts/release_credentials.py",
+    "scripts/release_registry.py",
+    "scripts/release_publication.py",
+    "scripts/release_cluster.py",
+    "scripts/release_deployment.py",
+    "scripts/release_http.py",
+    "scripts/release_rollout.py",
+    "scripts/release_smoke.py",
+    "scripts/release_execute.py",
+)
 SELECTION_BOUNDARY = "// No node, credential binding, upstream trigger, artifact execution"
 FILE_LIMIT = 1024 * 1024
 CHUNK_SIZE = 16000
@@ -55,11 +69,11 @@ def encoded_expression(data: bytes) -> str:
     return "[" + ",".join(chunks) + "].join('')"
 
 
-def verifier_bundle(root: Path) -> str:
+def verifier_bundle(root: Path, *, delivery: bool = False) -> str:
     """Embed only fixed reviewed tooling, with independent post-write hash readback."""
     sources = []
     hashes = []
-    for name in TOOLS:
+    for name in (*TOOLS, *(DELIVERY_TOOLS if delivery else ())):
         data = source_bytes(root, name)
         sources.append("'" + name + "':" + encoded_expression(data))
         hashes.append("'" + name + "':'" + sha256(data).hexdigest() + "'")
@@ -97,11 +111,15 @@ def verifier_bundle(root: Path) -> str:
     )
 
 
-def assemble_definition(root: Path = ROOT) -> str:
-    """Build a verification-only definition from fixed local inputs, with no release actions."""
+def assemble_definition(
+    root: Path = ROOT, *, delivery: bool = False, mutations: bool = False
+) -> str:
+    """Assemble fixed reviewed phases; default remains the legacy verification-only candidate."""
+    if type(delivery) is not bool or type(mutations) is not bool or (mutations and not delivery):
+        raise ValueError("RELEASE_ASSEMBLY_MODE_INVALID")
     imports = set()
     bodies = []
-    for name in HELPERS:
+    for name in (*HELPERS, *(("release-delivery.groovy",) if delivery else ())):
         source = source_bytes(root, "ops/jenkins/" + name).decode("utf-8")
         if name == "release-job.groovy":
             if source.count(SELECTION_BOUNDARY) != 1:
@@ -110,5 +128,14 @@ def assemble_definition(root: Path = ROOT) -> str:
         lines = source.splitlines()
         imports.update(line for line in lines if line.startswith("import "))
         bodies.append("\n".join(line for line in lines if not line.startswith("import ")))
-    flow = source_bytes(root, "ops/jenkins/release-flow.groovy").decode("utf-8")
-    return "\n\n".join(["\n".join(sorted(imports)), *bodies, verifier_bundle(root), flow])
+    flow_name = "release-delivery-flow.groovy" if delivery else "release-flow.groovy"
+    flow = source_bytes(root, "ops/jenkins/" + flow_name).decode("utf-8")
+    if delivery:
+        marker = "final boolean FINSECURE_MUTATIONS_ENABLED = false"
+        if flow.count(marker) != 1:
+            raise ValueError("RELEASE_MUTATION_BOUNDARY_INVALID")
+        if mutations:
+            flow = flow.replace(marker, "final boolean FINSECURE_MUTATIONS_ENABLED = true")
+    return "\n\n".join(
+        ["\n".join(sorted(imports)), *bodies, verifier_bundle(root, delivery=delivery), flow]
+    )

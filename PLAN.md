@@ -1,6 +1,21 @@
 # FinSecure Pay — Implementation Plan
 
-## Latest checkpoint — Step 4.3 publication primitives and approved cache cleanup
+## Current execution — Step 4.3 integrated delivery
+
+The fixed delivery definition now connects independent artifact verification, publication,
+registry readback, conditional image-only deployment, rollout and synthetic smoke checks.
+The controller has scheduling policy v2 and the exact approved mutation-disabled definition,
+with a native SUCCESS upstream trigger, serialization and resume disabled. The isolated
+release worker is online. The next normal main build will exercise the real Pipeline;
+publication/deployment remain disabled until that verification run is inspected.
+
+Application metadata is 0.4.0; business request/response contracts are unchanged. The live
+application remains 0.3.0. Host checks passed (Ruff, 1,347 tests, build and source/dependency
+security gates); Jenkins CPS compilation passed. These are not a completed delivery run.
+Actual publication, rollout, blocking-gate, rollback and monitoring demonstrations remain
+pending. New cloud monitoring volumes still require sufficient-credit confirmation.
+
+## Previous checkpoint — Step 4.3 publication primitives and approved cache cleanup
 
 The user approved continuation of the execution scope, including host uv-cache cleanup.
 Unused-cache pruning removed 124.8 MiB; the subsequently approved remaining-cache cleanup

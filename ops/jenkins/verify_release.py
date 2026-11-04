@@ -103,15 +103,18 @@ def check_policy(client: Client) -> None:
         .findAll { it.class.name == 'FinsecureReleaseDispatcher' }
     assert guards.size() == 1
     def guard = guards[0]
-    assert guard.POLICY_VERSION == '1'
+    assert guard.POLICY_VERSION == '2'
     assert guard.TRUSTED_JOBS == ([
-        'finsecure-release/verify-boundaries', 'finsecure-release/verify-scheduling'
+        'finsecure-release/verify-boundaries', 'finsecure-release/verify-scheduling',
+        'finsecure-release/delivery'
     ] as Set)
     assert guard.rejection('finsecure-release', 'finsecure-ci', false) != null
     assert guard.rejection('finsecure-python', 'finsecure-release/verify-boundaries', false) != null
     assert guard.rejection('finsecure-release', null, false) != null
     assert guard.rejection(
         'finsecure-release', 'finsecure-release/verify-boundaries', false) == null
+    assert guard.rejection('finsecure-release', 'finsecure-release/delivery', false) == null
+    assert guard.rejection('finsecure-python', 'finsecure-release/delivery', false) != null
     println('FINSECURE_RELEASE_POLICY_VERIFIED')
     """
     crumb_response = client.get(BASE_URL + "/crumbIssuer/api/json")
