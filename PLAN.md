@@ -1,6 +1,29 @@
 # FinSecure Pay — Implementation Plan
 
-## Latest checkpoint — Step 4.3 private registry profile and readback adapter
+## Latest checkpoint — Step 4.3 publication primitives and approved cache cleanup
+
+The user approved continuation of the execution scope, including host uv-cache cleanup.
+Unused-cache pruning removed 124.8 MiB; the subsequently approved remaining-cache cleanup
+removed 1.4 GiB. Host space recovered to 2.9 GiB and measured 2.8 GiB after verification;
+Docker backing remains 7.6 GiB. Reports, diagnostics and Docker data were preserved.
+New monitoring volumes still require explicit confirmation of sufficient trial credit.
+
+`scripts/release_publication.py` now separates local-format/tag-absence preflight from the
+single-push mutation primitive, so the controller can recheck its original candidate between
+stages. Prepared bytes are rehashed, existing tags are refused, and successful push output
+is not accepted as registry proof. Failed/timed-out writes stop for manual inspection, with
+no relaunch or rollback. Registry-side atomic tag immutability is not established.
+
+20 focused cases and all 1,279 host tests passed with Ruff/build/security/secret boundaries.
+Actual pinned crane also read the public repository tag listing without stored credentials;
+this verified listing framing only, not publication or image readback. Installed delivery,
+policy, approvals and cloud remained unchanged. These primitives are not yet wired into the
+Pipeline. See [publication evidence](evidence/task-04/step-03-release-publication-code.md).
+
+Next: deployment execution and full Pipeline integration before approved main publication,
+activation and genuine rollout/gate/rollback demonstrations. No completion claim yet.
+
+## Previous checkpoint — Step 4.3 private registry profile and readback adapter
 
 `scripts/release_registry.py` now owns a private Docker Hub profile and performs fixed-
 repository SHA-tag/digest-pinned manifest/config readback with one shared remaining deadline.

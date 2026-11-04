@@ -1,0 +1,4 @@
+Clearing cache at: <home>/.cache/uv
+Removed 23132 files (1.4GiB)
+Filesystem      Size    Used   Avail Capacity iused ifree %iused  Mounted on
+/dev/disk3s1   228Gi   199Gi   2.9Gi    99%    1.7M   30M    5%   /System/Volumes/Data

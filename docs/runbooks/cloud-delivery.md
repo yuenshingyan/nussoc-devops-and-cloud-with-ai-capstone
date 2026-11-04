@@ -741,9 +741,37 @@ remained 7.6 GiB. Host VM/swap currently occupies 5 GiB, but there is no causal 
 No caches/volumes/diagnostics were pruned. Review headroom before storage-intensive work.
 See [registry evidence](../../evidence/task-04/step-03-release-registry.md).
 
+## Publication primitives — 4 November 2026
+
+`scripts/release_publication.py` separates `publication_preflight` from `push_prepared`.
+The former rehashes the exact private prepared tar, runs full local crane validation/digest,
+and requires a successful bounded tag listing with the intended SHA tag absent. An existing
+tag—including one left by an earlier uncertain publication—requires manual inspection.
+It is not treated as an automatic retry/resume opportunity.
+
+The fixed controller must first independently verify the archive/config/revision binding,
+then run preflight, then recheck the **original candidate immediately before the write stage**.
+`push_prepared` rehashes the prepared tar and invokes crane push once. A failed/timed-out
+push can still have accepted remote writes; stop for inspection, never relaunch or roll back
+automatically. Exit-zero output is ignored as proof; the existing digest-pinned manifest/
+config readback must subsequently succeed. Every command receives the same remaining
+worker-local deadline. The approved internal-crane retry exception remains unchanged.
+
+These are trusted-controller primitives, not self-authorizing APIs. Tag absence is an
+observation, not an atomic reservation or server-enforced immutability guarantee against
+other writers. No image is rebuilt. The installed Pipeline still does not call these helpers.
+20 focused cases and 1,279 total host tests passed. Actual pinned crane read the public
+repository's tag-list framing without stored credentials; no push or image readback occurred.
+See [publication evidence](../../evidence/task-04/step-03-release-publication-code.md).
+
+Approved host uv-cache cleanup recovered space to 2.9 GiB, with 2.8 GiB at closure. Docker
+backing remains 7.6 GiB. No reports, diagnostics or Docker data were pruned. Do not infer
+adequate headroom for all future image/DB operations from these measurements. Monitoring
+volume provisioning remains conditional on explicit confirmation of sufficient trial credit.
+
 ## Remaining verification
 
-Actual registry integration/proof, immutable upload and deployment execution;
+Actual publication/readback integration/proof and deployment execution;
 reviewed installation/scheduling
 and actual execution of the fixed Pipeline with an eligible normal-main AMD64 build;
 reviewed publication and

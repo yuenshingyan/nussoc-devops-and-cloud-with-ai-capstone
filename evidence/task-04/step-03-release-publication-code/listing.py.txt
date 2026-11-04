@@ -1,0 +1,22 @@
+"""Read public repository tag-list framing only, with no stored credentials or writes."""
+from json import dumps
+from pathlib import Path
+from re import fullmatch
+from sys import path
+from tempfile import TemporaryDirectory
+from time import monotonic
+path.insert(0,'/review')
+from release_command import run_command
+with TemporaryDirectory(prefix='public-list-') as temporary:
+ root=Path(temporary)
+ result=run_command(['/usr/local/bin/crane','ls','docker.io/yuenshingyan/finsecure-pay'],
+  {'HOME':temporary,'DOCKER_CONFIG':temporary,'TMPDIR':temporary,'PATH':'/usr/local/bin:/usr/bin:/bin'},monotonic()+20)
+ assert result.returncode==0,'Public tag listing failed; no publication attempted'
+ assert not result.stdout or result.stdout.endswith(b'\n')
+ tags=result.stdout.split(b'\n')[:-1] if result.stdout else []
+ assert all(fullmatch(rb'[A-Za-z0-9_][A-Za-z0-9_.-]{0,127}',tag) for tag in tags)
+ assert len(set(tags))==len(tags)
+assert not root.exists()
+print(dumps({'status':'verified','scope':'public_registry_listing_only','tags_observed':len(tags),
+ 'newline_delimited_tag_framing_verified':True,'stored_credentials_used':False,'writes_performed':False,
+ 'release_eligibility_verified':False,'image_readback_verified':False,'owned_profile_removed':True}))

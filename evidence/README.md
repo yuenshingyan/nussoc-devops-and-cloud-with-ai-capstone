@@ -202,6 +202,9 @@ and report retention on an isolated failure. Cloud delivery remains unverified.
   published accessible reports, and provided packages with verified download hashes.
   The build was manually triggered; no source-trigger, release, or deployment gate is claimed.
 
+- [Step 4.3 — Publication primitives](task-04/step-03-release-publication-code.md):
+  local preflight/single-push/readback sequencing, 1,279 host tests and actual public tag-list
+  framing checks. Approved uv-cache cleanup recovered host space. No upload or Pipeline proof.
 - [Step 4.3 — Private registry profile and readback adapter](task-04/step-03-release-registry.md):
   pinned crane resolved synthetic profile credentials; cleanup and local real-image fixture
   checks passed. Fixed-repository readback sequencing tested at process boundaries; 1,259

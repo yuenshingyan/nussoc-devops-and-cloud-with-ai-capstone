@@ -1,0 +1,4 @@
+{
+  "scripts/release_publication.py": "6ebf2eb6f3b0b0a6a8339a37675fd86748bb877e527eadafa5e223c2a06f2213",
+  "tests/unit/test_release_publication.py": "402e0729c8eabc616d6a0a28c45385abcd9d87a23332095025e31761a1754027"
+}

@@ -1,0 +1,8 @@
+Filesystem      Size    Used   Avail Capacity iused ifree %iused  Mounted on
+/dev/disk3s1   228Gi   200Gi   1.8Gi   100%    1.7M   19M    8%   /System/Volumes/Data
+Pruning cache at: <home>/.cache/uv
+Removed 2026 files (124.8MiB)
+Filesystem      Size    Used   Avail Capacity iused ifree %iused  Mounted on
+/dev/disk3s1   228Gi   200Gi   1.8Gi   100%    1.7M   19M    8%   /System/Volumes/Data
+Filesystem      Size  Used Avail Use% Mounted on
+/dev/vda1        59G   48G  7.6G  87% /var/jenkins_home
