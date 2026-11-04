@@ -1,0 +1,23 @@
+"""Read only the existing delivery approval state; never approve scripts or signatures."""
+from json import dumps, loads
+from pathlib import Path
+from bootstrap import BASE_URL, admin_password
+from httpx2 import BasicAuth, Client
+
+code = '''
+def job=jenkins.model.Jenkins.get().getItemByFullName('finsecure-release/delivery')
+def approval=org.jenkinsci.plugins.scriptsecurity.scripts.ScriptApproval.get()
+def matching=approval.pendingScripts.count { it.script == job.definition.script }
+assert job.disabled && job.lastBuild == null && matching == 1
+println(groovy.json.JsonOutput.toJson([delivery_disabled:true,never_built:true,
+ exact_definition_pending_approval:true,pending_count:approval.pendingScripts.size(),
+ approved_script_count:approval.approvedScriptHashes.length]))
+'''
+with Client(auth=BasicAuth('admin',admin_password()),timeout=20,trust_env=False) as client:
+    crumb=client.get(BASE_URL+'/crumbIssuer/api/json').json()
+    response=client.post(BASE_URL+'/scriptText',data={'script':code},headers={crumb['crumbRequestField']:crumb['crumb']})
+    response.raise_for_status()
+    Path('reports/release-artifacts/approval-response.txt').write_text(response.text)
+    result=loads(response.text)
+    Path('reports/release-artifacts/approval-state.json').write_text(dumps(result,indent=2)+'\n')
+    print(dumps(result))

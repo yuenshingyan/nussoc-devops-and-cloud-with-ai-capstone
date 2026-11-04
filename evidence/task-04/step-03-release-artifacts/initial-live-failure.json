@@ -1,0 +1,23 @@
+{
+  "phase": "observer_Groovy_compilation",
+  "status": "failed",
+  "reason": "293316-code-unit fixture exceeded 65535-unit string literal limit",
+  "transfer_started": false,
+  "worker_boundaries": {
+    "release_node_online": true,
+    "scheduling_policy_verified": true,
+    "release_container_boundaries": "passed",
+    "secrets_absent_from_process_arguments_and_environment": true,
+    "remoting_secret_verified": true,
+    "folder_file_credentials_match_private_sources": true,
+    "source_job_lookup_denied": true,
+    "cpu_limit": 0.5,
+    "memory_limit_mib": 512,
+    "readonly_root": true
+  },
+  "release_worker_stopped": true,
+  "release_worker_oom_killed": false,
+  "registry_or_gke_credentials_bound": false,
+  "publishing_attempted": false,
+  "deployment_attempted": false
+}

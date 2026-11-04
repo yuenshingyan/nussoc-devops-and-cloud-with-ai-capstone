@@ -1,0 +1,14 @@
+Retained verbatim excerpt from the initial pytest tool output, before adding the explicit repository-tooling import path:
+
+==================================== ERRORS ====================================
+____________ ERROR collecting tests/unit/test_release_artifacts.py _____________
+ImportError while importing test module '<repository>/tests/unit/test_release_artifacts.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+tests/unit/test_release_artifacts.py:15: in <module>
+    from scripts.image_scan import DB_REPOSITORY, TRIVY_SHA256, TRIVY_VERSION, image_result
+E   ModuleNotFoundError: No module named 'scripts'
+=========================== short test summary info ============================
+ERROR tests/unit/test_release_artifacts.py
+!!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!
+1 error in 0.09s

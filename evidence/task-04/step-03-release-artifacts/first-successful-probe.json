@@ -1,0 +1,104 @@
+{
+  "probe_kind": "administrator_owned_remoting_not_downstream_pipeline",
+  "registry_or_gke_credentials_bound": false,
+  "publishing_attempted": false,
+  "deployment_attempted": false,
+  "trusted_tool_sha256": {
+    "scripts/release_artifacts.py": "72129e77881e822de6b2aa4d2d6f4734de6323fb28de7f6deb86854c5a5b499a",
+    "scripts/release_archive.py": "ef004e882cba7f369e154bc90678e61e54a807510c394cbd2f8e2455db242fcb",
+    "scripts/image_scan.py": "acb93d1eb21af514c94eb91d5ea430f4e8ff89e1a06f0a885eeb7a1cb2ad88d0",
+    "scripts/security_scan.py": "a379e3ce4e9afd6cf2f119d0615b30f7af7edbc1ad45f0384e4971b98107d73a",
+    "ops/jenkins/image_archive.py": "cb1a3035c6159ec3e8f46b1adc7c42819d491bec8a969ff48f9a1500760eff66"
+  },
+  "transfer_script_sha256": "b56f5e99de14e246e0337c1022ce2e1b91e3e75d24e35d4f2a6984dfafc11c4d",
+  "preflight": {
+    "status": "verified",
+    "main_build": 34,
+    "delivery_disabled_unbuilt": true,
+    "queue_empty": true
+  },
+  "worker_boundaries": {
+    "release_node_online": true,
+    "scheduling_policy_verified": true,
+    "release_container_boundaries": "passed",
+    "secrets_absent_from_process_arguments_and_environment": true,
+    "remoting_secret_verified": true,
+    "folder_file_credentials_match_private_sources": true,
+    "source_job_lookup_denied": true,
+    "cpu_limit": 0.5,
+    "memory_limit_mib": 512,
+    "readonly_root": true
+  },
+  "transfer": {
+    "status": "transferred",
+    "receipt": {
+      "files": 21,
+      "bytes": 21615108,
+      "receipt_sha256": "a9f350713f0372d66aff90366fb935bdf542c25e1e8638edb526d8165e33c2f7"
+    },
+    "source_job": "finsecure-ci-amd64-review-20261104041956",
+    "source_build": 1,
+    "registry_or_gke_bindings": false,
+    "upstream_code_executed": false
+  },
+  "worker_verification": {
+    "status": "verified",
+    "publishing_authorized": false,
+    "revision": "dc7ffe5a2884f8aeb833f9befd0f1be30d608739",
+    "archive_sha256": "c7173b149f2821d3baba3521397eee791dd53f1b9e33c42b07a91eb2e13a0cf0",
+    "database_age_seconds": 19894.740146,
+    "verified_files": 21,
+    "source_findings": {
+      "LOW": 43,
+      "MEDIUM": 0,
+      "HIGH": 0,
+      "blocking_findings": 0
+    },
+    "image_id": "sha256:d4c23d06faf317e704f3732cb8af970a7b896556d1b8e5c90ac65e3ab744ac10",
+    "platform": "linux/amd64",
+    "layers": 9,
+    "expanded_layer_bytes": 62625792,
+    "archive_oci_manifest_digest": "sha256:27ee6d5d4d5a4af23079d2310ca208c5bb4bd6989231fb858934ff9bfb791099"
+  },
+  "worker_negative_cases": {
+    "status": "verified",
+    "rejection_cases": [
+      "post-transfer-byte-tampering",
+      "synthetic-future-release-clock"
+    ],
+    "restored_inputs": {
+      "status": "verified",
+      "publishing_authorized": false,
+      "revision": "dc7ffe5a2884f8aeb833f9befd0f1be30d608739",
+      "archive_sha256": "c7173b149f2821d3baba3521397eee791dd53f1b9e33c42b07a91eb2e13a0cf0",
+      "database_age_seconds": 19896.342467,
+      "verified_files": 21,
+      "source_findings": {
+        "LOW": 43,
+        "MEDIUM": 0,
+        "HIGH": 0,
+        "blocking_findings": 0
+      },
+      "image_id": "sha256:d4c23d06faf317e704f3732cb8af970a7b896556d1b8e5c90ac65e3ab744ac10",
+      "platform": "linux/amd64",
+      "layers": 9,
+      "expanded_layer_bytes": 62625792,
+      "archive_oci_manifest_digest": "sha256:27ee6d5d4d5a4af23079d2310ca208c5bb4bd6989231fb858934ff9bfb791099"
+    }
+  },
+  "cleanup": {
+    "owned_probe_removed": true,
+    "queue_empty": true
+  },
+  "final_job_state": {
+    "status": "verified",
+    "main_build": 34,
+    "delivery_disabled_unbuilt": true,
+    "queue_empty": true
+  },
+  "status": "verified",
+  "stop_returncode": 0,
+  "release_worker_stopped": true,
+  "release_worker_oom_killed": false,
+  "observed_at_utc": "2026-11-04T07:00:01.440095+00:00"
+}

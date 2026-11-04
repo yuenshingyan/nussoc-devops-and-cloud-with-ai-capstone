@@ -1,0 +1,138 @@
+{
+  "schema_version": 1,
+  "context": {
+    "image_id": "sha256:d4c23d06faf317e704f3732cb8af970a7b896556d1b8e5c90ac65e3ab744ac10",
+    "archive_sha256": "c7173b149f2821d3baba3521397eee791dd53f1b9e33c42b07a91eb2e13a0cf0",
+    "lock_sha256": "cb8355288ebcd7008a73677b2576f07a7f66fdb259d11a523e1ba0330d817adf",
+    "local_tag": "finsecure-pay-ci:jenkins-finsecure-ci-amd64-review-20261104041956-1",
+    "revision": "dc7ffe5a2884f8aeb833f9befd0f1be30d608739",
+    "upstream_job": "finsecure-ci-amd64-review-20261104041956",
+    "upstream_build": 1,
+    "source_sha256": {
+      "ops/jenkins/bootstrap.py": "499b008ad3f416f76e58156a1589c687f5727016ffa757cbcb5f22f1beda1de9",
+      "ops/jenkins/image_archive.py": "cb1a3035c6159ec3e8f46b1adc7c42819d491bec8a969ff48f9a1500760eff66",
+      "ops/jenkins/release_bootstrap.py": "b2168aba3ab7403668c9512151e27d992200f3ae161b3b8b2880c3239966dcc6",
+      "ops/jenkins/release_probe.py": "6079c0754a9f7b5f8be1a6073c8266660ab8a5fedf42fab2f26df59cdf939779",
+      "ops/jenkins/release_store.py": "9cae5fd76b640523f0686663850af7737614c5f71c4ba0b9233787fa5871012e",
+      "ops/jenkins/verify.py": "7b2184fecddb97b5d19d18de21a749a20e99b6c5ba0c3f58073ab837e47421ff",
+      "ops/jenkins/verify_ci.py": "a9724a586727c307b49dfbf4d3f9703c516c72ff5769adb82cbcf4279d32cd39",
+      "ops/jenkins/verify_release.py": "a77f4286fbba9d4ee02c081a57b02504bb1c93dd550828304a3b314b824a2852",
+      "ops/jenkins/verify_secrets.py": "76f3ba55a465d9147de262065eaf8e525033c8a26877eb4c47977849c9334f9f",
+      "ops/jenkins/verify_trigger.py": "f16eae8bc764fa54fabf90bf147f57032b3873e77dabc5c6f5e11bdceba0d95c",
+      "scripts/gke_preflight.py": "cf2eb88f215dc3564ec0379d64c29d321dcf6136d46576eff4ddc2ae7b8b81b8",
+      "scripts/image_scan.py": "acb93d1eb21af514c94eb91d5ea430f4e8ff89e1a06f0a885eeb7a1cb2ad88d0",
+      "scripts/monitoring_credentials.py": "f18f9930a80caf99add72cdd800837c70ef0852ef46572720e1fae8c1c7a3044",
+      "scripts/release_access.py": "8320ed1c3024b33774f8d83aff0e4b49d062467cc431231280812ceccb84fd48",
+      "scripts/release_cluster.py": "d40af1c5b6c7716474c77da974ffca894c8132b29d574d9f25db91dd63a75edc",
+      "scripts/release_credentials.py": "8f61c1a2bf7c785a0b26090a44b65748af73d3c00d722d7f4633e52af168de1d",
+      "scripts/security_scan.py": "a379e3ce4e9afd6cf2f119d0615b30f7af7edbc1ad45f0384e4971b98107d73a",
+      "scripts/smoke_test.py": "73b88a6b0d531a5e7cc0b3c681e34192d39a77808c30ada2384527a2f7865135",
+      "src/finsecure_pay/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "src/finsecure_pay/api/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "src/finsecure_pay/api/dependencies.py": "936849f4fd30fde77243a0add24158a1b52e04396054e0468013145e074a615c",
+      "src/finsecure_pay/api/errors.py": "75abde197e410093244c99c66507ce052b8fb3fc75c10edcd58a63e6986fe969",
+      "src/finsecure_pay/api/health.py": "44b177ed30442db2d5abcd532223ddc078f6b8539515b5e6d91d32d01424aebe",
+      "src/finsecure_pay/api/metrics.py": "276056377ca42aa35d1a7d36efc9b28fcaf899e4b7a239375c17703e4d112a39",
+      "src/finsecure_pay/api/validation.py": "78610c2780b0e29f69ac00bc691ea3d962e06b8d1778baf48934e99a9bccd518",
+      "src/finsecure_pay/config.py": "490f18f21c86e2775f701e4ddd20a41799ad1b92d0d7116656535c6fe032a065",
+      "src/finsecure_pay/main.py": "cf6c3fcdb4ef05e9dda8cc6148bbd2d6d56166ba559e4aa100197ef84d565bce",
+      "src/finsecure_pay/observability/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "src/finsecure_pay/observability/http.py": "488f3ef688fd6fbc098286467b74ec31fa697e57192123f78cff09330f2d92cf",
+      "src/finsecure_pay/observability/logging.py": "757578f8d1d72ee5067062784e954b303d775124a89e9b3ae84ed02b20025bb0",
+      "src/finsecure_pay/observability/metrics.py": "10f1d0961d85b8d110f07086221675a3085de32bf6c29ec794a6ff19f2057587",
+      "src/finsecure_pay/schemas/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "src/finsecure_pay/schemas/errors.py": "ad689c0fb2960b53b4dbbce12c321e0b6b250b2fb4e7ee28c0e5ee53ddfe33d1",
+      "src/finsecure_pay/schemas/health.py": "7ccd0f73cb93a5ec8ecba748b4e67eeb43b77275cfce637b6300691f55957951",
+      "src/finsecure_pay/schemas/transaction.py": "2e5959dfadeb39a2722b7b658236ec717c2cfefe40fa24fcb83865f7ecd31bac",
+      "src/finsecure_pay/services/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "src/finsecure_pay/services/validation.py": "789f87b07baf82ad5fde4b95f2a3486ec4e306c24c5bae9a0df0c2411b7b3b66"
+    },
+    "pyproject_sha256": "a1593a1e35d1c73b44bb90405a15793e50a02d295f8d83830cf49a1e07bee6ec"
+  },
+  "artifacts": {
+    "images/finsecure-pay.tar.gz": {
+      "size": 21435786,
+      "sha256": "c7173b149f2821d3baba3521397eee791dd53f1b9e33c42b07a91eb2e13a0cf0"
+    },
+    "reports/bandit.json": {
+      "size": 54386,
+      "sha256": "982eeac395bec66a218635770c6e58b27d9a29df44139c67577304c21dd61ff9"
+    },
+    "reports/bandit.txt": {
+      "size": 213,
+      "sha256": "cbdcb21f996bbcee086d84b3866c7ee7ae261a506de510360aef715a8e09c33f"
+    },
+    "reports/build-metadata.txt": {
+      "size": 174,
+      "sha256": "14d34b53e075c5ac23dd58eb68ac1867be80646c338d154f28d0f3706c7fc697"
+    },
+    "reports/buildkit-image.json": {
+      "size": 694,
+      "sha256": "7b20edcbc9cdcdbfcde45bef8b4d411b52c33cc72fc69ba2bfa94f9585b3ed08"
+    },
+    "reports/image-metadata.txt": {
+      "size": 156,
+      "sha256": "a59942eb49cd0eacb50e6320381c1ed3c4fd78bf18c647574ae3dc07d898f579"
+    },
+    "reports/image-runtime-requirements.txt": {
+      "size": 286,
+      "sha256": "9224d43537fd4abb4bf349d2a326e5b449fe1c4349a6b401808c2834b2cf25e3"
+    },
+    "reports/image-security-export.txt": {
+      "size": 314,
+      "sha256": "f995fc0ea1675b12bc5152a5c31d3d7ceefd630b4ecceb28e24fc06e3729fc6e"
+    },
+    "reports/image-security-summary.json": {
+      "size": 2542,
+      "sha256": "bdef5590b737ccff6bc7f23ff4c9f386088045b6b5c654643b37e306ae3d60db"
+    },
+    "reports/image-security-tools.txt": {
+      "size": 16,
+      "sha256": "84e54b2d02a5de1ad8dff546f152fb3aa252379d25a3a8d0f982d6d3a1fe4cba"
+    },
+    "reports/image.sha256": {
+      "size": 94,
+      "sha256": "74561c8366b7cda03bfef2cfd1358049a5e1e4626b3a9ae54f539a5259a4d340"
+    },
+    "reports/pip-audit.json": {
+      "size": 903,
+      "sha256": "9633ea8ef4e54acfdb9d5fc509b003bdd526169b8b7823f9b638702453253228"
+    },
+    "reports/pip-audit.txt": {
+      "size": 31,
+      "sha256": "15950a68a7ed99c59779717acefdceb3f69cfd31bde67d2c954f2a3cea4d7955"
+    },
+    "reports/runtime-requirements.txt": {
+      "size": 5386,
+      "sha256": "497441010dc84048d4313d1bb9bcf84f42f9b2fede6296c2b319842da53d0e6b"
+    },
+    "reports/security-export.txt": {
+      "size": 5417,
+      "sha256": "ae575b2e31b33df331d7bf25c05c2ed87008737c04d87ef7b2c3d8d5dc3d1b26"
+    },
+    "reports/security-summary.json": {
+      "size": 6046,
+      "sha256": "ec705b81f0d2a0a197b94b53853933bb783a945e2be9642a59f644f8532e0e5a"
+    },
+    "reports/security-tools.txt": {
+      "size": 50,
+      "sha256": "44a60294bb4e259844ac5e29a7fc37051d18a55e9c972ecc09604e374fa1b2b2"
+    },
+    "reports/trivy-db.json": {
+      "size": 168,
+      "sha256": "1524aacea5be0415b27dc94e7f90f1860ba6515f0c3aeaf15137e3c2bb6ee97b"
+    },
+    "reports/trivy-db.txt": {
+      "size": 417,
+      "sha256": "e324a164fd90a548850a3f57548034c503457456beba8dcab0994690357d889e"
+    },
+    "reports/trivy.json": {
+      "size": 101228,
+      "sha256": "20de06f7aac8006493a19ee8cbd0ed42ae44eaa846a297c0dbf36317e6f2af8f"
+    },
+    "reports/trivy.txt": {
+      "size": 801,
+      "sha256": "717f4f8de8ae2d05e62120248cc386e7f7aa988968749b71f078e780e3c7e9da"
+    }
+  }
+}

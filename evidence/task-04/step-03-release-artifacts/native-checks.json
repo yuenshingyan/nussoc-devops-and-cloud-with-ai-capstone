@@ -1,0 +1,33 @@
+{
+  "status": "verified",
+  "cases": [
+    "exact-boundary-copy",
+    "size",
+    "deadline",
+    "empty-log"
+  ],
+  "files": [
+    "reports/security-summary.json",
+    "reports/security-tools.txt",
+    "reports/security-export.txt",
+    "reports/runtime-requirements.txt",
+    "reports/bandit.json",
+    "reports/bandit.txt",
+    "reports/pip-audit.json",
+    "reports/pip-audit.txt",
+    "reports/image-security-summary.json",
+    "reports/image-security-tools.txt",
+    "reports/image-security-export.txt",
+    "reports/image-runtime-requirements.txt",
+    "reports/trivy-db.json",
+    "reports/trivy-db.txt",
+    "reports/trivy.json",
+    "reports/trivy.txt",
+    "reports/build-metadata.txt",
+    "reports/image-metadata.txt",
+    "reports/buildkit-image.json",
+    "reports/image.sha256",
+    "images/finsecure-pay.tar.gz"
+  ],
+  "policy_version": "1"
+}

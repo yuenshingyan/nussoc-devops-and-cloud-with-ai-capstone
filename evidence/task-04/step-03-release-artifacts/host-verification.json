@@ -1,0 +1,22 @@
+{
+  "status": "passed",
+  "host_tests": 1060,
+  "new_offline_tests": 85,
+  "commands": [
+    "uv run --locked ruff check .",
+    "uv run --locked ruff format --check .",
+    "uv run --locked pytest",
+    "uv build",
+    "uv run --locked python scripts/security_scan.py",
+    "PYTHONPATH=ops/jenkins uv run --locked python ops/jenkins/verify_secrets.py --notifications"
+  ],
+  "source_findings": {
+    "LOW": 43,
+    "MEDIUM": 0,
+    "HIGH": 0
+  },
+  "runtime_dependencies_audited": 15,
+  "new_image_build": false,
+  "new_dependency": false,
+  "normal_scm_build": false
+}

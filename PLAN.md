@@ -1,6 +1,28 @@
 # FinSecure Pay — Implementation Plan
 
-## Latest checkpoint — Step 4.3 cloud delivery preparation
+## Latest checkpoint — Step 4.3 artifact transfer and verification
+
+The separate trusted transfer/verifier helpers are implemented and verified, but not
+integrated into the disabled delivery job. A controller-owned remoting probe transferred
+21 fixed artifacts from retained manual AMD64 candidate #1 (`dc7ffe5`) to the constrained
+release worker. Independent hash, Git-snapshot, source/dependency/image gate, DB-time
+and archive/layer checks passed; modified bytes and a synthetic stale-clock case failed
+closed. No upstream code or image was executed, and no registry/GKE credentials were
+bound. This was an administrator-owned probe, not an eligible downstream release build.
+
+All 1,060 host tests, Ruff, package build and source/dependency gates passed. The first
+Groovy fixture compilation failure and subsequent successful probes are retained.
+Owned scratch was removed; worker stopped without OOM; delivery remains disabled,
+pending approval and never built. Policy v1, main #34, the Deployment specification
+and Pod identities remain unchanged; two Ready replicas and health 200 were verified.
+No merge, publication, upload or deployment occurred. See
+[artifact evidence](evidence/task-04/step-03-release-artifacts.md).
+
+Next: trusted production Git snapshots and Pipeline integration, newer/same-revision
+build rejection, action-time main checks, immutable upload and image-only deployment;
+then review/publication and normal SCM/downstream, timeout and concurrency evidence.
+
+## Previous checkpoint — Step 4.3 initial cloud delivery preparation
 
 Recovery evidence was reviewed/merged/published as `19b4486`; automatic #34 passed
 781 tests/all gates and 33 artifacts with matching notification revision. The user
@@ -319,7 +341,7 @@ The assignment allows equivalent application, build, and unit-testing tools with
 ### Step 4.3 — Automate container delivery
 - **Branch:** `task-04/step-03-container-delivery`
 - **Approved local subset:** separate rootless BuildKit with builder-only security exceptions, local ARM64 build/export, and operator-side artifact smoke verification. Reviewed/merged as `ab538a2`; normal SCM build #2 passed all 245 tests, exported the image, and its downloaded artifact passed operator-side smoke checks. See the [SCM follow-up](evidence/task-04/step-03-scm-verification.md). No registry credentials, publishing, or cloud work is authorized by this subset. See the [builder runbook](docs/runbooks/local-image-builder.md) and [evidence](evidence/task-04/step-03-local-image-builder.md).
-- **Cloud continuation:** dedicated deployer IAM/RBAC and namespace admission are live-verified. The release-worker image/tools and folder credential imports passed actual read-only Jenkins probes. The controller-owned scheduling guard passed ten decision cases and five real Pipeline cases (including three denied assignments); 942 host tests and source/dependency gates passed. Worker stopped and diagnostic jobs disabled after verification. Manual AMD64 candidate CI at `dc7ffe5` subsequently passed 961 tests, all gates and 33 verified artifacts, with zero image findings and matching local mail. The fixed non-sandboxed selection job is installed disabled/pending approval; 975 host tests and native selection checks passed, including rejection of real main #34's ARM64 image through a simulated upstream envelope. No job build, artifact transfer, upload or deployment stage yet; review/publication and normal SCM AMD64 proof pending. See [setup/status](docs/runbooks/cloud-delivery.md) and [selection evidence](evidence/task-04/step-03-release-selection.md).
+- **Cloud continuation:** dedicated deployer IAM/RBAC and namespace admission are live-verified. The release-worker image/tools and folder credential imports passed actual read-only Jenkins probes. The controller-owned scheduling guard passed ten decision cases and five real Pipeline cases (including three denied assignments); 942 host tests and source/dependency gates passed. Worker stopped and diagnostic jobs disabled after verification. Manual AMD64 candidate CI at `dc7ffe5` subsequently passed 961 tests, all gates and 33 verified artifacts, with zero image findings and matching local mail. The fixed non-sandboxed selection job is installed disabled/pending approval; 975 host tests and native selection checks passed, including rejection of real main #34's ARM64 image through a simulated upstream envelope. Separate transfer/verifier helpers subsequently passed 1,060 host tests and an administrator-owned remoting probe of 21 retained candidate artifacts, including actual byte-tampering rejection and a synthetic stale-clock rejection. These helpers are not yet integrated into the disabled/unbuilt job; no upload or deployment stage exists. Trusted production snapshots, newer-build rejection, review/publication and normal SCM/downstream proof remain pending. See [setup/status](docs/runbooks/cloud-delivery.md), [selection evidence](evidence/task-04/step-03-release-selection.md) and [artifact evidence](evidence/task-04/step-03-release-artifacts.md).
 - Full step still requires container build, versioned push, and Kubernetes deployment stages.
 - Deploy the exact built image, wait for rollout completion, and perform a smoke test.
 - Serialize deployments to the shared demo environment to prevent overlapping releases.

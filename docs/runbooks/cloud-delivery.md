@@ -25,8 +25,10 @@ disabled. See the checkpoints below.
 
 **Partially implemented:** the fixed, disabled `finsecure-release/delivery` definition
 now performs candidate-selection checks. It has never built and its non-sandboxed script
-is pending approval. Artifact transfer/full verification, registry upload and cloud
-deployment stages are not implemented. The feature-branch Jenkinsfile now exports
+is pending approval. Separate controller-transfer and independent-verification helpers
+now pass host tests and a real administrator-owned remoting probe; they are not yet
+wired into this Pipeline. Registry upload and cloud deployment remain unimplemented.
+The feature-branch Jenkinsfile now exports
 and scans AMD64 explicitly. A manual Jenkins candidate passed 961 tests and all gates;
 its AMD64 archive was independently verified. Normal main #34 remains the earlier
 ARM64 build until reviewed publication and a new SCM run. Neither pipeline publishes
@@ -388,16 +390,73 @@ around real main #34 exercised the actual SCM/JUnit/artifact APIs and rejected i
 image. This was not a genuine downstream trigger or Pipeline-body execution. The job
 has never built; the ten-minute cancellation behavior has not been demonstrated.
 
-See [selection evidence](../../evidence/task-04/step-03-release-selection.md). Next work
-must implement and test the controller-owned artifact transfer and independent validation
-before any credential binding, then the immutable upload and image-only deployment.
+See [selection evidence](../../evidence/task-04/step-03-release-selection.md). The next
+checkpoint below verifies separate transfer/validation helpers. They must be integrated
+before any credential binding, followed by immutable upload and image-only deployment.
 Recheck current main immediately before external actions; a selection-time observation
 alone cannot make GitHub and Kubernetes updates atomic. Do not approve/enable this
 incomplete definition as a release pipeline.
 
+## Artifact-transfer and verification checkpoint — 4 November 2026
+
+`ops/jenkins/release-transfer.groovy` is a fixed administrator-owned helper, not upstream
+code. It reads 21 fixed files through the completed run's standard artifact manager and
+writes them through Jenkins remoting to the release worker. It rejects another node,
+an existing destination, source links/escapes, missing files and oversized streams.
+It hashes bytes during transfer and creates the control receipt last. It never gives
+Jenkins admin credentials to the worker, follows artifact download URLs, or binds the
+registry/GKE credentials. The operation owner removes its newly allocated scratch
+folder after verification; borrowed streams remain the caller's responsibility, and
+owned streams close on failure.
+
+`scripts/release_artifacts.py` independently verifies those hashes and sizes, strict
+JSON, source hashes against trusted Git snapshots, lock-bound exports, raw Bandit and
+dependency results, and raw image results. It rejects boolean counts, duplicate JSON
+keys, nonfinite numbers, missing/extra inputs and unsafe filesystem entries. It checks
+UTC ordering and DB freshness both at the report timestamp and the release clock;
+the existing 86,400-second maximum age is unchanged. Runtime packages must match the
+locked export plus the project. LOW source findings remain visible; the policy is not
+weakened. The verifier always returns `publishing_authorized: false`.
+
+`scripts/release_archive.py` reads without extracting or running the image. It verifies
+one Docker/OCI export, every referenced blob hash/descriptor, the AMD64 non-root
+configuration and revision, matching Docker/OCI layer references, and each expanded
+layer's diff ID against the configuration. Its returned **archive OCI manifest digest
+is not evidence of a published registry manifest**.
+
+These helpers use explicit defensive limits: 1 MiB per report/control/JSON input,
+64 MiB for the compressed archive and outer tar stream, 64 visible archive members,
+256 MiB expanded per layer and 512 MiB expanded across layers. Transfer and verification
+each have a 120-second cooperative check budget inside the proposed ten-minute release
+budget. Expired-budget checks are tested; **blocked-I/O cancellation and the complete
+Pipeline's wall-clock timeout are not yet demonstrated**. No background transfer or
+automatic retry was introduced. The receipt, source snapshots and verifier code must
+come from the trusted controller, not the upstream artifact inventory.
+
+Actual verification used the retained manual AMD64 candidate #1 at `dc7ffe5`, not a
+normal main build or eligible downstream release. The operator supplied exact local
+Git-object snapshots for that revision. The controller transferred 21,615,108 bytes;
+the constrained ARM64 worker verified 21 files and nine layers. This was byte inspection,
+not AMD64 image execution. The worker rejected changed bytes and a synthetic future
+release clock, then reverified restored inputs. The failed first observer compilation
+(JVM string-literal limit) and subsequent successful probes are retained. The final
+probe used the exact recorded helper hashes after adding the DB/report-time cross-check.
+
+All 1,060 host tests, Ruff checks, package build and existing source/dependency gates
+passed (43 LOW, zero blocking source findings; 15 dependencies clean). The pytest
+configuration now explicitly includes the repository root for direct tooling imports;
+application wheel contents and dependencies are unchanged.
+
+The owned worker scratch folder was removed, the worker stopped without OOM, and the
+queue was empty. The installed release definition remains unchanged, disabled and never
+built; policy version 1 still excludes it. Main remains #34 and the cloud application's
+Deployment specification and Pod identities remain unchanged, with two Ready replicas
+and public health 200. See [artifact evidence](../../evidence/task-04/step-03-release-artifacts.md).
+
 ## Remaining verification
 
-Reviewed publication and normal SCM AMD64 verification;
-artifact transfer and independent verification; serialization/stale-build execution checks; immutable upload
-identity; deployment timeout/failure behavior; healthy rollout and smoke checks; retained
-failure reports. Full delivery is pending until all of these run successfully.
+Trusted production Git-snapshot acquisition and Pipeline integration; rejection of newer
+builds including the same revision; action-time main checks; reviewed publication and
+normal SCM AMD64 proof; real downstream triggering, serialization, timeout/cancellation
+and restart behavior; immutable upload identity; deployment failure/rollout/smoke checks
+and retained failure reports. Full delivery is pending until all of these run successfully.

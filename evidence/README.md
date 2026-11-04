@@ -202,6 +202,12 @@ and report retention on an isolated failure. Cloud delivery remains unverified.
   published accessible reports, and provided packages with verified download hashes.
   The build was manually triggered; no source-trigger, release, or deployment gate is claimed.
 
+- [Step 4.3 — Controller transfer and independent artifact verification](task-04/step-03-release-artifacts.md):
+  21 real retained candidate artifacts transferred through remoting and independently
+  verified on the constrained worker; tampering and a synthetic stale clock rejected.
+  1,060 host tests and existing source gates passed. Administrator-owned probe only;
+  no credential binding, downstream release, image execution, upload or deployment.
+  Worker stopped; delivery remains disabled/unbuilt and helpers are not integrated.
 - [Step 4.3 — Disabled fixed release selection](task-04/step-03-release-selection.md):
   administrator-owned definition installed without approving/enabling it. 975 host
   tests and native selection checks passed. Real main #34 metadata rejected as ARM64;

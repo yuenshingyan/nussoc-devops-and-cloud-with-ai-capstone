@@ -1,0 +1,37 @@
+"""Operator-only fixture from retained real candidate artifacts and exact local Git objects."""
+from datetime import UTC, datetime
+from hashlib import sha256
+from json import dumps, loads
+from pathlib import Path
+from shutil import copyfile
+from subprocess import check_output
+
+from scripts.release_artifacts import FILES, verify_artifacts
+
+base = Path('reports/release-artifacts').resolve()
+inputs = base / 'input'
+control = base / 'control'
+inputs.mkdir(mode=0o700)
+control.mkdir(mode=0o700)
+job = Path('reports/amd64-ci/job.txt').read_text().strip()
+source = Path('reports') / job
+image = loads((source / 'reports/image-security-summary.json').read_text())
+revision = image['source_revision']
+def git_file(name):
+    return check_output(['git', 'show', revision + ':' + name])
+paths = check_output(['git', 'ls-tree', '-r', '--name-only', revision], text=True).splitlines()
+source_hashes = {name: sha256(git_file(name)).hexdigest() for name in paths
+                 if name.endswith('.py') and name.startswith(('src/finsecure_pay/', 'scripts/', 'ops/jenkins/'))}
+context = {name: image[name] for name in ['image_id', 'archive_sha256', 'lock_sha256', 'local_tag']}
+context.update(revision=revision, upstream_job=job, upstream_build=1, source_sha256=source_hashes)
+for name in ['uv.lock', 'pyproject.toml']:
+    (control / name).write_bytes(git_file(name))
+context['pyproject_sha256'] = sha256((control / 'pyproject.toml').read_bytes()).hexdigest()
+artifacts = {}
+for name in sorted(FILES):
+    destination = inputs / name
+    destination.parent.mkdir(exist_ok=True)
+    copyfile(source / name, destination)
+    artifacts[name] = {'size': destination.stat().st_size, 'sha256': sha256(destination.read_bytes()).hexdigest()}
+(control / 'receipt.json').write_text(dumps({'schema_version': 1, 'context': context, 'artifacts': artifacts}, indent=2))
+print(dumps(verify_artifacts(inputs, control, datetime.now(UTC)), indent=2))

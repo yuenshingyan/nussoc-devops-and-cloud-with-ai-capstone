@@ -1,0 +1,51 @@
+"""Compile trusted transfer code and verify borrowed-stream bounds without starting a worker."""
+from base64 import b64encode
+from json import dumps, loads
+from pathlib import Path
+from bootstrap import BASE_URL, admin_password
+from httpx2 import BasicAuth, Client
+from verify_release import check_policy
+
+source = Path('ops/jenkins/release-transfer.groovy').read_text()
+code = '''
+def loader = new GroovyClassLoader(jenkins.model.Jenkins.get().pluginManager.uberClassLoader)
+loader.parseClass(new String(Base64.decoder.decode('__SOURCE__'), 'UTF-8'))
+def transfer = loader.loadClass('FinsecureArtifactTransfer')
+def checks = []
+def input = new ByteArrayInputStream('synthetic'.getBytes('UTF-8'))
+def output = new ByteArrayOutputStream()
+def receipt = transfer.copyStream(input, output, 9L, System.nanoTime() + 10000000000L)
+assert receipt.size == 9 && output.toString('UTF-8') == 'synthetic'
+assert receipt.sha256 == java.security.MessageDigest.getInstance('SHA-256').digest('synthetic'.getBytes('UTF-8')).encodeHex().toString()
+checks << 'exact-boundary-copy'
+input.close(); output.close()
+[['size', '12345', 4L, System.nanoTime() + 10000000000L, 'TRANSFER_SIZE_LIMIT'],
+ ['deadline', '12345', 10L, System.nanoTime() - 1L, 'TRANSFER_BUDGET_EXCEEDED']].each { row ->
+ def source = new ByteArrayInputStream(row[1].getBytes('UTF-8'))
+ def sink = new ByteArrayOutputStream()
+ String reason = null
+ try { transfer.copyStream(source, sink, row[2], row[3]) }
+ catch (IllegalStateException error) { reason = error.message }
+ finally { source.close(); sink.close() }
+ assert reason == row[4]
+ assert sink.size() == 0
+ checks << row[0]
+}
+def empty = new ByteArrayInputStream(new byte[0]); def sink = new ByteArrayOutputStream()
+try { assert transfer.copyStream(empty, sink, 0L, System.nanoTime() + 10000000000L).size == 0 }
+finally { empty.close(); sink.close() }
+checks << 'empty-log'
+assert transfer.FILES.size() == 21 && transfer.FILES.toSet().size() == 21
+println(groovy.json.JsonOutput.toJson([status:'verified', cases:checks, files:transfer.FILES,
+ policy_version:jenkins.model.Jenkins.get().getExtensionList(hudson.model.queue.QueueTaskDispatcher.class).findAll { it.class.name == 'FinsecureReleaseDispatcher' }.first().POLICY_VERSION]))
+'''.replace('__SOURCE__', b64encode(source.encode()).decode())
+with Client(auth=BasicAuth('admin', admin_password()), timeout=30, trust_env=False) as client:
+    check_policy(client)
+    crumb = client.get(BASE_URL+'/crumbIssuer/api/json').json()
+    response = client.post(BASE_URL+'/scriptText', data={'script':code}, headers={crumb['crumbRequestField']:crumb['crumb']})
+    response.raise_for_status()
+    Path('reports/release-artifacts/native-response.txt').write_text(response.text)
+    result = loads(response.text)
+    assert result['status'] == 'verified'
+    Path('reports/release-artifacts/native-checks.json').write_text(dumps(result,indent=2)+'\n')
+    print(dumps(result))

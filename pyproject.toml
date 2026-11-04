@@ -31,6 +31,8 @@ packages = ["src/finsecure_pay"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+# Import repository tooling directly while retaining importlib-mode test isolation.
+pythonpath = ["."]
 addopts = "--import-mode=importlib -ra"
 junit_family = "xunit2"
 junit_suite_name = "finsecure-pay"
