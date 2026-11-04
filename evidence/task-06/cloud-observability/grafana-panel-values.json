@@ -1,0 +1,22 @@
+{
+  "Request rate": {
+    "numeric_values": 1,
+    "last_value": 6.103671428571428
+  },
+  "Mean ASGI handling latency": {
+    "numeric_values": 1,
+    "last_value": 0.0025658719306930916
+  },
+  "Application scrape health": {
+    "numeric_values": 1,
+    "last_value": 1
+  },
+  "Application process memory": {
+    "numeric_values": 1,
+    "last_value": 54.8984375
+  },
+  "Validation outcomes / second": {
+    "numeric_values": 168,
+    "last_value": 0.4857561380311633
+  }
+}

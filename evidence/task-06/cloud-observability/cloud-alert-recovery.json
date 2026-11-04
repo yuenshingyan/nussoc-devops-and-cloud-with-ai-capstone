@@ -1,0 +1,9 @@
+{
+  "status": "verified",
+  "target_restored": "35.198.197.186:80",
+  "public_API_healthy": true,
+  "prometheus_alert_inactive": true,
+  "configuration_restored": true,
+  "monitoring_hosted": "existing_local_Docker_stack",
+  "cloud_volumes_created": false
+}

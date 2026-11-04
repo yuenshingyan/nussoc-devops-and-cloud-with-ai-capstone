@@ -1,0 +1,15 @@
+{
+  "services": {
+    "application": {
+      "profiles": [
+        "local-application"
+      ]
+    },
+    "prometheus": {
+      "volumes": [
+        "./prometheus/cloud-prometheus.yaml:/etc/prometheus/alerts-prometheus.yaml:ro",
+        "./prometheus/cloud-alerts.yaml:/etc/prometheus/alerts.yaml:ro"
+      ]
+    }
+  }
+}

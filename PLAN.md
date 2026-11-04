@@ -7,8 +7,10 @@ image-only rollout, two ready runtime-image Pods, public readiness and all smoke
 The live release is 0.4.0. Native Replay #37 proved a real failing-test block; #38 proved
 38 HIGH/2 CRITICAL findings withheld the image and prevented downstream delivery. The
 controlled rollback also passed. See [live evidence](evidence/task-04/step-03-live-delivery.md).
-Monitoring evidence and final recording materials are the next work; new cloud volumes
-remain conditional on credit confirmation. The earlier integration history follows.
+Cloud observability is now [verified](evidence/task-06/cloud-observability.md): local Grafana/
+Prometheus observe the GKE API; native GKE node/Pod metrics, Cloud Logging and actual cloud-
+scoped firing/recovery mail are recorded. Sampling limitations are explicit. No cloud volumes
+were created. Final recording materials are next. The earlier integration history follows.
 
 The fixed delivery definition now connects independent artifact verification, publication,
 registry readback, conditional image-only deployment, rollout and synthetic smoke checks.

@@ -1,0 +1,118 @@
+{
+  "scope": "actual_GKE_Cloud_Logging_allowlisted_fields_only",
+  "events": [
+    {
+      "cloud_timestamp": "2026-11-04T16:23:46.670651051Z",
+      "application": {
+        "event": "validation_outcome",
+        "outcome": "invalid",
+        "codes": [
+          "INVALID_REQUEST"
+        ]
+      }
+    },
+    {
+      "cloud_timestamp": "2026-11-04T16:23:46.633070871Z",
+      "application": {
+        "event": "validation_outcome",
+        "outcome": "rejected",
+        "codes": [
+          "AMOUNT_NOT_POSITIVE"
+        ]
+      }
+    },
+    {
+      "cloud_timestamp": "2026-11-04T16:23:46.599050194Z",
+      "application": {
+        "event": "validation_outcome",
+        "outcome": "accepted",
+        "codes": []
+      }
+    },
+    {
+      "cloud_timestamp": "2026-11-04T16:22:52.324894148Z",
+      "application": {
+        "event": "validation_outcome",
+        "outcome": "invalid",
+        "codes": [
+          "INVALID_REQUEST"
+        ]
+      }
+    },
+    {
+      "cloud_timestamp": "2026-11-04T16:22:52.295665297Z",
+      "application": {
+        "event": "validation_outcome",
+        "outcome": "rejected",
+        "codes": [
+          "AMOUNT_NOT_POSITIVE"
+        ]
+      }
+    },
+    {
+      "cloud_timestamp": "2026-11-04T16:22:52.270874924Z",
+      "application": {
+        "event": "validation_outcome",
+        "outcome": "accepted",
+        "codes": []
+      }
+    },
+    {
+      "cloud_timestamp": "2026-11-04T16:22:52.155061017Z",
+      "application": {
+        "event": "validation_outcome",
+        "outcome": "invalid",
+        "codes": [
+          "INVALID_REQUEST"
+        ]
+      }
+    },
+    {
+      "cloud_timestamp": "2026-11-04T16:22:52.131588377Z",
+      "application": {
+        "event": "validation_outcome",
+        "outcome": "rejected",
+        "codes": [
+          "AMOUNT_NOT_POSITIVE"
+        ]
+      }
+    },
+    {
+      "cloud_timestamp": "2026-11-04T16:22:52.110341330Z",
+      "application": {
+        "event": "validation_outcome",
+        "outcome": "accepted",
+        "codes": []
+      }
+    },
+    {
+      "cloud_timestamp": "2026-11-04T16:22:52.084783414Z",
+      "application": {
+        "event": "validation_outcome",
+        "outcome": "invalid",
+        "codes": [
+          "INVALID_REQUEST"
+        ]
+      }
+    },
+    {
+      "cloud_timestamp": "2026-11-04T16:22:52.055356173Z",
+      "application": {
+        "event": "validation_outcome",
+        "outcome": "rejected",
+        "codes": [
+          "AMOUNT_NOT_POSITIVE"
+        ]
+      }
+    },
+    {
+      "cloud_timestamp": "2026-11-04T16:22:52.025871885Z",
+      "application": {
+        "event": "validation_outcome",
+        "outcome": "accepted",
+        "codes": []
+      }
+    }
+  ],
+  "prior_observer_failure": "Initial event-name filter omitted http_request_completed; no mutation or log fabrication"
+}

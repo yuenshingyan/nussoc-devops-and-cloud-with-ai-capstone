@@ -1,0 +1,9 @@
+{
+  "requests": 60,
+  "statuses": {
+    "200": 40,
+    "422": 20
+  },
+  "synthetic_data_only": true,
+  "scope": "this_dashboard_batch_only"
+}

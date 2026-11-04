@@ -1,0 +1,65 @@
+{
+  "rule_files": [
+    "cloud-alerts.yaml"
+  ],
+  "evaluation_interval": "15s",
+  "tests": [
+    {
+      "name": "healthy cloud endpoint does not alert on missing local application",
+      "interval": "15s",
+      "input_series": [
+        {
+          "series": "up{job=\"finsecure-pay\",instance=\"35.198.197.186:80\"}",
+          "values": "1x12"
+        }
+      ],
+      "alert_rule_test": [
+        {
+          "eval_time": "2m",
+          "alertname": "FinSecureApplicationScrapeUnavailable",
+          "exp_alerts": []
+        }
+      ]
+    },
+    {
+      "name": "cloud failure pending firing and recovery",
+      "interval": "15s",
+      "input_series": [
+        {
+          "series": "up{job=\"finsecure-pay\",instance=\"35.198.197.186:80\"}",
+          "values": "0x8 1x8"
+        }
+      ],
+      "alert_rule_test": [
+        {
+          "eval_time": "45s",
+          "alertname": "FinSecureApplicationScrapeUnavailable",
+          "exp_alerts": []
+        },
+        {
+          "eval_time": "1m",
+          "alertname": "FinSecureApplicationScrapeUnavailable",
+          "exp_alerts": [
+            {
+              "exp_labels": {
+                "job": "finsecure-pay",
+                "instance": "35.198.197.186:80",
+                "severity": "warning",
+                "scope": "cloud-api-demo"
+              },
+              "exp_annotations": {
+                "summary": "FinSecure application metrics are unavailable",
+                "description": "The GKE public API metrics scrape is unavailable. This is monitoring reachability, not proof of an API outage or failed payment. Check the public API and Prometheus target separately."
+              }
+            }
+          ]
+        },
+        {
+          "eval_time": "3m",
+          "alertname": "FinSecureApplicationScrapeUnavailable",
+          "exp_alerts": []
+        }
+      ]
+    }
+  ]
+}

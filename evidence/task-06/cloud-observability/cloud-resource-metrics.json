@@ -1,0 +1,55 @@
+{
+  "observed_at_utc": "2026-11-04T16:05:51.373631+00:00",
+  "scope": "native_GKE_metrics_API_operator_read_only",
+  "new_collector_or_volume_created": false,
+  "nodes": [
+    {
+      "timestamp": "2026-11-04T16:05:26Z",
+      "window": "30.25s",
+      "usage": {
+        "cpu": "123967305n",
+        "memory": "1485396Ki"
+      },
+      "containers": []
+    },
+    {
+      "timestamp": "2026-11-04T16:05:24Z",
+      "window": "30.248s",
+      "usage": {
+        "cpu": "120217237n",
+        "memory": "1139952Ki"
+      },
+      "containers": []
+    }
+  ],
+  "pods": [
+    {
+      "timestamp": "2026-11-04T16:05:15Z",
+      "window": "19.789s",
+      "usage": null,
+      "containers": [
+        {
+          "name": "api",
+          "usage": {
+            "cpu": "3689069n",
+            "memory": "42896Ki"
+          }
+        }
+      ]
+    },
+    {
+      "timestamp": "2026-11-04T16:05:21Z",
+      "window": "36.307s",
+      "usage": null,
+      "containers": [
+        {
+          "name": "api",
+          "usage": {
+            "cpu": "3436086n",
+            "memory": "42948Ki"
+          }
+        }
+      ]
+    }
+  ]
+}

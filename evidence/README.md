@@ -1,5 +1,9 @@
 # Evidence index
 
+**Cloud observability:** [real GKE API dashboard, cloud-scoped firing/recovery mail, native
+node/Pod metrics and structured Cloud Logging](task-06/cloud-observability.md).
+Prometheus/Grafana remain local; sampling and SMTP limits are explicit.
+
 **Latest live delivery:** [automatic SCM #39 → delivery #3, real release blocks and controlled
 rollback](task-04/step-03-live-delivery.md). GKE 0.4.0, two ready runtime-image Pods and smoke
 checks are verified. Earlier entries below retain their historical scope and limitations.

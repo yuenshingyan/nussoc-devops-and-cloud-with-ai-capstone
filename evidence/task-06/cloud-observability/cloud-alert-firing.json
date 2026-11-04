@@ -1,0 +1,27 @@
+{
+  "status": "verified",
+  "condition": "deliberate_scrape_path_failure_not_API_outage",
+  "alerts": [
+    {
+      "labels": {
+        "alertname": "FinSecureApplicationScrapeUnavailable",
+        "instance": "35.198.197.186:81",
+        "job": "finsecure-pay",
+        "scope": "cloud-api-demo",
+        "severity": "warning"
+      },
+      "annotations": {
+        "description": "The GKE public API metrics scrape is unavailable. This is monitoring reachability, not proof of an API outage or failed payment. Check the public API and Prometheus target separately.",
+        "summary": "FinSecure application metrics are unavailable"
+      },
+      "state": "firing",
+      "activeAt": "2026-11-04T16:09:30.161889101Z",
+      "value": "0e+00"
+    }
+  ],
+  "email_id": "2a9aKzFaouCZCTEE1NLXMP",
+  "email_subject": "[FIRING:1] FinSecureApplicationScrapeUnavailable 35.198.197.186:81 finsecure-pay (cloud-api-demo warning)",
+  "elapsed_seconds": 55.29794208300882,
+  "public_API_healthy": true,
+  "delivery": "local_Mailpit_not_external_SMTP"
+}

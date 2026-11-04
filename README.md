@@ -366,9 +366,10 @@ Remove a placeholder when its directory receives real content.
 - Task 5: source/dependency/image gates and isolated release credentials are implemented;
   actual restricted deployer use is verified. LOW findings and historical failures remain
   visible. No blanket credential rotation or production-security completeness is claimed.
-- Task 6: local metrics, Grafana, alert delivery and JSON logs are verified; GKE system
-  metrics/logging are enabled. The cloud-API monitoring demonstration is being completed.
-  Prometheus/Grafana remain local; no new cloud monitoring volumes have been created.
+- Task 6: [cloud-API monitoring, actual firing/recovery notifications, native GKE node/Pod
+  resource metrics and Cloud Logging](evidence/task-06/cloud-observability.md) are verified.
+  Prometheus/Grafana remain local; no new cloud monitoring volumes were created. The
+  load-balancer scrape is not a reliable aggregate across Pods; see the evidence limits.
 - Task 7: design document, diagrams, AI proposal and presentation exist; final evidence
   updates and the demonstration video remain to be completed.
 
