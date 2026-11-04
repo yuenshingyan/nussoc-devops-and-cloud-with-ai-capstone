@@ -1,0 +1,18 @@
+{
+  "audio_tracks": 0,
+  "duration_seconds": 755,
+  "format": "H264 MP4",
+  "height": 1080,
+  "scenes": 21,
+  "scope": "silent evidence walkthrough, not live execution",
+  "status": "encoded_and_inspected",
+  "video_tracks": 1,
+  "width": 1920,
+  "local_file": "submission/demo-walkthrough.mp4",
+  "sha256": "f5280dd3eabff0e1fc16f08a9ad53383e7609cc1d0c0ed3a527c5fd532998fc3",
+  "bytes": 7692217,
+  "all_scene_timestamps_decoded": 21,
+  "full_human_playback_review": "pending",
+  "silent_format_acceptance": "unconfirmed",
+  "external_upload": "not_performed"
+}

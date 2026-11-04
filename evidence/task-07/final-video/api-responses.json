@@ -1,0 +1,49 @@
+{
+  "captured_at_utc": "2026-11-04T17:01:26.290892+00:00",
+  "endpoint": "http://35.198.197.186",
+  "synthetic_data_only": true,
+  "cases": [
+    {
+      "case": "health",
+      "status": 200,
+      "response": {
+        "status": "healthy"
+      }
+    },
+    {
+      "case": "valid",
+      "status": 200,
+      "response": {
+        "valid": true,
+        "errors": []
+      }
+    },
+    {
+      "case": "zero amount",
+      "status": 200,
+      "response": {
+        "valid": false,
+        "errors": [
+          "AMOUNT_NOT_POSITIVE"
+        ]
+      }
+    },
+    {
+      "case": "numeric amount",
+      "status": 422,
+      "response": {
+        "detail": [
+          {
+            "loc": [
+              "body",
+              "amount"
+            ],
+            "type": "string_type",
+            "msg": "Invalid request value. Check the API contract."
+          }
+        ]
+      }
+    }
+  ],
+  "public_version": "0.4.0"
+}

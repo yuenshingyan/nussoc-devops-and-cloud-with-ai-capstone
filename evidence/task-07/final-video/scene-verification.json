@@ -1,0 +1,107 @@
+[
+  {
+    "decoded_at_seconds" : 1,
+    "scene" : 1,
+    "title" : "Purpose and scope"
+  },
+  {
+    "decoded_at_seconds" : 26,
+    "scene" : 2,
+    "title" : "Strict transaction-validation contract"
+  },
+  {
+    "decoded_at_seconds" : 66,
+    "scene" : 3,
+    "title" : "Actual public HTTP responses"
+  },
+  {
+    "decoded_at_seconds" : 106,
+    "scene" : 4,
+    "title" : "Automatic main-to-cloud delivery"
+  },
+  {
+    "decoded_at_seconds" : 141,
+    "scene" : 5,
+    "title" : "Actual Jenkins source provenance"
+  },
+  {
+    "decoded_at_seconds" : 171,
+    "scene" : 6,
+    "title" : "Actual CI result and downstream trigger"
+  },
+  {
+    "decoded_at_seconds" : 201,
+    "scene" : 7,
+    "title" : "Actual downstream cause"
+  },
+  {
+    "decoded_at_seconds" : 231,
+    "scene" : 8,
+    "title" : "Actual successful delivery"
+  },
+  {
+    "decoded_at_seconds" : 281,
+    "scene" : 9,
+    "title" : "Actual failed-test release block"
+  },
+  {
+    "decoded_at_seconds" : 321,
+    "scene" : 10,
+    "title" : "Actual security release block"
+  },
+  {
+    "decoded_at_seconds" : 361,
+    "scene" : 11,
+    "title" : "Actual blocked image-security artifact"
+  },
+  {
+    "decoded_at_seconds" : 391,
+    "scene" : 12,
+    "title" : "Cloud runtime and Pod recovery"
+  },
+  {
+    "decoded_at_seconds" : 426,
+    "scene" : 13,
+    "title" : "Retained failures and controlled recovery"
+  },
+  {
+    "decoded_at_seconds" : 471,
+    "scene" : 14,
+    "title" : "Actual rollback verification"
+  },
+  {
+    "decoded_at_seconds" : 501,
+    "scene" : 15,
+    "title" : "Actual Grafana cloud-API observations"
+  },
+  {
+    "decoded_at_seconds" : 546,
+    "scene" : 16,
+    "title" : "Actual cloud-scoped FIRING notification"
+  },
+  {
+    "decoded_at_seconds" : 581,
+    "scene" : 17,
+    "title" : "Actual RESOLVED notification"
+  },
+  {
+    "decoded_at_seconds" : 606,
+    "scene" : 18,
+    "title" : "Actual native resources and centralized logs"
+  },
+  {
+    "decoded_at_seconds" : 646,
+    "scene" : 19,
+    "title" : "Trust boundaries and current architecture"
+  },
+  {
+    "decoded_at_seconds" : 681,
+    "scene" : 20,
+    "title" : "AI advisory triage proposal"
+  },
+  {
+    "decoded_at_seconds" : 721,
+    "scene" : 21,
+    "title" : "Evidence, limitations and evaluator access"
+  }
+]

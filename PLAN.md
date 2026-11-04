@@ -10,8 +10,11 @@ controlled rollback also passed. See [live evidence](evidence/task-04/step-03-li
 Cloud observability is now [verified](evidence/task-06/cloud-observability.md): local Grafana/
 Prometheus observe the GKE API; native GKE node/Pod metrics, Cloud Logging and actual cloud-
 scoped firing/recovery mail are recorded. Sampling limitations are explicit. No cloud volumes
-were created. The updated ten-slide presentation and four-page design PDF now reflect actual results;
-layout and PDF page-count checks passed. The timed video is next. The earlier history follows.
+were created. The updated ten-slide presentation and four-page design PDF reflect actual results;
+layout and PDF page-count checks passed. The [12:35 silent walkthrough](evidence/task-07/final-video.md)
+is encoded and all 21 scenes decoded at expected timestamps. Full student playback review,
+silent-format confirmation and separate upload remain; do not claim those are complete.
+The earlier history follows.
 
 The fixed delivery definition now connects independent artifact verification, publication,
 registry readback, conditional image-only deployment, rollout and synthetic smoke checks.

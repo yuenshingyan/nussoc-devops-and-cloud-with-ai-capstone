@@ -16,6 +16,9 @@ __pycache__/
 htmlcov/
 /reports/
 
+# Generated video is supplied separately; reviewed metadata/captions stay tracked.
+/submission/*.mp4
+
 # Local credentials and configuration
 # Jenkins bootstrap normally stores these outside the repository/in Docker volumes.
 admin-password
