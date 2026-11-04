@@ -1,5 +1,7 @@
 # Evidence index
 
+**Final recording materials:** [updated presentation/design PDFs and actual Jenkins UI captures](task-07/final-presentation.md).
+
 **Cloud observability:** [real GKE API dashboard, cloud-scoped firing/recovery mail, native
 node/Pod metrics and structured Cloud Logging](task-06/cloud-observability.md).
 Prometheus/Grafana remain local; sampling and SMTP limits are explicit.

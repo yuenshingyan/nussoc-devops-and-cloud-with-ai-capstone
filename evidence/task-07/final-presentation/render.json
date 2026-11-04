@@ -1,0 +1,12 @@
+{
+  "presentation": {
+    "pages": 10,
+    "overflow_checked": true,
+    "pdf_written": true
+  },
+  "design-document": {
+    "pages": 4,
+    "overflow_checked": true,
+    "pdf_written": true
+  }
+}

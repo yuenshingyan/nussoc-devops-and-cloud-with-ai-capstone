@@ -1,0 +1,41 @@
+{
+  "captures": [
+    {
+      "name": "ci-39-top",
+      "url": "http://127.0.0.1:8080/job/finsecure-ci/39/console",
+      "actual_UI": true,
+      "position": "top"
+    },
+    {
+      "name": "ci-39-success",
+      "url": "http://127.0.0.1:8080/job/finsecure-ci/39/console",
+      "actual_UI": true,
+      "position": "bottom"
+    },
+    {
+      "name": "delivery-3-top",
+      "url": "http://127.0.0.1:8080/job/finsecure-release/job/delivery/3/console",
+      "actual_UI": true,
+      "position": "top"
+    },
+    {
+      "name": "delivery-3-success",
+      "url": "http://127.0.0.1:8080/job/finsecure-release/job/delivery/3/console",
+      "actual_UI": true,
+      "position": "bottom"
+    },
+    {
+      "name": "test-37",
+      "url": "http://127.0.0.1:8080/job/finsecure-ci/37/console",
+      "actual_UI": true,
+      "position": "test"
+    },
+    {
+      "name": "image-38",
+      "url": "http://127.0.0.1:8080/job/finsecure-ci/38/console",
+      "actual_UI": true,
+      "position": "bottom"
+    }
+  ],
+  "owned_profile_removed": true
+}
