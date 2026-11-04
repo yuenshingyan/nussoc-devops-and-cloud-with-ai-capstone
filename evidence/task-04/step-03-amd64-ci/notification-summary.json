@@ -1,0 +1,7 @@
+{
+  "job": "finsecure-ci-amd64-review-20261104041956",
+  "build": 1,
+  "candidate_revision": "dc7ffe5a2884f8aeb833f9befd0f1be30d608739",
+  "local_mailpit_receipt_verified": true,
+  "external_delivery_claimed": false
+}

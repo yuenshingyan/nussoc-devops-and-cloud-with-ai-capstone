@@ -24,10 +24,11 @@ live allow/deny tests. The worker is now deliberately stopped and diagnostic job
 disabled. See the checkpoints below.
 
 **Not yet implemented:** production release jobs,
-registry upload or cloud deployment stages. The current Jenkinsfile
-still exports/scans ARM64 and has no publishing/deployment stage. Read-only inspection
-confirmed the existing BuildKit worker advertises AMD64 support; this is not yet an
-actual AMD64 Jenkins build/gate result.
+registry upload or cloud deployment stages. The feature-branch Jenkinsfile now exports
+and scans AMD64 explicitly. A manual Jenkins candidate passed 961 tests and all gates;
+its AMD64 archive was independently verified. Normal main #34 remains the earlier
+ARM64 build until reviewed publication and a new SCM run. Neither pipeline publishes
+or deploys yet.
 
 The operator has saved the dedicated Docker Hub token. A read-only check on
 4 November verified the private file metadata, received an authenticated registry
@@ -319,9 +320,36 @@ from upstream artifacts. Production release selection, credentials usage and art
 validation remain separate controls. A future production job needs a reviewed explicit
 allowlist/preflight update; version 1 authorizes no production delivery job.
 
+## AMD64 candidate CI — verified, not published
+
+Candidate `dc7ffe5a2884f8aeb833f9befd0f1be30d608739` changed the export platform,
+metadata and scanner argument together to `linux/amd64`. Scanner/archive helper
+ARM64 defaults remain available; current CI verification explicitly selects AMD64
+and rejects both summary and raw-report platform mismatches. Existing test, source,
+dependency, image identity/freshness/severity gates and timeout budgets are unchanged.
+
+Manual `finsecure-ci-amd64-review-20261104041956` #1 passed **961 tests**, all gates
+and **33 verified artifacts**. Trivy reported zero findings at every severity; database
+age at completion was approximately 10,412 seconds, inside the existing 86,400-second
+policy. The exact archive and config identities are recorded in the
+[evidence](../../evidence/task-04/step-03-amd64-ci.md), not as registry manifest digests.
+
+The operator wrapper checked out public base `19b4486`, verified a local Git bundle
+hash, and checked out the exact unpublished candidate. Existing stages were retained;
+notification provenance was set to the verified candidate. Local Mailpit received the
+matching SUCCESS notification. This is a real manual candidate pipeline, not normal
+SCM triggering or external email receipt. Tests ran on the ARM64 source worker;
+BuildKit targeted AMD64 using available emulation. The candidate application image
+was not started or deployed; no native GKE runtime result is claimed for it.
+
+The candidate job is disabled; release worker remains stopped; normal main remains
+#34. Host free storage was about 3.2 GiB and Docker backing storage 7.6 GiB. Review
+headroom before another image build; do not prune shared caches or retained scanner
+diagnostics without approval.
+
 ## Remaining verification
 
-Actual AMD64 CI build and scan;
+Reviewed publication and normal SCM AMD64 verification;
 trusted-main release selection; serialization/stale-build policy; immutable upload
 identity; deployment timeout/failure behavior; healthy rollout and smoke checks; retained
 failure reports. Full delivery is pending until all of these run successfully.

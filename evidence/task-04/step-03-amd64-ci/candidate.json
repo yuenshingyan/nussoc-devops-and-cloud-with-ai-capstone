@@ -1,0 +1,7 @@
+{
+  "candidate_revision": "dc7ffe5a2884f8aeb833f9befd0f1be30d608739",
+  "public_base_revision": "19b44861114c18e07dff249423365215547035a3",
+  "agent_bundle_path": "/home/jenkins/agent/release-amd64-candidate.bundle",
+  "bundle_sha256": "0331575852b6d5f28f30d83a0e32febb69f9b3ad4971fee52d8bed263b3c5a82",
+  "expected_tests": 961
+}

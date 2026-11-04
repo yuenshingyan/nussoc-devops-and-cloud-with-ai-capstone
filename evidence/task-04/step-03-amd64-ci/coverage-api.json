@@ -1,0 +1,23 @@
+{
+  "_class": "io.jenkins.plugins.coverage.metrics.restapi.CoverageApi",
+  "modifiedFilesDelta": {},
+  "modifiedFilesStatistics": {},
+  "modifiedLinesDelta": {},
+  "modifiedLinesStatistics": {},
+  "projectDelta": {},
+  "projectStatistics": {
+    "branch": "93.10%",
+    "class": "73.68%",
+    "cyclomatic-complexity": "0",
+    "file": "73.68%",
+    "line": "98.89%",
+    "loc": "270",
+    "module": "100.00%",
+    "package": "100.00%"
+  },
+  "qualityGates": {
+    "overallResult": "INACTIVE",
+    "resultItems": []
+  },
+  "referenceBuild": "-"
+}

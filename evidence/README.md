@@ -202,6 +202,10 @@ and report retention on an isolated failure. Cloud delivery remains unverified.
   published accessible reports, and provided packages with verified download hashes.
   The build was manually triggered; no source-trigger, release, or deployment gate is claimed.
 
+- [Step 4.3 — Manual AMD64 CI candidate](task-04/step-03-amd64-ci.md):
+  961 tests, all gates, 33 verified artifacts and zero image findings; matching local
+  notification. Explicit AMD64 archive verified; no publishing/deployment or normal
+  SCM-trigger claim. Main remains #34; candidate job disabled.
 - [Step 4.3 — Trusted-job scheduling verification](task-04/step-03-release-scheduling.md):
   controller-owned guard passed ten decision cases and five live Pipeline cases;
   three forbidden assignments never reached a worker. 942 host tests and source gates

@@ -1,0 +1,15 @@
+Created finsecure-ci-amd64-review-20261104041956
+{
+  "job": "finsecure-ci-amd64-review-20261104041956",
+  "result": "SUCCESS",
+  "tests": 961,
+  "artifacts": 33,
+  "image_findings": {
+    "UNKNOWN": 0,
+    "LOW": 0,
+    "MEDIUM": 0,
+    "HIGH": 0,
+    "CRITICAL": 0
+  },
+  "mail_received": true
+}

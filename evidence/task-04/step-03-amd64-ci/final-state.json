@@ -1,0 +1,20 @@
+{
+  "observed_at_utc": "2026-11-04T04:27:49.096315+00:00",
+  "status": "verified",
+  "policy_sha256": "2dc73a047e5e4a6640c1725541e56a97a6c2a82ebf2a6d8558c7b02c04fc6c83",
+  "image_and_persisted_startup_scripts_match": true,
+  "active_guard_verified": true,
+  "release_worker_stopped": true,
+  "release_worker_exit_code": 143,
+  "all_five_diagnostic_jobs_disabled": true,
+  "candidate_job": "finsecure-ci-amd64-review-20261104041956",
+  "source_worker_online": true,
+  "queue_empty": true,
+  "normal_ci_build": 34,
+  "normal_ci_result": "SUCCESS",
+  "application_matches_prior_checkpoint": true,
+  "available_replicas": 2,
+  "public_health_status": 200,
+  "upload_attempted": false,
+  "deployment_attempted": false
+}
