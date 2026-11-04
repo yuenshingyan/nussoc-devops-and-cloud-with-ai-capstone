@@ -1,6 +1,23 @@
 # FinSecure Pay — Implementation Plan
 
-## Latest checkpoint — Step 3.4 one-pod recovery verified
+## Latest checkpoint — Step 4.3 cloud delivery preparation
+
+Recovery evidence was reviewed/merged/published as `19b4486`; automatic #34 passed
+781 tests/all gates and 33 artifacts with matching notification revision. The user
+approved the separate local release-agent/deployer-identity approach. Work resumes
+on `task-04/step-03-container-delivery` from that main revision.
+
+A local-only interactive Docker Hub token storage helper and 31 synthetic tests are
+implemented; 812 host tests, Ruff lint/format and packaging passed. The initial test
+collection failure (standalone scripts are not importable packages under pytest) was
+fixed using the existing run-path testing convention; diagnostics remain in reports.
+See [cloud delivery setup](docs/runbooks/cloud-delivery.md). The operator must create
+and save a dedicated Read & Write token locally, never in chat. No release job/agent,
+Google key/IAM/RBAC change, registry push or new deployment has occurred. Tool pins,
+operation budgets and actual delivery verification remain pending. This is a local
+preparation checkpoint, not completed CI/CD or approval to merge an unfinished pipeline.
+
+## Previous checkpoint — Step 3.4 one-pod recovery verified
 
 Step 3.3 was merged/published as `7e37eaa`; automatic #33 passed 781 tests/all gates,
 33 artifacts and exact-revision local notification. With explicit approval, exactly
@@ -11,11 +28,12 @@ this is not a claim of continuous availability. Synthetic validation passed befo
 Deployment, Service and node identities/configuration were unchanged as checked by the
 harness. No force, repeated DELETE, node operation, paid upgrade or teardown occurred.
 
-Runbook and evidence are local on `task-03/step-04-recovery-demonstration`, pending
-review/publication. All 781 host tests, lint/format/build and harness style checks passed.
+Runbook and evidence were reviewed/merged/published as `19b4486`; automatic #34
+passed 781 tests/all gates. All host checks and harness style checks also passed.
 See [recovery evidence](evidence/task-03/step-04-recovery.md) and
 [troubleshooting/cleanup runbook](docs/runbooks/pod-recovery.md).
-Do not begin deferred cloud CI/rollout/monitoring steps before this review.
+That review is complete. Cloud delivery setup is now approved; additional disruptive
+rollout/rollback/alert demonstrations remain separate scopes.
 
 ## Previous checkpoint — Step 3.3 live GKE deployment verified
 
@@ -288,6 +306,7 @@ The assignment allows equivalent application, build, and unit-testing tools with
 ### Step 4.3 — Automate container delivery
 - **Branch:** `task-04/step-03-container-delivery`
 - **Approved local subset:** separate rootless BuildKit with builder-only security exceptions, local ARM64 build/export, and operator-side artifact smoke verification. Reviewed/merged as `ab538a2`; normal SCM build #2 passed all 245 tests, exported the image, and its downloaded artifact passed operator-side smoke checks. See the [SCM follow-up](evidence/task-04/step-03-scm-verification.md). No registry credentials, publishing, or cloud work is authorized by this subset. See the [builder runbook](docs/runbooks/local-image-builder.md) and [evidence](evidence/task-04/step-03-local-image-builder.md).
+- **Cloud continuation:** approved isolated local release agent, upload/GKE tools and dedicated deployer credentials. The interactive token helper is implemented locally; agent, IAM/RBAC, credentials import, publishing and deployment are not yet configured. See [setup/status](docs/runbooks/cloud-delivery.md).
 - Full step still requires container build, versioned push, and Kubernetes deployment stages.
 - Deploy the exact built image, wait for rollout completion, and perform a smoke test.
 - Serialize deployments to the shared demo environment to prevent overlapping releases.
