@@ -1,0 +1,18 @@
+Started by user admin
+[Pipeline] Start of Pipeline
+[Pipeline] timeout
+Timeout set to expire in 45 sec
+[Pipeline] {
+[Pipeline] node
+Running on finsecure-python in /home/jenkins/agent/workspace/release-scheduling-source-probe
+[Pipeline] {
+[Pipeline] echo
+ASSIGNED:finsecure-python
+[Pipeline] sh
++ true
+[Pipeline] }
+[Pipeline] // node
+[Pipeline] }
+[Pipeline] // timeout
+[Pipeline] End of Pipeline
+Finished: SUCCESS

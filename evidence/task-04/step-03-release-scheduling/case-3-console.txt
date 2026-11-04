@@ -1,0 +1,13 @@
+Started by user admin
+[Pipeline] Start of Pipeline
+[Pipeline] timeout
+Timeout set to expire in 45 sec
+[Pipeline] {
+[Pipeline] node
+Aborted by admin
+[Pipeline] // node
+[Pipeline] }
+[Pipeline] // timeout
+[Pipeline] End of Pipeline
+org.jenkinsci.plugins.workflow.actions.ErrorAction$ErrorId: f3e99f48-7b28-4551-b6b2-1a944f93cdbd
+Finished: ABORTED

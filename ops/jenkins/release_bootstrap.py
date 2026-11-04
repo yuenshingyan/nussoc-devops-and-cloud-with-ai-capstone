@@ -8,6 +8,8 @@ from time import monotonic, sleep
 
 from bootstrap import ROOT, Jenkins, admin_password, command
 from defusedxml.ElementTree import fromstring
+from httpx2 import BasicAuth, Client
+from verify_release import check_policy
 
 IMAGE = "finsecure-jenkins-release-agent:step-04-03"
 VOLUME = "finsecure-jenkins-release-agent-secrets"
@@ -84,10 +86,15 @@ def initialize_secret(secret: str) -> None:
 
 def start() -> dict:
     """Connect one worker; do not create/import registry or Google credentials or jobs."""
+    password = admin_password()
+    with Client(
+        auth=BasicAuth("admin", password), timeout=20, trust_env=False, follow_redirects=False
+    ) as policy_client:
+        check_policy(policy_client)
     image = loads(command(["docker", "image", "inspect", IMAGE]))[0]
     if image["Config"]["User"] != "jenkins" or image["Config"].get("Volumes"):
         raise RuntimeError("Unexpected release image user or implicit volumes")
-    client = Jenkins(admin_password())
+    client = Jenkins(password)
     agent = loads(client.request("/computer/finsecure-release/api/json"))
     if not agent["offline"] or len(agent["executors"]) != 1:
         raise RuntimeError("Expected an offline, single-executor release node")

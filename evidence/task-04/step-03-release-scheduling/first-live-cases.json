@@ -1,0 +1,10 @@
+[
+  {
+    "job": "finsecure-release/verify-scheduling",
+    "build": 1,
+    "label": "release",
+    "allowed": true,
+    "result": "SUCCESS",
+    "observation": null
+  }
+]

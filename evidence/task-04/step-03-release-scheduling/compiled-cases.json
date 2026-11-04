@@ -1,0 +1,12 @@
+{
+  "compiled": true,
+  "policy_cases": 10,
+  "installed_placeholder_owner_api_verified": true,
+  "buildable_constructors": [
+    "public hudson.model.Queue$BuildableItem(hudson.model.Queue$WaitingItem)",
+    "public hudson.model.Queue$BuildableItem(hudson.model.Queue$NotWaitingItem)"
+  ],
+  "waiting_constructors": [
+    "public hudson.model.Queue$WaitingItem(java.util.Calendar,hudson.model.Queue$Task,java.util.List)"
+  ]
+}

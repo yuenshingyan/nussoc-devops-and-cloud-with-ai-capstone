@@ -1,0 +1,73 @@
+ Image finsecure-jenkins-controller:step-04-03-policy Building
+#1 [internal] load local bake definitions
+#1 reading from stdin 643B done
+#1 DONE 0.0s
+
+#2 [internal] load build definition from controller.Dockerfile
+#2 transferring dockerfile: 858B done
+#2 DONE 0.0s
+
+#3 [internal] load metadata for docker.io/jenkins/jenkins:lts-jdk21@sha256:a660310e39ade10631f774bacd5219de767dfd08947ea5c32a739b5e5bb382c1
+#3 ...
+
+#4 [auth] jenkins/jenkins:pull token for registry-1.docker.io
+#4 DONE 0.0s
+
+#3 [internal] load metadata for docker.io/jenkins/jenkins:lts-jdk21@sha256:a660310e39ade10631f774bacd5219de767dfd08947ea5c32a739b5e5bb382c1
+#3 DONE 1.8s
+
+#5 [internal] load .dockerignore
+#5 transferring context: 187B done
+#5 DONE 0.0s
+
+#6 [1/8] FROM docker.io/jenkins/jenkins:lts-jdk21@sha256:a660310e39ade10631f774bacd5219de767dfd08947ea5c32a739b5e5bb382c1
+#6 DONE 0.0s
+
+#7 [internal] load build context
+#7 transferring context: 173B done
+#7 DONE 0.0s
+
+#8 [7/8] COPY --chown=jenkins:jenkins seed-jobs.groovy /usr/share/jenkins/ref/init.groovy.d/finsecure-seed-jobs.groovy.override
+#8 CACHED
+
+#9 [2/8] COPY --chown=jenkins:jenkins plugins.txt /usr/share/jenkins/ref/plugins.txt
+#9 CACHED
+
+#10 [5/8] COPY --chown=jenkins:jenkins checkout-job.groovy /usr/share/jenkins/checkout-job.groovy
+#10 CACHED
+
+#11 [6/8] COPY --chown=jenkins:jenkins ci-job.groovy /usr/share/jenkins/ci-job.groovy
+#11 CACHED
+
+#12 [3/8] RUN jenkins-plugin-cli --latest=false --plugin-file /usr/share/jenkins/ref/plugins.txt
+#12 CACHED
+
+#13 [4/8] COPY --chown=jenkins:jenkins jenkins.yaml /usr/share/jenkins/jenkins.yaml
+#13 CACHED
+
+#14 [8/8] COPY --chown=jenkins:jenkins release-policy.groovy /usr/share/jenkins/ref/init.groovy.d/finsecure-release-policy.groovy.override
+#14 ERROR: failed to calculate checksum of ref f29682b8-fa37-4ac1-ac07-a8b14119d0e3::yhjz9j8bwhh0zxmchm5cqg1yr: "/release-policy.groovy": not found
+------
+ > [8/8] COPY --chown=jenkins:jenkins release-policy.groovy /usr/share/jenkins/ref/init.groovy.d/finsecure-release-policy.groovy.override:
+------
+controller.Dockerfile:8
+
+--------------------
+
+   6 |     COPY --chown=jenkins:jenkins ci-job.groovy /usr/share/jenkins/ci-job.groovy
+
+   7 |     COPY --chown=jenkins:jenkins seed-jobs.groovy /usr/share/jenkins/ref/init.groovy.d/finsecure-seed-jobs.groovy.override
+
+   8 | >>> COPY --chown=jenkins:jenkins release-policy.groovy /usr/share/jenkins/ref/init.groovy.d/finsecure-release-policy.groovy.override
+
+   9 |     ENV CASC_JENKINS_CONFIG=/usr/share/jenkins/jenkins.yaml
+
+  10 |
+
+--------------------
+
+failed to solve: failed to compute cache key: failed to calculate checksum of ref f29682b8-fa37-4ac1-ac07-a8b14119d0e3::yhjz9j8bwhh0zxmchm5cqg1yr: "/release-policy.groovy": not found
+
+
+
+View build details: docker-desktop://dashboard/build/default/default/xm6v2eldjpyq68j297n5unepx

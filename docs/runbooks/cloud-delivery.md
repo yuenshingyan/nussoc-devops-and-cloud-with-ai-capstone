@@ -19,10 +19,11 @@ forbidden. Application state remained unchanged. See
 
 **Additional verified setup:** the ARM64 release worker was built and exercised, and both
 existing credentials were imported into the release folder. Real Jenkins file-binding
-probes and read-only registry/GKE access passed. The worker is now deliberately stopped;
-the diagnostic job is disabled. See the checkpoint below.
+probes and read-only registry/GKE access passed. The subsequent scheduling guard passed
+live allow/deny tests. The worker is now deliberately stopped and diagnostic jobs are
+disabled. See the checkpoints below.
 
-**Not yet implemented:** trusted-job scheduling enforcement, production release jobs,
+**Not yet implemented:** production release jobs,
 registry upload or cloud deployment stages. The current Jenkinsfile
 still exports/scans ARM64 and has no publishing/deployment stage. Read-only inspection
 confirmed the existing BuildKit worker advertises AMD64 support; this is not yet an
@@ -248,13 +249,12 @@ before the existing strict mode-0700 check. No supplied directory is repaired an
 security suppression/threshold change was added. Fixed failure-code reporting does not
 expose provider messages. Regression tests cover inherited permissions and safe errors.
 
-**Important pending boundary:** EXCLUSIVE labels are scheduling preferences, not job
-access control. Folder credential scope alone does not stop another Pipeline requesting
-this node and leaving code to observe a later binding. Enforce and negatively test a
-trusted-job scheduling guard before bringing this worker back for release use. The
-worker was stopped with SIGTERM (exit 143) after verification; the diagnostic job is
-disabled, queue empty, source worker still online. Do not treat this checkpoint as
-complete cross-job isolation or enable production delivery yet.
+**Historical boundary gap at this checkpoint:** EXCLUSIVE labels are scheduling
+preferences, not job access control. Folder credential scope alone does not stop another
+Pipeline requesting this node and leaving code to observe a later binding. The worker
+was stopped with SIGTERM (exit 143), diagnostic job disabled and queue empty. The
+subsequent scheduling guard below closes this executor-assignment gap; it does not make
+Jenkins a complete sandbox or enable production delivery.
 
 Read-only operator checks, when the reviewed worker is intentionally online:
 
@@ -273,9 +273,55 @@ was recreated or rotated; no upload, Deployment patch or cloud resource change o
 Normal SCM history remains #34; all 73 plugin versions and notification bindings were
 preserved. This checkpoint is not yet merged/published.
 
+## Trusted-job scheduling guard — installed and live-tested
+
+`ops/jenkins/release-policy.groovy` installs a controller-owned `QueueTaskDispatcher`
+through the pinned controller image's startup directory. It uses the queued task's
+actual owner Job and actual node name, not caller-supplied labels or parameters.
+Version 1 allows only `finsecure-release/verify-boundaries` and
+`finsecure-release/verify-scheduling` onto `finsecure-release`. Unknown ownership and
+other jobs are denied. Release-folder executor tasks are denied all other nodes.
+Pipeline flyweight orchestration remains possible on the controller without allocating
+a worker workspace. Duplicate registrations are rejected; owner-resolution exceptions
+produce a fixed denial rather than exposing exception details.
+
+The installed Jenkins/plugin APIs compiled the policy and passed ten decision cases.
+After idle controller recreation, all 73 plugin versions, main #34 and source-worker
+operation were preserved. Five real Pipeline cases passed verification:
+
+| Actual assignment requested | Observed outcome |
+| --- | --- |
+| Allowlisted diagnostic → release worker | SUCCESS; shell step ran |
+| Root-level source probe → release worker | Queued with JOB_DENIED; never assigned |
+| Unapproved release-folder job → release worker | Queued with JOB_DENIED; never assigned |
+| Allowlisted release job → source worker | Queued with WRONG_NODE; never assigned |
+| Root-level source probe → source worker | SUCCESS; shell step ran |
+
+In each denied case the target worker was online and idle; the real queue reason and
+actual PlaceholderTask owner were inspected, then that owned probe was explicitly
+stopped (ABORTED). This is not merely an offline-node or label-mismatch test. No probe
+bound release credentials. All four diagnostic jobs, including the earlier binding job,
+are disabled; the release worker is stopped again, source worker online and queue empty.
+See [scheduling evidence](../../evidence/task-04/step-03-release-scheduling.md).
+
+`verify_release.py` now requires the active guard and exact version-1 allowlist. The
+one-time `release_bootstrap.py` performs that policy preflight before any Docker command
+or secret-volume creation. It still refuses to replace existing resources; do not rerun
+it to resume this existing worker.
+
+**Operational restart rule:** stop the release worker before recreating/restarting the
+controller, and require a successful policy preflight before starting the worker again.
+Startup-script failure does not itself shut down Jenkins; merely finding its script on
+disk is not sufficient. The opt-in worker has no restart policy. Administrators and
+reviewed job definitions remain trusted; this is not a multitenant security guarantee.
+Retest on controller/plugin upgrades. Do not enable arbitrary folder jobs or run scripts
+from upstream artifacts. Production release selection, credentials usage and artifact
+validation remain separate controls. A future production job needs a reviewed explicit
+allowlist/preflight update; version 1 authorizes no production delivery job.
+
 ## Remaining verification
 
-Trusted-job scheduling enforcement and negative tests; actual AMD64 CI build and scan;
+Actual AMD64 CI build and scan;
 trusted-main release selection; serialization/stale-build policy; immutable upload
 identity; deployment timeout/failure behavior; healthy rollout and smoke checks; retained
 failure reports. Full delivery is pending until all of these run successfully.

@@ -7,3 +7,4 @@
 !checkout-job.groovy
 !ci-job.groovy
 !seed-jobs.groovy
+!release-policy.groovy

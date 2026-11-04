@@ -1,0 +1,10 @@
+{
+  "guard_active_after_controller_recreation": true,
+  "plugin_versions_unchanged": true,
+  "plugin_count": 73,
+  "normal_ci_build": 34,
+  "normal_ci_result": "SUCCESS",
+  "release_worker_still_stopped": true,
+  "source_worker_online": true,
+  "queue_empty": true
+}

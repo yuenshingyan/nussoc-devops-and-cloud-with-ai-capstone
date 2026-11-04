@@ -5,4 +5,5 @@ COPY --chown=jenkins:jenkins jenkins.yaml /usr/share/jenkins/jenkins.yaml
 COPY --chown=jenkins:jenkins checkout-job.groovy /usr/share/jenkins/checkout-job.groovy
 COPY --chown=jenkins:jenkins ci-job.groovy /usr/share/jenkins/ci-job.groovy
 COPY --chown=jenkins:jenkins seed-jobs.groovy /usr/share/jenkins/ref/init.groovy.d/finsecure-seed-jobs.groovy.override
+COPY --chown=jenkins:jenkins release-policy.groovy /usr/share/jenkins/ref/init.groovy.d/finsecure-release-policy.groovy.override
 ENV CASC_JENKINS_CONFIG=/usr/share/jenkins/jenkins.yaml

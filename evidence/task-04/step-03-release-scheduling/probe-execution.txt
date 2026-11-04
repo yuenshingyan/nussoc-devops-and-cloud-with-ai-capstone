@@ -1,0 +1,8 @@
+{
+  "status": "verified",
+  "live_cases": 5,
+  "credentials_bound": false,
+  "owned_jobs_disabled": true,
+  "release_worker_stopped": true,
+  "queue_empty": true
+}

@@ -4,7 +4,7 @@ from hashlib import sha256
 from json import dumps, loads
 from pathlib import Path
 
-from bootstrap import ROOT, Jenkins, admin_password, command
+from bootstrap import BASE_URL, ROOT, Jenkins, admin_password, command
 from defusedxml.ElementTree import fromstring
 from httpx2 import BasicAuth, Client
 from release_store import FILES, ReleaseStore, private_file
@@ -96,6 +96,37 @@ def process_metadata(container: str) -> list[str]:
     return values
 
 
+def check_policy(client: Client) -> None:
+    """Require the exact reviewed scheduler policy before starting or inspecting this worker."""
+    script = """
+    def guards = hudson.ExtensionList.lookup(hudson.model.queue.QueueTaskDispatcher.class)
+        .findAll { it.class.name == 'FinsecureReleaseDispatcher' }
+    assert guards.size() == 1
+    def guard = guards[0]
+    assert guard.POLICY_VERSION == '1'
+    assert guard.TRUSTED_JOBS == ([
+        'finsecure-release/verify-boundaries', 'finsecure-release/verify-scheduling'
+    ] as Set)
+    assert guard.rejection('finsecure-release', 'finsecure-ci', false) != null
+    assert guard.rejection('finsecure-python', 'finsecure-release/verify-boundaries', false) != null
+    assert guard.rejection('finsecure-release', null, false) != null
+    assert guard.rejection(
+        'finsecure-release', 'finsecure-release/verify-boundaries', false) == null
+    println('FINSECURE_RELEASE_POLICY_VERIFIED')
+    """
+    crumb_response = client.get(BASE_URL + "/crumbIssuer/api/json")
+    crumb_response.raise_for_status()
+    crumb = crumb_response.json()
+    response = client.post(
+        BASE_URL + "/scriptText",
+        data={"script": script},
+        headers={crumb["crumbRequestField"]: crumb["crumb"]},
+    )
+    response.raise_for_status()
+    if response.text.strip() != "FINSECURE_RELEASE_POLICY_VERIFIED":
+        raise ValueError("RELEASE_SCHEDULING_POLICY_NOT_VERIFIED")
+
+
 def main() -> None:
     """Verify existing resources only; do not start jobs, rotate credentials or configure IAM."""
     password = admin_password()
@@ -149,6 +180,7 @@ def main() -> None:
     with Client(
         auth=BasicAuth("admin", password), timeout=20, trust_env=False, follow_redirects=False
     ) as client:
+        check_policy(client)
         scoped = ReleaseStore(client).snapshot()
         expected = {
             identifier: {"fileName": FILES[identifier], "sha256": sha256(value).hexdigest()}
@@ -160,6 +192,7 @@ def main() -> None:
         dumps(
             {
                 "release_node_online": True,
+                "scheduling_policy_verified": True,
                 "release_container_boundaries": "passed",
                 "secrets_absent_from_process_arguments_and_environment": True,
                 "remoting_secret_verified": True,

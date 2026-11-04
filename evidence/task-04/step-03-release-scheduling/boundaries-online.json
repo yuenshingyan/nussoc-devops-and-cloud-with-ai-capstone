@@ -1,0 +1,12 @@
+{
+  "release_node_online": true,
+  "scheduling_policy_verified": true,
+  "release_container_boundaries": "passed",
+  "secrets_absent_from_process_arguments_and_environment": true,
+  "remoting_secret_verified": true,
+  "folder_file_credentials_match_private_sources": true,
+  "source_job_lookup_denied": true,
+  "cpu_limit": 0.5,
+  "memory_limit_mib": 512,
+  "readonly_root": true
+}

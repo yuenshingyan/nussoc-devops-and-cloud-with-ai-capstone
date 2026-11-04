@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "<repository>/reports/release-scheduling/probe.py", line 136, in <module>
+    main()
+    ~~~~^^
+  File "<repository>/reports/release-scheduling/probe.py", line 65, in main
+    assert response.status_code in {200,201,302}
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError

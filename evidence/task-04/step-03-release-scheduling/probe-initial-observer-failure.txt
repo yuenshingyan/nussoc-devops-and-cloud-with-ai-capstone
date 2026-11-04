@@ -1,0 +1,14 @@
+Traceback (most recent call last):
+  File "<repository>/reports/release-scheduling/probe.py", line 129, in <module>
+    main()
+    ~~~~^^
+  File "<repository>/reports/release-scheduling/probe.py", line 43, in main
+    j.wait('/computer/finsecure-release/api/json','offline',False,120,'release-agent')
+    ~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<repository>/ops/jenkins/bootstrap.py", line 157, in wait
+    container = command([*COMPOSE, "ps", "--all", "--quiet", service])
+  File "<repository>/ops/jenkins/bootstrap.py", line 49, in command
+    raise RuntimeError(
+        "Local Docker command failed; inspect the owned service without exposing secrets"
+    )
+RuntimeError: Local Docker command failed; inspect the owned service without exposing secrets

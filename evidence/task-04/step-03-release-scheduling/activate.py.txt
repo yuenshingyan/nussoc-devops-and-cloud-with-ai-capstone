@@ -1,0 +1,29 @@
+"""Activate the built controller policy while its release worker is stopped."""
+
+from json import dumps, loads
+from pathlib import Path
+
+from bootstrap import BASE_URL, Jenkins, admin_password, command
+from httpx2 import BasicAuth, Client
+from verify_release import check_policy
+
+j = Jenkins(admin_password())
+assert not loads(j.request('/queue/api/json'))['items']
+assert loads(j.request('/computer/finsecure-python/api/json'))['idle']
+state = loads(command(['docker', 'inspect', 'finsecure-jenkins-release-agent-1']))[0]['State']
+assert not state['Running']
+before = loads(j.request('/job/finsecure-ci/lastBuild/api/json'))
+plugins = {p['shortName']:p['version'] for p in loads(j.request('/pluginManager/api/json?depth=1'))['plugins']}
+assert before['number'] == 34 and not before['building'] and before['result']=='SUCCESS'
+command(['docker','compose','-f','ops/jenkins/compose.yaml','-f','ops/jenkins/notifications.compose.yaml','up','-d','--no-deps','--no-build','controller'], timeout=120)
+j.wait('/api/json','numExecutors',0,180,'controller')
+j.wait('/computer/finsecure-python/api/json','offline',False,120,'agent')
+with Client(auth=BasicAuth('admin',admin_password()), timeout=20, trust_env=False, follow_redirects=False) as client:
+    check_policy(client)
+after = loads(j.request('/job/finsecure-ci/lastBuild/api/json'))
+assert after['number']==before['number'] and after['result']=='SUCCESS'
+assert plugins == {p['shortName']:p['version'] for p in loads(j.request('/pluginManager/api/json?depth=1'))['plugins']}
+assert not loads(j.request('/queue/api/json'))['items']
+record={'guard_active_after_controller_recreation':True,'plugin_versions_unchanged':True,'plugin_count':len(plugins),'normal_ci_build':34,'normal_ci_result':'SUCCESS','release_worker_still_stopped':True,'source_worker_online':True,'queue_empty':True}
+Path('reports/release-scheduling/activation.json').write_text(dumps(record,indent=2)+'\n')
+print(dumps(record,indent=2))

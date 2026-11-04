@@ -1,7 +1,7 @@
 from pathlib import Path
 from runpy import run_path
 from subprocess import CompletedProcess
-from unittest.mock import Mock
+from unittest.mock import MagicMock, Mock
 
 from pytest import MonkeyPatch, fixture, mark, raises
 
@@ -63,6 +63,21 @@ def test_seed_uses_stdin_and_removes_only_owned_helper(helpers, monkeypatch, fai
     assert "--cap-add=CHOWN" in creation
     assert "--cap-add=DAC_OVERRIDE" not in creation
     assert "--network=none" in creation
+
+
+def test_missing_scheduling_policy_prevents_bootstrap_mutations(helpers, monkeypatch):
+    state = helpers["start"].__globals__
+    monkeypatch.setitem(state, "admin_password", Mock(return_value="synthetic"))
+    monkeypatch.setitem(state, "Client", MagicMock())
+    monkeypatch.setitem(state, "check_policy", Mock(side_effect=ValueError("POLICY_MISSING")))
+    command = Mock()
+    seed = Mock()
+    monkeypatch.setitem(state, "command", command)
+    monkeypatch.setitem(state, "initialize_secret", seed)
+    with raises(ValueError, match="POLICY_MISSING"):
+        helpers["start"]()
+    command.assert_not_called()
+    seed.assert_not_called()
 
 
 def test_cli_requires_explicit_approval(helpers, monkeypatch):

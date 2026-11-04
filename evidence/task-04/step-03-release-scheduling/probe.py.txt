@@ -1,0 +1,140 @@
+"""Exercise real Pipeline scheduling without binding any publishing/deployer credentials."""
+
+from html import escape
+from json import dumps, loads
+from pathlib import Path
+from time import monotonic, sleep
+
+from bootstrap import BASE_URL, Jenkins, admin_password, command
+from httpx2 import BasicAuth, Client
+from verify_release import check_policy
+
+ROOT = Path('reports/release-scheduling')
+JOBS = ['finsecure-release/verify-scheduling', 'release-scheduling-source-probe', 'finsecure-release/verify-unapproved']
+
+
+def config(label: str, expected: bool) -> str:
+    body = "echo \"ASSIGNED:${env.NODE_NAME}\"; sh 'true'" if expected else "error('UNEXPECTED_WORKER_ASSIGNMENT')"
+    script = f"timeout(time: 45, unit: 'SECONDS') {{ node('{label}') {{ {body} }} }}"
+    return '<flow-definition><description>Owned credential-free scheduling verification</description><definition class="org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition"><script>'+escape(script)+'</script><sandbox>true</sandbox></definition><triggers/><disabled>false</disabled></flow-definition>'
+
+
+def main() -> None:
+    j = Jenkins(admin_password())
+    assert not loads(j.request('/queue/api/json'))['items']
+    owned = [JOBS[0]]
+    results = loads((ROOT/'first-live-cases.json').read_text())
+    assert len(results)==1 and results[0]['result']=='SUCCESS' and results[0]['build']==1
+    with Client(auth=BasicAuth('admin',admin_password()), timeout=20, trust_env=False, follow_redirects=False) as client:
+        crumb=client.get(BASE_URL+'/crumbIssuer/api/json').json()
+        headers={crumb['crumbRequestField']:crumb['crumb']}
+        def path(job: str) -> str:
+            return ''.join('/job/'+part for part in job.split('/')) if job else ''
+        def post(url: str, **kwargs):
+            response=client.post(BASE_URL+url,headers=headers,**kwargs)
+            assert response.status_code in {200,201,302}, 'Owned scheduling operation failed'
+            return response
+        def groovy(script: str) -> dict:
+            response=post('/scriptText',data={'script':script})
+            return loads(response.text)
+        check_policy(client)
+        existing=client.get(BASE_URL+path(JOBS[0])+'/api/json').json()
+        assert existing['disabled'] and existing['lastBuild']['number']==1
+        assert existing['description']=='Owned credential-free scheduling verification'
+        for job in JOBS[1:]:
+            assert client.get(BASE_URL+path(job)+'/api/json').status_code==404
+        cases=[
+            (JOBS[0],'release',True,None),
+            (JOBS[1],'release',False,'FINSECURE_RELEASE_JOB_DENIED'),
+            (JOBS[2],'release',False,'FINSECURE_RELEASE_JOB_DENIED'),
+            (JOBS[0],'python',False,'FINSECURE_RELEASE_WRONG_NODE'),
+            (JOBS[1],'python',True,None),
+        ]
+        try:
+            command(['docker','compose','-f','ops/jenkins/compose.yaml','-f','ops/jenkins/notifications.compose.yaml','-f','ops/jenkins/release.compose.yaml','up','-d','--no-deps','--no-build','release-agent'],timeout=60)
+            deadline=monotonic()+120
+            while monotonic()<deadline:
+                if not loads(j.request('/computer/finsecure-release/api/json'))['offline']:
+                    break
+                state=loads(command(['docker','inspect','finsecure-jenkins-release-agent-1']))[0]['State']
+                assert state['Running'], 'Owned release worker exited'
+                sleep(2)
+            assert not loads(j.request('/computer/finsecure-release/api/json'))['offline']
+            for index,(job,label,allowed,reason) in enumerate(cases[1:],2):
+                endpoint=path(job)
+                xml=config(label,allowed)
+                if job not in owned:
+                    parent,name=job.rsplit('/',1) if '/' in job else ('',job)
+                    response=client.post(BASE_URL+path(parent)+'/createItem',params={'name':name},content=xml,headers={**headers,'Content-Type':'application/xml'})
+                    assert response.status_code in {200,201,302}
+                    owned.append(job)
+                else:
+                    response=client.post(BASE_URL+endpoint+'/config.xml',content=xml,headers={**headers,'Content-Type':'application/xml'})
+                    assert response.status_code in {200,302}
+                info=client.get(BASE_URL+endpoint+'/api/json').json()
+                number=info['nextBuildNumber']
+                post(endpoint+'/build')
+                deadline=monotonic()+60
+                observation=None
+                while monotonic()<deadline:
+                    if not allowed:
+                        script='''
+                        def guard = hudson.ExtensionList.lookup(hudson.model.queue.QueueTaskDispatcher.class).find{it.class.name=='FinsecureReleaseDispatcher'}
+                        def item = jenkins.model.Jenkins.get().queue.items.find { it.task.ownerTask instanceof hudson.model.Job && it.task.ownerTask.fullName == JOB }
+                        def node = jenkins.model.Jenkins.get().getNode(NODE)
+                        def data = [found:false]
+                        if (item instanceof hudson.model.Queue.BuildableItem) {
+                            data = [found:true, task_class:item.task.class.name, owner:item.task.ownerTask.fullName,
+                                    node_online:node.toComputer().online, node_idle:node.toComputer().idle,
+                                    policy_reason:guard.canTake(node,item)?.shortDescription, queue_reason:item.why]
+                        }
+                        println(groovy.json.JsonOutput.toJson(data))
+                        '''.replace('JOB',dumps(job)).replace('NODE',dumps('finsecure-release' if label=='release' else 'finsecure-python'))
+                        observation=groovy(script)
+                        if observation['found']:
+                            assert observation['node_online'] and observation['node_idle']
+                            assert observation['policy_reason']==reason
+                            assert observation['task_class'].endswith('$PlaceholderTask')
+                            post(endpoint+f'/{number}/stop')
+                            break
+                    else:
+                        response=client.get(BASE_URL+endpoint+f'/{number}/api/json')
+                        if response.status_code==200 and not response.json()['building']:
+                            break
+                    sleep(1)
+                if not allowed:
+                    assert observation and observation['found'], 'Expected queue rejection not observed'
+                deadline=monotonic()+40
+                while monotonic()<deadline:
+                    response=client.get(BASE_URL+endpoint+f'/{number}/api/json')
+                    if response.status_code==200 and not response.json()['building']:
+                        break
+                    sleep(1)
+                build=response.json()
+                assert not build['building']
+                assert build['result']==('SUCCESS' if allowed else 'ABORTED')
+                console=client.get(BASE_URL+endpoint+f'/{number}/consoleText').text
+                if allowed:
+                    assert 'ASSIGNED:'+('finsecure-release' if label=='release' else 'finsecure-python') in console
+                else:
+                    assert 'Running on ' not in console and 'UNEXPECTED_WORKER_ASSIGNMENT' not in console
+                (ROOT/f'case-{index}-console.txt').write_text(console)
+                results.append({'job':job,'build':number,'label':label,'allowed':allowed,'result':build['result'],'observation':observation})
+                post(endpoint+'/disable')
+            verification = command(['uv', 'run', '--locked', 'python', 'ops/jenkins/verify_release.py'], timeout=60)
+            (ROOT/'boundaries-online.json').write_text(verification+'\n')
+        finally:
+            for job in owned:
+                endpoint=path(job)
+                response=client.get(BASE_URL+endpoint+'/lastBuild/api/json')
+                if response.status_code==200 and response.json()['building']:
+                    post(endpoint+f"/{response.json()['number']}/stop")
+                post(endpoint+'/disable')
+            (ROOT/'live-cases.json').write_text(dumps(results,indent=2)+'\n')
+            command(['docker','compose','-f','ops/jenkins/compose.yaml','-f','ops/jenkins/notifications.compose.yaml','-f','ops/jenkins/release.compose.yaml','stop','--timeout','30','release-agent'],timeout=60)
+        assert len(results)==5 and not loads(j.request('/queue/api/json'))['items']
+        print(dumps({'status':'verified','live_cases':len(results),'credentials_bound':False,'owned_jobs_disabled':True,'release_worker_stopped':True,'queue_empty':True},indent=2))
+
+
+if __name__=='__main__':
+    main()

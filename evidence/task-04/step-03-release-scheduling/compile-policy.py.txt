@@ -1,0 +1,49 @@
+"""Compile the startup policy in Jenkins without executing its registration body."""
+
+from json import dumps, loads
+from pathlib import Path
+
+from bootstrap import BASE_URL, admin_password
+from httpx2 import BasicAuth, Client
+
+source = Path("ops/jenkins/release-policy.groovy").read_text()
+script = """
+def loader = new GroovyClassLoader(jenkins.model.Jenkins.get().pluginManager.uberClassLoader)
+loader.parseClass(SOURCE)
+def policy = loader.loadClass('FinsecureReleaseDispatcher')
+def cases = [
+ ['finsecure-release','finsecure-ci',false,'FINSECURE_RELEASE_JOB_DENIED'],
+ ['finsecure-release',null,false,'FINSECURE_RELEASE_JOB_DENIED'],
+ ['finsecure-release','finsecure-release/unknown',false,'FINSECURE_RELEASE_JOB_DENIED'],
+ ['finsecure-release','other/verify-boundaries',false,'FINSECURE_RELEASE_JOB_DENIED'],
+ ['finsecure-release','finsecure-release/verify-boundaries',false,null],
+ ['finsecure-release','finsecure-release/verify-scheduling',false,null],
+ ['finsecure-python','finsecure-release/verify-boundaries',false,'FINSECURE_RELEASE_WRONG_NODE'],
+ ['finsecure-python','finsecure-ci',false,null],
+ ['', 'finsecure-release/verify-boundaries',true,null],
+ ['finsecure-release','finsecure-release/verify-boundaries',true,'FINSECURE_RELEASE_FLYWEIGHT_DENIED']
+]
+cases.each { row -> assert policy.rejection(row[0],row[1],row[2]) == row[3] }
+def placeholder = loader.loadClass('org.jenkinsci.plugins.workflow.support.steps.ExecutorStepExecution$PlaceholderTask')
+assert placeholder.getMethod('getOwnerTask').returnType == hudson.model.Queue.Task
+println(groovy.json.JsonOutput.toJson([
+ compiled:true, policy_cases:cases.size(), installed_placeholder_owner_api_verified:true,
+ buildable_constructors:hudson.model.Queue.BuildableItem.constructors.collect{it.toString()},
+ waiting_constructors:hudson.model.Queue.WaitingItem.constructors.collect{it.toString()}
+]))
+""".replace("SOURCE", dumps(source))
+with Client(
+    auth=BasicAuth("admin", admin_password()), timeout=30, trust_env=False, follow_redirects=False
+) as client:
+    crumb = client.get(BASE_URL + "/crumbIssuer/api/json").json()
+    response = client.post(
+        BASE_URL + "/scriptText",
+        data={"script": script},
+        headers={crumb["crumbRequestField"]: crumb["crumb"]},
+    )
+    response.raise_for_status()
+    record = loads(response.text)
+    Path("reports/cloud-delivery/scheduling-compile.json").write_text(
+        dumps(record, indent=2) + "\n"
+    )
+    print(dumps(record, indent=2))

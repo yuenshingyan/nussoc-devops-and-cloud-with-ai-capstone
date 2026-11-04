@@ -1,0 +1,8 @@
+{
+  "ops/jenkins/release-policy.groovy": "2dc73a047e5e4a6640c1725541e56a97a6c2a82ebf2a6d8558c7b02c04fc6c83",
+  "ops/jenkins/controller.Dockerfile": "93d7b2edc044b7d3b2a0b44aeb23d382e624c77c5c1a150fe627e1d6b2e3c79a",
+  "ops/jenkins/.dockerignore": "a8b5553bb3a0ca34cba910d6705efcb2907b3bc4aa9e731bdfd715f1c46635b1",
+  "ops/jenkins/compose.yaml": "3ddddb09283228e5b6d43cad381497c9f330f9b6c94f49d7e68e462c8a787755",
+  "ops/jenkins/verify_release.py": "a77f4286fbba9d4ee02c081a57b02504bb1c93dd550828304a3b314b824a2852",
+  "ops/jenkins/release_bootstrap.py": "b2168aba3ab7403668c9512151e27d992200f3ae161b3b8b2880c3239966dcc6"
+}

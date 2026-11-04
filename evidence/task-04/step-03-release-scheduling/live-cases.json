@@ -1,0 +1,66 @@
+[
+  {
+    "job": "finsecure-release/verify-scheduling",
+    "build": 1,
+    "label": "release",
+    "allowed": true,
+    "result": "SUCCESS",
+    "observation": null
+  },
+  {
+    "job": "release-scheduling-source-probe",
+    "build": 1,
+    "label": "release",
+    "allowed": false,
+    "result": "ABORTED",
+    "observation": {
+      "found": true,
+      "task_class": "org.jenkinsci.plugins.workflow.support.steps.ExecutorStepExecution$PlaceholderTask",
+      "owner": "release-scheduling-source-probe",
+      "node_online": true,
+      "node_idle": true,
+      "policy_reason": "FINSECURE_RELEASE_JOB_DENIED",
+      "queue_reason": "FINSECURE_RELEASE_JOB_DENIED; \u2018finsecure-python\u2019 doesn\u2019t have label \u2018release\u2019"
+    }
+  },
+  {
+    "job": "finsecure-release/verify-unapproved",
+    "build": 1,
+    "label": "release",
+    "allowed": false,
+    "result": "ABORTED",
+    "observation": {
+      "found": true,
+      "task_class": "org.jenkinsci.plugins.workflow.support.steps.ExecutorStepExecution$PlaceholderTask",
+      "owner": "finsecure-release/verify-unapproved",
+      "node_online": true,
+      "node_idle": true,
+      "policy_reason": "FINSECURE_RELEASE_JOB_DENIED",
+      "queue_reason": "FINSECURE_RELEASE_JOB_DENIED; \u2018finsecure-python\u2019 doesn\u2019t have label \u2018release\u2019"
+    }
+  },
+  {
+    "job": "finsecure-release/verify-scheduling",
+    "build": 2,
+    "label": "python",
+    "allowed": false,
+    "result": "ABORTED",
+    "observation": {
+      "found": true,
+      "task_class": "org.jenkinsci.plugins.workflow.support.steps.ExecutorStepExecution$PlaceholderTask",
+      "owner": "finsecure-release/verify-scheduling",
+      "node_online": true,
+      "node_idle": true,
+      "policy_reason": "FINSECURE_RELEASE_WRONG_NODE",
+      "queue_reason": "FINSECURE_RELEASE_WRONG_NODE; \u2018finsecure-release\u2019 doesn\u2019t have label \u2018python\u2019"
+    }
+  },
+  {
+    "job": "release-scheduling-source-probe",
+    "build": 2,
+    "label": "python",
+    "allowed": true,
+    "result": "SUCCESS",
+    "observation": null
+  }
+]
