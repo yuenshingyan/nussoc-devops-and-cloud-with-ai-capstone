@@ -69,6 +69,29 @@ def test_cli_requires_approval(helpers, monkeypatch):
     create.assert_not_called()
 
 
+def test_selection_checks_build_order_before_and_after_remote_reads():
+    script = (ROOT / "ops/jenkins/release-job.groovy").read_text()
+    selection = script.split("static Map select(def releaseRun)", 1)[1]
+    before, after = selection.split("Map candidate = validate", 1)
+    assert "requireLatest(job, run)" in before
+    assert "requireLatest(job, run)" in after.split("return candidate", 1)[0]
+    assert "job.lastBuild?.number, job.isInQueue()" in script
+    assert "queued instanceof Boolean" in script
+
+
+def test_action_time_recheck_reselects_and_compares_the_original_candidate():
+    script = (ROOT / "ops/jenkins/release-job.groovy").read_text()
+    assert "confirmSelection(expected, select(releaseRun))" in script
+    assert "expected.equals(observed)" in script
+    for code in (
+        "RELEASE_BUILD_ORDER_INVALID",
+        "RELEASE_SUPERSEDED_BUILD",
+        "RELEASE_SOURCE_BUILD_QUEUED",
+        "RELEASE_CANDIDATE_CHANGED",
+    ):
+        assert code in script
+
+
 def test_job_cannot_publish_or_execute_upstream_artifacts():
     script = (ROOT / "ops/jenkins/release-job.groovy").read_text()
     assert "timeout(time: 10, unit: 'MINUTES')" in script

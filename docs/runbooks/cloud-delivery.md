@@ -453,10 +453,39 @@ built; policy version 1 still excludes it. Main remains #34 and the cloud applic
 Deployment specification and Pod identities remain unchanged, with two Ready replicas
 and public health 200. See [artifact evidence](../../evidence/task-04/step-03-release-artifacts.md).
 
+## Supersession guard candidate — 4 November 2026
+
+The working `release-job.groovy` now rejects a candidate unless its build number is
+exactly the source job's latest build and the source job has no queued build. Newer
+failed, running or successful builds supersede it even when their Git SHA is identical.
+Missing/invalid ordering data fails closed. Selection checks local ordering both before
+artifact reads and after the current-main lookup.
+
+The new `recheck(releaseRun, expected)` helper repeats full authoritative selection,
+including current GitHub main, then compares the complete selected candidate map.
+Callers must preserve the original selection unchanged and keep verification outputs
+separate. This helper is intended for immediately before **each** future external
+action; it is not yet wired to publishing/deployment, which remain absent. These are
+point-in-time checks, not an atomic transaction across Jenkins, GitHub and Kubernetes.
+
+Native checks passed ten ordering rejection cases, three newer/same-SHA status cases,
+nine candidate-identity rejection cases and the existing selection/parser cases. Actual
+main #33 was rejected as superseded by #34 through both selection and `recheck`; #34
+still failed the AMD64 requirement. No source build was queued or modified. Synthetic
+queue/state cases do not prove concurrent Pipeline execution. All 1,062 host tests,
+Ruff, packaging and source/dependency gates passed.
+
+**This candidate is not installed.** The installed job still has script SHA-256
+`78192f53c275bf58d8e8def12ed097c133bcff7b7c3541b2136938bbc9a800cf`, remains disabled,
+never built and pending approval. There are zero approved scripts. Keep this distinction
+when checking the live definition: it intentionally differs from the new working file.
+No job update, script approval, worker startup, upload or cloud mutation occurred.
+See [supersession evidence](../../evidence/task-04/step-03-release-supersession.md).
+
 ## Remaining verification
 
-Trusted production Git-snapshot acquisition and Pipeline integration; rejection of newer
-builds including the same revision; action-time main checks; reviewed publication and
+Trusted production Git-snapshot acquisition and Pipeline integration, including the
+tested supersession/action-time helpers; reviewed publication and
 normal SCM AMD64 proof; real downstream triggering, serialization, timeout/cancellation
 and restart behavior; immutable upload identity; deployment failure/rollout/smoke checks
 and retained failure reports. Full delivery is pending until all of these run successfully.

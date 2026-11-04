@@ -67,6 +67,34 @@ class FinsecureCandidateSelection {
     }
 
     @NonCPS
+    static void validateLatest(Object selected, Object latest, Object queued) {
+        require(selected instanceof Integer && selected > 0 &&
+            latest instanceof Integer && latest > 0 && queued instanceof Boolean,
+            'RELEASE_BUILD_ORDER_INVALID')
+        // A newer failed/running build also supersedes this candidate, even at the same SHA.
+        require(selected == latest, 'RELEASE_SUPERSEDED_BUILD')
+        require(!queued, 'RELEASE_SOURCE_BUILD_QUEUED')
+    }
+
+    @NonCPS
+    static void requireLatest(def job, def run) {
+        validateLatest(run.number, job.lastBuild?.number, job.isInQueue())
+    }
+
+    @NonCPS
+    static void confirmSelection(Map expected, Map observed) {
+        require(expected != null && observed != null && expected.equals(observed),
+            'RELEASE_CANDIDATE_CHANGED')
+    }
+
+    @NonCPS
+    static void recheck(def releaseRun, Map expected) {
+        // Call immediately before each external action, not just before binding credentials.
+        // Re-read native provenance, gate identities and current GitHub main; never retry.
+        confirmSelection(expected, select(releaseRun))
+    }
+
+    @NonCPS
     static Map validate(Map provenance, Map source, Map image, String head) {
         require(provenance.job == 'finsecure-ci', 'RELEASE_UPSTREAM_JOB_DENIED')
         require(provenance.build instanceof Integer && provenance.build > 0, 'RELEASE_BUILD_INVALID')
@@ -120,6 +148,7 @@ class FinsecureCandidateSelection {
             scm.branches.collect { it.name } == ['*/main'], 'RELEASE_SOURCE_JOB_INVALID')
         def run = job.getBuildByNumber(cause.upstreamBuild)
         require(run != null && !run.building && run.result == Result.SUCCESS, 'RELEASE_UPSTREAM_NOT_SUCCESS')
+        requireLatest(job, run)
         def data = run.getActions(BuildData.class)
         require(data.size() == 1 && data[0].remoteUrls == ([REPOSITORY] as Set), 'RELEASE_GIT_DATA_INVALID')
         def revision = data[0].lastBuiltRevision
@@ -131,8 +160,11 @@ class FinsecureCandidateSelection {
             result:run.result.toString(), repository:REPOSITORY, branch:'refs/remotes/origin/main',
             revision:revision.sha1String, tests:tests.totalCount, failures:tests.failCount,
             skipped:tests.skipCount]
-        return validate(provenance, report(run, 'reports/security-summary.json'),
+        Map candidate = validate(provenance, report(run, 'reports/security-summary.json'),
             report(run, 'reports/image-security-summary.json'), currentMain())
+        // Local state can change while reports or GitHub are being read.
+        requireLatest(job, run)
+        return candidate
     }
 }
 

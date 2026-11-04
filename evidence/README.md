@@ -202,6 +202,10 @@ and report retention on an isolated failure. Cloud delivery remains unverified.
   published accessible reports, and provided packages with verified download hashes.
   The build was manually triggered; no source-trigger, release, or deployment gate is claimed.
 
+- [Step 4.3 — Supersession/action-time guard candidate](task-04/step-03-release-supersession.md):
+  native ordering/identity checks passed, including rejection of real main #33 behind
+  #34. 1,062 host tests and source gates passed. Candidate not installed; old release
+  definition remains disabled/unbuilt/pending approval. No worker startup or release.
 - [Step 4.3 — Controller transfer and independent artifact verification](task-04/step-03-release-artifacts.md):
   21 real retained candidate artifacts transferred through remoting and independently
   verified on the constrained worker; tampering and a synthetic stale clock rejected.

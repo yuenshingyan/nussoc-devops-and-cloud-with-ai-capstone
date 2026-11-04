@@ -1,0 +1,25 @@
+{
+  "build_order_rejections": 10,
+  "same_revision_newer_build_states": [
+    "SUCCESS",
+    "FAILURE",
+    "RUNNING"
+  ],
+  "candidate_identity_rejections": 9,
+  "real_older_build": 33,
+  "real_older_rejection": "RELEASE_SUPERSEDED_BUILD",
+  "action_time_recheck_rejection": "RELEASE_SUPERSEDED_BUILD",
+  "source_job_or_queue_mutated": false,
+  "compiled": true,
+  "synthetic_authority_fixture": true,
+  "positive_selection_requires_artifact_verification": true,
+  "validation_rejections": 28,
+  "bounded_parser_cases": 3,
+  "manual_cause_rejected": true,
+  "real_main_build": 34,
+  "real_main_rejection": "RELEASE_PLATFORM_DENIED",
+  "pipeline_body_executed": false,
+  "publishing_attempted": false,
+  "deployment_attempted": false,
+  "script_sha256": "e0d6db76457e8e654691f302f05e04e9e2a1baf491297d9526d7be7e88965ed5"
+}
