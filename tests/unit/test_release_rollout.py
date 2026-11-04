@@ -13,7 +13,12 @@ from scripts.release_deployment import image_reference, spec_sha256
 from scripts.release_execute import execute_child, supervise
 from scripts.release_http import DEPLOYMENT_PATH, DeploymentClient
 from scripts.release_rollout import deploy_and_wait, deployment_ready, ready_pod_uids
-from scripts.release_smoke import PUBLIC_HOST, verify_service, verify_smoke
+from scripts.release_smoke import (
+    PUBLIC_HOST,
+    verify_service,
+    verify_smoke,
+    wait_for_public_readiness,
+)
 
 DIGEST = "sha256:" + "b" * 64
 UID = "synthetic-deployment-uid"
@@ -446,9 +451,12 @@ def test_child_composes_service_patch_rollout_smoke_and_profile_cleanup(
     arguments, documents, service, transport, smoke_responses, monkeypatch
 ):
     before, after, sets, pods = documents
-    transport["responses"] = [
-        (200, value) for value in [service, before, after, sets, pods, after, service]
-    ] + smoke_responses
+    transport["responses"] = (
+        [(200, value) for value in [service, before, after, sets, pods, after, service]]
+        + [(200, {"status": "healthy"})] * 10
+        + smoke_responses
+    )
+    monkeypatch.setattr("scripts.release_smoke.sleep", lambda seconds: None)
     profiles = []
 
     def token(environment: dict[str, str]) -> str:
@@ -466,6 +474,19 @@ def test_child_composes_service_patch_rollout_smoke_and_profile_cleanup(
     assert not profiles[0].exists() and Path(arguments.key).exists()
     assert sum(call[0] == "PATCH" for call in transport["calls"]) == 1
     assert all("Authorization" not in call[3] for call in transport["calls"][-4:])
+
+
+def test_public_readiness_requires_stable_health_before_smoke(transport, monkeypatch):
+    transport["responses"] = (
+        [(200, {"status": "healthy"})] * 2
+        + [(503, {"status": "starting"})]
+        + [(200, {"status": "healthy"})] * 10
+    )
+    waits = []
+    monkeypatch.setattr("scripts.release_smoke.sleep", waits.append)
+    wait_for_public_readiness(monotonic() + 30)
+    assert len(transport["calls"]) == 13 and waits == [1.0] * 12
+    assert all(call[0] == "GET" and call[1] == "/health" for call in transport["calls"])
 
 
 @mark.parametrize("failure", ["none", "exit", "timeout", "wrong_result"])

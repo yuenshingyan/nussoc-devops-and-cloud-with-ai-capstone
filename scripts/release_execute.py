@@ -20,7 +20,7 @@ from scripts.release_http import DeploymentClient, remaining
 from scripts.release_input import private_directory
 from scripts.release_registry import COOKIES
 from scripts.release_rollout import deploy_and_wait
-from scripts.release_smoke import verify_service, verify_smoke
+from scripts.release_smoke import verify_service, verify_smoke, wait_for_public_readiness
 
 
 def execute_child(arguments: Namespace) -> dict:
@@ -40,6 +40,7 @@ def execute_child(arguments: Namespace) -> dict:
         verify_service(client.get_service())
         result = deploy_and_wait(client, arguments.uid, arguments.spec_sha256, arguments.digest)
         verify_service(client.get_service())
+        wait_for_public_readiness(arguments.deadline)
         verify_smoke(arguments.deadline)
         remaining(arguments.deadline)
         result.update(status="deployment_verified", smoke_verified=True)

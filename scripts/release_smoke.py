@@ -1,8 +1,9 @@
-"""Single-attempt synthetic smoke checks against the approved public HTTP demo endpoint."""
+"""Public readiness observations and single-attempt synthetic HTTP smoke checks."""
 
 from contextlib import closing
 from http.client import HTTPConnection, HTTPException
 from json import dumps
+from time import monotonic, sleep
 
 from scripts.release_archive import strict_json
 from scripts.release_deployment import require
@@ -81,6 +82,28 @@ def smoke_request(
         raise RuntimeError("DEPLOYMENT_SMOKE_REQUEST_FAILED") from None
     if status != expected_status or not matches:
         raise RuntimeError("DEPLOYMENT_SMOKE_RESPONSE_MISMATCH")
+
+
+def wait_for_public_readiness(deadline: float) -> None:
+    """Observe ten healthy samples before smoke; never repeat a mutation or validation POST.
+
+    Kubernetes readiness can precede public load-balancer convergence. Health observations
+    are one second apart, each bounded by five seconds and the original release deadline.
+    The four strict smoke cases still execute once after this readiness window.
+    """
+    consecutive = 0
+    while consecutive < 10:
+        remaining(deadline)
+        try:
+            smoke_request(
+                "/health", None, 200, {"status": "healthy"}, min(deadline, monotonic() + 5.0)
+            )
+        except RuntimeError:
+            consecutive = 0
+        else:
+            consecutive += 1
+        if consecutive < 10:
+            sleep(min(1.0, remaining(deadline)))
 
 
 def verify_smoke(deadline: float) -> dict:

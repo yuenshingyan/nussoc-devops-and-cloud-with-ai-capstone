@@ -11,11 +11,20 @@ unsets empty environment variables. That failure is retained. The corrected defi
 now enabled for gated publication/deployment. Each external command retains one process-group
 owner, avoiding nested supervisors killing an owner before it can reap its child.
 
-Application metadata is 0.4.0; business request/response contracts are unchanged. The live
-application remains 0.3.0. Host checks passed (Ruff, 1,348 tests, build and source/dependency
-security gates); Jenkins CPS compilation passed. These are not a completed delivery run.
-Actual publication, rollout, blocking-gate, rollback and monitoring demonstrations remain
-pending. New cloud monitoring volumes still require sufficient-credit confirmation.
+Automatic source #36 passed and triggered delivery #2: exact archive publication/readback
+succeeded, then the image-only deployment reached rollout verification but failed a public
+HTTP smoke request. Read-only inspection subsequently verified two ready runtime-image Pods,
+public 0.4.0 and four smoke cases. A separate explicit rollback demonstration restored 0.3.0
+and its approved spec in 33.43 seconds, with two ready Pods and passing smoke checks. Neither
+failed delivery is relabelled successful. Native Replay #37 injected one actual failing test:
+no package/image artifacts and no downstream delivery. The security fault case is underway.
+
+Public health readiness now requires ten healthy observations one second apart (five-second
+per-observation bound within the original release deadline), followed by the four smoke cases
+once. No PATCH, upload or validation POST is retried. This addresses the observed public-path
+readiness gap; the precise cause of the earlier HTTP exception was not retained. Host checks
+passed (Ruff, 1,349 tests, build and source/dependency gates). A fresh complete delivery and
+monitoring evidence remain pending. New monitoring volumes still require credit confirmation.
 
 ## Previous checkpoint — Step 4.3 publication primitives and approved cache cleanup
 
