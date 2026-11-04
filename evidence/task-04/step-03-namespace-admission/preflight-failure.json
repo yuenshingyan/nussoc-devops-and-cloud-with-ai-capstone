@@ -1,0 +1,10 @@
+{
+  "started_at_utc": "2026-11-04T01:39:55.465053+00:00",
+  "status": "failed",
+  "namespace_patch_attempts": 0,
+  "pod_create_requests_without_dry_run": 0,
+  "probes": [],
+  "error_type": "RuntimeError",
+  "finished_at_utc": "2026-11-04T01:39:57.161170+00:00",
+  "elapsed_seconds": 1.6957926670147572
+}

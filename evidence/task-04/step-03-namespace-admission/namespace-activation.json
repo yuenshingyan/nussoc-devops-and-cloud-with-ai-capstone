@@ -1,0 +1,56 @@
+{
+  "started_at_utc": "2026-11-04T01:40:59.823484+00:00",
+  "status": "verified",
+  "namespace_patch_attempts": 1,
+  "pod_create_requests_without_dry_run": 0,
+  "probes": [
+    {
+      "case": "compatible",
+      "dry_run": "server",
+      "exit_code": 0,
+      "accepted": true,
+      "restricted_v1_36_denial": false,
+      "expected_reason_observed": true
+    },
+    {
+      "case": "privileged",
+      "dry_run": "server",
+      "exit_code": 1,
+      "accepted": false,
+      "restricted_v1_36_denial": true,
+      "expected_reason_observed": true
+    },
+    {
+      "case": "hostNetwork",
+      "dry_run": "server",
+      "exit_code": 1,
+      "accepted": false,
+      "restricted_v1_36_denial": true,
+      "expected_reason_observed": true
+    },
+    {
+      "case": "hostPath",
+      "dry_run": "server",
+      "exit_code": 1,
+      "accepted": false,
+      "restricted_v1_36_denial": true,
+      "expected_reason_observed": true
+    }
+  ],
+  "namespace_patch_verified": true,
+  "application_objects_unchanged": true,
+  "original_pod_uids_still_ready": true,
+  "available_replicas": 2,
+  "probe_pod_absent": true,
+  "public_health_status": 200,
+  "namespace_labels": {
+    "pod-security.kubernetes.io/enforce": "restricted",
+    "pod-security.kubernetes.io/enforce-version": "v1.36",
+    "pod-security.kubernetes.io/audit": "restricted",
+    "pod-security.kubernetes.io/audit-version": "v1.36",
+    "pod-security.kubernetes.io/warn": "restricted",
+    "pod-security.kubernetes.io/warn-version": "v1.36"
+  },
+  "finished_at_utc": "2026-11-04T01:41:05.119165+00:00",
+  "elapsed_seconds": 5.295459166984074
+}

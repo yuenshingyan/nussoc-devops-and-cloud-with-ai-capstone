@@ -12,8 +12,12 @@ implemented. The operator saved the token locally; read-only Docker authenticati
 existing-manifest access passed with requested pull/push scope. No push/import occurred.
 825 host tests, Ruff lint/format and packaging now pass, including 13 new static policy
 cases. Live namespace inspection found no Pod Security Admission labels. A restricted
-v1.36 namespace patch and limited deployer Role are prepared but not applied/bound;
-explicit namespace-policy approval and live dry-run checks are required before grants. The initial test
+v1.36 namespace patch was subsequently explicitly approved and applied once. Live
+server dry runs accepted the compatible Pod and rejected privileged, host-network and
+host-path variants; no probe Pod was created. Original Pod UIDs stayed Ready and the
+application objects were unchanged. The limited deployer Role remains unbound and
+uninstalled; no Google key or IAM grant has been created. See
+[namespace activation evidence](evidence/task-04/step-03-namespace-admission.md). The initial test
 collection failure (standalone scripts are not importable packages under pytest) was
 fixed using the existing run-path testing convention; diagnostics remain in reports.
 See [cloud delivery setup](docs/runbooks/cloud-delivery.md) and

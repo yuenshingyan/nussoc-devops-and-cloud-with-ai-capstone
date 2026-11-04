@@ -1,0 +1,235 @@
+"""One approved namespace-label patch; Pod probes are server dry runs only."""
+
+from copy import deepcopy
+from datetime import UTC, datetime
+from json import dumps, loads
+from os import environ
+from pathlib import Path
+from subprocess import run
+from time import monotonic
+
+from httpx2 import Client
+from yaml import safe_load
+
+OUT = Path("reports/cloud-delivery/namespace-activation.json")
+SDK = "/opt/homebrew/share/google-cloud-sdk/bin"
+ENV = {
+    **environ,
+    "PATH": SDK + ":" + environ["PATH"],
+    "KUBECONFIG": str(Path.home() / ".config/finsecure-pay/gke/kubeconfig"),
+}
+RECORD = {
+    "started_at_utc": datetime.now(UTC).isoformat(),
+    "status": "pending",
+    "namespace_patch_attempts": 0,
+    "pod_create_requests_without_dry_run": 0,
+    "probes": [],
+}
+
+
+def save() -> None:
+    OUT.write_text(dumps(RECORD, indent=2) + "\n", encoding="utf-8")
+
+
+def kube(arguments: list[str], payload: dict | list | None = None) -> dict:
+    result = run(
+        ["kubectl", "--request-timeout=20s", *arguments, "-o", "json"],
+        input=None if payload is None else dumps(payload),
+        env=ENV,
+        capture_output=True,
+        text=True,
+        timeout=30,
+        check=False,
+    )
+    if result.returncode:
+        raise RuntimeError("KUBERNETES_OPERATION_FAILED")
+    return loads(result.stdout)
+
+
+def objects() -> dict:
+    result = {}
+    for kind in ["deployment", "service"]:
+        result[kind] = kube(["-n", "finsecure-pay", "get", kind, "finsecure-pay"])
+    container = result["deployment"]["spec"]["template"]["spec"]["containers"][0]
+    references = [entry["configMapRef"]["name"] for entry in container["envFrom"]]
+    assert len(references) == 1 and references[0].startswith("finsecure-pay-config-")
+    result["configmap"] = kube(["-n", "finsecure-pay", "get", "configmap", references[0]])
+    result["pods"] = kube(
+        ["-n", "finsecure-pay", "get", "pods", "-l", "app.kubernetes.io/name=finsecure-pay"]
+    )["items"]
+    return result
+
+
+def require_ready(pods: list[dict]) -> None:
+    assert len(pods) == 2
+    for pod in pods:
+        assert not pod["metadata"].get("deletionTimestamp")
+        assert pod["status"]["phase"] == "Running"
+        assert any(
+            c["type"] == "Ready" and c["status"] == "True" for c in pod["status"]["conditions"]
+        )
+
+
+def probe(pod: dict, expected: str) -> None:
+    result = run(
+        [
+            "kubectl",
+            "--request-timeout=20s",
+            "-n",
+            "finsecure-pay",
+            "create",
+            "--dry-run=server",
+            "-f",
+            "-",
+            "-o",
+            "json",
+        ],
+        input=dumps(pod),
+        env=ENV,
+        capture_output=True,
+        text=True,
+        timeout=30,
+        check=False,
+    )
+    accepted = result.returncode == 0
+    policy_denial = 'violates PodSecurity "restricted:v1.36"' in result.stderr
+    reason = expected == "compatible" or expected in result.stderr
+    RECORD["probes"].append(
+        {
+            "case": expected,
+            "dry_run": "server",
+            "exit_code": result.returncode,
+            "accepted": accepted,
+            "restricted_v1_36_denial": policy_denial,
+            "expected_reason_observed": reason,
+        }
+    )
+    save()
+    if expected == "compatible":
+        assert accepted and loads(result.stdout)["kind"] == "Pod"
+    else:
+        assert not accepted and policy_denial and reason
+
+
+def main() -> None:
+    """Stop on any failure; never retry a mutation or relax admission policy."""
+    assert not OUT.exists(), "Existing activation record: inspect instead of repeating"
+    save()
+    started = monotonic()
+    try:
+        project = run(
+            [SDK + "/gcloud", "config", "get-value", "project"],
+            capture_output=True,
+            text=True,
+            timeout=30,
+            check=True,
+        ).stdout.strip()
+        context = run(
+            ["kubectl", "config", "current-context"],
+            env=ENV,
+            capture_output=True,
+            text=True,
+            timeout=30,
+            check=True,
+        ).stdout.strip()
+        assert context == f"gke_{project}_asia-southeast1-a_finsecure-pay-demo"
+        namespace = kube(["get", "namespace", "finsecure-pay"])
+        labels = namespace["metadata"].get("labels", {})
+        assert not any(key.startswith("pod-security.kubernetes.io/") for key in labels)
+        before = objects()
+        require_ready(before["pods"])
+        assert before["deployment"]["status"]["availableReplicas"] == 2
+        with Client(timeout=5, trust_env=False, follow_redirects=False) as client:
+            response = client.get("http://35.198.197.186/health")
+            assert response.status_code == 200 and response.json() == {"status": "healthy"}
+        policy = safe_load(Path("deploy/kubernetes/overlays/gke/namespace-policy.yaml").read_text())
+        desired = policy["metadata"]["labels"]
+        assert desired == {
+            f"pod-security.kubernetes.io/{key}": value
+            for mode in ("enforce", "warn", "audit")
+            for key, value in [(mode, "restricted"), (mode + "-version", "v1.36")]
+        }
+        patch = [
+            {"op": "test", "path": "/metadata/uid", "value": namespace["metadata"]["uid"]},
+            {
+                "op": "test",
+                "path": "/metadata/resourceVersion",
+                "value": namespace["metadata"]["resourceVersion"],
+            },
+            *[
+                {"op": "add", "path": "/metadata/labels/" + key.replace("/", "~1"), "value": value}
+                for key, value in desired.items()
+            ],
+        ]
+        RECORD["namespace_patch_attempts"] = 1
+        save()
+        changed = kube(
+            ["patch", "namespace", "finsecure-pay", "--type=json", "--patch-file=/dev/stdin"], patch
+        )
+        assert changed["metadata"]["labels"] == {**labels, **desired}
+        RECORD["namespace_patch_verified"] = True
+        save()
+        pod = {
+            "apiVersion": "v1",
+            "kind": "Pod",
+            "metadata": {"name": "finsecure-admission-probe", "namespace": "finsecure-pay"},
+            "spec": deepcopy(before["deployment"]["spec"]["template"]["spec"]),
+        }
+        probe(pod, "compatible")
+        privileged = deepcopy(pod)
+        privileged["spec"]["containers"][0]["securityContext"].update(
+            privileged=True, allowPrivilegeEscalation=True
+        )
+        probe(privileged, "privileged")
+        network = deepcopy(pod)
+        network["spec"]["hostNetwork"] = True
+        probe(network, "hostNetwork")
+        host_path = deepcopy(pod)
+        host_path["spec"]["volumes"].append({"name": "host-probe", "hostPath": {"path": "/"}})
+        probe(host_path, "hostPath")
+        after = objects()
+        require_ready(after["pods"])
+        for kind in ["deployment", "service", "configmap"]:
+            assert before[kind]["metadata"]["uid"] == after[kind]["metadata"]["uid"]
+            for field in ["spec", "data", "binaryData"]:
+                assert before[kind].get(field) == after[kind].get(field)
+        assert (
+            before["deployment"]["metadata"]["generation"]
+            == after["deployment"]["metadata"]["generation"]
+        )
+        assert after["deployment"]["status"]["availableReplicas"] == 2
+        assert {p["metadata"]["uid"] for p in before["pods"]} == {
+            p["metadata"]["uid"] for p in after["pods"]
+        }
+        assert all(
+            p["metadata"]["name"] != "finsecure-admission-probe"
+            for p in kube(["-n", "finsecure-pay", "get", "pods"])["items"]
+        )
+        final_namespace = kube(["get", "namespace", "finsecure-pay"])
+        assert final_namespace["metadata"]["labels"] == {**labels, **desired}
+        with Client(timeout=5, trust_env=False, follow_redirects=False) as client:
+            response = client.get("http://35.198.197.186/health")
+            assert response.status_code == 200 and response.json() == {"status": "healthy"}
+        RECORD.update(
+            status="verified",
+            application_objects_unchanged=True,
+            original_pod_uids_still_ready=True,
+            available_replicas=2,
+            probe_pod_absent=True,
+            public_health_status=200,
+            namespace_labels=desired,
+        )
+    except Exception as error:
+        RECORD.update(status="failed", error_type=type(error).__name__)
+    finally:
+        RECORD.update(
+            finished_at_utc=datetime.now(UTC).isoformat(), elapsed_seconds=monotonic() - started
+        )
+        save()
+    print(dumps(RECORD, indent=2))
+    if RECORD["status"] != "verified":
+        raise SystemExit(2)
+
+
+if __name__ == "__main__":
+    main()

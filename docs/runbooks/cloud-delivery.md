@@ -87,25 +87,32 @@ resource limits, credential/job/node boundaries, IAM/RBAC permissions, release
 serialization, stale-build policy, timeouts and failure/rollback behavior in this
 runbook and verify them. No retry or automated rollback contract is established here.
 
-## Namespace admission prerequisite — proposed, not applied
+## Namespace admission prerequisite — applied and live-verified
 
-Live read-only inspection found no Pod Security Admission labels on `finsecure-pay`.
+Initial read-only inspection found no Pod Security Admission labels on `finsecure-pay`.
 The existing pod/container security contexts use non-root UID 10001, RuntimeDefault
 seccomp, no privilege escalation and all capabilities dropped; two replicas remain
 available. These observations are not a complete live admission test.
 
 Deployment `patch` permission can change the entire pod template, not just its image.
 RBAC alone cannot constrain which template fields change. Before granting that
-permission, request explicit approval to enforce the **restricted v1.36** Pod Security
-Standard in this application namespace. The candidate GKE namespace patch adds
+permission, the operator explicitly approved enforcing the **restricted v1.36** Pod
+Security Standard in this application namespace. On 4 November at 01:41 UTC, exactly
+one UID/resource-version-preconditioned namespace patch applied the six labels. The
+GKE namespace patch adds
 `enforce`, `audit` and `warn` labels, each pinned to v1.36. It leaves the demo overlay,
 application Deployment, Service and ConfigMap unchanged. Review this version pin
 when the managed cluster moves to a newer minor version.
 
-Activation must apply **only the namespace labels** after approval, not reapply the
-whole application overlay. This does not restart existing pods. Verify the live labels
-and test a compatible Pod plus deliberately incompatible privileged/host-network Pod
-using server-side dry runs under the operator identity. No probe Pod should be created.
+Activation applied **only the namespace labels**, not the whole application overlay.
+A compatible Pod was accepted in a server-side dry run; privileged, host-network and
+host-path variants were each rejected with `restricted:v1.36` policy violations.
+No probe Pod was created. Original Pod UIDs remained Ready, two replicas remained
+available, Deployment/Service/ConfigMap contents were unchanged and public health
+returned 200. The initial preflight failed before mutation because it requested an
+unhashed ConfigMap name; the corrected harness used the live Deployment reference.
+See [activation evidence](../../evidence/task-04/step-03-namespace-admission.md).
+Further policy changes or repeated probes require their own reviewed scope.
 Pod Security enforcement applies to Pods; acceptance of a Deployment dry run alone
 would not prove its future Pods pass admission. Preserve rejection evidence and stop
 on unexpected results, rather than relaxing the policy.
