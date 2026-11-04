@@ -13,6 +13,20 @@ def helpers(monkeypatch: MonkeyPatch) -> dict:
     return run_path(str(ROOT / "ops/jenkins/release_job.py"))
 
 
+def test_new_definition_disables_resume_and_requires_explicit_legacy_profile(helpers):
+    xml = helpers["job_xml"]("fixed")
+    marker = "<org.jenkinsci.plugins.workflow.job.properties.DisableResumeJobProperty/>"
+    assert marker in xml
+    legacy = xml.replace(marker, "").encode()
+    with raises(ValueError, match="DEFINITION_MISMATCH"):
+        helpers["verify_definition"](legacy, "fixed")
+    helpers["verify_definition"](legacy, "fixed", resume_disabled=False)
+    with raises(ValueError, match="DEFINITION_MISMATCH"):
+        helpers["verify_definition"](xml.encode(), "fixed", resume_disabled=False)
+    with raises(ValueError, match="RESUME_PROFILE_INVALID"):
+        helpers["verify_definition"](xml.encode(), "fixed", resume_disabled=0)
+
+
 def test_definition_stays_disabled_serialized_and_exact(helpers):
     script = "echo 'fixed <source> & no upstream execution'"
     helpers["verify_definition"](helpers["job_xml"](script).encode(), script)

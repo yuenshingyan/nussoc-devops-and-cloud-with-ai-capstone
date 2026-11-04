@@ -1,13 +1,14 @@
-"""Create the fixed, disabled release-selection job; never enable, approve or run it."""
+"""Create the fixed, disabled verification Pipeline; never enable, approve or run it."""
 
 from argparse import ArgumentParser
 from hashlib import sha256
 from html import escape
 from json import dumps
 
-from bootstrap import BASE_URL, ROOT, admin_password
+from bootstrap import BASE_URL, admin_password
 from defusedxml.ElementTree import fromstring
 from httpx2 import BasicAuth, Client
+from release_definition import assemble_definition
 from release_store import DESCRIPTION
 from verify_release import check_policy
 
@@ -21,20 +22,28 @@ def job_xml(script: str) -> str:
         "<flow-definition><description>" + JOB_DESCRIPTION + "</description>"
         "<keepDependencies>false</keepDependencies><properties>"
         "<org.jenkinsci.plugins.workflow.job.properties.DisableConcurrentBuildsJobProperty/>"
+        "<org.jenkinsci.plugins.workflow.job.properties.DisableResumeJobProperty/>"
         '</properties><definition class="org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition">'
         "<script>" + escape(script) + "</script><sandbox>false</sandbox></definition>"
         "<triggers/><disabled>true</disabled></flow-definition>"
     )
 
 
-def verify_definition(content: bytes, script: str) -> None:
-    """Require the installed definition to match the fixed, disabled source exactly."""
+def verify_definition(content: bytes, script: str, *, resume_disabled: bool = True) -> None:
+    """Match fixed source; the explicit legacy profile is only for older read-only checkpoints."""
+    if type(resume_disabled) is not bool:
+        raise ValueError("RELEASE_RESUME_PROFILE_INVALID")
     root = fromstring(content)
     definition = root.find("definition")
     properties = root.find("properties")
     triggers = root.find("triggers")
     serial_name = "org.jenkinsci.plugins.workflow.job.properties.DisableConcurrentBuildsJobProperty"
     trigger_name = "org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty"
+    resume_name = "org.jenkinsci.plugins.workflow.job.properties.DisableResumeJobProperty"
+    allowed = (
+        {serial_name, trigger_name, resume_name} if resume_disabled else {serial_name, trigger_name}
+    )
+    resume = properties.find(resume_name) if properties is not None else None
     serial = properties.find(serial_name) if properties is not None else None
     scheduled = properties.find(trigger_name) if properties is not None else None
     if (
@@ -47,7 +56,8 @@ def verify_definition(content: bytes, script: str) -> None:
         or definition.findtext("script") != script
         or properties is None
         or len({item.tag for item in properties}) != len(properties)
-        or any(item.tag not in {serial_name, trigger_name} for item in properties)
+        or any(item.tag not in allowed for item in properties)
+        or (resume_disabled and (resume is None or len(resume) != 0))
         or serial is None
         or serial.findtext("abortPrevious") not in {None, "false"}
         or (triggers is not None and len(triggers) != 0)
@@ -88,6 +98,7 @@ def create_disabled_job(client: Client, script: str) -> dict:
         "disabled": True,
         "sandbox": False,
         "serialized": True,
+        "resume_disabled": True,
         "triggers": [],
         "script_sha256": sha256(script.encode("utf-8")).hexdigest(),
         "publishing_implemented": False,
@@ -101,7 +112,7 @@ def main() -> None:
     parser.add_argument("--approve-disabled-release-job", action="store_true")
     if not parser.parse_args().approve_disabled_release_job:
         parser.error("Explicit approval for the disabled non-sandboxed definition is required")
-    script = (ROOT / "ops/jenkins/release-job.groovy").read_text(encoding="utf-8")
+    script = assemble_definition()
     with Client(
         auth=BasicAuth("admin", admin_password()),
         timeout=20,

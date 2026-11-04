@@ -1,0 +1,245 @@
+{
+  "status": "verified",
+  "kind": "plain_groovy_recording_dsl_not_pipeline_execution",
+  "cases": [
+    {
+      "name": "verified-stops-disabled",
+      "status": "passed",
+      "outcome": "RELEASE_DISABLED_PUBLISHING_AND_DEPLOYMENT_NOT_IMPLEMENTED",
+      "calls": [
+        "select",
+        "node",
+        "recheck",
+        "allocate",
+        "prepare",
+        "confirm",
+        "install",
+        "sh",
+        "read-result",
+        "recheck",
+        "report-exists",
+        "archive",
+        "cleanup"
+      ]
+    },
+    {
+      "name": "selection-stops-before-node",
+      "status": "passed",
+      "outcome": "select",
+      "calls": [
+        "select"
+      ]
+    },
+    {
+      "name": "allocation-not-owned",
+      "status": "passed",
+      "outcome": "allocate",
+      "calls": [
+        "select",
+        "node",
+        "recheck",
+        "allocate"
+      ]
+    },
+    {
+      "name": "prepare-failure-cleans",
+      "status": "passed",
+      "outcome": "prepare",
+      "calls": [
+        "select",
+        "node",
+        "recheck",
+        "allocate",
+        "prepare",
+        "report-exists",
+        "archive",
+        "cleanup"
+      ]
+    },
+    {
+      "name": "confirm-failure-cleans",
+      "status": "passed",
+      "outcome": "confirm",
+      "calls": [
+        "select",
+        "node",
+        "recheck",
+        "allocate",
+        "prepare",
+        "confirm",
+        "report-exists",
+        "archive",
+        "cleanup"
+      ]
+    },
+    {
+      "name": "install-failure-cleans",
+      "status": "passed",
+      "outcome": "install",
+      "calls": [
+        "select",
+        "node",
+        "recheck",
+        "allocate",
+        "prepare",
+        "confirm",
+        "install",
+        "report-exists",
+        "archive",
+        "cleanup"
+      ]
+    },
+    {
+      "name": "sh-failure-cleans",
+      "status": "passed",
+      "outcome": "sh",
+      "calls": [
+        "select",
+        "node",
+        "recheck",
+        "allocate",
+        "prepare",
+        "confirm",
+        "install",
+        "sh",
+        "report-exists",
+        "archive",
+        "cleanup"
+      ]
+    },
+    {
+      "name": "read-result-failure-cleans",
+      "status": "passed",
+      "outcome": "read-result",
+      "calls": [
+        "select",
+        "node",
+        "recheck",
+        "allocate",
+        "prepare",
+        "confirm",
+        "install",
+        "sh",
+        "read-result",
+        "report-exists",
+        "archive",
+        "cleanup"
+      ]
+    },
+    {
+      "name": "archive-failure-cleans",
+      "status": "passed",
+      "outcome": "archive",
+      "calls": [
+        "select",
+        "node",
+        "recheck",
+        "allocate",
+        "prepare",
+        "confirm",
+        "install",
+        "sh",
+        "read-result",
+        "recheck",
+        "report-exists",
+        "archive",
+        "cleanup"
+      ]
+    },
+    {
+      "name": "cleanup-failure-visible",
+      "status": "passed",
+      "outcome": "cleanup",
+      "calls": [
+        "select",
+        "node",
+        "recheck",
+        "allocate",
+        "prepare",
+        "confirm",
+        "install",
+        "sh",
+        "read-result",
+        "recheck",
+        "report-exists",
+        "archive",
+        "cleanup"
+      ]
+    },
+    {
+      "name": "primary-failure-preserved",
+      "status": "passed",
+      "outcome": "sh",
+      "calls": [
+        "select",
+        "node",
+        "recheck",
+        "allocate",
+        "prepare",
+        "confirm",
+        "install",
+        "sh",
+        "report-exists",
+        "archive",
+        "RELEASE_VERIFICATION_REPORT_ARCHIVE_FAILED",
+        "cleanup",
+        "RELEASE_SCRATCH_CLEANUP_FAILED_RETAINED_FOR_OPERATOR"
+      ]
+    },
+    {
+      "name": "worker-interruption",
+      "status": "passed",
+      "outcome": "sh",
+      "calls": [
+        "select",
+        "node",
+        "recheck",
+        "allocate",
+        "prepare",
+        "confirm",
+        "install",
+        "sh",
+        "report-exists",
+        "archive",
+        "cleanup"
+      ]
+    },
+    {
+      "name": "archive-interruption-overrides-failure",
+      "status": "passed",
+      "outcome": "archive",
+      "calls": [
+        "select",
+        "node",
+        "recheck",
+        "allocate",
+        "prepare",
+        "confirm",
+        "install",
+        "sh",
+        "report-exists",
+        "archive",
+        "cleanup"
+      ]
+    },
+    {
+      "name": "cleanup-interruption-propagates",
+      "status": "passed",
+      "outcome": "cleanup",
+      "calls": [
+        "select",
+        "node",
+        "recheck",
+        "allocate",
+        "prepare",
+        "confirm",
+        "install",
+        "sh",
+        "report-exists",
+        "archive",
+        "cleanup"
+      ]
+    }
+  ],
+  "flow_sha256": "8593f5353466afdf17103f1144cc94841155aa400f81bc3bc048b3dd29576d62"
+}

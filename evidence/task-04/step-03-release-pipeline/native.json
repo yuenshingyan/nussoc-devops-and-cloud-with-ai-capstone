@@ -1,0 +1,28 @@
+{
+  "status": "verified",
+  "cps_compiled": true,
+  "pipeline_body_executed": false,
+  "historical_worker_report_fixture": true,
+  "report_rejections": 21,
+  "wrong_node_rejected": true,
+  "local_controller_bundle_write_and_hash_readback": true,
+  "bundle_files": 5,
+  "existing_tools_rejected": true,
+  "owned_controller_scratch_removed": true,
+  "approval_state": {
+    "pending": 1,
+    "approved": 0
+  },
+  "worker_started": false,
+  "credentials_bound": false,
+  "publishing_attempted": false,
+  "deployment_attempted": false,
+  "definition_sha256": "0d0f2daab7e6bf43a186437c840234a247252f4bf7b5775b9c69754db065a4c6",
+  "tool_sha256": {
+    "scripts/release_artifacts.py": "2d923594452a765b613257714d342db35243e647ad063f719c5bd2ad38b07f71",
+    "scripts/release_archive.py": "ef004e882cba7f369e154bc90678e61e54a807510c394cbd2f8e2455db242fcb",
+    "scripts/image_scan.py": "acb93d1eb21af514c94eb91d5ea430f4e8ff89e1a06f0a885eeb7a1cb2ad88d0",
+    "scripts/security_scan.py": "a379e3ce4e9afd6cf2f119d0615b30f7af7edbc1ad45f0384e4971b98107d73a",
+    "ops/jenkins/image_archive.py": "cb1a3035c6159ec3e8f46b1adc7c42819d491bec8a969ff48f9a1500760eff66"
+  }
+}

@@ -1,6 +1,28 @@
 # FinSecure Pay — Implementation Plan
 
-## Latest checkpoint — Step 4.3 trusted source/preparation candidate
+## Latest checkpoint — Step 4.3 fixed verification Pipeline candidate
+
+The administrator-owned definition now assembles selection, independent Git snapshots,
+trusted transfer, bundled verifier code, isolated worker invocation, result validation,
+rechecks and owned-scratch cleanup. It always stops before publishing/deployment and
+contains no credential binding. New job XML requests restart-resumption blocking.
+
+Jenkins CPS compilation, five-file controller-local bundle/hash/mode checks, 21 verifier
+result rejections and 14 recording-DSL control-flow cases passed. These do not establish
+real Pipeline execution, remoting, cancellation or restart behavior. Two failed native
+attempts were retained. All 1,083 host tests, Ruff, package/source/dependency gates and
+secret-boundary checks passed.
+
+Live definition remains unchanged/disabled/unbuilt/pending approval; approved scripts
+remain zero and scheduling v1 still excludes delivery. Worker stayed stopped; cloud
+closure remained unchanged with two Ready replicas and health 200. No CI/image builds,
+job update, approval, upload, cloud mutation, merge or publication. See
+[Pipeline evidence](evidence/task-04/step-03-release-pipeline.md).
+
+Next: immutable publishing/image-only deployment code, followed by reviewed installation
+and real execution with eligible normal-main AMD64 provenance and runtime failure proof.
+
+## Previous checkpoint — Step 4.3 trusted source/preparation candidate
 
 A fixed controller helper now fetches immutable public Git source independently of
 upstream artifacts, without checkout, extraction or execution. Published `19b4486`
@@ -380,7 +402,7 @@ The assignment allows equivalent application, build, and unit-testing tools with
 ### Step 4.3 — Automate container delivery
 - **Branch:** `task-04/step-03-container-delivery`
 - **Approved local subset:** separate rootless BuildKit with builder-only security exceptions, local ARM64 build/export, and operator-side artifact smoke verification. Reviewed/merged as `ab538a2`; normal SCM build #2 passed all 245 tests, exported the image, and its downloaded artifact passed operator-side smoke checks. See the [SCM follow-up](evidence/task-04/step-03-scm-verification.md). No registry credentials, publishing, or cloud work is authorized by this subset. See the [builder runbook](docs/runbooks/local-image-builder.md) and [evidence](evidence/task-04/step-03-local-image-builder.md).
-- **Cloud continuation:** dedicated deployer IAM/RBAC and namespace admission are live-verified. The release-worker image/tools and folder credential imports passed actual read-only Jenkins probes. The controller-owned scheduling guard passed ten decision cases and five real Pipeline cases (including three denied assignments); 942 host tests and source/dependency gates passed. Worker stopped and diagnostic jobs disabled after verification. Manual AMD64 candidate CI at `dc7ffe5` subsequently passed 961 tests, all gates and 33 verified artifacts, with zero image findings and matching local mail. The fixed non-sandboxed selection job is installed disabled/pending approval; 975 host tests and native selection checks passed, including rejection of real main #34's ARM64 image through a simulated upstream envelope. Separate transfer/verifier helpers subsequently passed 1,060 host tests and an administrator-owned remoting probe of 21 retained candidate artifacts, including actual byte-tampering rejection and a synthetic stale-clock rejection. These helpers are not yet integrated into the disabled/unbuilt job; no upload or deployment stage exists. Supersession/action-time helper candidates then passed native checks and 1,062 host tests, but are not installed. Trusted-source acquisition and a preparation-composition candidate subsequently passed native checks and 1,064 host tests, but are not integrated into the installed job. Fixed Pipeline integration, review/publication and normal SCM/downstream proof remain pending. See [setup/status](docs/runbooks/cloud-delivery.md), [selection evidence](evidence/task-04/step-03-release-selection.md) and [artifact evidence](evidence/task-04/step-03-release-artifacts.md).
+- **Cloud continuation:** dedicated deployer IAM/RBAC and namespace admission are live-verified. The release-worker image/tools and folder credential imports passed actual read-only Jenkins probes. The controller-owned scheduling guard passed ten decision cases and five real Pipeline cases (including three denied assignments); 942 host tests and source/dependency gates passed. Worker stopped and diagnostic jobs disabled after verification. Manual AMD64 candidate CI at `dc7ffe5` subsequently passed 961 tests, all gates and 33 verified artifacts, with zero image findings and matching local mail. The fixed non-sandboxed selection job is installed disabled/pending approval; 975 host tests and native selection checks passed, including rejection of real main #34's ARM64 image through a simulated upstream envelope. Separate transfer/verifier helpers subsequently passed 1,060 host tests and an administrator-owned remoting probe of 21 retained candidate artifacts, including actual byte-tampering rejection and a synthetic stale-clock rejection. These helpers are not yet integrated into the disabled/unbuilt job; no upload or deployment stage exists. Supersession/action-time helper candidates then passed native checks and 1,062 host tests, but are not installed. Trusted-source acquisition and a preparation-composition candidate subsequently passed native checks and 1,064 host tests, but are not integrated into the installed job. A fixed verification-only Pipeline subsequently passed CPS compilation and 1,083 host tests, but was not installed or run. Publishing/deployment code, review/publication and normal SCM/downstream runtime proof remain pending. See [setup/status](docs/runbooks/cloud-delivery.md), [selection evidence](evidence/task-04/step-03-release-selection.md) and [artifact evidence](evidence/task-04/step-03-release-artifacts.md).
 - Full step still requires container build, versioned push, and Kubernetes deployment stages.
 - Deploy the exact built image, wait for rollout completion, and perform a smoke test.
 - Serialize deployments to the shared demo environment to prevent overlapping releases.

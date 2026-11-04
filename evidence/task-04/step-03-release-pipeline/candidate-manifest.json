@@ -1,0 +1,23 @@
+{
+  "definition_sha256": "0d0f2daab7e6bf43a186437c840234a247252f4bf7b5775b9c69754db065a4c6",
+  "definition_bytes": 111976,
+  "candidate_xml_sha256": "92d8a3f04e1e6ff4cf9f35fbd36eda986b52bbcfdc9faf27b11587f8026b2352",
+  "source_sha256": {
+    "ops/jenkins/release-job.groovy": "e0d6db76457e8e654691f302f05e04e9e2a1baf491297d9526d7be7e88965ed5",
+    "ops/jenkins/release-source.groovy": "4053666172e9203e536035e082fb005bc68a9e67f5e80c626ac3ca8e93498dc9",
+    "ops/jenkins/release-transfer.groovy": "b56f5e99de14e246e0337c1022ce2e1b91e3e75d24e35d4f2a6984dfafc11c4d",
+    "ops/jenkins/release-preparation.groovy": "97d53f132ed38b318464c2a7bf2c13c6cc254a7b3b2c85294a00c2a4699ca113",
+    "ops/jenkins/release-verification.groovy": "5d1ac0951daccac33373ff02b9c52c84b4534662b4d7e8558340d488b258fb3c",
+    "ops/jenkins/release-flow.groovy": "8593f5353466afdf17103f1144cc94841155aa400f81bc3bc048b3dd29576d62",
+    "ops/jenkins/release_definition.py": "ebe21b043fc2d34a5009d1ed7f27b84db7138779d83403b72044bd8e1e42b9f2",
+    "ops/jenkins/release_job.py": "9decfade9cf95697ecee6b79f101e440f3df7ce8e41824bc6b77bd9228087726",
+    "scripts/release_artifacts.py": "2d923594452a765b613257714d342db35243e647ad063f719c5bd2ad38b07f71",
+    "scripts/release_archive.py": "ef004e882cba7f369e154bc90678e61e54a807510c394cbd2f8e2455db242fcb",
+    "scripts/image_scan.py": "acb93d1eb21af514c94eb91d5ea430f4e8ff89e1a06f0a885eeb7a1cb2ad88d0",
+    "scripts/security_scan.py": "a379e3ce4e9afd6cf2f119d0615b30f7af7edbc1ad45f0384e4971b98107d73a",
+    "ops/jenkins/image_archive.py": "cb1a3035c6159ec3e8f46b1adc7c42819d491bec8a969ff48f9a1500760eff66"
+  },
+  "candidate_installed": false,
+  "pipeline_body_executed": false,
+  "new_job_resume_disabled": true
+}

@@ -1,0 +1,88 @@
+"""Exercise synchronous control-flow fixtures, explicitly not Jenkins Pipeline execution."""
+from base64 import b64encode
+from json import dumps,loads
+from pathlib import Path
+from hashlib import sha256
+from bootstrap import BASE_URL,admin_password
+from httpx2 import BasicAuth,Client
+flow=Path('ops/jenkins/release-flow.groovy').read_text()
+stubs='''
+class Trace {
+ static List calls=[]
+ static Set failures=[]
+ static Set interrupts=[]
+ static void hit(String name) {
+  calls<<name
+  if(interrupts.contains(name)) {throw new InterruptedException(name)}
+  if(failures.contains(name)) {throw new IllegalStateException(name)}
+ }
+}
+class FinsecureCandidateSelection {
+ static Map select(Object run) {Trace.hit('select');return [revision:'fixed']}
+ static void recheck(Object run,Map candidate) {Trace.hit('recheck')}
+ static void confirmSelection(Map expected,Map candidate) {Trace.hit('confirm')}
+}
+class FinsecureWorkerVerification {
+ static String allocate(Object workspace) {Trace.hit('allocate');return 'owned'}
+ static Map scratch(Object workspace,String name) {return [remote:'/synthetic/owned']}
+ static void readResult(Object workspace,String name,Map candidate) {Trace.hit('read-result')}
+ static boolean reportExists(Object workspace,String name) {Trace.hit('report-exists');return true}
+ static void cleanup(Object workspace,String name) {Trace.hit('cleanup')}
+}
+class FinsecureReleasePreparation {
+ static Map prepare(Object run,Object scratch) {Trace.hit('prepare');return [candidate:[revision:'fixed']]}
+}
+class FinsecureVerifierBundle {
+ static void install(Object scratch) {Trace.hit('install')}
+}
+'''
+payload={'flow':stubs+flow,'cases':[
+ {'name':'verified-stops-disabled','fail':[],'interrupt':[],'error':'RELEASE_DISABLED_PUBLISHING_AND_DEPLOYMENT_NOT_IMPLEMENTED','cleanup':True},
+ {'name':'selection-stops-before-node','fail':['select'],'interrupt':[],'error':'select','cleanup':False},
+ {'name':'allocation-not-owned','fail':['allocate'],'interrupt':[],'error':'allocate','cleanup':False},
+ *[{'name':point+'-failure-cleans','fail':[point],'interrupt':[],'error':point,'cleanup':True} for point in ['prepare','confirm','install','sh','read-result','archive']],
+ {'name':'cleanup-failure-visible','fail':['cleanup'],'interrupt':[],'error':'cleanup','cleanup':True},
+ {'name':'primary-failure-preserved','fail':['sh','archive','cleanup'],'interrupt':[],'error':'sh','cleanup':True},
+ {'name':'worker-interruption','fail':[],'interrupt':['sh'],'error':'sh','cleanup':True},
+ {'name':'archive-interruption-overrides-failure','fail':['sh'],'interrupt':['archive'],'error':'archive','cleanup':True},
+ {'name':'cleanup-interruption-propagates','fail':['sh'],'interrupt':['cleanup'],'error':'cleanup','cleanup':True},
+]}
+encoded=b64encode(dumps(payload).encode()).decode()
+code='''
+def data=new groovy.json.JsonSlurperClassic().parseText(new String(Base64.decoder.decode('__DATA__'),'UTF-8'))
+def loader=new GroovyClassLoader(jenkins.model.Jenkins.get().pluginManager.uberClassLoader)
+try {
+ def script=loader.parseClass(data.flow)
+ def trace=loader.loadClass('Trace')
+ def results=[]
+ data.cases.each { row ->
+  trace.calls=[];trace.failures=row.fail as Set;trace.interrupts=row.interrupt as Set
+  def binding=new Binding([
+   currentBuild:[rawBuild:'synthetic'],timeout:{ Map settings,Closure body ->body()},
+   stage:{String name,Closure body ->body()},node:{String name,Closure body ->trace.hit('node');body()},
+   getContext:{Class type ->'synthetic-workspace'},withEnv:{List env,Closure body ->body()},
+   sh:{String command ->assert command.contains('python -I -B');trace.hit('sh')},
+   archiveArtifacts:{Map settings ->assert settings.followSymlinks==false;trace.hit('archive')},
+   echo:{String message ->trace.calls<<message},error:{String message ->throw new IllegalStateException(message)}])
+  String reason=null;String type=null
+  try {def run=script.newInstance();run.binding=binding;run.run()}
+  catch(Exception error) {reason=error.message;type=error.class.simpleName}
+  assert reason==row.error: row.name+': '+reason
+  assert trace.calls.contains('cleanup')==row.cleanup:row.name
+  if(!row.interrupt.isEmpty()) {assert type=='InterruptedException'}
+  if(row.name=='selection-stops-before-node') {assert !trace.calls.contains('node')}
+  if(row.name=='primary-failure-preserved') {
+   assert trace.calls.contains('RELEASE_VERIFICATION_REPORT_ARCHIVE_FAILED')
+   assert trace.calls.contains('RELEASE_SCRATCH_CLEANUP_FAILED_RETAINED_FOR_OPERATOR')
+  }
+  results<<[name:row.name,status:'passed',outcome:reason,calls:trace.calls]
+ }
+ println(groovy.json.JsonOutput.toJson([status:'verified',kind:'plain_groovy_recording_dsl_not_pipeline_execution',cases:results]))
+} finally {loader.close()}
+'''.replace('__DATA__',encoded)
+with Client(auth=BasicAuth('admin',admin_password()),timeout=40,trust_env=False,follow_redirects=False) as client:
+ crumb=client.get(BASE_URL+'/crumbIssuer/api/json').json()
+ response=client.post(BASE_URL+'/scriptText',data={'script':code},headers={crumb['crumbRequestField']:crumb['crumb']});response.raise_for_status()
+ Path('reports/release-pipeline/flow-response.txt').write_text(response.text)
+ result=loads(response.text);result['flow_sha256']=sha256(flow.encode()).hexdigest()
+ Path('reports/release-pipeline/flow.json').write_text(dumps(result,indent=2)+'\n');print(dumps({'status':result['status'],'cases':len(result['cases']),'kind':result['kind']}))

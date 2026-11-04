@@ -1,0 +1,22 @@
+{
+  "failures": [
+    {
+      "phase": "initial_lint",
+      "reason": "line_length",
+      "corrected_without_suppressions": true
+    },
+    {
+      "phase": "first_cps_attempt",
+      "reason": "missing_class_boundary_newline",
+      "pipeline_body_executed": false
+    },
+    {
+      "phase": "second_cps_attempt",
+      "reason": "observer_initialized_ownerless_cps_script",
+      "pipeline_body_executed": false
+    }
+  ],
+  "worker_started": false,
+  "job_updated": false,
+  "script_approved": false
+}

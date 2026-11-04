@@ -527,10 +527,54 @@ passed. The installed job remains the older disabled/unbuilt/pending-approval de
 no worker startup or cloud mutation occurred. See
 [source evidence](../../evidence/task-04/step-03-release-source.md).
 
+## Fixed verification Pipeline candidate — 4 November 2026
+
+`release_definition.py` assembles the reviewed local helper classes and
+`release-flow.groovy`, removing only the explicitly delimited legacy selection-only
+body. It embeds five fixed verifier modules as bounded base64 chunks plus SHA-256 hashes.
+Local source links, non-regular files, path escapes and oversized inputs are rejected.
+No fetched Git code or upstream artifact code is used as executable tooling.
+
+The candidate selects current main before requesting the release node, rechecks after
+allocation, prepares authoritative inputs, confirms the original candidate, and writes
+reviewed tooling with hash readback. It runs isolated Python (`-I -B`) against data-only
+inputs with a private umask. The controller then checks the verifier's exact result
+schema/identity/bounds and rechecks candidate eligibility. Only `verification.json` is
+archived, with symlink following disabled. Cleanup targets a new random owned scratch
+subdirectory, never the whole shared workspace. Ordinary archive/cleanup failures do
+not hide a primary failure; interruptions propagate. Finally the candidate always stops
+with `RELEASE_DISABLED_PUBLISHING_AND_DEPLOYMENT_NOT_IMPLEMENTED`.
+
+The definition declares a ten-minute enclosing timeout and a two-minute verifier timeout,
+without retries. New job XML also requires `DisableResumeJobProperty` alongside serialized
+execution without aborting predecessors. These are candidate declarations: real timeout,
+cancellation, restart and cleanup behavior remains unproved. A restart can leave owned
+scratch; no automatic recovery or cleanup claim is made. The creation helper still refuses
+an existing job and does not approve, enable or update it. For read-only checks of the
+older installed source only, `verify_definition(..., resume_disabled=False)` selects the
+explicit legacy schema; new creation always requires disabled resumption.
+
+Jenkins' actual CPS transformer compiled the assembled definition. Native result checks
+accepted a historical worker-result fixture and rejected 21 altered results; that fixture
+is not a new freshness check. A wrong-node call was rejected. Five bundled tools were
+written and hash/mode checked in a new **controller-local** temporary directory, then
+removed; existing tool directories were rejected. This is not worker-remoting execution.
+Fourteen plain-Groovy recording-DSL cases checked control-flow/failure handling, not the
+Jenkins Pipeline engine. Two failed attempts are retained: a missing class-boundary
+newline, then an observer that incorrectly tried to initialize an ownerless CPS script.
+The corrected observer compiles classes without running the Pipeline body.
+
+All 1,083 host tests, Ruff, packaging, source/dependency gates and secret-boundary checks
+passed. The installed job remains the exact older disabled/unbuilt definition; its script
+approval remains pending, with zero approved scripts. Scheduling v1 still excludes delivery.
+No release worker startup, job update, approval, trigger, upload or cloud mutation occurred.
+See [Pipeline candidate evidence](../../evidence/task-04/step-03-release-pipeline.md).
+
 ## Remaining verification
 
-Fixed Pipeline assembly and integration of the tested preparation/verifier/action-time
-helpers with an eligible normal-main AMD64 build; reviewed publication and
+Immutable upload and image-only deployment implementation; reviewed installation/scheduling
+and actual execution of the fixed Pipeline with an eligible normal-main AMD64 build;
+reviewed publication and
 normal SCM AMD64 proof; real downstream triggering, serialization, timeout/cancellation
 and restart behavior; immutable upload identity; deployment failure/rollout/smoke checks
 and retained failure reports. Full delivery is pending until all of these run successfully.

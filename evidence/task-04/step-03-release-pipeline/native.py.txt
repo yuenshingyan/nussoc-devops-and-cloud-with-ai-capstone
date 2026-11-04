@@ -1,0 +1,90 @@
+"""Compile the candidate with Jenkins CPS; exercise result parsing and local tool writes only."""
+from base64 import b64encode
+from hashlib import sha256
+from json import dumps,loads
+from pathlib import Path
+from bootstrap import BASE_URL,admin_password
+from release_definition import assemble_definition,TOOLS
+from httpx2 import BasicAuth,Client
+
+base=Path('reports/release-pipeline')
+script=assemble_definition();(base/'candidate.groovy').write_text(script)
+fixture=loads(Path('reports/release-artifacts/live-verification.json').read_text())['worker_verification']
+payload={'script':script,'report':fixture,'hashes':{name:sha256(Path(name).read_bytes()).hexdigest() for name in TOOLS}}
+text=b64encode(dumps(payload).encode()).decode()
+expr='['+','.join(repr(text[i:i+32000]) for i in range(0,len(text),32000))+"] .join('')"
+code='''
+def data=new groovy.json.JsonSlurperClassic().parseText(new String(Base64.decoder.decode(__DATA__),'UTF-8'))
+def approval=org.jenkinsci.plugins.scriptsecurity.scripts.ScriptApproval.get()
+def before=[pending:approval.pendingScripts.size(),approved:approval.approvedScriptHashes.size()]
+def shell=new org.jenkinsci.plugins.workflow.cps.CpsGroovyShellFactory(null).forTrusted().build()
+try {
+def compiled=shell.classLoader.parseClass(data.script)
+assert compiled.superclass.name=='org.jenkinsci.plugins.workflow.cps.CpsScript'
+assert compiled.declaredMethods.any {it.name.startsWith('___cps___')}
+def loader=compiled.classLoader
+def verifier=loader.loadClass('FinsecureWorkerVerification')
+def bundle=loader.loadClass('FinsecureVerifierBundle')
+assert bundle.HASHES==data.hashes
+assert bundle.SOURCES.keySet()==data.hashes.keySet()
+bundle.SOURCES.each { name, encoded ->
+ assert java.security.MessageDigest.getInstance('SHA-256').digest(Base64.decoder.decode(encoded)).encodeHex().toString()==data.hashes[name]
+}
+def candidate=[revision:data.report.revision,archive_sha256:data.report.archive_sha256,image_id:data.report.image_id]
+assert verifier.validate(data.report,candidate)==data.report
+int rejected=0
+[
+ ['status','failed'],['publishing_authorized',true],['publishing_authorized',0],
+ ['revision','a'*40],['archive_sha256','a'*64],['image_id','sha256:'+'a'*64],
+ ['platform','linux/arm64'],['verified_files',true],['verified_files',20],
+ ['layers',0],['layers',65],['layers',true],['expanded_layer_bytes',0],
+ ['expanded_layer_bytes',536870913],['database_age_seconds',-1],
+ ['database_age_seconds',86401],['database_age_seconds',true],
+ ['archive_oci_manifest_digest','not-a-digest'],['source_findings',[LOW:0,MEDIUM:1,HIGH:0,blocking_findings:1]],
+ ['source_findings',[LOW:true,MEDIUM:0,HIGH:0,blocking_findings:0]],['unexpected','field']
+].each { row ->
+ def altered=new LinkedHashMap(data.report);altered[row[0]]=row[1]
+ String reason=null
+ try {verifier.validate(altered,candidate)} catch(IllegalStateException error) {reason=error.message}
+ assert reason!=null && reason.startsWith('RELEASE_VERIFIER_'):row[0]
+ rejected++
+}
+String wrongNode=null
+try {verifier.scratch(new hudson.FilePath(new File('/tmp/not-a-release-workspace')),'release-data-'+'a'*32)}
+catch(IllegalStateException error) {wrongNode=error.message}
+assert wrongNode=='RELEASE_VERIFICATION_WRONG_NODE'
+def temporary=java.nio.file.Files.createTempDirectory('finsecure-owned-bundle-')
+def root=new hudson.FilePath(temporary.toFile())
+try {
+ root.chmod(0700)
+ bundle.install(root)
+ data.hashes.each { name, expected ->
+  def file=root.child('tools/'+name)
+  assert (file.mode() & 0777)==0600
+  def stream=file.read()
+  try {assert java.security.MessageDigest.getInstance('SHA-256').digest(stream.readAllBytes()).encodeHex().toString()==expected}
+  finally {stream.close()}
+ }
+ String reason=null
+ try {bundle.install(root)} catch(IllegalStateException error) {reason=error.message}
+ assert reason=='RELEASE_TOOL_DIRECTORY_EXISTS'
+} finally {root.deleteRecursive()}
+assert !root.exists()
+assert loader.loadClass('org.jenkinsci.plugins.workflow.job.properties.DisableResumeJobProperty')!=null
+assert [pending:approval.pendingScripts.size(),approved:approval.approvedScriptHashes.size()]==before
+assert jenkins.model.Jenkins.get().getItemByFullName('finsecure-release/delivery').disabled
+assert jenkins.model.Jenkins.get().getItemByFullName('finsecure-release/delivery').lastBuild==null
+assert !jenkins.model.Jenkins.get().getNode('finsecure-release').toComputer().online
+println(groovy.json.JsonOutput.toJson([status:'verified',cps_compiled:true,pipeline_body_executed:false,
+ historical_worker_report_fixture:true,report_rejections:rejected,wrong_node_rejected:true,
+ local_controller_bundle_write_and_hash_readback:true,bundle_files:bundle.SOURCES.size(),
+ existing_tools_rejected:true,owned_controller_scratch_removed:true,approval_state:before,
+ worker_started:false,credentials_bound:false,publishing_attempted:false,deployment_attempted:false]))
+} finally {shell.classLoader.close()}
+'''.replace('__DATA__',expr)
+with Client(auth=BasicAuth('admin',admin_password()),timeout=90,trust_env=False,follow_redirects=False) as client:
+ crumb=client.get(BASE_URL+'/crumbIssuer/api/json').json()
+ response=client.post(BASE_URL+'/scriptText',data={'script':code},headers={crumb['crumbRequestField']:crumb['crumb']});response.raise_for_status()
+ (base/'native-response.txt').write_text(response.text)
+ result=loads(response.text);result['definition_sha256']=sha256(script.encode()).hexdigest();result['tool_sha256']=payload['hashes']
+ (base/'native.json').write_text(dumps(result,indent=2)+'\n');print(dumps(result))

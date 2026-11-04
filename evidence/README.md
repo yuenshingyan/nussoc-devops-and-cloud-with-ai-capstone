@@ -202,6 +202,10 @@ and report retention on an isolated failure. Cloud delivery remains unverified.
   published accessible reports, and provided packages with verified download hashes.
   The build was manually triggered; no source-trigger, release, or deployment gate is claimed.
 
+- [Step 4.3 — Fixed verification Pipeline candidate](task-04/step-03-release-pipeline.md):
+  assembled trusted helpers/tooling and verification-only flow compiled with Jenkins CPS;
+  native result/bundle checks and recording-DSL cases passed, plus 1,083 host tests and
+  source/secret gates. Not installed or run as a Pipeline; delivery and worker unchanged.
 - [Step 4.3 — Trusted Git source and preparation candidate](task-04/step-03-release-source.md):
   immutable public snapshot matched 30 Python files and both metadata files from exact
   local Git objects; native archive/boundary/composition cases passed. 1,064 host tests
