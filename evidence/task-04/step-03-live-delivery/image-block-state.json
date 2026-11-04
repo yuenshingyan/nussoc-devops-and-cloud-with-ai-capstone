@@ -1,0 +1,104 @@
+{
+  "_class": "org.jenkinsci.plugins.workflow.job.WorkflowRun",
+  "artifacts": [
+    {
+      "relativePath": "dist/finsecure_pay-0.4.0-py3-none-any.whl"
+    },
+    {
+      "relativePath": "dist/finsecure_pay-0.4.0.tar.gz"
+    },
+    {
+      "relativePath": "reports/bandit.json"
+    },
+    {
+      "relativePath": "reports/bandit.txt"
+    },
+    {
+      "relativePath": "reports/build-metadata.txt"
+    },
+    {
+      "relativePath": "reports/buildkit-image.json"
+    },
+    {
+      "relativePath": "reports/buildkit-workers.txt"
+    },
+    {
+      "relativePath": "reports/coverage.xml"
+    },
+    {
+      "relativePath": "reports/dependencies.txt"
+    },
+    {
+      "relativePath": "reports/format.txt"
+    },
+    {
+      "relativePath": "reports/image-build.txt"
+    },
+    {
+      "relativePath": "reports/image-metadata.txt"
+    },
+    {
+      "relativePath": "reports/image-runtime-requirements.txt"
+    },
+    {
+      "relativePath": "reports/image-security-export.txt"
+    },
+    {
+      "relativePath": "reports/image-security-summary.json"
+    },
+    {
+      "relativePath": "reports/image-security-tools.txt"
+    },
+    {
+      "relativePath": "reports/image.sha256"
+    },
+    {
+      "relativePath": "reports/junit.xml"
+    },
+    {
+      "relativePath": "reports/lint.txt"
+    },
+    {
+      "relativePath": "reports/package.txt"
+    },
+    {
+      "relativePath": "reports/packages.sha256"
+    },
+    {
+      "relativePath": "reports/pip-audit.json"
+    },
+    {
+      "relativePath": "reports/pip-audit.txt"
+    },
+    {
+      "relativePath": "reports/runtime-requirements.txt"
+    },
+    {
+      "relativePath": "reports/security-export.txt"
+    },
+    {
+      "relativePath": "reports/security-summary.json"
+    },
+    {
+      "relativePath": "reports/security-tools.txt"
+    },
+    {
+      "relativePath": "reports/tests.txt"
+    },
+    {
+      "relativePath": "reports/trivy-db.json"
+    },
+    {
+      "relativePath": "reports/trivy-db.txt"
+    },
+    {
+      "relativePath": "reports/trivy.json"
+    },
+    {
+      "relativePath": "reports/trivy.txt"
+    }
+  ],
+  "building": false,
+  "number": 38,
+  "result": "FAILURE"
+}

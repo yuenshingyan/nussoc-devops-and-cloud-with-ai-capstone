@@ -1,4 +1,24 @@
-# Cloud delivery — approved approach, setup in progress
+# Cloud delivery — live integrated release
+
+## Current verified operation
+
+Normal SCM build **#39** automatically triggered **delivery #3**, which passed exact image
+publication, independent registry readback, conditional image-only deployment, rollout and
+four synthetic smoke cases. The live application is **0.4.0** with two verified ready Pods.
+[Evidence, retained failures, release blocks and controlled rollback](../../evidence/task-04/step-03-live-delivery.md).
+
+The enabled job uses fixed approved code, native SUCCESS upstream triggering, scheduling
+policy v2, serialization and disabled resume. Original-candidate checks occur before writes.
+The next release takes its approved spec baseline from the previous successful delivery's
+archived deployment report; it does not approve arbitrary live drift. Existing SHA tags and
+uncertain outcomes require inspection, not automatic repush, rebase or rollback.
+
+Public health readiness requires ten consecutive healthy observations one second apart,
+each bounded by five seconds and the original ten-minute release budget. Then the strict
+smoke suite runs once. Readiness observations do not repeat image pushes, PATCHes or validation
+POSTs. Full live restart/cancellation/concurrency fault demonstrations remain unverified.
+
+## Historical setup record (superseded by the live result above)
 
 Step 4.3 resumes from published `19b4486` on
 `task-04/step-03-container-delivery`. Automatic main build #34 passed 781 tests,

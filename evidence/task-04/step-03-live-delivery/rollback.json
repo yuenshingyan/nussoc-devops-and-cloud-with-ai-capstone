@@ -1,0 +1,23 @@
+{
+  "status": "rollback_verified",
+  "deployment_uid": "aadc396b-cf58-4929-96d1-0e225d8b4256",
+  "generation": 3,
+  "spec_sha256": "158af9a81aa2cf64a3252a974a3627f3f6134c5f1cbf0a9e1178550bff3b39bb",
+  "pod_uids": [
+    "91bc8eeb-ef33-46b0-8980-2cc770a88ad7",
+    "aad208c1-1b12-480b-af96-0469ce943cd0"
+  ],
+  "registry_manifest_digest": "sha256:1fc3362f15ba91f4161b8fccab644631ccc0733e9b9675bb7e2cb88e7aea5b4c",
+  "elapsed_seconds": 33.43,
+  "automatic_rollback": false,
+  "public_version": "0.3.0",
+  "four_smoke_cases_passed": true,
+  "public_version_observations": 1,
+  "authentication": "existing_host_operator_sdk",
+  "explicit_operator_demonstration": true,
+  "patch_attempts": 1,
+  "pipeline_result_not_changed": true,
+  "rollout_helper_smoke_verified": false,
+  "smoke_verified": true,
+  "smoke_status_note": "Final operator smoke result; original rollout helper returned before smoke checks."
+}

@@ -1,0 +1,11 @@
+{
+  "status": "activated",
+  "cps_compiled": true,
+  "mutations_enabled": true,
+  "native_upstream_trigger": true,
+  "serialized": true,
+  "resume_disabled": true,
+  "parameters": false,
+  "definition_sha256": "13a62b040bb94e85fc2eae5809e6c7bc6a0e98568d3cb1eeeacd3231a8ab15bd",
+  "prior_failure_retained": true
+}

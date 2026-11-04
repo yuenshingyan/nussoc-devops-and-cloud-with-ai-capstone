@@ -1,5 +1,9 @@
 # Evidence index
 
+**Latest live delivery:** [automatic SCM #39 → delivery #3, real release blocks and controlled
+rollback](task-04/step-03-live-delivery.md). GKE 0.4.0, two ready runtime-image Pods and smoke
+checks are verified. Earlier entries below retain their historical scope and limitations.
+
 Store only reviewed, sanitized evidence from actual execution here. Task 1 has
 application, test, package-installation, and public source-access evidence.
 Task 2 has image-build, execution, versioned registry publication, and anonymous
@@ -7,7 +11,7 @@ pull/access evidence for ARM64 and AMD64. Task 3 has locally verified configurat
 0.2.0 registry publication, digest-pinned manifests, and constrained-container runtime
 checks, not cloud-deployment or kubelet-probe evidence. Task 4 includes local Jenkins
 checkout, candidate and normal SCM-loaded application CI, published reports, package downloads,
-and report retention on an isolated failure. Cloud delivery remains unverified.
+and report retention on isolated failures. Cloud delivery is now verified in the latest record above.
 
 | Task | Directory | Status |
 | --- | --- | --- |

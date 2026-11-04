@@ -1,6 +1,14 @@
 # FinSecure Pay — Implementation Plan
 
-## Current execution — Step 4.3 integrated delivery
+## Verified execution — Step 4.3 integrated delivery
+
+Normal SCM **#39 → delivery #3 completed SUCCESS**: exact gated publication/readback,
+image-only rollout, two ready runtime-image Pods, public readiness and all smoke checks.
+The live release is 0.4.0. Native Replay #37 proved a real failing-test block; #38 proved
+38 HIGH/2 CRITICAL findings withheld the image and prevented downstream delivery. The
+controlled rollback also passed. See [live evidence](evidence/task-04/step-03-live-delivery.md).
+Monitoring evidence and final recording materials are the next work; new cloud volumes
+remain conditional on credit confirmation. The earlier integration history follows.
 
 The fixed delivery definition now connects independent artifact verification, publication,
 registry readback, conditional image-only deployment, rollout and synthetic smoke checks.
@@ -17,14 +25,14 @@ HTTP smoke request. Read-only inspection subsequently verified two ready runtime
 public 0.4.0 and four smoke cases. A separate explicit rollback demonstration restored 0.3.0
 and its approved spec in 33.43 seconds, with two ready Pods and passing smoke checks. Neither
 failed delivery is relabelled successful. Native Replay #37 injected one actual failing test:
-no package/image artifacts and no downstream delivery. The security fault case is underway.
+no package/image artifacts and no downstream delivery. The later security fault case #38 blocked 40 HIGH/CRITICAL findings.
 
 Public health readiness now requires ten healthy observations one second apart (five-second
 per-observation bound within the original release deadline), followed by the four smoke cases
 once. No PATCH, upload or validation POST is retried. This addresses the observed public-path
 readiness gap; the precise cause of the earlier HTTP exception was not retained. Host checks
-passed (Ruff, 1,349 tests, build and source/dependency gates). A fresh complete delivery and
-monitoring evidence remain pending. New monitoring volumes still require credit confirmation.
+passed (Ruff, 1,349 tests, build and source/dependency gates). A fresh complete delivery subsequently passed as #39 → #3;
+monitoring evidence remains pending. New monitoring volumes still require credit confirmation.
 
 ## Previous checkpoint — Step 4.3 publication primitives and approved cache cleanup
 
@@ -539,8 +547,9 @@ The assignment allows equivalent application, build, and unit-testing tools with
 ### Step 4.3 — Automate container delivery
 - **Branch:** `task-04/step-03-container-delivery`
 - **Approved local subset:** separate rootless BuildKit with builder-only security exceptions, local ARM64 build/export, and operator-side artifact smoke verification. Reviewed/merged as `ab538a2`; normal SCM build #2 passed all 245 tests, exported the image, and its downloaded artifact passed operator-side smoke checks. See the [SCM follow-up](evidence/task-04/step-03-scm-verification.md). No registry credentials, publishing, or cloud work is authorized by this subset. See the [builder runbook](docs/runbooks/local-image-builder.md) and [evidence](evidence/task-04/step-03-local-image-builder.md).
-- **Cloud continuation:** dedicated deployer IAM/RBAC and namespace admission are live-verified. The release-worker image/tools and folder credential imports passed actual read-only Jenkins probes. The controller-owned scheduling guard passed ten decision cases and five real Pipeline cases (including three denied assignments); 942 host tests and source/dependency gates passed. Worker stopped and diagnostic jobs disabled after verification. Manual AMD64 candidate CI at `dc7ffe5` subsequently passed 961 tests, all gates and 33 verified artifacts, with zero image findings and matching local mail. The fixed non-sandboxed selection job is installed disabled/pending approval; 975 host tests and native selection checks passed, including rejection of real main #34's ARM64 image through a simulated upstream envelope. Separate transfer/verifier helpers subsequently passed 1,060 host tests and an administrator-owned remoting probe of 21 retained candidate artifacts, including actual byte-tampering rejection and a synthetic stale-clock rejection. These helpers are not yet integrated into the disabled/unbuilt job; no upload or deployment stage exists. Supersession/action-time helper candidates then passed native checks and 1,062 host tests, but are not installed. Trusted-source acquisition and a preparation-composition candidate subsequently passed native checks and 1,064 host tests, but are not integrated into the installed job. A fixed verification-only Pipeline subsequently passed CPS compilation and 1,083 host tests, but was not installed or run. A pure image-only patch planner subsequently passed 57 cases and 1,140 total host tests; the user subsequently approved bounded crane-internal retries. A command adapter passed real isolated crane fault injection and 1,164 host tests, but production upload/execution remains unwired. Feature publication through `0ac68c1` subsequently succeeded. Exact crane input preparation and local config/layer correspondence passed with 1,192 host tests, but remain unwired. Private registry profiles/readback command sequencing subsequently passed 1,259 host tests and local native credential resolution, with no live registry proof. Main publication and normal SCM/downstream runtime proof remain pending; host free space is now 1.8 GiB. See [setup/status](docs/runbooks/cloud-delivery.md), [selection evidence](evidence/task-04/step-03-release-selection.md) and [artifact evidence](evidence/task-04/step-03-release-artifacts.md).
-- Full step still requires container build, versioned push, and Kubernetes deployment stages.
+- **Latest live result:** normal SCM #39 → delivery #3 passed publication, rollout and smoke; failed-test/security blocks and controlled rollback are demonstrated. [Evidence](evidence/task-04/step-03-live-delivery.md).
+- **Historical cloud preparation (superseded by the live result above):** dedicated deployer IAM/RBAC and namespace admission are live-verified. The release-worker image/tools and folder credential imports passed actual read-only Jenkins probes. The controller-owned scheduling guard passed ten decision cases and five real Pipeline cases (including three denied assignments); 942 host tests and source/dependency gates passed. Worker stopped and diagnostic jobs disabled after verification. Manual AMD64 candidate CI at `dc7ffe5` subsequently passed 961 tests, all gates and 33 verified artifacts, with zero image findings and matching local mail. The fixed non-sandboxed selection job is installed disabled/pending approval; 975 host tests and native selection checks passed, including rejection of real main #34's ARM64 image through a simulated upstream envelope. Separate transfer/verifier helpers subsequently passed 1,060 host tests and an administrator-owned remoting probe of 21 retained candidate artifacts, including actual byte-tampering rejection and a synthetic stale-clock rejection. These helpers are not yet integrated into the disabled/unbuilt job; no upload or deployment stage exists. Supersession/action-time helper candidates then passed native checks and 1,062 host tests, but are not installed. Trusted-source acquisition and a preparation-composition candidate subsequently passed native checks and 1,064 host tests, but are not integrated into the installed job. A fixed verification-only Pipeline subsequently passed CPS compilation and 1,083 host tests, but was not installed or run. A pure image-only patch planner subsequently passed 57 cases and 1,140 total host tests; the user subsequently approved bounded crane-internal retries. A command adapter passed real isolated crane fault injection and 1,164 host tests, but production upload/execution remains unwired. Feature publication through `0ac68c1` subsequently succeeded. Exact crane input preparation and local config/layer correspondence passed with 1,192 host tests, but remain unwired. Private registry profiles/readback command sequencing subsequently passed 1,259 host tests and local native credential resolution, with no live registry proof. Main publication and normal SCM/downstream runtime proof remain pending; host free space is now 1.8 GiB. See [setup/status](docs/runbooks/cloud-delivery.md), [selection evidence](evidence/task-04/step-03-release-selection.md) and [artifact evidence](evidence/task-04/step-03-release-artifacts.md).
+- Full container build, versioned push and Kubernetes deployment stages are now live-verified.
 - Deploy the exact built image, wait for rollout completion, and perform a smoke test.
 - Serialize deployments to the shared demo environment to prevent overlapping releases.
 - This is an intermediate pipeline; Task 5 adds the final security gates before release.

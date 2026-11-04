@@ -1,0 +1,78 @@
+{
+  "_class": "org.jenkinsci.plugins.workflow.job.WorkflowRun",
+  "actions": [
+    {},
+    {
+      "_class": "hudson.model.CauseAction",
+      "causes": [
+        {
+          "_class": "hudson.model.Cause$UserIdCause",
+          "shortDescription": "Started by user admin"
+        },
+        {
+          "_class": "org.jenkinsci.plugins.workflow.cps.replay.ReplayCause",
+          "shortDescription": "Replayed #36"
+        }
+      ]
+    },
+    {
+      "_class": "org.jenkinsci.plugins.workflow.libs.LibrariesAction"
+    },
+    {},
+    {
+      "_class": "hudson.plugins.git.util.BuildData"
+    },
+    {},
+    {
+      "_class": "org.jenkinsci.plugins.workflow.cps.EnvActionImpl"
+    },
+    {
+      "_class": "hudson.tasks.junit.TestResultAction",
+      "failCount": 1,
+      "skipCount": 0,
+      "totalCount": 1349
+    },
+    {},
+    {},
+    {},
+    {},
+    {
+      "_class": "org.jenkinsci.plugins.displayurlapi.actions.RunDisplayAction"
+    },
+    {
+      "_class": "org.jenkinsci.plugins.pipeline.modeldefinition.actions.RestartDeclarativePipelineAction"
+    },
+    {},
+    {
+      "_class": "org.jenkinsci.plugins.workflow.job.views.FlowGraphAction"
+    },
+    {},
+    {}
+  ],
+  "artifacts": [
+    {
+      "relativePath": "reports/build-metadata.txt"
+    },
+    {
+      "relativePath": "reports/coverage.xml"
+    },
+    {
+      "relativePath": "reports/dependencies.txt"
+    },
+    {
+      "relativePath": "reports/format.txt"
+    },
+    {
+      "relativePath": "reports/junit.xml"
+    },
+    {
+      "relativePath": "reports/lint.txt"
+    },
+    {
+      "relativePath": "reports/tests.txt"
+    }
+  ],
+  "building": false,
+  "number": 37,
+  "result": "FAILURE"
+}

@@ -1,0 +1,62 @@
+{
+  "_class": "org.jenkinsci.plugins.workflow.job.WorkflowRun",
+  "actions": [
+    {
+      "_class": "hudson.model.CauseAction",
+      "causes": [
+        {
+          "_class": "hudson.model.Cause$UpstreamCause",
+          "shortDescription": "Started by upstream project \"finsecure-ci\" build number 39",
+          "upstreamBuild": 39,
+          "upstreamProject": "finsecure-ci"
+        }
+      ]
+    },
+    {
+      "_class": "org.jenkinsci.plugins.workflow.libs.LibrariesAction"
+    },
+    {},
+    {},
+    {},
+    {},
+    {
+      "_class": "org.jenkinsci.plugins.displayurlapi.actions.RunDisplayAction"
+    },
+    {
+      "_class": "org.jenkinsci.plugins.pipeline.modeldefinition.actions.RestartDeclarativePipelineAction"
+    },
+    {},
+    {
+      "_class": "org.jenkinsci.plugins.workflow.job.views.FlowGraphAction"
+    },
+    {},
+    {}
+  ],
+  "artifacts": [
+    {
+      "relativePath": "deploy-attempt.json"
+    },
+    {
+      "relativePath": "deploy.json"
+    },
+    {
+      "relativePath": "preflight.json"
+    },
+    {
+      "relativePath": "prepare.json"
+    },
+    {
+      "relativePath": "publish-attempt.json"
+    },
+    {
+      "relativePath": "publish.json"
+    },
+    {
+      "relativePath": "verification.json"
+    }
+  ],
+  "building": false,
+  "duration": 104780,
+  "number": 3,
+  "result": "SUCCESS"
+}

@@ -12,13 +12,15 @@ E2 nodes and two Running/Ready application pods on separate nodes. Native runtim
 external health/validation checks passed. **HTTP is unencrypted: use synthetic data
 only, never customer/payment-card data or credentials.** No money is transferred.
 
-The GKE overlay pins published AMD64 **0.3.0**; historical base/demo pins remain 0.2.0.
-Automatic delivery #2 published the exact gated **0.4.0** image and changed the GKE
-Deployment, but failed a public HTTP smoke request. Subsequent inspection verified two ready
-runtime-image Pods, public version 0.4.0 and all four smoke cases. An explicit controlled
-rollback then restored 0.3.0 in 33.43 seconds with two ready Pods and passing smoke checks.
-The failed Pipeline is retained, not relabelled successful. Public readiness observations
-now precede the single-attempt smoke suite; a fresh complete delivery run is pending.
+**Live release: AMD64 0.4.0.** Normal SCM **#39 automatically triggered delivery #3**;
+publication, independent registry verification, image-only rollout and all smoke checks passed.
+Two ready runtime-image Pods were verified. Deliberate test failure #37 and HIGH/CRITICAL
+security block #38 prevented downstream delivery. A controlled rollback to 0.3.0 also passed.
+See [actual delivery, blocking-gate and rollback evidence](evidence/task-04/step-03-live-delivery.md).
+Failures #1/#2 remain recorded; they are not relabelled successful.
+
+The GKE overlay remains the **0.3.0 bootstrap baseline**, not the current delivery digest;
+do not reapply it as though it represented the latest release. Base/demo pins remain 0.2.0.
 See [image identity](docs/runbooks/image-publication.md),
 [creation/access runbook](docs/runbooks/gke-creation.md),
 [approved resource profile](deploy/infrastructure/gke-proposal.md) and
@@ -355,34 +357,20 @@ submission/             Final presentation and design-document deliverables
 Empty directories use `.gitkeep` files so Git preserves the intended layout.
 Remove a placeholder when its directory receives real content.
 
-## Files to add during implementation
+## Current implementation status
 
-- Tasks 1–2: complete; published image 0.1.0 remains unchanged.
-- Task 3.1: configuration/manifests and 0.2.0 publication reviewed and merged.
-- Task 3.2: runtime settings reviewed and merged; Kubernetes execution pending.
-- Remaining Task 3: provider-specific infrastructure, deployment, and recovery (deferred).
-- Task 4.1: local Jenkins and checkout reviewed, merged, and published.
-- Task 4.2: reviewed, merged, published, and verified through the normal SCM-loaded job.
-- Task 4.3: local builder/export subset reviewed, merged, and verified through SCM build #2.
-  Registry publication and Kubernetes delivery remain deferred; the full step is incomplete.
-- Task 4.4: local source-trigger/test-gate subset reviewed, merged, published, and SCM-verified.
-  Demo branch reverted/passing and job disabled; publishing/deployment gates remain pending.
-- Remaining Task 4: registry/cloud delivery, full release-gate proof, rollout/rollback.
-- Task 5.1: reviewed, merged, published, and verified through normal SCM build #6
-  (316 tests, passing scans, 25 artifacts); 17 LOW Bandit findings remain reported.
-- Task 5.2: Alpine/image gate implemented and locally verified with passing, vulnerability-
-  blocked and error cases (410 tests each). Merged/published; normal SCM build #8 passed
-  410 tests and all gates, with 33 verified artifacts.
-- Task 5.3: approved local boundary-check subset merged/SCM-verified; rotation and
-  registry/cloud credential controls remain deferred.
-- Task 5.4: local image-archival block/remediation demonstration reviewed, merged and
-  published as `d76b713`. Registry/deployment-blocking proof remains deferred.
-- Task 6.1: local instrumentation/Prometheus merged and SCM-verified (build #17,
-  538 tests, passing gates and 33 artifacts), with earlier real 60-request/process
-  collection evidence. Managed-cluster monitoring and later observability steps deferred.
-- Remaining Tasks 5–6: deferred security controls and cloud release-gate proof,
-  monitoring/logging, alert delivery and notifications.
-- Task 7: Design document, architecture diagram, AI use case, and presentation.
+- Tasks 1–2: application, tests, packaging and versioned image publication implemented.
+- Task 3: GKE deployment, two ready Pods, safeguards and actual Pod recreation verified.
+- Task 4: automatic SCM build → gated publication → rollout/smoke verified as #39 → #3.
+  Actual failing-test and security blocks and controlled rollback are demonstrated.
+- Task 5: source/dependency/image gates and isolated release credentials are implemented;
+  actual restricted deployer use is verified. LOW findings and historical failures remain
+  visible. No blanket credential rotation or production-security completeness is claimed.
+- Task 6: local metrics, Grafana, alert delivery and JSON logs are verified; GKE system
+  metrics/logging are enabled. The cloud-API monitoring demonstration is being completed.
+  Prometheus/Grafana remain local; no new cloud monitoring volumes have been created.
+- Task 7: design document, diagrams, AI proposal and presentation exist; final evidence
+  updates and the demonstration video remain to be completed.
 
 Do not add empty executable configuration files as if they were working artifacts.
 

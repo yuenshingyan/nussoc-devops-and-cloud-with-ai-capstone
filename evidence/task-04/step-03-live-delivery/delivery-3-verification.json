@@ -1,0 +1,19 @@
+{
+  "status": "verified",
+  "publishing_authorized": false,
+  "revision": "b5ee4dece0a76a7621ad4d2222d34874b69c083d",
+  "archive_sha256": "e1fd4fb32362aca46ecc5e5e8af26f68b34a3165a253e672351011f38afac150",
+  "database_age_seconds": 9589.261707,
+  "verified_files": 21,
+  "source_findings": {
+    "LOW": 45,
+    "MEDIUM": 0,
+    "HIGH": 0,
+    "blocking_findings": 0
+  },
+  "image_id": "sha256:047855d87e877634cca917385047a54d56f19939e53b1e519a7bfa1bde4c158c",
+  "platform": "linux/amd64",
+  "layers": 9,
+  "expanded_layer_bytes": 62626304,
+  "archive_oci_manifest_digest": "sha256:f9155ab0d3f3f90e0f443dbdf34ced89c3ec2f286c35a0f94bff079c3d50d730"
+}

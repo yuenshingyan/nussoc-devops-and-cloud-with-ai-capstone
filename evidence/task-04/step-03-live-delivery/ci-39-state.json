@@ -1,0 +1,154 @@
+{
+  "_class": "org.jenkinsci.plugins.workflow.job.WorkflowRun",
+  "actions": [
+    {
+      "_class": "hudson.model.CauseAction",
+      "causes": [
+        {
+          "_class": "hudson.triggers.SCMTrigger$SCMTriggerCause",
+          "shortDescription": "Started by an SCM change"
+        }
+      ]
+    },
+    {},
+    {
+      "_class": "org.jenkinsci.plugins.workflow.libs.LibrariesAction"
+    },
+    {},
+    {
+      "_class": "hudson.plugins.git.util.BuildData"
+    },
+    {},
+    {
+      "_class": "org.jenkinsci.plugins.workflow.cps.EnvActionImpl"
+    },
+    {
+      "_class": "hudson.tasks.junit.TestResultAction",
+      "failCount": 0,
+      "skipCount": 0,
+      "totalCount": 1349
+    },
+    {},
+    {},
+    {},
+    {},
+    {},
+    {
+      "_class": "org.jenkinsci.plugins.displayurlapi.actions.RunDisplayAction"
+    },
+    {
+      "_class": "org.jenkinsci.plugins.pipeline.modeldefinition.actions.RestartDeclarativePipelineAction"
+    },
+    {},
+    {
+      "_class": "org.jenkinsci.plugins.workflow.job.views.FlowGraphAction"
+    },
+    {},
+    {}
+  ],
+  "artifacts": [
+    {
+      "relativePath": "dist/finsecure_pay-0.4.0-py3-none-any.whl"
+    },
+    {
+      "relativePath": "dist/finsecure_pay-0.4.0.tar.gz"
+    },
+    {
+      "relativePath": "images/finsecure-pay.tar.gz"
+    },
+    {
+      "relativePath": "reports/bandit.json"
+    },
+    {
+      "relativePath": "reports/bandit.txt"
+    },
+    {
+      "relativePath": "reports/build-metadata.txt"
+    },
+    {
+      "relativePath": "reports/buildkit-image.json"
+    },
+    {
+      "relativePath": "reports/buildkit-workers.txt"
+    },
+    {
+      "relativePath": "reports/coverage.xml"
+    },
+    {
+      "relativePath": "reports/dependencies.txt"
+    },
+    {
+      "relativePath": "reports/format.txt"
+    },
+    {
+      "relativePath": "reports/image-build.txt"
+    },
+    {
+      "relativePath": "reports/image-metadata.txt"
+    },
+    {
+      "relativePath": "reports/image-runtime-requirements.txt"
+    },
+    {
+      "relativePath": "reports/image-security-export.txt"
+    },
+    {
+      "relativePath": "reports/image-security-summary.json"
+    },
+    {
+      "relativePath": "reports/image-security-tools.txt"
+    },
+    {
+      "relativePath": "reports/image.sha256"
+    },
+    {
+      "relativePath": "reports/junit.xml"
+    },
+    {
+      "relativePath": "reports/lint.txt"
+    },
+    {
+      "relativePath": "reports/package.txt"
+    },
+    {
+      "relativePath": "reports/packages.sha256"
+    },
+    {
+      "relativePath": "reports/pip-audit.json"
+    },
+    {
+      "relativePath": "reports/pip-audit.txt"
+    },
+    {
+      "relativePath": "reports/runtime-requirements.txt"
+    },
+    {
+      "relativePath": "reports/security-export.txt"
+    },
+    {
+      "relativePath": "reports/security-summary.json"
+    },
+    {
+      "relativePath": "reports/security-tools.txt"
+    },
+    {
+      "relativePath": "reports/tests.txt"
+    },
+    {
+      "relativePath": "reports/trivy-db.json"
+    },
+    {
+      "relativePath": "reports/trivy-db.txt"
+    },
+    {
+      "relativePath": "reports/trivy.json"
+    },
+    {
+      "relativePath": "reports/trivy.txt"
+    }
+  ],
+  "building": false,
+  "duration": 77390,
+  "number": 39,
+  "result": "SUCCESS"
+}

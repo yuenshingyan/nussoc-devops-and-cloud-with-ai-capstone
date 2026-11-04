@@ -1,0 +1,15 @@
+{
+  "status": "inspected",
+  "new_version": "0.4.0",
+  "registry_manifest_digest": "sha256:c6d5e283fb321df4d47b932399f31f57671b616d12848f7a995dde3580fef4c8",
+  "deployment_uid": "aadc396b-cf58-4929-96d1-0e225d8b4256",
+  "generation": 2,
+  "spec_sha256": "d1dab44b228e7db9f44d605fef907a6a37d84a3193f75fdf09d970199fd391ac",
+  "ready_pod_uids": [
+    "e02344f1-77da-4eab-b908-e3fca087287d",
+    "fe74cc1d-ac54-4a5c-aab2-296b89357ff3"
+  ],
+  "approved_prior_spec_reconstructed": true,
+  "four_smoke_cases_passed": true,
+  "pipeline_smoke_failure_retained": true
+}

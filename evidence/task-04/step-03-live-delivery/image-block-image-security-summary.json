@@ -1,0 +1,68 @@
+{
+  "started_at_utc": "2026-11-04T15:52:48.871704+00:00",
+  "status": "blocked",
+  "source_revision": "5d4d4bbb5b52dcf16305029130b0ede84401fc28",
+  "expected_platform": "linux/amd64",
+  "local_tag": "finsecure-pay-ci:jenkins-finsecure-ci-38",
+  "database_repository": "ghcr.io/aquasecurity/trivy-db:2",
+  "operation_budget_seconds": 300,
+  "max_database_age_seconds": 86400,
+  "phase": "report",
+  "trivy_version": "0.76.1",
+  "image_id": "sha256:99ab09040bfa9983f06ab6b1c5060e3300afa468fe5d43f30120a99497da2085",
+  "platform": "linux/amd64",
+  "archive_sha256": "f2fdd9d37299ed01936118ff5dc277631412a0d232483399f7ede0c1f5726e4a",
+  "lock_sha256": "9be28295f603f5c497b28b0b0885fd505df0797139bb67c8c89cac75565a6a14",
+  "trivy_sha256": "b422130ea54e53e142e65c838662e48919ce9c3f23f17d80066b43e70550cb85",
+  "database_exit_code": 0,
+  "database_age_seconds": 9383.873678,
+  "scan_exit_code": 0,
+  "database_age_at_finish_seconds": 9388.36758,
+  "os": {
+    "Family": "debian",
+    "Name": "12.15"
+  },
+  "end_of_life": false,
+  "packages_by_type": {
+    "debian": 97,
+    "python-pkg": 16
+  },
+  "runtime_packages": {
+    "annotated-doc": "0.0.5",
+    "annotated-types": "0.8.0",
+    "anyio": "4.15.1",
+    "click": "8.5.0",
+    "fastapi": "0.156.8",
+    "finsecure-pay": "0.4.0",
+    "h11": "0.16.0",
+    "idna": "3.20",
+    "opentelemetry-api": "1.45.1",
+    "prometheus-client": "0.26.0",
+    "pydantic": "2.14.1",
+    "pydantic-core": "2.50.1",
+    "starlette": "1.9.0",
+    "typing-inspection": "0.4.4",
+    "typing-extensions": "4.16.0",
+    "uvicorn": "0.54.0"
+  },
+  "severities": {
+    "UNKNOWN": 10,
+    "LOW": 91,
+    "MEDIUM": 113,
+    "HIGH": 38,
+    "CRITICAL": 2
+  },
+  "blocking_findings": 40,
+  "temporary_cache_removed": true,
+  "finished_at_utc": "2026-11-04T15:53:22.097980+00:00",
+  "elapsed_seconds": 33.22592401600559,
+  "report_sha256": {
+    "image-security-tools.txt": "84e54b2d02a5de1ad8dff546f152fb3aa252379d25a3a8d0f982d6d3a1fe4cba",
+    "image-security-export.txt": "2d95d73429d4605531bdd704d50da374cd416728e304d858ef7e5b7263eafddb",
+    "image-runtime-requirements.txt": "9224d43537fd4abb4bf349d2a326e5b449fe1c4349a6b401808c2834b2cf25e3",
+    "trivy-db.json": "ef7397b991df24c23fb54a80e2ec7f3aaf982b22d3a2eeea66ff638bc9aad72e",
+    "trivy-db.txt": "6df565c458b0fa8bff85316bd02aa5f1c9a52c011a7e6d75aeeb5de9ea8f511b",
+    "trivy.json": "4461816d8af3744ff09d603ad5af82ff0715057412d1a44b6d6e1d9c04401c21",
+    "trivy.txt": "676d3bfb78aea5324507e21ff19c7b1e5b0ab3ad62a3164d6c2db866fd007f2f"
+  }
+}
