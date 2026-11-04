@@ -1,0 +1,8 @@
+{
+  "status": "verified",
+  "requested_pull_push_granted": true,
+  "existing_manifest_verified": true,
+  "upload_attempted": false,
+  "worker_uid": 1000,
+  "bound_file_metadata_verified": true
+}

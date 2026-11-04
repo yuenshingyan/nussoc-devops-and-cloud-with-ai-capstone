@@ -34,7 +34,7 @@ def test_base_jcasc_explicitly_bridges_only_notification_flag_with_false_default
     controller = (ROOT / "ops/jenkins/controller.Dockerfile").read_text()
     assert "COPY --chown=jenkins:jenkins jenkins.yaml /usr/share/jenkins/jenkins.yaml" in controller
     assert (
-        "image: finsecure-jenkins-controller:step-06-05"
+        "image: finsecure-jenkins-controller:step-04-03-delivery"
         in (ROOT / "ops/jenkins/compose.yaml").read_text()
     )
 

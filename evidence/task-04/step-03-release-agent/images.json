@@ -1,0 +1,12 @@
+{
+  "finsecure-jenkins-release-agent:step-04-03": {
+    "id": "sha256:a876fbf1b25a2793a3c0af92ca67251ff07700648fa163a908b811d6ed7a2477",
+    "architecture": "arm64",
+    "os": "linux"
+  },
+  "finsecure-jenkins-controller:step-04-03-delivery": {
+    "id": "sha256:21dda4fa6db3705c468994b9bba3b6b6931bfdcacd38e2e312f845c4bdd8f63f",
+    "architecture": "arm64",
+    "os": "linux"
+  }
+}

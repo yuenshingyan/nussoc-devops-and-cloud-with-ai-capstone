@@ -1,0 +1,51 @@
+uid=1000(jenkins) gid=1000(jenkins) groups=1000(jenkins),1000(jenkins)
+Python 3.14.9
+openjdk version "21.0.13" 2026-10-20 LTS
+OpenJDK Runtime Environment Temurin-21.0.13+9 (build 21.0.13+9-LTS)
+OpenJDK 64-Bit Server VM Temurin-21.0.13+9 (build 21.0.13+9-LTS, mixed mode)
+0.22.1
+{
+  "clientVersion": {
+    "major": "1",
+    "minor": "36",
+    "gitVersion": "v1.36.4",
+    "gitCommit": "bb826b1d48562f110659e64e8ec444327433db95",
+    "gitTreeState": "clean",
+    "buildDate": "2026-08-20T03:09:25Z",
+    "goVersion": "go1.26.5",
+    "compiler": "gc",
+    "platform": "linux/arm64"
+  },
+  "kustomizeVersion": "v5.8.1"
+}
+Kubernetes v37.0.0-12-g05550ad15
+Get the digest of an image
+
+Usage:
+  crane digest IMAGE [flags]
+
+Flags:
+      --full-ref         (Optional) if true, print the full image reference by digest
+  -h, --help             help for digest
+      --tarball string   (Optional) path to tarball containing the image
+
+Global Flags:
+      --allow-nondistributable-artifacts   Allow pushing non-distributable (foreign) layers
+      --insecure                           Allow image references to be fetched without TLS
+      --platform platform                  Specifies the platform in the form os/arch[/variant][:osversion] (e.g. linux/amd64). (default all)
+  -v, --verbose                            Enable debug logs
+If the PATH is a directory, it will be read as an OCI image layout. Otherwise, PATH is assumed to be a docker-style tarball.
+
+Usage:
+  crane push PATH IMAGE [flags]
+
+Flags:
+  -h, --help                help for push
+      --image-refs string   path to file where a list of the published image references will be written
+      --index               push a collection of images as a single index, currently required if PATH contains multiple images
+
+Global Flags:
+      --allow-nondistributable-artifacts   Allow pushing non-distributable (foreign) layers
+      --insecure                           Allow image references to be fetched without TLS
+      --platform platform                  Specifies the platform in the form os/arch[/variant][:osversion] (e.g. linux/amd64). (default all)
+  -v, --verbose                            Enable debug logs

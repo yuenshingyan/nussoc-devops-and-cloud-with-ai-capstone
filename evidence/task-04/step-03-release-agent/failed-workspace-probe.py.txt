@@ -1,0 +1,165 @@
+"""Read-only credential-binding checks on the isolated release worker; never publish."""
+
+from argparse import ArgumentParser
+from base64 import b64encode, urlsafe_b64decode
+from json import dumps, loads
+from os import environ, getuid
+from pathlib import Path
+from stat import S_IMODE, S_ISREG
+from subprocess import run
+from tempfile import TemporaryDirectory
+from urllib.error import HTTPError
+from urllib.request import ProxyHandler, Request, build_opener
+
+from scripts.release_cluster import NoRedirect, prepare_client
+
+REPOSITORY = "yuenshingyan/finsecure-pay"
+KNOWN_DIGEST = "sha256:1fc3362f15ba91f4161b8fccab644631ccc0733e9b9675bb7e2cb88e7aea5b4c"
+
+
+def private_binding(path: Path) -> bytes:
+    """Require one private file owned by this worker, with no content in its environment."""
+    info = path.lstat()
+    if (
+        not S_ISREG(info.st_mode)
+        or info.st_uid != getuid()
+        or S_IMODE(info.st_mode) not in {0o400, 0o600}
+        or info.st_nlink != 1
+        or not 0 < info.st_size <= 16384
+    ):
+        raise ValueError("UNSAFE_BOUND_FILE")
+    value = path.read_bytes()
+    if any(value.decode("utf-8") in item for item in environ.values()):
+        raise ValueError("SECRET_CONTENT_IN_ENVIRONMENT")
+    return value
+
+
+def registry(path: Path) -> dict:
+    """Authenticate for the fixed repository and read its existing release, without writes."""
+    token = private_binding(path).decode("ascii")
+    if not 1 <= len(token) <= 4096 or any(not 33 <= ord(c) <= 126 for c in token):
+        raise ValueError("INVALID_REGISTRY_TOKEN")
+    opener = build_opener(ProxyHandler({}), NoRedirect())
+    request = Request(
+        "https://auth.docker.io/token?service=registry.docker.io&scope=repository:"
+        + REPOSITORY
+        + ":pull,push",
+        headers={
+            "Authorization": "Basic " + b64encode(("yuenshingyan:" + token).encode()).decode()
+        },
+    )
+    try:
+        with opener.open(request, timeout=20) as response:
+            if response.status != 200:
+                raise ValueError("Unexpected authentication response")
+            data = response.read(1048577)
+            if len(data) > 1048576:
+                raise ValueError("Oversized authentication response")
+            bearer = loads(data)["token"]
+        payload = bearer.split(".")[1]
+        claims = loads(urlsafe_b64decode(payload + "=" * (-len(payload) % 4)))
+        grants = [
+            a
+            for a in claims.get("access", [])
+            if a.get("type") == "repository" and a.get("name") == REPOSITORY
+        ]
+        if len(grants) != 1 or not {"pull", "push"} <= set(grants[0]["actions"]):
+            raise ValueError("Repository permissions missing")
+        request = Request(
+            "https://registry-1.docker.io/v2/" + REPOSITORY + "/manifests/0.3.0",
+            headers={
+                "Authorization": "Bearer " + bearer,
+                "Accept": (
+                    "application/vnd.docker.distribution.manifest.v2+json,"
+                    "application/vnd.oci.image.manifest.v1+json"
+                ),
+            },
+        )
+        with opener.open(request, timeout=20) as response:
+            if (
+                response.status != 200
+                or response.headers.get("Docker-Content-Digest") != KNOWN_DIGEST
+            ):
+                raise ValueError("Existing release identity differs")
+    except HTTPError as error:
+        error.close()
+        raise RuntimeError("REGISTRY_PROBE_FAILED") from None
+    return {
+        "status": "verified",
+        "requested_pull_push_granted": True,
+        "existing_manifest_verified": True,
+        "upload_attempted": False,
+    }
+
+
+def cluster(path: Path) -> dict:
+    """Verify the bound identity by reading the Deployment and observing a Secret denial."""
+    private_binding(path)
+    # Keep owned client state inside the job's cleanup boundary as well as its context manager.
+    with TemporaryDirectory(dir=Path.cwd(), prefix="finsecure-release-probe-") as temporary:
+        env = prepare_client(path, Path(temporary))
+        result = run(
+            [
+                "kubectl",
+                "--request-timeout=20s",
+                "-n",
+                "finsecure-pay",
+                "get",
+                "deployment",
+                "finsecure-pay",
+                "-o=json",
+            ],
+            env=env,
+            capture_output=True,
+            text=True,
+            timeout=30,
+            check=False,
+        )
+        if result.returncode:
+            raise RuntimeError("DEPLOYMENT_READ_FAILED")
+        data = loads(result.stdout)
+        if data["status"].get("availableReplicas") != 2:
+            raise RuntimeError("APPLICATION_NOT_READY")
+        denied = run(
+            ["kubectl", "--request-timeout=20s", "-n", "finsecure-pay", "get", "secrets"],
+            env=env,
+            capture_output=True,
+            text=True,
+            timeout=30,
+            check=False,
+        )
+        if (
+            denied.returncode == 0
+            or "Forbidden" not in denied.stderr
+            or "cannot list resource" not in denied.stderr
+        ):
+            raise RuntimeError("EXPECTED_SECRET_DENIAL_MISSING")
+    return {
+        "status": "verified",
+        "available_replicas": 2,
+        "secret_list_forbidden": True,
+        "workload_mutation_attempted": False,
+        "private_client_directory_removed": True,
+    }
+
+
+def main() -> int:
+    """Report fixed safe fields even if a provider returns a sensitive error body."""
+    parser = ArgumentParser(description=__doc__)
+    parser.add_argument("action", choices=["registry", "cluster"])
+    action = parser.parse_args().action
+    try:
+        path = Path(environ["RELEASE_CREDENTIAL_FILE"])
+        result = registry(path) if action == "registry" else cluster(path)
+        result.update(worker_uid=getuid(), bound_file_metadata_verified=True)
+    except Exception as error:
+        result = {"status": "failed", "error_type": type(error).__name__}
+    directory = Path("reports")
+    directory.mkdir(exist_ok=True)
+    (directory / (action + "-probe.json")).write_text(dumps(result, indent=2) + "\n")
+    print(dumps(result))
+    return 0 if result["status"] == "verified" else 2
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

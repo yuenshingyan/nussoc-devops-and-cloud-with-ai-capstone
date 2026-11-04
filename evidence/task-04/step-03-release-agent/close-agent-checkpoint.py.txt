@@ -1,0 +1,133 @@
+"""Verify unchanged application/history, then stop only the idle owned release worker."""
+
+from datetime import UTC, datetime
+from hashlib import sha256
+from json import dumps, loads
+from os import environ
+from pathlib import Path
+from subprocess import run
+
+from bootstrap import Jenkins, admin_password
+from httpx2 import Client
+
+
+def main() -> None:
+    """Leave release execution unavailable until the scheduling policy is reviewed."""
+    jenkins = Jenkins(admin_password())
+    assert not loads(jenkins.request("/queue/api/json"))["items"]
+    for node in ["finsecure-release", "finsecure-python"]:
+        agent = loads(jenkins.request(f"/computer/{node}/api/json"))
+        assert not agent["offline"] and agent["idle"]
+    job = loads(jenkins.request("/job/finsecure-release/job/verify-boundaries/api/json"))
+    assert job["disabled"] and job["lastBuild"]["number"] == 4
+    final = loads(jenkins.request("/job/finsecure-release/job/verify-boundaries/4/api/json"))
+    assert not final["building"] and final["result"] == "SUCCESS"
+    main_build = loads(jenkins.request("/job/finsecure-ci/lastBuild/api/json"))
+    assert main_build["number"] == 34 and main_build["result"] == "SUCCESS"
+    plugins = loads(jenkins.request("/pluginManager/api/json?depth=1"))["plugins"]
+    versions = {item["shortName"]: item["version"] for item in plugins}
+    baseline = loads(Path("reports/cloud-delivery/controller-before.json").read_text())
+    assert versions == baseline["plugin_versions"]
+    environment = {**environ, "PATH": "/opt/homebrew/share/google-cloud-sdk/bin:" + environ["PATH"]}
+    kubeconfig = Path.home() / ".config/finsecure-pay/gke/kubeconfig"
+
+    def get(resource: str) -> dict:
+        result = run(
+            [
+                "kubectl",
+                "--kubeconfig",
+                str(kubeconfig),
+                "--request-timeout=20s",
+                "-n",
+                "finsecure-pay",
+                "get",
+                resource,
+                "-o",
+                "json",
+            ],
+            env=environment,
+            capture_output=True,
+            text=True,
+            timeout=30,
+        )
+        assert result.returncode == 0, "Read-only application inspection failed"
+        return loads(result.stdout)
+
+    deployment = get("deployment/finsecure-pay")
+    pods = get("pods")["items"]
+    assert len(pods) == 2 and all(
+        any(c["type"] == "Ready" and c["status"] == "True" for c in p["status"]["conditions"])
+        for p in pods
+    )
+    snapshot = {
+        "deployment_uid": deployment["metadata"]["uid"],
+        "generation": deployment["metadata"]["generation"],
+        "spec_sha256": sha256(dumps(deployment["spec"], sort_keys=True).encode()).hexdigest(),
+        "ready_pod_uids": sorted(p["metadata"]["uid"] for p in pods),
+        "available_replicas": deployment["status"]["availableReplicas"],
+    }
+    prior = loads(Path("evidence/task-04/step-03-deployer/final-verification.json").read_text())[
+        "after"
+    ]
+    assert snapshot == prior
+    with Client(timeout=10, trust_env=False, follow_redirects=False) as client:
+        health = client.get("http://35.198.197.186/health")
+        assert health.status_code == 200
+    result = run(
+        [
+            "docker",
+            "compose",
+            "-f",
+            "ops/jenkins/compose.yaml",
+            "-f",
+            "ops/jenkins/notifications.compose.yaml",
+            "-f",
+            "ops/jenkins/release.compose.yaml",
+            "stop",
+            "--timeout",
+            "30",
+            "release-agent",
+        ],
+        capture_output=True,
+        text=True,
+        timeout=60,
+    )
+    assert result.returncode == 0, "Owned worker stop needs inspection"
+    result = run(
+        ["docker", "inspect", "finsecure-jenkins-release-agent-1"],
+        capture_output=True,
+        text=True,
+        timeout=20,
+    )
+    assert result.returncode == 0
+    state = loads(result.stdout)[0]["State"]
+    assert not state["Running"] and not state["OOMKilled"] and state["ExitCode"] in {0, 143}
+    assert not loads(jenkins.request("/queue/api/json"))["items"]
+    assert not loads(jenkins.request("/computer/finsecure-python/api/json"))["offline"]
+    record = {
+        "observed_at_utc": datetime.now(UTC).isoformat(),
+        "status": "verified",
+        "application_matches_deployer_checkpoint": True,
+        "application": snapshot,
+        "public_health_status": health.status_code,
+        "normal_ci_build": 34,
+        "normal_ci_result": "SUCCESS",
+        "plugin_count": len(versions),
+        "plugin_versions_unchanged": True,
+        "diagnostic_job_disabled": True,
+        "release_worker_stopped": True,
+        "release_worker_exit_code": state["ExitCode"],
+        "source_worker_online": True,
+        "queue_empty": True,
+        "reason": "Trusted job scheduling guard and release orchestration remain pending",
+        "registry_upload_attempted": False,
+        "deployment_attempted": False,
+    }
+    Path("reports/cloud-delivery/agent-checkpoint-final.json").write_text(
+        dumps(record, indent=2) + "\n"
+    )
+    print(dumps(record, indent=2))
+
+
+if __name__ == "__main__":
+    main()

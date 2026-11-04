@@ -1,0 +1,11 @@
+{
+  "ops/jenkins/release-agent.Dockerfile": "ba2e32868f60108e29fd57a8994477264efb6546d86e336e3211c8f858de0505",
+  "ops/jenkins/release.compose.yaml": "0aa19873f2b0da63e3301fc43f0025315635d891594563d87aab2be5c98e3564",
+  "ops/jenkins/release_bootstrap.py": "8ec098bee282beab90326a140e292dcc125976102bef770b97d99650c1084737",
+  "ops/jenkins/release_store.py": "9cae5fd76b640523f0686663850af7737614c5f71c4ba0b9233787fa5871012e",
+  "ops/jenkins/release_probe.py": "6079c0754a9f7b5f8be1a6073c8266660ab8a5fedf42fab2f26df59cdf939779",
+  "ops/jenkins/verify_release.py": "b4b5b8b48e467524bde14918491d64988d2f49cebdb1efedc84e04b4691a7970",
+  "scripts/release_cluster.py": "d40af1c5b6c7716474c77da974ffca894c8132b29d574d9f25db91dd63a75edc",
+  "ops/jenkins/jenkins.yaml": "3922ba113acdae23a05e6d37843636450996caeeb80816e2b83769a4beb1ff96",
+  "ops/jenkins/compose.yaml": "d5263e421790f92f3ee5c66b9fd76dc8739773ac24f4d7659b58d520a1cf7b4b"
+}

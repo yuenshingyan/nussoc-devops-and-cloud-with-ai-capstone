@@ -1,0 +1,33 @@
+Started by user admin
+[Pipeline] Start of Pipeline
+[Pipeline] node
+Running on finsecure-release in /home/jenkins/agent/workspace/finsecure-release/verify-boundaries
+[Pipeline] {
+[Pipeline] deleteDir
+[Pipeline] writeFile
+[Pipeline] writeFile
+[Pipeline] withCredentials
+Masking supported pattern matches of $RELEASE_CREDENTIAL_FILE
+[Pipeline] {
+[Pipeline] sh
+{"status": "verified", "requested_pull_push_granted": true, "existing_manifest_verified": true, "upload_attempted": false, "worker_uid": 1000, "bound_file_metadata_verified": true}
+[Pipeline] }
+[Pipeline] // withCredentials
+[Pipeline] fileExists
+[Pipeline] withCredentials
+Masking supported pattern matches of $RELEASE_CREDENTIAL_FILE
+[Pipeline] {
+[Pipeline] sh
+{"status": "verified", "available_replicas": 2, "secret_list_forbidden": true, "workload_mutation_attempted": false, "private_client_directory_removed": true, "worker_uid": 1000, "bound_file_metadata_verified": true}
+[Pipeline] }
+[Pipeline] // withCredentials
+[Pipeline] fileExists
+[Pipeline] writeFile
+[Pipeline] archiveArtifacts
+Archiving artifacts
+Recording fingerprints
+[Pipeline] deleteDir
+[Pipeline] }
+[Pipeline] // node
+[Pipeline] End of Pipeline
+Finished: SUCCESS

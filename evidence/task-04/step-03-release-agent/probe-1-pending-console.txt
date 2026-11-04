@@ -1,0 +1,5 @@
+Started by user admin
+[Pipeline] Start of Pipeline
+[Pipeline] node
+Still waiting to schedule task
+‘finsecure-release’ is offline

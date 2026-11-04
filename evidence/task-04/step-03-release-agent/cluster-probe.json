@@ -1,0 +1,9 @@
+{
+  "status": "verified",
+  "available_replicas": 2,
+  "secret_list_forbidden": true,
+  "workload_mutation_attempted": false,
+  "private_client_directory_removed": true,
+  "worker_uid": 1000,
+  "bound_file_metadata_verified": true
+}

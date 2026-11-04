@@ -1,0 +1,36 @@
+# Opt-in release worker. Provision its dedicated node/secret before starting it.
+services:
+  release-agent:
+    build:
+      context: .
+      dockerfile: release-agent.Dockerfile
+    image: finsecure-jenkins-release-agent:step-04-03
+    init: true
+    read_only: true
+    command:
+      - -url
+      - http://controller:8080/
+      - -name
+      - finsecure-release
+      - -secret
+      - "@/run/secrets/agent_secret"
+      - -webSocket
+    environment:
+      JENKINS_JAVA_OPTS: "-Xms32m -Xmx128m"
+      JENKINS_AGENT_WORKDIR: /home/jenkins/agent
+    volumes:
+      - release-workspace:/home/jenkins/agent
+      - release-agent-secrets:/run/secrets:ro
+      # Preserve Jenkins' default disk-space monitor; client subdirectories are private.
+      - release-temp:/tmp
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    cpus: 0.5
+    mem_limit: 512m
+    stop_grace_period: 30s
+volumes:
+  release-temp:
+  release-workspace:
+  release-agent-secrets:
+    external: true
+    name: finsecure-jenkins-release-agent-secrets

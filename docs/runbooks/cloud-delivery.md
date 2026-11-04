@@ -17,8 +17,13 @@ denied access reviews passed using that identity; an actual Secret-list request 
 forbidden. Application state remained unchanged. See
 [deployer evidence](../../evidence/task-04/step-03-deployer-identity.md).
 
-**Not yet implemented:** release agent, release jobs, registry upload, Jenkins credential
-import or cloud deployment stages. The current Jenkinsfile
+**Additional verified setup:** the ARM64 release worker was built and exercised, and both
+existing credentials were imported into the release folder. Real Jenkins file-binding
+probes and read-only registry/GKE access passed. The worker is now deliberately stopped;
+the diagnostic job is disabled. See the checkpoint below.
+
+**Not yet implemented:** trusted-job scheduling enforcement, production release jobs,
+registry upload or cloud deployment stages. The current Jenkinsfile
 still exports/scans ARM64 and has no publishing/deployment stage. Read-only inspection
 confirmed the existing BuildKit worker advertises AMD64 support; this is not yet an
 actual AMD64 Jenkins build/gate result.
@@ -26,7 +31,8 @@ actual AMD64 Jenkins build/gate result.
 The operator has saved the dedicated Docker Hub token. A read-only check on
 4 November verified the private file metadata, received an authenticated registry
 token granting the requested repository pull/push actions, and read the existing
-0.3.0 manifest with the expected digest. No upload or Jenkins import was attempted.
+0.3.0 manifest with the expected digest. That initial check attempted no upload or
+Jenkins import; the later import and binding probes are recorded below.
 This does not independently establish the PAT's permissions on other repositories,
 whether it also permits deletion, or whether an actual push will succeed.
 
@@ -138,7 +144,8 @@ privileged service accounts and sensitive Secrets out of this namespace. Direct 
 API denial is not a guarantee against indirect access through a modified workload.
 Only reviewed main release code should hold this credential. Provider grants, role
 binding and actual positive/negative service-account tests are now verified. No Jenkins
-job has received this credential yet.
+production release job has received this credential yet. The owned read-only diagnostic
+job has used a temporary file binding; its files were removed afterward.
 
 ## Approved deployer bootstrap execution contract
 
@@ -191,9 +198,84 @@ deleting a key alone does not promise immediate invalidation of previously issue
 access tokens. Do not affect `finsecure-gke-node` until the separate cluster teardown.
 There is still no automatic key expiry, rotation, revocation or scheduled cleanup.
 
+## Release worker and credential checkpoint — verified, worker stopped
+
+The opt-in `ops/jenkins/release.compose.yaml` worker is ARM64; it will publish a separately
+built AMD64 archive without running or rebuilding it. `release-agent.Dockerfile` pins
+Python and Jenkins remoting image digests plus checksums for crane 0.22.1, kubectl 1.36.4
+and the standalone GKE auth plugin archive dated `20261016073856` (its binary reports
+`Kubernetes v37.0.0-12-g05550ad15`). The actual image build and tool version checks passed. APK packages are repository-resolved, not individually version-locked;
+this is not a vulnerability scan or complete reproducible-build claim for the worker.
+No Google SDK or personal login is installed. Pip/ensurepip are removed.
+
+The worker uses UID 1000, one exclusive executor, a read-only root, all capabilities
+dropped, no-new-privileges, 0.5 CPU and 512 MiB. Its workspace, temporary storage and
+remoting-secret volumes are separate from the source worker/controller. No host bind,
+Docker/BuildKit socket or public port is attached. The existing 1 GiB disk-space monitor
+threshold was retained: an initial 64 MiB tmpfs made Jenkins mark the node offline, so
+only this worker's temporary storage moved to a dedicated disk-backed volume. That
+volume has no independent quota and shares Docker's backing storage; check host and
+Docker headroom separately. Private client subdirectories are mode 0700.
+
+`release_bootstrap.py` creates a distinct remoting credential volume and refuses to
+replace an existing/ambiguous volume. `release_store.py` imports the existing private
+files into `finsecure-release` using multipart file credentials, after a synthetic
+import/hash round trip and removal. It refuses to replace existing credentials.
+`finsecure-ci` cannot resolve either folder credential; operator comparison matched
+both private source files. File-credential GLOBAL scope here means the containing
+folder, not Jenkins' root store. Administrators still have full authority.
+
+`scripts/release_cluster.py` validates the dedicated service-account identity, removes
+inherited Google/SDK/Kubernetes configuration overrides, obtains ADC directly through
+the plugin, and discovers the fixed cluster through Google's API. It refuses redirects,
+proxies and non-GKE DNS endpoints. It writes a private, token-free kubeconfig with an
+exec credential provider. Auth subprocesses have a 30-second limit, discovery requests
+20 seconds, and probe kubectl calls 30 seconds with 20-second request limits. These are
+read-only probe budgets, not a deployment/rollback timeout policy.
+
+The operator-controlled `finsecure-release/verify-boundaries` Pipeline has no SCM or
+upstream trigger. Its successful #4 used both real file bindings on the release worker:
+registry pull/push token scope and the existing image digest were verified without
+upload; the deployed application had two available replicas and Secret listing was
+forbidden. Both bound files and owned client directories were removed, reports archived,
+and workspace cleaned. This was not an automatic SCM release. Preserve #1 ABORTED
+(disk monitor), #2 SUCCESS (earlier client path), and #3 FAILURE (inherited setgid).
+
+The source gate separately blocked B108 on the initial hardcoded temporary path.
+Client state now lives inside the job workspace's cleanup boundary. A fresh directory
+can inherit setgid there; the caller clears inherited bits on that new owned directory
+before the existing strict mode-0700 check. No supplied directory is repaired and no
+security suppression/threshold change was added. Fixed failure-code reporting does not
+expose provider messages. Regression tests cover inherited permissions and safe errors.
+
+**Important pending boundary:** EXCLUSIVE labels are scheduling preferences, not job
+access control. Folder credential scope alone does not stop another Pipeline requesting
+this node and leaving code to observe a later binding. Enforce and negatively test a
+trusted-job scheduling guard before bringing this worker back for release use. The
+worker was stopped with SIGTERM (exit 143) after verification; the diagnostic job is
+disabled, queue empty, source worker still online. Do not treat this checkpoint as
+complete cross-job isolation or enable production delivery yet.
+
+Read-only operator checks, when the reviewed worker is intentionally online:
+
+```sh
+PYTHONPATH=ops/jenkins uv run --locked python ops/jenkins/verify_release.py
+PYTHONPATH=ops/jenkins uv run --locked python ops/jenkins/verify_secrets.py --notifications
+```
+
+The first check intentionally fails while the worker is stopped. It checks runtime
+mounts against the reviewed Compose contract, resource/privilege settings, known-secret
+absence from process arguments/environment, remoting identity and folder scope. It
+reads Linux proc metadata rather than relying on incompatible Alpine `ps` options.
+
+See [checkpoint evidence](../../evidence/task-04/step-03-release-agent.md). No key/token
+was recreated or rotated; no upload, Deployment patch or cloud resource change occurred.
+Normal SCM history remains #34; all 73 plugin versions and notification bindings were
+preserved. This checkpoint is not yet merged/published.
+
 ## Remaining verification
 
-Actual AMD64 CI build and scan; tool supply-chain checks; isolated agent provisioning;
-credential import and Jenkins isolation checks; trusted-main
-release selection; immutable upload identity; healthy rollout and smoke checks; retained
+Trusted-job scheduling enforcement and negative tests; actual AMD64 CI build and scan;
+trusted-main release selection; serialization/stale-build policy; immutable upload
+identity; deployment timeout/failure behavior; healthy rollout and smoke checks; retained
 failure reports. Full delivery is pending until all of these run successfully.

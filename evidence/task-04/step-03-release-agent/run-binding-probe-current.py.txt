@@ -1,0 +1,151 @@
+"""Run one trusted diagnostic pipeline; no SCM trigger, upload or deployment stage."""
+
+from base64 import b64encode
+from html import escape
+from json import dumps, loads
+from pathlib import Path
+from time import monotonic, sleep
+
+from bootstrap import BASE_URL, Jenkins, admin_password
+from defusedxml.ElementTree import fromstring
+from httpx2 import BasicAuth, Client
+
+JOB = "/job/finsecure-release/job/verify-boundaries"
+
+
+def main() -> None:
+    """Archive sanitized checks, then disable the owned diagnostic job without retrying."""
+    writes = []
+    for name in ["scripts/release_cluster.py", "ops/jenkins/release_probe.py"]:
+        encoded = b64encode(Path(name).read_bytes()).decode()
+        writes.append(f"writeFile file: '{name}', encoding: 'Base64', text: '{encoded}'")
+    script = """node('release') {
+    deleteDir()
+    try {
+        SOURCE_FILES
+        def registryPath
+        withCredentials([file(credentialsId: 'finsecure-dockerhub',
+                              variable: 'RELEASE_CREDENTIAL_FILE')]) {
+            registryPath = env.RELEASE_CREDENTIAL_FILE
+            sh '#!/bin/sh\nset -eu\npython -m ops.jenkins.release_probe registry'
+        }
+        if (fileExists(registryPath)) { error('Registry credential file not removed') }
+        def clusterPath
+        withCredentials([file(credentialsId: 'finsecure-gke-deployer',
+                              variable: 'RELEASE_CREDENTIAL_FILE')]) {
+            clusterPath = env.RELEASE_CREDENTIAL_FILE
+            sh '#!/bin/sh\nset -eu\npython -m ops.jenkins.release_probe cluster'
+        }
+        if (fileExists(clusterPath)) { error('Google credential file not removed') }
+        writeFile file: 'reports/binding-cleanup.json',
+                  text: '{"registry_bound_file_removed":true,' +
+                        '"google_bound_file_removed":true}'
+    } finally {
+        try {
+            archiveArtifacts artifacts: 'reports/registry-probe.json,reports/cluster-probe.json,' +
+                                        'reports/binding-cleanup.json',
+                             allowEmptyArchive: true, fingerprint: true
+        } finally { deleteDir() }
+    }
+}""".replace("SOURCE_FILES", "\n        ".join(writes))
+    # Escape backslashes so the Groovy single-quoted shell text contains newline escapes.
+    script = script.replace("sh '#!/bin/sh\nset -eu\n", "sh '#!/bin/sh\\nset -eu\\n")
+    xml = (
+        "<flow-definition><description>"
+        "Owned read-only release credential boundary probe</description>"
+        "<keepDependencies>false</keepDependencies><properties>"
+        "<org.jenkinsci.plugins.workflow.job.properties.DisableConcurrentBuildsJobProperty/>"
+        '</properties><definition class="org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition">'
+        "<script>" + escape(script) + "</script><sandbox>true</sandbox></definition><triggers/>"
+        "<disabled>false</disabled></flow-definition>"
+    )
+    j = Jenkins(admin_password())
+    assert not loads(j.request("/queue/api/json"))["items"]
+    assert loads(j.request("/computer/finsecure-release/api/json"))["idle"]
+    record = {
+        "status": "pending",
+        "job": "finsecure-release/verify-boundaries",
+        "manual_probe_only": True,
+    }
+    created = False
+    with Client(
+        auth=BasicAuth("admin", admin_password()),
+        timeout=20,
+        trust_env=False,
+        follow_redirects=False,
+    ) as client:
+        crumb = client.get(BASE_URL + "/crumbIssuer/api/json").json()
+        headers = {crumb["crumbRequestField"]: crumb["crumb"]}
+        existing = client.get(BASE_URL + JOB + "/api/json").json()
+        assert existing["disabled"] and existing["lastBuild"]["number"] == 2
+        assert client.get(BASE_URL + JOB + "/2/api/json").json()["result"] == "SUCCESS"
+        current_xml = client.get(BASE_URL + JOB + "/config.xml").content
+        old = b64encode(
+            Path("reports/cloud-delivery/source-gate-initial/release_probe.py.txt").read_bytes()
+        ).decode()
+        new = b64encode(Path("ops/jenkins/release_probe.py").read_bytes()).decode()
+        assert fromstring(current_xml).find("definition/script").text.replace(old, new) == script
+        response = client.post(
+            BASE_URL + JOB + "/config.xml",
+            content=xml.replace("<disabled>false", "<disabled>true"),
+            headers={**headers, "Content-Type": "application/xml"},
+        )
+        assert response.status_code in {200, 302}
+        try:
+            created = True
+            response = client.post(BASE_URL + JOB + "/enable", headers=headers)
+            assert response.status_code in {200, 302}
+            response = client.post(BASE_URL + JOB + "/build", headers=headers)
+            assert response.status_code == 201
+            deadline = monotonic() + 240
+            build = None
+            while monotonic() < deadline:
+                response = client.get(BASE_URL + JOB + "/lastBuild/api/json")
+                if response.status_code == 200:
+                    build = response.json()
+                    if build["number"] == 3 and not build["building"]:
+                        break
+                sleep(2)
+            assert build is not None and build["number"] == 3 and not build["building"]
+            record.update(build=build["number"], result=build["result"])
+            out = Path("reports/cloud-delivery/binding-probe-current")
+            out.mkdir(exist_ok=True)
+            console = client.get(BASE_URL + JOB + f"/{build['number']}/consoleText").text
+            secrets = [
+                (Path.home() / ".config/finsecure-pay/release/dockerhub-ci-token").read_text(),
+                loads(
+                    (Path.home() / ".config/finsecure-pay/release/gke-deployer.json").read_text()
+                )["private_key"],
+                admin_password(),
+            ]
+            assert all(value not in console for value in secrets)
+            (out / "console.txt").write_text(console)
+            for artifact in build["artifacts"]:
+                name = artifact["relativePath"]
+                assert name in {
+                    "reports/registry-probe.json",
+                    "reports/cluster-probe.json",
+                    "reports/binding-cleanup.json",
+                }
+                response = client.get(BASE_URL + JOB + f"/{build['number']}/artifact/" + name)
+                response.raise_for_status()
+                assert all(value not in response.text for value in secrets)
+                (out / Path(name).name).write_text(response.text)
+            assert build["result"] == "SUCCESS" and len(build["artifacts"]) == 3
+            record["status"] = "verified"
+        finally:
+            if created:
+                current = client.get(BASE_URL + JOB + "/lastBuild/api/json").json()
+                if current["number"] == 3 and current["building"]:
+                    client.post(BASE_URL + JOB + "/3/stop", headers=headers)
+                    record["owned_probe_stop_requested"] = True
+                response = client.post(BASE_URL + JOB + "/disable", headers=headers)
+                record["job_disabled"] = response.status_code in {200, 302}
+            Path("reports/cloud-delivery/binding-probe-current-result.json").write_text(
+                dumps(record, indent=2) + "\n"
+            )
+    print(dumps(record, indent=2))
+
+
+if __name__ == "__main__":
+    main()

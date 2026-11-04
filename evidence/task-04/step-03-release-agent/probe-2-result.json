@@ -1,0 +1,8 @@
+{
+  "status": "verified",
+  "job": "finsecure-release/verify-boundaries",
+  "manual_probe_only": true,
+  "build": 2,
+  "result": "SUCCESS",
+  "job_disabled": true
+}

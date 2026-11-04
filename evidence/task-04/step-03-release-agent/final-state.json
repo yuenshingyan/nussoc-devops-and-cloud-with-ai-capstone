@@ -1,0 +1,28 @@
+{
+  "observed_at_utc": "2026-11-04T03:31:33.199270+00:00",
+  "status": "verified",
+  "application_matches_deployer_checkpoint": true,
+  "application": {
+    "deployment_uid": "aadc396b-cf58-4929-96d1-0e225d8b4256",
+    "generation": 1,
+    "spec_sha256": "158af9a81aa2cf64a3252a974a3627f3f6134c5f1cbf0a9e1178550bff3b39bb",
+    "ready_pod_uids": [
+      "67692746-e7a6-4929-bcbd-ef91199520ad",
+      "c878c97b-552a-4c4c-aa4f-9d0b01a71346"
+    ],
+    "available_replicas": 2
+  },
+  "public_health_status": 200,
+  "normal_ci_build": 34,
+  "normal_ci_result": "SUCCESS",
+  "plugin_count": 73,
+  "plugin_versions_unchanged": true,
+  "diagnostic_job_disabled": true,
+  "release_worker_stopped": true,
+  "release_worker_exit_code": 143,
+  "source_worker_online": true,
+  "queue_empty": true,
+  "reason": "Trusted job scheduling guard and release orchestration remain pending",
+  "registry_upload_attempted": false,
+  "deployment_attempted": false
+}

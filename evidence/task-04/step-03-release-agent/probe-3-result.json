@@ -1,0 +1,8 @@
+{
+  "status": "pending",
+  "job": "finsecure-release/verify-boundaries",
+  "manual_probe_only": true,
+  "build": 3,
+  "result": "FAILURE",
+  "job_disabled": true
+}

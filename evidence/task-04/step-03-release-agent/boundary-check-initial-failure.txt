@@ -1,0 +1,11 @@
+Traceback (most recent call last):
+  File "<repository>/ops/jenkins/verify_release.py", line 161, in <module>
+    main()
+    ~~~~^^
+  File "<repository>/ops/jenkins/verify_release.py", line 109, in main
+    processes = command(["docker", "top", container, "-eo", "args"])
+  File "<repository>/ops/jenkins/bootstrap.py", line 49, in command
+    raise RuntimeError(
+        "Local Docker command failed; inspect the owned service without exposing secrets"
+    )
+RuntimeError: Local Docker command failed; inspect the owned service without exposing secrets

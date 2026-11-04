@@ -1,5 +1,5 @@
 jenkins:
-  systemMessage: "FinSecure Pay — local application CI; no image publishing or cloud deployment configured."
+  systemMessage: "FinSecure Pay — private local Jenkins administration."
   numExecutors: 0
   scmCheckoutRetryCount: 0
   slaveAgentPort: -1
@@ -26,6 +26,18 @@ jenkins:
         remoteFS: /home/jenkins/agent
         numExecutors: 1
         labelString: python
+        mode: EXCLUSIVE
+        launcher:
+          inbound:
+            workDirSettings:
+              disabled: false
+              internalDir: remoting
+              failIfWorkDirIsMissing: false
+    - permanent:
+        name: finsecure-release
+        remoteFS: /home/jenkins/agent
+        numExecutors: 1
+        labelString: release
         mode: EXCLUSIVE
         launcher:
           inbound:

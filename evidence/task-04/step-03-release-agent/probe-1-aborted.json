@@ -1,0 +1,8 @@
+{
+  "build": 1,
+  "result": "ABORTED",
+  "cause": "temporary filesystem below unchanged default 1 GiB monitor threshold",
+  "credential_steps_started": false,
+  "job_disabled": true,
+  "queue_empty": true
+}

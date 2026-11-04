@@ -13,8 +13,8 @@ and report retention on an isolated failure. Cloud delivery remains unverified.
 | --- | --- | --- |
 | 1 — Application and Git | [task-01](task-01/) | Complete and merged |
 | 2 — Containerisation | [task-02](task-02/) | Complete, reviewed, merged, and published |
-| 3 — Kubernetes and cloud | [task-03](task-03/) | Steps 3.1–3.2 merged; cloud execution deferred |
-| 4 — CI/CD | [task-04](task-04/) | Steps 4.1–4.2 merged; Step 4.3 local build/export merged and SCM-verified (245 tests/image smoke); Step 4.4 local SCM/test-gate merged and SCM-verified (260 tests); publishing/deployment pending |
+| 3 — Kubernetes and cloud | [task-03](task-03/) | GKE deployment and one-Pod recovery published; two Ready replicas verified |
+| 4 — CI/CD | [task-04](task-04/) | Local build/export and SCM/test gates published; deployer and release-worker credential probes verified. Worker stopped pending scheduling guard; automatic publishing/deployment pending |
 | 5 — DevSecOps | [task-05](task-05/) | Step 5.1 merged/SCM-verified; Step 5.2 merged/published and SCM-verified (410 tests, passing image gate, 33 verified artifacts) |
 | 6 — Observability | [task-06](task-06/) | Local metrics/dashboard/alert configuration merged; recovery and SCM #24 verified (584 tests, 33 artifacts). Step 6.4 actual firing/recovery SMTP receipt and screenshots published; SCM #25 passed 584 tests/all gates/33 artifact checks. Step 6.5 local subset verified: 654 candidate CI tests/all gates/33 artifacts, actual Jenkins mail, exact gated-image JSON logs and Pipeline interruption checks; review/publication pending. Managed metrics/centralized cloud logs remain pending. |
 | 7 — Documentation and demonstration | [task-07](task-07/) | Pending |
@@ -202,6 +202,10 @@ and report retention on an isolated failure. Cloud delivery remains unverified.
   published accessible reports, and provided packages with verified download hashes.
   The build was manually triggered; no source-trigger, release, or deployment gate is claimed.
 
+- [Step 4.3 — Release-worker and credential checkpoint](task-04/step-03-release-agent.md):
+  actual worker/tool build, scoped imports and read-only Jenkins bindings verified;
+  936 host tests and source gates passed. Failed attempts retained. Worker stopped
+  pending trusted-job scheduling enforcement; no upload/deployment or SCM-release claim.
 - [Step 4.3 — Local rootless image building (partial)](task-04/step-03-local-image-builder.md):
   candidate Jenkins build exported an ARM64 image, downloaded checksum/configuration
   matched, and the loaded image passed local non-root/HTTP/shutdown checks. Failure
