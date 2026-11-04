@@ -11,8 +11,14 @@ The operator approved an isolated local Jenkins release agent, registry-upload/G
 client tools, a Docker Hub CI token and a dedicated least-privilege Google deployer
 service account using a service-account key held in Jenkins credentials.
 
-**Not yet implemented:** release agent, release jobs, registry upload, Google deployer,
-key creation/import, IAM/RBAC grants or cloud deployment stages. The current Jenkinsfile
+**Implemented and live-verified:** dedicated Google deployer, one private JSON key,
+project cluster-discovery grant and namespaced Role/RoleBinding. Six allowed and ten
+denied access reviews passed using that identity; an actual Secret-list request was
+forbidden. Application state remained unchanged. See
+[deployer evidence](../../evidence/task-04/step-03-deployer-identity.md).
+
+**Not yet implemented:** release agent, release jobs, registry upload, Jenkins credential
+import or cloud deployment stages. The current Jenkinsfile
 still exports/scans ARM64 and has no publishing/deployment stage. Read-only inspection
 confirmed the existing BuildKit worker advertises AMD64 support; this is not yet an
 actual AMD64 Jenkins build/gate result.
@@ -117,8 +123,8 @@ Pod Security enforcement applies to Pods; acceptance of a Deployment dry run alo
 would not prove its future Pods pass admission. Preserve rejection evidence and stop
 on unexpected results, rather than relaxing the policy.
 
-The candidate `deploy/kubernetes/delivery/role.yaml` is deliberately separate from the
-application overlay. It is not installed/bound. It permits patch/get/watch of the named
+`deploy/kubernetes/delivery/role.yaml` is deliberately separate from the application
+overlay. It is now installed and bound to the dedicated Google deployer identity. It permits patch/get/watch of the named
 Deployment, read-only Pods/ReplicaSets in this namespace and get of the named Service.
 It grants no direct Secret reads, exec, create/delete, node or RBAC operations.
 The predefined Google `roles/container.clusterViewer` was inspected read-only and
@@ -131,11 +137,63 @@ availability and mount Secrets available in its namespace. Keep unrelated worklo
 privileged service accounts and sensitive Secrets out of this namespace. Direct Secret
 API denial is not a guarantee against indirect access through a modified workload.
 Only reviewed main release code should hold this credential. Provider grants, role
-binding and actual positive/negative service-account tests remain pending.
+binding and actual positive/negative service-account tests are now verified. No Jenkins
+job has received this credential yet.
+
+## Approved deployer bootstrap execution contract
+
+The one-time operator bootstrap created `finsecure-gke-deployer` in the already-selected
+capstone project, granted only `roles/container.clusterViewer` at project scope, created
+the reviewed namespaced Role and a User RoleBinding for that Google service-account
+email, then created one JSON key outside Git. It refuses an existing account, Role,
+RoleBinding, key file or execution record instead of replacing/retrying setup.
+
+All SDK/Kubernetes command output remains in a new private mode-0700 setup directory;
+files use mode 0600. Each subprocess has at most 60 seconds (Kubernetes requests also
+use 20 seconds), within a 600-second overall observation budget. There is one 120-second
+wait after the IAM grant for propagation. There are no wrapper retries. The SDK may
+perform internal transport retries; an unsuccessful/ambiguous mutation stops setup
+for inspection, without automatic rollback or credential replacement.
+
+The new key is activated only in a separate temporary-purpose SDK configuration and
+kubeconfig, never the operator's normal profile. Credential override environment
+variables are removed from that probe environment. Verify the active identity, actual
+cluster/deployment read access, positive and negative self-access reviews, and a direct
+forbidden Secret-list request. No image patch or workload execution is part of setup.
+Compare application state before/after and verify public health. Remove the owned probe
+SDK/token-cache/kubeconfig directory after checks; retain the private original key for
+later Jenkins import. On failure retain private diagnostics and inspect partial cloud
+state before any further action. A successful setup does not enable Jenkins delivery.
+
+### Actual bootstrap outcome and retained credentials
+
+All five creation/grant commands succeeded once. The immediate key listing was empty,
+so setup stopped rather than creating another key. After one 120-second propagation
+wait, the existing key appeared. That read-only verification then stopped because GKE
+returned `no - reason` while the original checker expected exactly `no`. The corrected
+parser has 14 regression cases and rejects CLI errors/contradictory results. A separate
+read-only final verification passed all 16 access reviews and the actual denied Secret
+list. No grant was widened and no key was replaced. Both failed records are retained.
+
+The key remains at `~/.config/finsecure-pay/release/gke-deployer.json`, mode 0600.
+Owned probe SDK profiles, token caches and kubeconfigs were removed. Private diagnostic
+outputs remain outside Git in `release/deployer-setup`, `release/deployer-verification`
+and `release/deployer-final-verification`. Do not print or copy those raw files into
+submission evidence. The ordinary operator profile/kubeconfig was not replaced.
+
+### Credential teardown — future approval, not performed
+
+At the planned 19 November review, after grading: disable release jobs first, remove
+the application's `finsecure-deployer` RoleBinding/Role, revoke the recorded Google key
+and Docker Hub token, remove the deployer's project IAM binding/service account, then
+remove its Jenkins credentials and private local key. Confirm every actual outcome;
+deleting a key alone does not promise immediate invalidation of previously issued
+access tokens. Do not affect `finsecure-gke-node` until the separate cluster teardown.
+There is still no automatic key expiry, rotation, revocation or scheduled cleanup.
 
 ## Remaining verification
 
 Actual AMD64 CI build and scan; tool supply-chain checks; isolated agent provisioning;
-credential import and scope checks; positive/negative Google authorization; trusted-main
+credential import and Jenkins isolation checks; trusted-main
 release selection; immutable upload identity; healthy rollout and smoke checks; retained
 failure reports. Full delivery is pending until all of these run successfully.

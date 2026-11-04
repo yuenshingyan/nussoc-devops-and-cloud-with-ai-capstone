@@ -1,0 +1,35 @@
+{
+  "started_at_utc": "2026-11-04T01:49:06.523701+00:00",
+  "status": "failed",
+  "mutation_attempts": [
+    "create-service-account",
+    "grant-cluster-discovery",
+    "create-namespace-role",
+    "create-namespace-binding",
+    "create-service-account-key"
+  ],
+  "successful_mutations": [
+    "create-service-account",
+    "grant-cluster-discovery",
+    "create-namespace-role",
+    "create-namespace-binding",
+    "create-service-account-key"
+  ],
+  "access_checks": [],
+  "image_deployment_attempted": false,
+  "jenkins_imported": false,
+  "last_operation": "verify-user-managed-key",
+  "before": {
+    "deployment_uid": "aadc396b-cf58-4929-96d1-0e225d8b4256",
+    "generation": 1,
+    "spec_sha256": "158af9a81aa2cf64a3252a974a3627f3f6134c5f1cbf0a9e1178550bff3b39bb",
+    "ready_pod_uids": [
+      "67692746-e7a6-4929-bcbd-ef91199520ad",
+      "c878c97b-552a-4c4c-aa4f-9d0b01a71346"
+    ],
+    "available_replicas": 2
+  },
+  "unrelated_project_iam_bindings_preserved": true,
+  "error_type": "AssertionError",
+  "finished_at_utc": "2026-11-04T01:49:22.957991+00:00"
+}

@@ -1,0 +1,237 @@
+"""Read-only follow-up after successful creation and an empty immediate key listing."""
+
+from datetime import UTC, datetime
+from json import dumps, loads
+from os import getuid, umask
+from pathlib import Path
+from runpy import run_path
+from shutil import rmtree
+from stat import S_IMODE, S_ISREG
+from time import monotonic
+
+from httpx2 import Client
+
+helpers = run_path("reports/cloud-delivery/setup-deployer.py")
+state = helpers["command"].__globals__
+OUT = Path("reports/cloud-delivery/deployer-final-verification.json")
+PRIVATE = Path.home() / ".config/finsecure-pay/release/deployer-final-verification"
+SDK = state["SDK"]
+ENV = state["ENV"]
+NAMESPACE = state["NAMESPACE"]
+RECORD = {
+    "started_at_utc": datetime.now(UTC).isoformat(),
+    "status": "pending",
+    "mutation_attempts": [],
+    "successful_mutations": [],
+    "access_checks": [],
+    "image_deployment_attempted": False,
+    "jenkins_imported": False,
+    "iam_propagation_wait_seconds": 0,
+    "prior_propagation_wait_completed": True,
+}
+state.update(OUT=OUT, PRIVATE=PRIVATE, RECORD=RECORD, DEADLINE=monotonic() + 600)
+command = helpers["command"]
+google = helpers["google"]
+kube = helpers["kube"]
+save = helpers["save"]
+application_state = helpers["application_state"]
+access_review_allowed = run_path("scripts/release_access.py")["access_review_allowed"]
+
+
+def main() -> None:
+    """Verify the existing identity without repeating setup, grant or key creation."""
+    with OUT.open("x", encoding="utf-8") as initial:
+        initial.write(dumps(RECORD) + "\n")
+    previous_umask = umask(0o077)
+    profile = PRIVATE / "probe-profile"
+    try:
+        initial = loads(Path("reports/cloud-delivery/deployer-setup.json").read_text())
+        assert initial["successful_mutations"] == [
+            "create-service-account",
+            "grant-cluster-discovery",
+            "create-namespace-role",
+            "create-namespace-binding",
+            "create-service-account-key",
+        ]
+        assert initial["last_operation"] == "verify-user-managed-key"
+        helpers["run_path"]("scripts/release_credentials.py")["private_directory"]()
+        PRIVATE.mkdir(mode=0o700, exist_ok=False)
+        key_path = PRIVATE.parent / "gke-deployer.json"
+        info = key_path.lstat()
+        assert (
+            S_ISREG(info.st_mode)
+            and S_IMODE(info.st_mode) == 0o600
+            and info.st_uid == getuid()
+            and info.st_nlink == 1
+        )
+        key = loads(key_path.read_text())
+        project = command(
+            "selected-project", [SDK + "/gcloud", "config", "get-value", "project"]
+        ).stdout.strip()
+        email = "finsecure-gke-deployer@" + project + ".iam.gserviceaccount.com"
+        assert (
+            key["type"] == "service_account"
+            and key["client_email"] == email
+            and key["project_id"] == project
+        )
+        save()
+        keys = google(
+            "verify-existing-key",
+            [
+                "iam",
+                "service-accounts",
+                "keys",
+                "list",
+                "--managed-by=user",
+                "--iam-account=" + email,
+                "--project=" + project,
+            ],
+        )
+        assert len(keys) == 1 and keys[0]["name"].endswith("/keys/" + key["private_key_id"])
+        RECORD.update(private_key_file_verified=True, user_managed_key_count=1)
+        role = kube("verify-role", ["-n", NAMESPACE, "get", "role", "finsecure-deployer"])
+        expected_role = helpers["safe_load"](
+            Path("deploy/kubernetes/delivery/role.yaml").read_text()
+        )
+        assert role["rules"] == expected_role["rules"]
+        binding = kube(
+            "verify-binding", ["-n", NAMESPACE, "get", "rolebinding", "finsecure-deployer"]
+        )
+        assert binding["subjects"] == [
+            {"kind": "User", "apiGroup": "rbac.authorization.k8s.io", "name": email}
+        ]
+        assert binding["roleRef"] == {
+            "apiGroup": "rbac.authorization.k8s.io",
+            "kind": "Role",
+            "name": "finsecure-deployer",
+        }
+        profile.mkdir(mode=0o700)
+        clean = {
+            k: v
+            for k, v in ENV.items()
+            if not k.startswith(("CLOUDSDK_", "GOOGLE_", "GKE_", "KUBERNETES_"))
+        }
+        clean.update(
+            CLOUDSDK_CONFIG=str(profile),
+            KUBECONFIG=str(profile / "kubeconfig"),
+            CLOUDSDK_CORE_DISABLE_PROMPTS="1",
+            USE_GKE_GCLOUD_AUTH_PLUGIN="True",
+        )
+        command(
+            "activate-isolated-key",
+            [
+                SDK + "/gcloud",
+                "auth",
+                "activate-service-account",
+                email,
+                "--key-file=" + str(key_path),
+                "--project=" + project,
+                "--quiet",
+            ],
+            env=clean,
+        )
+        identities = google("verify-isolated-identity", ["auth", "list"], env=clean)
+        assert (
+            len(identities) == 1
+            and identities[0]["account"] == email
+            and identities[0]["status"] == "ACTIVE"
+        )
+        command(
+            "get-isolated-cluster-credentials",
+            [
+                SDK + "/gcloud",
+                "container",
+                "clusters",
+                "get-credentials",
+                "finsecure-pay-demo",
+                "--zone=asia-southeast1-a",
+                "--dns-endpoint",
+                "--project=" + project,
+                "--quiet",
+            ],
+            env=clean,
+        )
+        actual = kube(
+            "deployer-read-deployment", ["-n", NAMESPACE, "get", "deployment", NAMESPACE], env=clean
+        )
+        assert actual["metadata"]["uid"] == initial["before"]["deployment_uid"]
+        cases = [
+            ("get-application", "get", "deployment/finsecure-pay", NAMESPACE, True, []),
+            ("patch-application", "patch", "deployment/finsecure-pay", NAMESPACE, True, []),
+            ("watch-application", "watch", "deployment/finsecure-pay", NAMESPACE, True, []),
+            ("list-pods", "list", "pods", NAMESPACE, True, []),
+            ("list-replicasets", "list", "replicasets", NAMESPACE, True, []),
+            ("get-service", "get", "service/finsecure-pay", NAMESPACE, True, []),
+            ("deny-secrets", "get", "secrets", NAMESPACE, False, []),
+            ("deny-exec", "create", "pods", NAMESPACE, False, ["--subresource=exec"]),
+            ("deny-pod-create", "create", "pods", NAMESPACE, False, []),
+            ("deny-pod-delete", "delete", "pods", NAMESPACE, False, []),
+            ("deny-service-patch", "patch", "service/finsecure-pay", NAMESPACE, False, []),
+            ("deny-other-deployment", "patch", "deployment/unrelated", NAMESPACE, False, []),
+            ("deny-other-namespace", "patch", "deployment/finsecure-pay", "default", False, []),
+            ("deny-nodes", "patch", "nodes", NAMESPACE, False, []),
+            ("deny-rbac", "create", "rolebindings", NAMESPACE, False, []),
+            ("deny-namespace-policy", "patch", "namespace/finsecure-pay", NAMESPACE, False, []),
+        ]
+        for name, verb, resource, namespace_name, allowed, extra in cases:
+            result = command(
+                name,
+                [
+                    "kubectl",
+                    "--request-timeout=20s",
+                    "auth",
+                    "can-i",
+                    verb,
+                    resource,
+                    "-n",
+                    namespace_name,
+                    *extra,
+                ],
+                env=clean,
+                require_success=False,
+            )
+            assert access_review_allowed(result.returncode, result.stdout) is allowed
+            RECORD["access_checks"].append({"case": name, "allowed": allowed, "verified": True})
+            save()
+        denied = command(
+            "direct-secret-list-denied",
+            ["kubectl", "--request-timeout=20s", "-n", NAMESPACE, "get", "secrets"],
+            env=clean,
+            require_success=False,
+        )
+        assert (
+            denied.returncode != 0
+            and "Forbidden" in denied.stderr
+            and "cannot list resource" in denied.stderr
+        )
+        RECORD["direct_secret_list_forbidden"] = True
+        after = application_state("after")
+        assert initial["before"] == after
+        with Client(timeout=5, trust_env=False, follow_redirects=False) as client:
+            response = client.get("http://35.198.197.186/health")
+            assert response.status_code == 200 and response.json() == {"status": "healthy"}
+        RECORD.update(
+            status="verified",
+            active_deployer_identity_verified=True,
+            google_role="roles/container.clusterViewer",
+            namespace_role="finsecure-deployer",
+            before=initial["before"],
+            after=after,
+            public_health_status=200,
+        )
+    except Exception as error:
+        RECORD.update(status="failed", error_type=type(error).__name__)
+    finally:
+        if profile.exists():
+            rmtree(profile)
+            RECORD["owned_probe_profile_removed"] = True
+        RECORD["finished_at_utc"] = datetime.now(UTC).isoformat()
+        save()
+        umask(previous_umask)
+    print(dumps(RECORD, indent=2))
+    if RECORD["status"] != "verified":
+        raise SystemExit(2)
+
+
+if __name__ == "__main__":
+    main()

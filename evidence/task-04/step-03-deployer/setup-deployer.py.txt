@@ -1,0 +1,383 @@
+"""Approved one-time IAM/RBAC/key bootstrap; never deploy an image or retry setup."""
+
+from datetime import UTC, datetime
+from hashlib import sha256
+from json import dumps, loads
+from os import environ, getuid, umask
+from pathlib import Path
+from re import fullmatch
+from runpy import run_path
+from shutil import rmtree
+from stat import S_IMODE, S_ISREG
+from subprocess import CompletedProcess, run
+from time import monotonic, sleep
+
+from httpx2 import Client
+from yaml import safe_load
+
+SDK = "/opt/homebrew/share/google-cloud-sdk/bin"
+OUT = Path("reports/cloud-delivery/deployer-setup.json")
+ROLE_NAME = "finsecure-deployer"
+NAMESPACE = "finsecure-pay"
+ACCOUNT_NAME = "finsecure-gke-deployer"
+GOOGLE_ROLE = "roles/container.clusterViewer"
+ENV = {
+    **environ,
+    "PATH": SDK + ":" + environ["PATH"],
+    "KUBECONFIG": str(Path.home() / ".config/finsecure-pay/gke/kubeconfig"),
+    "CLOUDSDK_CORE_DISABLE_PROMPTS": "1",
+}
+RECORD = {
+    "started_at_utc": datetime.now(UTC).isoformat(),
+    "status": "pending",
+    "mutation_attempts": [],
+    "successful_mutations": [],
+    "access_checks": [],
+    "image_deployment_attempted": False,
+    "jenkins_imported": False,
+}
+DEADLINE = monotonic() + 600
+PRIVATE = Path.home() / ".config/finsecure-pay/release/deployer-setup"
+
+
+def save() -> None:
+    OUT.write_text(dumps(RECORD, indent=2) + "\n", encoding="utf-8")
+
+
+def command(
+    label: str,
+    args: list[str],
+    *,
+    env: dict | None = None,
+    payload: dict | None = None,
+    mutation: bool = False,
+    require_success: bool = True,
+) -> CompletedProcess[str]:
+    remaining = DEADLINE - monotonic()
+    if remaining <= 0:
+        raise RuntimeError("SETUP_BUDGET_EXHAUSTED")
+    RECORD["last_operation"] = label
+    if mutation:
+        RECORD["mutation_attempts"].append(label)
+    save()
+    result = run(
+        args,
+        env=ENV if env is None else env,
+        input=None if payload is None else dumps(payload),
+        capture_output=True,
+        text=True,
+        timeout=min(60, remaining),
+        check=False,
+    )
+    (PRIVATE / (label + ".stdout")).write_text(result.stdout)
+    (PRIVATE / (label + ".stderr")).write_text(result.stderr)
+    if require_success and result.returncode:
+        raise RuntimeError("COMMAND_FAILED_INSPECT_PRIVATE_DIAGNOSTICS")
+    if mutation and result.returncode == 0:
+        RECORD["successful_mutations"].append(label)
+        save()
+    return result
+
+
+def google(label: str, args: list[str], **kwargs: object) -> dict | list:
+    return loads(
+        command(label, [SDK + "/gcloud", *args, "--format=json", "--quiet"], **kwargs).stdout
+    )
+
+
+def kube(label: str, args: list[str], **kwargs: object) -> dict:
+    return loads(
+        command(label, ["kubectl", "--request-timeout=20s", *args, "-o=json"], **kwargs).stdout
+    )
+
+
+def application_state(prefix: str) -> dict:
+    deployment = kube(prefix + "-deployment", ["-n", NAMESPACE, "get", "deployment", NAMESPACE])
+    pods = kube(
+        prefix + "-pods",
+        ["-n", NAMESPACE, "get", "pods", "-l", "app.kubernetes.io/name=finsecure-pay"],
+    )["items"]
+    assert deployment["status"].get("availableReplicas") == 2 and len(pods) == 2
+    assert all(
+        not p["metadata"].get("deletionTimestamp")
+        and any(c["type"] == "Ready" and c["status"] == "True" for c in p["status"]["conditions"])
+        for p in pods
+    )
+    return {
+        "deployment_uid": deployment["metadata"]["uid"],
+        "generation": deployment["metadata"]["generation"],
+        "spec_sha256": sha256(dumps(deployment["spec"], sort_keys=True).encode()).hexdigest(),
+        "ready_pod_uids": sorted(p["metadata"]["uid"] for p in pods),
+        "available_replicas": 2,
+    }
+
+
+def bindings(policy: dict) -> set[tuple[str, str, str]]:
+    return {
+        (entry["role"], member, dumps(entry.get("condition"), sort_keys=True))
+        for entry in policy["bindings"]
+        for member in entry["members"]
+    }
+
+
+def main() -> None:
+    """Keep mutation records and private diagnostics; stop rather than changing policy."""
+    with OUT.open("x", encoding="utf-8") as initial:
+        initial.write(dumps(RECORD) + "\n")
+    previous_umask = umask(0o077)
+    probe_directory = PRIVATE / "probe-profile"
+    try:
+        directory = run_path("scripts/release_credentials.py")["private_directory"]()
+        assert directory == PRIVATE.parent
+        PRIVATE.mkdir(mode=0o700, exist_ok=False)
+        key_path = directory / "gke-deployer.json"
+        assert not key_path.exists() and not key_path.is_symlink()
+        project = command(
+            "selected-project", [SDK + "/gcloud", "config", "get-value", "project"]
+        ).stdout.strip()
+        assert fullmatch(r"finsecure-pay-capstone-[a-f0-9]{6}", project)
+        context = command(
+            "operator-context", ["kubectl", "config", "current-context"]
+        ).stdout.strip()
+        assert context == f"gke_{project}_asia-southeast1-a_finsecure-pay-demo"
+        email = ACCOUNT_NAME + "@" + project + ".iam.gserviceaccount.com"
+        accounts = google(
+            "existing-accounts", ["iam", "service-accounts", "list", "--project=" + project]
+        )
+        assert not any(a["email"] == email for a in accounts)
+        for kind in ["roles", "rolebindings"]:
+            existing = kube("existing-" + kind, ["-n", NAMESPACE, "get", kind])["items"]
+            assert not any(item["metadata"]["name"] == ROLE_NAME for item in existing)
+        namespace = kube("namespace-policy", ["get", "namespace", NAMESPACE])
+        expected = safe_load(
+            Path("deploy/kubernetes/overlays/gke/namespace-policy.yaml").read_text()
+        )["metadata"]["labels"]
+        assert all(namespace["metadata"]["labels"].get(k) == v for k, v in expected.items())
+        role = safe_load(Path("deploy/kubernetes/delivery/role.yaml").read_text())
+        assert role["kind"] == "Role" and role["metadata"] == {
+            "name": ROLE_NAME,
+            "namespace": NAMESPACE,
+        }
+        before_policy = google("iam-before", ["projects", "get-iam-policy", project])
+        before = application_state("before")
+        RECORD["before"] = before
+        save()
+        account = google(
+            "create-service-account",
+            [
+                "iam",
+                "service-accounts",
+                "create",
+                ACCOUNT_NAME,
+                "--display-name=FinSecure application deployer",
+                "--project=" + project,
+            ],
+            mutation=True,
+        )
+        assert account["email"] == email and not account.get("disabled", False)
+        after_policy = google(
+            "grant-cluster-discovery",
+            [
+                "projects",
+                "add-iam-policy-binding",
+                project,
+                "--member=serviceAccount:" + email,
+                "--role=" + GOOGLE_ROLE,
+                "--condition=None",
+            ],
+            mutation=True,
+        )
+        grant_time = monotonic()
+        assert bindings(after_policy) == bindings(before_policy) | {
+            (GOOGLE_ROLE, "serviceAccount:" + email, "null")
+        }
+        RECORD["unrelated_project_iam_bindings_preserved"] = True
+        kube("create-namespace-role", ["create", "-f", "-"], payload=role, mutation=True)
+        binding = {
+            "apiVersion": "rbac.authorization.k8s.io/v1",
+            "kind": "RoleBinding",
+            "metadata": {"name": ROLE_NAME, "namespace": NAMESPACE},
+            "subjects": [{"kind": "User", "apiGroup": "rbac.authorization.k8s.io", "name": email}],
+            "roleRef": {"apiGroup": "rbac.authorization.k8s.io", "kind": "Role", "name": ROLE_NAME},
+        }
+        kube("create-namespace-binding", ["create", "-f", "-"], payload=binding, mutation=True)
+        command(
+            "create-service-account-key",
+            [
+                SDK + "/gcloud",
+                "iam",
+                "service-accounts",
+                "keys",
+                "create",
+                str(key_path),
+                "--iam-account=" + email,
+                "--project=" + project,
+                "--key-file-type=json",
+                "--quiet",
+            ],
+            mutation=True,
+        )
+        info = key_path.lstat()
+        assert (
+            S_ISREG(info.st_mode)
+            and S_IMODE(info.st_mode) == 0o600
+            and info.st_uid == getuid()
+            and info.st_nlink == 1
+        )
+        key = loads(key_path.read_text())
+        assert (
+            key["type"] == "service_account"
+            and key["client_email"] == email
+            and key["project_id"] == project
+        )
+        keys = google(
+            "verify-user-managed-key",
+            [
+                "iam",
+                "service-accounts",
+                "keys",
+                "list",
+                "--managed-by=user",
+                "--iam-account=" + email,
+                "--project=" + project,
+            ],
+        )
+        assert len(keys) == 1 and keys[0]["name"].endswith("/keys/" + key["private_key_id"])
+        RECORD["private_key_file_verified"] = True
+        RECORD["user_managed_key_count"] = 1
+        probe_directory.mkdir(mode=0o700)
+        clean = {
+            k: v
+            for k, v in ENV.items()
+            if not k.startswith(("CLOUDSDK_", "GOOGLE_", "GKE_", "KUBERNETES_"))
+        }
+        clean.update(
+            CLOUDSDK_CONFIG=str(probe_directory),
+            KUBECONFIG=str(probe_directory / "kubeconfig"),
+            CLOUDSDK_CORE_DISABLE_PROMPTS="1",
+            USE_GKE_GCLOUD_AUTH_PLUGIN="True",
+        )
+        command(
+            "activate-isolated-key",
+            [
+                SDK + "/gcloud",
+                "auth",
+                "activate-service-account",
+                email,
+                "--key-file=" + str(key_path),
+                "--project=" + project,
+                "--quiet",
+            ],
+            env=clean,
+        )
+        identities = google("verify-isolated-identity", ["auth", "list"], env=clean)
+        assert (
+            len(identities) == 1
+            and identities[0]["account"] == email
+            and identities[0]["status"] == "ACTIVE"
+        )
+        remaining_wait = max(0, 120 - (monotonic() - grant_time))
+        assert DEADLINE - monotonic() > remaining_wait + 30
+        RECORD["iam_propagation_wait_seconds"] = remaining_wait
+        save()
+        sleep(remaining_wait)
+        command(
+            "get-isolated-cluster-credentials",
+            [
+                SDK + "/gcloud",
+                "container",
+                "clusters",
+                "get-credentials",
+                "finsecure-pay-demo",
+                "--zone=asia-southeast1-a",
+                "--dns-endpoint",
+                "--project=" + project,
+                "--quiet",
+            ],
+            env=clean,
+        )
+        actual = kube(
+            "deployer-read-deployment", ["-n", NAMESPACE, "get", "deployment", NAMESPACE], env=clean
+        )
+        assert actual["metadata"]["uid"] == before["deployment_uid"]
+        cases = [
+            ("get-application", "get", "deployment/finsecure-pay", NAMESPACE, True, []),
+            ("patch-application", "patch", "deployment/finsecure-pay", NAMESPACE, True, []),
+            ("watch-application", "watch", "deployment/finsecure-pay", NAMESPACE, True, []),
+            ("list-pods", "list", "pods", NAMESPACE, True, []),
+            ("list-replicasets", "list", "replicasets", NAMESPACE, True, []),
+            ("get-service", "get", "service/finsecure-pay", NAMESPACE, True, []),
+            ("deny-secrets", "get", "secrets", NAMESPACE, False, []),
+            ("deny-exec", "create", "pods", NAMESPACE, False, ["--subresource=exec"]),
+            ("deny-pod-create", "create", "pods", NAMESPACE, False, []),
+            ("deny-pod-delete", "delete", "pods", NAMESPACE, False, []),
+            ("deny-service-patch", "patch", "service/finsecure-pay", NAMESPACE, False, []),
+            ("deny-other-deployment", "patch", "deployment/unrelated", NAMESPACE, False, []),
+            ("deny-other-namespace", "patch", "deployment/finsecure-pay", "default", False, []),
+            ("deny-nodes", "patch", "nodes", NAMESPACE, False, []),
+            ("deny-rbac", "create", "rolebindings", NAMESPACE, False, []),
+            ("deny-namespace-policy", "patch", "namespace/finsecure-pay", NAMESPACE, False, []),
+        ]
+        for name, verb, resource, namespace_name, allowed, extra in cases:
+            result = command(
+                name,
+                [
+                    "kubectl",
+                    "--request-timeout=20s",
+                    "auth",
+                    "can-i",
+                    verb,
+                    resource,
+                    "-n",
+                    namespace_name,
+                    *extra,
+                ],
+                env=clean,
+                require_success=False,
+            )
+            assert result.returncode == (0 if allowed else 1) and result.stdout.strip() == (
+                "yes" if allowed else "no"
+            )
+            RECORD["access_checks"].append({"case": name, "allowed": allowed, "verified": True})
+            save()
+        denied = command(
+            "direct-secret-list-denied",
+            ["kubectl", "--request-timeout=20s", "-n", NAMESPACE, "get", "secrets"],
+            env=clean,
+            require_success=False,
+        )
+        assert (
+            denied.returncode != 0
+            and "Forbidden" in denied.stderr
+            and "cannot list resource" in denied.stderr
+        )
+        RECORD["direct_secret_list_forbidden"] = True
+        after = application_state("after")
+        assert before == after
+        with Client(timeout=5, trust_env=False, follow_redirects=False) as client:
+            response = client.get("http://35.198.197.186/health")
+            assert response.status_code == 200 and response.json() == {"status": "healthy"}
+        RECORD.update(
+            status="verified",
+            active_deployer_identity_verified=True,
+            google_role=GOOGLE_ROLE,
+            namespace_role=ROLE_NAME,
+            after=after,
+            public_health_status=200,
+        )
+    except Exception as error:
+        RECORD.update(status="failed", error_type=type(error).__name__)
+    finally:
+        if probe_directory.exists():
+            rmtree(probe_directory)
+            RECORD["owned_probe_profile_removed"] = True
+        RECORD["finished_at_utc"] = datetime.now(UTC).isoformat()
+        save()
+        umask(previous_umask)
+    print(dumps(RECORD, indent=2))
+    if RECORD["status"] != "verified":
+        raise SystemExit(2)
+
+
+if __name__ == "__main__":
+    main()

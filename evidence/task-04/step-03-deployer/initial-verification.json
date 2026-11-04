@@ -1,0 +1,47 @@
+{
+  "started_at_utc": "2026-11-04T01:51:21.603836+00:00",
+  "status": "failed",
+  "mutation_attempts": [],
+  "successful_mutations": [],
+  "access_checks": [
+    {
+      "case": "get-application",
+      "allowed": true,
+      "verified": true
+    },
+    {
+      "case": "patch-application",
+      "allowed": true,
+      "verified": true
+    },
+    {
+      "case": "watch-application",
+      "allowed": true,
+      "verified": true
+    },
+    {
+      "case": "list-pods",
+      "allowed": true,
+      "verified": true
+    },
+    {
+      "case": "list-replicasets",
+      "allowed": true,
+      "verified": true
+    },
+    {
+      "case": "get-service",
+      "allowed": true,
+      "verified": true
+    }
+  ],
+  "image_deployment_attempted": false,
+  "jenkins_imported": false,
+  "iam_propagation_wait_seconds": 120,
+  "last_operation": "deny-secrets",
+  "private_key_file_verified": true,
+  "user_managed_key_count": 1,
+  "error_type": "AssertionError",
+  "owned_probe_profile_removed": true,
+  "finished_at_utc": "2026-11-04T01:53:30.134992+00:00"
+}

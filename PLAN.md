@@ -10,19 +10,23 @@ on `task-04/step-03-container-delivery` from that main revision.
 A local-only interactive Docker Hub token storage helper and 31 synthetic tests are
 implemented. The operator saved the token locally; read-only Docker authentication and
 existing-manifest access passed with requested pull/push scope. No push/import occurred.
-825 host tests, Ruff lint/format and packaging now pass, including 13 new static policy
-cases. Live namespace inspection found no Pod Security Admission labels. A restricted
+839 host tests, Ruff lint/format and packaging now pass, including 13 static policy
+cases and 14 authorization-output regression cases. Live namespace inspection found no Pod Security Admission labels. A restricted
 v1.36 namespace patch was subsequently explicitly approved and applied once. Live
 server dry runs accepted the compatible Pod and rejected privileged, host-network and
 host-path variants; no probe Pod was created. Original Pod UIDs stayed Ready and the
-application objects were unchanged. The limited deployer Role remains unbound and
-uninstalled; no Google key or IAM grant has been created. See
-[namespace activation evidence](evidence/task-04/step-03-namespace-admission.md). The initial test
+application objects were unchanged. The dedicated deployer account, limited IAM grant,
+Role/RoleBinding and one private key are now created and live-verified: six allowed and
+ten denied access reviews plus an actual forbidden Secret-list request. Initial
+key-list propagation and denial-output parser failures are preserved; no grants or
+keys were repeated/widened. Owned probe profiles were removed; the key remains private
+for later Jenkins import. See [namespace activation](evidence/task-04/step-03-namespace-admission.md)
+and [deployer evidence](evidence/task-04/step-03-deployer-identity.md). The initial test
 collection failure (standalone scripts are not importable packages under pytest) was
 fixed using the existing run-path testing convention; diagnostics remain in reports.
 See [cloud delivery setup](docs/runbooks/cloud-delivery.md) and
 [actual preflight evidence](evidence/task-04/step-03-cloud-preparation.md). No release job/agent,
-Google key/IAM/RBAC change, registry push or new deployment has occurred. Tool pins,
+Jenkins credential import, registry push or new deployment has occurred. Tool pins,
 operation budgets and actual delivery verification remain pending. This is a local
 preparation checkpoint, not completed CI/CD or approval to merge an unfinished pipeline.
 
