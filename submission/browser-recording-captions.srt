@@ -1,0 +1,173 @@
+1
+00:00:00,007 --> 00:00:16,305
+Live browser • public API documentation
+Fresh browser interactions, not a slideshow. Synthetic data only; this public demo uses
+unencrypted HTTP.
+
+2
+00:00:16,305 --> 00:00:38,970
+Live API • health check
+Use Swagger Try it out and Execute. This sends a real request to the existing GKE
+application.
+
+3
+00:00:38,970 --> 00:01:05,580
+Live API • valid synthetic transaction
+Paste five explicit strings. The API validates a request; it does not transfer money or
+store balances.
+
+4
+00:01:05,580 --> 00:01:25,705
+Live API • Zero amount
+Change only the amount to zero. This is a business-rule rejection: HTTP 200, valid false,
+AMOUNT_NOT_POSITIVE.
+
+5
+00:01:25,705 --> 00:01:45,871
+Live API • Same sender and recipient
+Use the same opaque account identifier twice. The business rule rejects a self-transfer
+request.
+
+6
+00:01:45,871 --> 00:02:06,124
+Live API • Excess fractional precision
+Use three fractional digits. The service rejects excess precision rather than silently
+rounding money.
+
+7
+00:02:06,124 --> 00:02:26,255
+Live API • Wrong input type
+Send a JSON number instead of a decimal string. Strict boundary validation returns HTTP
+422 without echoing the submitted value.
+
+8
+00:02:26,255 --> 00:02:46,377
+Live API • Unknown request field
+Add an undocumented field. Extra request fields are rejected; the public contract is not
+silently expanded.
+
+9
+00:02:46,377 --> 00:03:06,511
+Live API • Restore a valid request
+Remove the extra field and restore the documented payload. The same running endpoint
+accepts the valid request again.
+
+10
+00:03:06,511 --> 00:03:35,538
+Reviewed source • exact API contract
+Read the published contract: schema failures and business rejections are different.
+Identifiers are case-sensitive; money uses Decimal.
+
+11
+00:03:35,538 --> 00:03:56,345
+Reviewed source • pure business rules
+HTTP handling and Pydantic schemas are separate from transaction rules. The service
+performs no network or filesystem I/O.
+
+12
+00:03:56,345 --> 00:04:22,208
+Reviewed source • container build and runtime
+The Dockerfile builds a locked package and defines a non-root runtime. This source review
+does not rebuild or execute a vulnerable artifact.
+
+13
+00:04:22,208 --> 00:04:50,043
+Reviewed source • CI gate ordering
+The Jenkinsfile places tests and security checks before image release. Actual retained
+Jenkins results follow; no job is triggered for this recording.
+
+14
+00:04:50,043 --> 00:05:17,989
+Historical Jenkins #39 • successful normal SCM run
+This is the retained normal-main run, not a new execution. Navigate its real Jenkins
+result and test report.
+
+15
+00:05:17,989 --> 00:05:42,405
+Historical Jenkins #39 • pipeline steps
+Review the actual native Pipeline Steps view. Separate stage observations from claims that
+a build is running now.
+
+16
+00:05:42,405 --> 00:06:07,871
+Historical Jenkins #39 • console and downstream trigger
+The console records the SCM cause and successful upstream completion. Native triggering
+started delivery #3.
+
+17
+00:06:07,871 --> 00:06:37,888
+Historical delivery #3 • independent release worker
+The native upstream cause identifies finsecure-ci #39. Reviewed release tools
+independently verify the original candidate before credentials and mutation.
+
+18
+00:06:37,888 --> 00:06:57,888
+Historical delivery #3 • actual deployed-image proof
+Open the archived deployment report. It records owned Pods, image identity and successful
+smoke checks. This is historical verification, not a new PATCH.
+
+19
+00:06:57,888 --> 00:07:21,445
+Historical failure #37 • real failed-test block
+One deliberate assertion failed in an isolated Replay. The fault did not change main, and
+no downstream delivery followed.
+
+20
+00:07:21,445 --> 00:07:54,094
+Historical failure #38 • image-security gate
+The actual native scan summary records 38 HIGH and 2 CRITICAL findings. The scan
+completed, but the gate withheld the image; it was never deployed.
+
+21
+00:07:54,094 --> 00:08:23,914
+Historical operator rollback • verified result
+Read the retained rollback record: one conditional PATCH, known-good 0.3.0, two Pods and
+passing smoke. Rollback was explicit, not automatic.
+
+22
+00:08:23,914 --> 00:08:50,738
+Live Grafana • cloud API observations
+This dashboard queries the running local Prometheus observing GKE. Load-balancer sampling
+is not complete per-Pod or reliable aggregate throughput.
+
+23
+00:08:50,738 --> 00:09:10,376
+Historical alert • actual FIRING email
+Open the retained cloud-scoped alert. The demonstration changed the scrape port, not the
+application; no outage is induced during this recording.
+
+24
+00:09:10,376 --> 00:09:28,936
+Historical alert • actual RESOLVED email
+Port 80 was restored and scraping recovered. Mailpit proves local SMTP delivery, not
+external email delivery.
+
+25
+00:09:28,936 --> 00:09:52,907
+Historical cloud observations • native resource metrics
+The reviewed GKE record contains separate CPU/memory observations for both nodes and
+application Pods. Timestamps and original units remain visible.
+
+26
+00:09:52,907 --> 00:10:13,596
+Historical Cloud Logging • sanitized event evidence
+Actual centralized log observations retain only approved timestamps and validation events.
+Private resource labels and request bodies are not shown.
+
+27
+00:10:13,596 --> 00:10:34,411
+Architecture • current trust boundaries
+Review the published architecture document: separate source execution, fixed release
+authority, GKE runtime and locally hosted monitoring.
+
+28
+00:10:34,411 --> 00:10:58,081
+AI triage • proposal only
+No AI model is deployed. The proposal requires sanitized inputs, citations, bounded
+outputs and human review; benefits are not measured results.
+
+29
+00:10:58,081 --> 00:11:15,667
+Finish • evidence and access
+Actual browser navigation and synthetic requests were recorded. Historical operations were
+reviewed, not rerun. Confirm silent-format acceptance before submission.

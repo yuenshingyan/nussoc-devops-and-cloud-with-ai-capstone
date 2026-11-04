@@ -1,0 +1,15 @@
+{
+  "ci": {
+    "_class": "org.jenkinsci.plugins.workflow.job.WorkflowRun",
+    "building": false,
+    "number": 43,
+    "result": "SUCCESS"
+  },
+  "delivery": {
+    "_class": "org.jenkinsci.plugins.workflow.job.WorkflowRun",
+    "building": false,
+    "number": 7,
+    "result": "SUCCESS"
+  },
+  "health": "healthy"
+}

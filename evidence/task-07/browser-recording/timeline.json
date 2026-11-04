@@ -1,0 +1,147 @@
+[
+  {
+    "at": 0.0065515839999998205,
+    "title": "Live browser \u2022 public API documentation",
+    "caption": "Fresh browser interactions, not a slideshow. Synthetic data only; this public demo uses unencrypted HTTP."
+  },
+  {
+    "at": 16.305090042,
+    "title": "Live API \u2022 health check",
+    "caption": "Use Swagger Try it out and Execute. This sends a real request to the existing GKE application."
+  },
+  {
+    "at": 38.970166834000004,
+    "title": "Live API \u2022 valid synthetic transaction",
+    "caption": "Paste five explicit strings. The API validates a request; it does not transfer money or store balances."
+  },
+  {
+    "at": 65.579790209,
+    "title": "Live API \u2022 Zero amount",
+    "caption": "Change only the amount to zero. This is a business-rule rejection: HTTP 200, valid false, AMOUNT_NOT_POSITIVE."
+  },
+  {
+    "at": 85.70544208400001,
+    "title": "Live API \u2022 Same sender and recipient",
+    "caption": "Use the same opaque account identifier twice. The business rule rejects a self-transfer request."
+  },
+  {
+    "at": 105.87117512500001,
+    "title": "Live API \u2022 Excess fractional precision",
+    "caption": "Use three fractional digits. The service rejects excess precision rather than silently rounding money."
+  },
+  {
+    "at": 126.12406895900001,
+    "title": "Live API \u2022 Wrong input type",
+    "caption": "Send a JSON number instead of a decimal string. Strict boundary validation returns HTTP 422 without echoing the submitted value."
+  },
+  {
+    "at": 146.25452858399998,
+    "title": "Live API \u2022 Unknown request field",
+    "caption": "Add an undocumented field. Extra request fields are rejected; the public contract is not silently expanded."
+  },
+  {
+    "at": 166.37658962499998,
+    "title": "Live API \u2022 Restore a valid request",
+    "caption": "Remove the extra field and restore the documented payload. The same running endpoint accepts the valid request again."
+  },
+  {
+    "at": 186.511114417,
+    "title": "Reviewed source \u2022 exact API contract",
+    "caption": "Read the published contract: schema failures and business rejections are different. Identifiers are case-sensitive; money uses Decimal."
+  },
+  {
+    "at": 215.537787875,
+    "title": "Reviewed source \u2022 pure business rules",
+    "caption": "HTTP handling and Pydantic schemas are separate from transaction rules. The service performs no network or filesystem I/O."
+  },
+  {
+    "at": 236.34503375,
+    "title": "Reviewed source \u2022 container build and runtime",
+    "caption": "The Dockerfile builds a locked package and defines a non-root runtime. This source review does not rebuild or execute a vulnerable artifact."
+  },
+  {
+    "at": 262.208270042,
+    "title": "Reviewed source \u2022 CI gate ordering",
+    "caption": "The Jenkinsfile places tests and security checks before image release. Actual retained Jenkins results follow; no job is triggered for this recording."
+  },
+  {
+    "at": 290.04325295900003,
+    "title": "Historical Jenkins #39 \u2022 successful normal SCM run",
+    "caption": "This is the retained normal-main run, not a new execution. Navigate its real Jenkins result and test report."
+  },
+  {
+    "at": 317.98910583400004,
+    "title": "Historical Jenkins #39 \u2022 pipeline steps",
+    "caption": "Review the actual native Pipeline Steps view. Separate stage observations from claims that a build is running now."
+  },
+  {
+    "at": 342.40493991700004,
+    "title": "Historical Jenkins #39 \u2022 console and downstream trigger",
+    "caption": "The console records the SCM cause and successful upstream completion. Native triggering started delivery #3."
+  },
+  {
+    "at": 367.87089275000005,
+    "title": "Historical delivery #3 \u2022 independent release worker",
+    "caption": "The native upstream cause identifies finsecure-ci #39. Reviewed release tools independently verify the original candidate before credentials and mutation."
+  },
+  {
+    "at": 397.88833266700004,
+    "title": "Historical delivery #3 \u2022 actual deployed-image proof",
+    "caption": "Open the archived deployment report. It records owned Pods, image identity and successful smoke checks. This is historical verification, not a new PATCH."
+  },
+  {
+    "at": 417.88833266700004,
+    "title": "Historical failure #37 \u2022 real failed-test block",
+    "caption": "One deliberate assertion failed in an isolated Replay. The fault did not change main, and no downstream delivery followed."
+  },
+  {
+    "at": 441.44505270900004,
+    "title": "Historical failure #38 \u2022 image-security gate",
+    "caption": "The actual native scan summary records 38 HIGH and 2 CRITICAL findings. The scan completed, but the gate withheld the image; it was never deployed."
+  },
+  {
+    "at": 474.094345834,
+    "title": "Historical operator rollback \u2022 verified result",
+    "caption": "Read the retained rollback record: one conditional PATCH, known-good 0.3.0, two Pods and passing smoke. Rollback was explicit, not automatic."
+  },
+  {
+    "at": 503.91411487500005,
+    "title": "Live Grafana \u2022 cloud API observations",
+    "caption": "This dashboard queries the running local Prometheus observing GKE. Load-balancer sampling is not complete per-Pod or reliable aggregate throughput."
+  },
+  {
+    "at": 530.7379372920001,
+    "title": "Historical alert \u2022 actual FIRING email",
+    "caption": "Open the retained cloud-scoped alert. The demonstration changed the scrape port, not the application; no outage is induced during this recording."
+  },
+  {
+    "at": 550.376077125,
+    "title": "Historical alert \u2022 actual RESOLVED email",
+    "caption": "Port 80 was restored and scraping recovered. Mailpit proves local SMTP delivery, not external email delivery."
+  },
+  {
+    "at": 568.9356038340001,
+    "title": "Historical cloud observations \u2022 native resource metrics",
+    "caption": "The reviewed GKE record contains separate CPU/memory observations for both nodes and application Pods. Timestamps and original units remain visible."
+  },
+  {
+    "at": 592.90653325,
+    "title": "Historical Cloud Logging \u2022 sanitized event evidence",
+    "caption": "Actual centralized log observations retain only approved timestamps and validation events. Private resource labels and request bodies are not shown."
+  },
+  {
+    "at": 613.596031709,
+    "title": "Architecture \u2022 current trust boundaries",
+    "caption": "Review the published architecture document: separate source execution, fixed release authority, GKE runtime and locally hosted monitoring."
+  },
+  {
+    "at": 634.4106272920001,
+    "title": "AI triage \u2022 proposal only",
+    "caption": "No AI model is deployed. The proposal requires sanitized inputs, citations, bounded outputs and human review; benefits are not measured results."
+  },
+  {
+    "at": 658.0813338750002,
+    "title": "Finish \u2022 evidence and access",
+    "caption": "Actual browser navigation and synthetic requests were recorded. Historical operations were reviewed, not rerun. Confirm silent-format acceptance before submission."
+  }
+]

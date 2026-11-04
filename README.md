@@ -371,9 +371,10 @@ Remove a placeholder when its directory receives real content.
   Prometheus/Grafana remain local; no new cloud monitoring volumes were created. The
   load-balancer scrape is not a reliable aggregate across Pods; see the evidence limits.
 - Task 7: [updated 10-slide presentation and four-page design document](evidence/task-07/final-presentation.md)
-  cover the actual results and limitations. The [12:35 silent evidence walkthrough](evidence/task-07/final-video.md)
-  is ready locally at `submission/demo-walkthrough.mp4`; full student review, silent-format
-  confirmation and separate upload remain. The AI use case is a proposal, not a deployed model.
+  cover the actual results and limitations. The revised [11:16 actual browser recording](evidence/task-07/browser-recording.md)
+  is ready for review at `submission/demo-browser-recording.mp4`; the earlier slideshow is
+  preserved. Full student review, silent-format confirmation and separate upload remain.
+  The AI use case is a proposal, not a deployed model.
 
 Do not add empty executable configuration files as if they were working artifacts.
 

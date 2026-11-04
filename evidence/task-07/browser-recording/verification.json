@@ -1,0 +1,223 @@
+{
+  "audio_tracks": 0,
+  "captured_browser_frames": 1350,
+  "chapter_decode_checks": [
+    {
+      "chapter": 1,
+      "decoded_seconds": 8,
+      "requested_seconds": 8.006551584,
+      "title": "Live browser \u2022 public API documentation"
+    },
+    {
+      "chapter": 2,
+      "decoded_seconds": 24.25,
+      "requested_seconds": 24.305090042,
+      "title": "Live API \u2022 health check"
+    },
+    {
+      "chapter": 3,
+      "decoded_seconds": 46.916666666666664,
+      "requested_seconds": 46.970166834000004,
+      "title": "Live API \u2022 valid synthetic transaction"
+    },
+    {
+      "chapter": 4,
+      "decoded_seconds": 73.5,
+      "requested_seconds": 73.579790209,
+      "title": "Live API \u2022 Zero amount"
+    },
+    {
+      "chapter": 5,
+      "decoded_seconds": 93.66666666666667,
+      "requested_seconds": 93.70544208400001,
+      "title": "Live API \u2022 Same sender and recipient"
+    },
+    {
+      "chapter": 6,
+      "decoded_seconds": 113.83333333333333,
+      "requested_seconds": 113.87117512500001,
+      "title": "Live API \u2022 Excess fractional precision"
+    },
+    {
+      "chapter": 7,
+      "decoded_seconds": 134.08333333333334,
+      "requested_seconds": 134.124068959,
+      "title": "Live API \u2022 Wrong input type"
+    },
+    {
+      "chapter": 8,
+      "decoded_seconds": 154.25,
+      "requested_seconds": 154.25452858399998,
+      "title": "Live API \u2022 Unknown request field"
+    },
+    {
+      "chapter": 9,
+      "decoded_seconds": 174.33333333333334,
+      "requested_seconds": 174.37658962499998,
+      "title": "Live API \u2022 Restore a valid request"
+    },
+    {
+      "chapter": 10,
+      "decoded_seconds": 194.5,
+      "requested_seconds": 194.511114417,
+      "title": "Reviewed source \u2022 exact API contract"
+    },
+    {
+      "chapter": 11,
+      "decoded_seconds": 223.5,
+      "requested_seconds": 223.537787875,
+      "title": "Reviewed source \u2022 pure business rules"
+    },
+    {
+      "chapter": 12,
+      "decoded_seconds": 244.33333333333334,
+      "requested_seconds": 244.34503375,
+      "title": "Reviewed source \u2022 container build and runtime"
+    },
+    {
+      "chapter": 13,
+      "decoded_seconds": 270.1666666666667,
+      "requested_seconds": 270.208270042,
+      "title": "Reviewed source \u2022 CI gate ordering"
+    },
+    {
+      "chapter": 14,
+      "decoded_seconds": 298,
+      "requested_seconds": 298.04325295900003,
+      "title": "Historical Jenkins #39 \u2022 successful normal SCM run"
+    },
+    {
+      "chapter": 15,
+      "decoded_seconds": 325.9166666666667,
+      "requested_seconds": 325.98910583400004,
+      "title": "Historical Jenkins #39 \u2022 pipeline steps"
+    },
+    {
+      "chapter": 16,
+      "decoded_seconds": 350.3333333333333,
+      "requested_seconds": 350.40493991700004,
+      "title": "Historical Jenkins #39 \u2022 console and downstream trigger"
+    },
+    {
+      "chapter": 17,
+      "decoded_seconds": 375.8333333333333,
+      "requested_seconds": 375.87089275000005,
+      "title": "Historical delivery #3 \u2022 independent release worker"
+    },
+    {
+      "chapter": 18,
+      "decoded_seconds": 405.8333333333333,
+      "requested_seconds": 405.88833266700004,
+      "title": "Historical delivery #3 \u2022 actual deployed-image proof"
+    },
+    {
+      "chapter": 19,
+      "decoded_seconds": 425.8333333333333,
+      "requested_seconds": 425.88833266700004,
+      "title": "Historical failure #37 \u2022 real failed-test block"
+    },
+    {
+      "chapter": 20,
+      "decoded_seconds": 449.4166666666667,
+      "requested_seconds": 449.44505270900004,
+      "title": "Historical failure #38 \u2022 image-security gate"
+    },
+    {
+      "chapter": 21,
+      "decoded_seconds": 482.0833333333333,
+      "requested_seconds": 482.094345834,
+      "title": "Historical operator rollback \u2022 verified result"
+    },
+    {
+      "chapter": 22,
+      "decoded_seconds": 511.8333333333333,
+      "requested_seconds": 511.91411487500005,
+      "title": "Live Grafana \u2022 cloud API observations"
+    },
+    {
+      "chapter": 23,
+      "decoded_seconds": 538.6666666666666,
+      "requested_seconds": 538.7379372920001,
+      "title": "Historical alert \u2022 actual FIRING email"
+    },
+    {
+      "chapter": 24,
+      "decoded_seconds": 558.3333333333334,
+      "requested_seconds": 558.376077125,
+      "title": "Historical alert \u2022 actual RESOLVED email"
+    },
+    {
+      "chapter": 25,
+      "decoded_seconds": 576.9166666666666,
+      "requested_seconds": 576.9356038340001,
+      "title": "Historical cloud observations \u2022 native resource metrics"
+    },
+    {
+      "chapter": 26,
+      "decoded_seconds": 600.8333333333334,
+      "requested_seconds": 600.90653325,
+      "title": "Historical Cloud Logging \u2022 sanitized event evidence"
+    },
+    {
+      "chapter": 27,
+      "decoded_seconds": 621.5833333333334,
+      "requested_seconds": 621.596031709,
+      "title": "Architecture \u2022 current trust boundaries"
+    },
+    {
+      "chapter": 28,
+      "decoded_seconds": 642.3333333333334,
+      "requested_seconds": 642.4106272920001,
+      "title": "AI triage \u2022 proposal only"
+    },
+    {
+      "chapter": 29,
+      "decoded_seconds": 666,
+      "requested_seconds": 666.0813338750002,
+      "title": "Finish \u2022 evidence and access"
+    }
+  ],
+  "chapters": 29,
+  "duration_seconds": 675.6666666666666,
+  "fps": 12,
+  "height": 1080,
+  "inserted_slides": 0,
+  "output_frames": 8108,
+  "playback_speed": 1,
+  "source_duration_seconds": 675.6275822920002,
+  "video_tracks": 1,
+  "width": 1920,
+  "sha256": "a145a816d126824b96b62bc49acb703a9b9137241cbcf607fa8508a125e756c9",
+  "bytes": 115944795,
+  "local_file": "submission/demo-browser-recording.mp4",
+  "capture_method": "Chrome DevTools Page.startScreencast",
+  "interaction_method": "scripted native browser input and native text selection/scrolling",
+  "authentication_recorded": false,
+  "retimed": false,
+  "edit_ranges": [
+    {
+      "take": "take-03",
+      "start": 0.0,
+      "end": 342.40493991700004
+    },
+    {
+      "take": "take-04",
+      "start": 1.0,
+      "end": 56.48339275
+    },
+    {
+      "take": "take-06",
+      "start": 1.0,
+      "end": 21.0
+    },
+    {
+      "take": "take-04",
+      "start": 82.87724387499999,
+      "end": 340.61649350000005
+    }
+  ],
+  "action_markers": 105,
+  "full_human_playback_review": "pending",
+  "external_upload": "not_performed",
+  "silent_format_acceptance": "unconfirmed"
+}

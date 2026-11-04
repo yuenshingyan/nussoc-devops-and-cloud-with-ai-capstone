@@ -1,7 +1,8 @@
 # Evidence index
 
 **Final recording materials:** [updated presentation/design PDFs and actual Jenkins UI captures](task-07/final-presentation.md),
-plus the [12:35 silent evidence walkthrough and verification](task-07/final-video.md).
+plus the revised [11:16 actual browser recording](task-07/browser-recording.md).
+The earlier [12:35 slideshow-style walkthrough](task-07/final-video.md) is preserved.
 
 **Cloud observability:** [real GKE API dashboard, cloud-scoped firing/recovery mail, native
 node/Pod metrics and structured Cloud Logging](task-06/cloud-observability.md).

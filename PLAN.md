@@ -11,9 +11,10 @@ Cloud observability is now [verified](evidence/task-06/cloud-observability.md): 
 Prometheus observe the GKE API; native GKE node/Pod metrics, Cloud Logging and actual cloud-
 scoped firing/recovery mail are recorded. Sampling limitations are explicit. No cloud volumes
 were created. The updated ten-slide presentation and four-page design PDF reflect actual results;
-layout and PDF page-count checks passed. The [12:35 silent walkthrough](evidence/task-07/final-video.md)
-is encoded and all 21 scenes decoded at expected timestamps. Full student playback review,
-silent-format confirmation and separate upload remain; do not claim those are complete.
+layout and PDF page-count checks passed. The revised [11:16 browser recording](evidence/task-07/browser-recording.md)
+uses actual browser footage with fresh API interactions and labelled historical evidence;
+all 29 chapter samples decoded. The earlier slideshow is retained. Full student playback
+review, silent-format confirmation and separate upload remain; do not claim those are complete.
 The earlier history follows.
 
 The fixed delivery definition now connects independent artifact verification, publication,
@@ -679,7 +680,7 @@ The assignment allows equivalent application, build, and unit-testing tools with
 - **Verify:** Check slide count, link accessibility, readability, and absence of secrets. Mark any remaining gaps rather than fabricating evidence.
 
 ### Step 7.4 — Prepare and rehearse demonstration
-- **Branch:** `task-07/step-04-demo-lessons`
+- **Branch:** `task-07/step-04-demo-lessons`; recording revision: `task-07/step-04-browser-recording`.
 - Create and rehearse a 10–15-minute end-to-end demonstration script.
 - Include successful validation, tests, container/cloud access, pipeline gating, rollout/rollback, recovery, monitoring, notifications, and AI explanation.
 - Use clearly identified recorded evidence for long-running operations where appropriate.
