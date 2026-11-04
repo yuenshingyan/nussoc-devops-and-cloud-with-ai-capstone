@@ -169,5 +169,5 @@ outputs and human review; benefits are not measured results.
 29
 00:10:58,081 --> 00:11:15,667
 Finish • evidence and access
-Actual browser navigation and synthetic requests were recorded. Historical operations were
-reviewed, not rerun. Confirm silent-format acceptance before submission.
+Demonstration complete. Please refer to the repository, documentation and supporting
+evidence for further details.

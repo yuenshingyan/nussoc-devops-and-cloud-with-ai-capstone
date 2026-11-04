@@ -45,6 +45,12 @@ first edit remain in `reports/browser-recording/`; they were not silently recast
 [optional subtitles](../../submission/browser-recording-captions.srt) ·
 [video checksum](../../submission/browser-recording.sha256).
 
+The closing caption was subsequently corrected to an evaluator-facing completion message;
+the preparation reminder was removed from both burned-in text and subtitles. The duration
+is unchanged, all 29 chapter samples were decoded again, and the closing frame was visually
+checked. Checksums now identify the corrected MP4. No new browser or application operation
+was needed for this caption-only correction.
+
 Full student playback review, silent-format acceptance and external upload remain pending.
 This is actual browser interaction footage, **not a claim that historical CI/deployment
 operations executed live during filming**. Application code was unchanged; application
