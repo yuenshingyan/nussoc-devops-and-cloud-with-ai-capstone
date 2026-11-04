@@ -8,3 +8,4 @@ images:
 patches:
   - path: workload.yaml
   - path: service.yaml
+  - path: namespace-policy.yaml

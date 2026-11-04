@@ -1,0 +1,32 @@
+{
+  "checked_at_utc": "2026-11-04T01:33:56.554275+00:00",
+  "cloud_role": "roles/container.clusterViewer",
+  "cloud_role_permissions": [
+    "container.clusters.connect",
+    "container.clusters.get",
+    "container.clusters.list",
+    "resourcemanager.projects.get",
+    "resourcemanager.projects.list"
+  ],
+  "namespace_pod_security_labels": {},
+  "deployment_available_replicas": 2,
+  "pod_security_context": {
+    "fsGroup": 10001,
+    "runAsGroup": 10001,
+    "runAsNonRoot": true,
+    "runAsUser": 10001,
+    "seccompProfile": {
+      "type": "RuntimeDefault"
+    }
+  },
+  "container_security_context": {
+    "allowPrivilegeEscalation": false,
+    "capabilities": {
+      "drop": [
+        "ALL"
+      ]
+    },
+    "readOnlyRootFilesystem": true
+  },
+  "mutation_performed": false
+}

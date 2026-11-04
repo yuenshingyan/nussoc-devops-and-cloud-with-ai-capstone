@@ -1,0 +1,17 @@
+{
+  "checked_at_utc": "2026-11-04T01:25:38.845568+00:00",
+  "repository": "yuenshingyan/finsecure-pay",
+  "upload_attempted": false,
+  "jenkins_imported": false,
+  "private_file_metadata_verified": true,
+  "authentication_status": 200,
+  "existing_manifest_status": 200,
+  "status": "verified",
+  "requested_repository_actions_granted": [
+    "pull",
+    "push"
+  ],
+  "existing_release_digest_verified": true,
+  "actual_push_verified": false,
+  "underlying_pat_other_repository_or_delete_permissions_verified": false
+}

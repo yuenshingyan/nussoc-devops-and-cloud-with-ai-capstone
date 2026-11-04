@@ -8,11 +8,16 @@ approved the separate local release-agent/deployer-identity approach. Work resum
 on `task-04/step-03-container-delivery` from that main revision.
 
 A local-only interactive Docker Hub token storage helper and 31 synthetic tests are
-implemented; 812 host tests, Ruff lint/format and packaging passed. The initial test
+implemented. The operator saved the token locally; read-only Docker authentication and
+existing-manifest access passed with requested pull/push scope. No push/import occurred.
+825 host tests, Ruff lint/format and packaging now pass, including 13 new static policy
+cases. Live namespace inspection found no Pod Security Admission labels. A restricted
+v1.36 namespace patch and limited deployer Role are prepared but not applied/bound;
+explicit namespace-policy approval and live dry-run checks are required before grants. The initial test
 collection failure (standalone scripts are not importable packages under pytest) was
 fixed using the existing run-path testing convention; diagnostics remain in reports.
-See [cloud delivery setup](docs/runbooks/cloud-delivery.md). The operator must create
-and save a dedicated Read & Write token locally, never in chat. No release job/agent,
+See [cloud delivery setup](docs/runbooks/cloud-delivery.md) and
+[actual preflight evidence](evidence/task-04/step-03-cloud-preparation.md). No release job/agent,
 Google key/IAM/RBAC change, registry push or new deployment has occurred. Tool pins,
 operation budgets and actual delivery verification remain pending. This is a local
 preparation checkpoint, not completed CI/CD or approval to merge an unfinished pipeline.

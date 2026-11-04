@@ -1,0 +1,6 @@
+{
+  "offline_render_passed": true,
+  "non_namespace_objects_unchanged": true,
+  "only_namespace_pod_security_labels_added": true,
+  "live_policy_applied": false
+}

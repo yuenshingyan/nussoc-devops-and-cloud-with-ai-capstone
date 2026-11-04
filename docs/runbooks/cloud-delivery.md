@@ -17,8 +17,12 @@ still exports/scans ARM64 and has no publishing/deployment stage. Read-only insp
 confirmed the existing BuildKit worker advertises AMD64 support; this is not yet an
 actual AMD64 Jenkins build/gate result.
 
-The first setup helper only saves an operator-provided token outside Git. Saving a token
-is not verification of its scope, successful authentication or Jenkins installation.
+The operator has saved the dedicated Docker Hub token. A read-only check on
+4 November verified the private file metadata, received an authenticated registry
+token granting the requested repository pull/push actions, and read the existing
+0.3.0 manifest with the expected digest. No upload or Jenkins import was attempted.
+This does not independently establish the PAT's permissions on other repositories,
+whether it also permits deletion, or whether an actual push will succeed.
 
 ## Operator action: create the Docker Hub CI token
 
@@ -82,6 +86,45 @@ Before introducing live release operations, record the exact tool/image pins, ag
 resource limits, credential/job/node boundaries, IAM/RBAC permissions, release
 serialization, stale-build policy, timeouts and failure/rollback behavior in this
 runbook and verify them. No retry or automated rollback contract is established here.
+
+## Namespace admission prerequisite — proposed, not applied
+
+Live read-only inspection found no Pod Security Admission labels on `finsecure-pay`.
+The existing pod/container security contexts use non-root UID 10001, RuntimeDefault
+seccomp, no privilege escalation and all capabilities dropped; two replicas remain
+available. These observations are not a complete live admission test.
+
+Deployment `patch` permission can change the entire pod template, not just its image.
+RBAC alone cannot constrain which template fields change. Before granting that
+permission, request explicit approval to enforce the **restricted v1.36** Pod Security
+Standard in this application namespace. The candidate GKE namespace patch adds
+`enforce`, `audit` and `warn` labels, each pinned to v1.36. It leaves the demo overlay,
+application Deployment, Service and ConfigMap unchanged. Review this version pin
+when the managed cluster moves to a newer minor version.
+
+Activation must apply **only the namespace labels** after approval, not reapply the
+whole application overlay. This does not restart existing pods. Verify the live labels
+and test a compatible Pod plus deliberately incompatible privileged/host-network Pod
+using server-side dry runs under the operator identity. No probe Pod should be created.
+Pod Security enforcement applies to Pods; acceptance of a Deployment dry run alone
+would not prove its future Pods pass admission. Preserve rejection evidence and stop
+on unexpected results, rather than relaxing the policy.
+
+The candidate `deploy/kubernetes/delivery/role.yaml` is deliberately separate from the
+application overlay. It is not installed/bound. It permits patch/get/watch of the named
+Deployment, read-only Pods/ReplicaSets in this namespace and get of the named Service.
+It grants no direct Secret reads, exec, create/delete, node or RBAC operations.
+The predefined Google `roles/container.clusterViewer` was inspected read-only and
+contains cluster connect/get/list plus project get/list—not workload administration.
+Do not claim this Google role limits metadata visibility to one cluster.
+
+**Remaining authority:** restricted Pod Security is not an image allowlist or a complete
+sandbox. A deployment writer can still change application code/configuration, interrupt
+availability and mount Secrets available in its namespace. Keep unrelated workloads,
+privileged service accounts and sensitive Secrets out of this namespace. Direct Secret
+API denial is not a guarantee against indirect access through a modified workload.
+Only reviewed main release code should hold this credential. Provider grants, role
+binding and actual positive/negative service-account tests remain pending.
 
 ## Remaining verification
 
