@@ -1,0 +1,129 @@
+"""Native source-snapshot fixture checks and one public immutable-source acquisition."""
+from base64 import b64encode
+from gzip import compress
+from hashlib import sha256
+from io import BytesIO
+from json import dumps, loads
+from pathlib import Path
+from subprocess import check_output
+from tarfile import DIRTYPE, LNKTYPE, SYMTYPE, TarFile, TarInfo
+
+from bootstrap import BASE_URL, admin_password
+from httpx2 import BasicAuth, Client
+
+REV='19b44861114c18e07dff249423365215547035a3'
+FAKE='a'*40
+PREFIX='nussoc-devops-and-cloud-with-ai-capstone-'+FAKE+'/'
+base=Path('reports/release-source')
+code=Path('ops/jenkins/release-source.groovy').read_bytes()
+
+def literal(data):
+    text=b64encode(data).decode()
+    return '['+','.join(repr(text[i:i+32000]) for i in range(0,len(text),32000))+"] .join('')"
+
+def tar(items):
+    buffer=BytesIO()
+    with TarFile.open(fileobj=buffer,mode='w') as archive:
+        for name,data,kind in items:
+            entry=TarInfo(name);entry.type=kind;entry.size=len(data)
+            if kind in [LNKTYPE,SYMTYPE]: entry.linkname='../../outside';entry.size=0
+            archive.addfile(entry,BytesIO(data))
+    return b64encode(compress(buffer.getvalue(),mtime=0)).decode()
+
+regular=b'0'
+files=[(PREFIX+'uv.lock',b'version=1\n',regular),
+       (PREFIX+'pyproject.toml',b'[project]\nname="finsecure-pay"\n',regular),
+       (PREFIX+'src/finsecure_pay/main.py',b'# synthetic\n',regular)]
+git_header=('pax_global_header',b'52 comment='+FAKE.encode()+b'\n',b'g')
+cases=[]
+for name,items,error in [
+ ('git-header',[git_header]+files,None),
+ ('duplicate-git-header',[git_header,git_header]+files,'SOURCE_GIT_HEADER_INVALID'),
+ ('wrong-git-header',[('pax_global_header',b'52 comment='+b'b'*40+b'\n',b'g')]+files,'SOURCE_GIT_HEADER_INVALID'),
+ ('valid',files,None),
+ ('duplicate',files+[files[-1]],'SOURCE_DUPLICATE_OR_EXCESS_ENTRIES'),
+ ('wrong-prefix',files+[('other/file',b'',regular)],'SOURCE_ARCHIVE_PREFIX_INVALID'),
+ ('traversal',files+[(PREFIX+'../outside',b'',regular)],'SOURCE_PATH_INVALID'),
+ ('absolute',files+[('/outside',b'',regular)],'SOURCE_ARCHIVE_PREFIX_INVALID'),
+ ('backslash',files+[(PREFIX+'scripts/back\\slash.py',b'',regular)],'SOURCE_PATH_INVALID'),
+ ('symlink',files+[(PREFIX+'scripts/link.py',b'',SYMTYPE)],'SOURCE_UNSUPPORTED_ENTRY'),
+ ('hardlink',files+[(PREFIX+'scripts/link.py',b'',LNKTYPE)],'SOURCE_UNSUPPORTED_ENTRY'),
+ ('directory-data',files+[(PREFIX+'folder/',b'x',DIRTYPE)],'SOURCE_DIRECTORY_DATA'),
+ ('missing-lock',files[1:],'SOURCE_REQUIRED_FILES_MISSING'),
+ ('missing-source',files[:2],'SOURCE_REQUIRED_FILES_MISSING'),
+ ('oversized-source',files+[(PREFIX+'scripts/large.py',b'x'*(1024*1024+1),regular)],'SOURCE_FILE_LIMIT'),
+ ('too-many-sources',files+[(PREFIX+f'scripts/file{i}.py',b'',regular) for i in range(200)],'SOURCE_FILE_COUNT_LIMIT'),
+ ('exact-source-limit',files+[(PREFIX+'scripts/large.py',b'x'*(1024*1024),regular)],None),
+]: cases.append({'name':name,'archive':tar(items),'error':error})
+paths=check_output(['git','ls-tree','-r','--name-only',REV],text=True).splitlines()
+expected={name:sha256(check_output(['git','show',REV+':'+name])).hexdigest() for name in paths
+          if name.endswith('.py') and name.startswith(('src/finsecure_pay/','scripts/','ops/jenkins/'))}
+for name in ['uv.lock','pyproject.toml']:
+    expected[name]=sha256(check_output(['git','show',REV+':'+name])).hexdigest()
+payload={'cases':cases,'revision':REV,'fake':FAKE,'expected':expected}
+script='''
+def loader=new GroovyClassLoader(jenkins.model.Jenkins.get().pluginManager.uberClassLoader)
+loader.parseClass(new String(Base64.decoder.decode(__CODE__),'UTF-8'))
+def helper=loader.loadClass('FinsecureSourceSnapshot')
+def bounded=loader.loadClass('FinsecureSnapshotStream')
+def fixture=new groovy.json.JsonSlurperClassic().parseText(new String(Base64.decoder.decode(__FIXTURE__),'UTF-8'))
+def results=[]
+fixture.cases.each { row ->
+ def bytes=new ByteArrayInputStream(Base64.decoder.decode(row.archive))
+ def gzip=new java.util.zip.GZIPInputStream(bytes)
+ def archive=new org.apache.tools.tar.TarInputStream(gzip,512,512,'UTF-8')
+ String reason=null;def value=null
+ try { value=helper.readArchive(archive,fixture.fake,System.nanoTime()+10000000000L) }
+ catch(IllegalStateException error) { reason=error.message }
+ finally { archive.close() }
+ assert reason==row.error: row.name+': '+reason
+ if(row.error==null) { assert value.source_sha256['src/finsecure_pay/main.py']!=null }
+ results << [name:row.name,status:'passed']
+}
+def bounds=[]
+['read','skip','expired'].each { operation ->
+ def stream=bounded.newInstance(new ByteArrayInputStream('12345'.getBytes('UTF-8')),4L,
+  operation=='expired' ? System.nanoTime()-1L : System.nanoTime()+10000000000L)
+ String reason=null
+ try {
+  if(operation=='skip') { stream.skip(5L) }
+  else { stream.read(new byte[10]) }
+ } catch(IllegalStateException error) { reason=error.message }
+ finally { stream.close() }
+ assert reason==(operation=='expired' ? 'SOURCE_BUDGET_EXCEEDED' : 'SOURCE_STREAM_LIMIT')
+ bounds << operation
+}
+['../main','main','A'*40,'a'*39].each { revision ->
+ String reason=null
+ try { helper.prefix(revision) } catch(IllegalStateException error) { reason=error.message }
+ assert reason=='SOURCE_REVISION_INVALID'
+}
+long started=System.nanoTime()
+def snapshot=helper.acquire(fixture.revision,started+120000000000L)
+def expectedSources=new LinkedHashMap(fixture.expected)
+def lock=expectedSources.remove('uv.lock');def project=expectedSources.remove('pyproject.toml')
+assert snapshot.source_sha256==expectedSources
+assert snapshot.lock_sha256==lock && snapshot.pyproject_sha256==project
+assert java.security.MessageDigest.getInstance('SHA-256').digest(snapshot.lock).encodeHex().toString()==lock
+assert java.security.MessageDigest.getInstance('SHA-256').digest(snapshot.project).encodeHex().toString()==project
+assert jenkins.model.Jenkins.get().queue.items.length==0
+assert jenkins.model.Jenkins.get().getItemByFullName('finsecure-release/delivery').disabled
+assert jenkins.model.Jenkins.get().getItemByFullName('finsecure-release/delivery').lastBuild==null
+assert !jenkins.model.Jenkins.get().getNode('finsecure-release').toComputer().online
+println(groovy.json.JsonOutput.toJson([status:'verified',source_revision:snapshot.revision,
+ source_sha256:snapshot.source_sha256,lock_sha256:snapshot.lock_sha256,pyproject_sha256:snapshot.pyproject_sha256,
+ archive_entries:snapshot.archive_entries,selected_bytes:snapshot.selected_bytes,
+ elapsed_seconds:(System.nanoTime()-started)/1000000000.0,fixture_cases:results,
+ stream_rejections:bounds,invalid_revision_rejections:4,source_code_executed:false,
+ credentials_bound:false,worker_started:false,publishing_attempted:false,deployment_attempted:false]))
+loader.close()
+'''.replace('__CODE__',literal(code)).replace('__FIXTURE__',literal(dumps(payload).encode()))
+with Client(auth=BasicAuth('admin',admin_password()),timeout=150,trust_env=False,follow_redirects=False) as client:
+    crumb=client.get(BASE_URL+'/crumbIssuer/api/json').json()
+    response=client.post(BASE_URL+'/scriptText',data={'script':script},headers={crumb['crumbRequestField']:crumb['crumb']})
+    response.raise_for_status()
+    (base/'native-response.txt').write_text(response.text)
+    result=loads(response.text)
+    result['helper_sha256']=sha256(code).hexdigest()
+    (base/'verification.json').write_text(dumps(result,indent=2)+'\n')
+    print(dumps({key:result[key] for key in ['status','archive_entries','selected_bytes','elapsed_seconds','helper_sha256']}))

@@ -1,0 +1,60 @@
+"""Compile controller composition and reject ineligible real upstreams before preparation."""
+from base64 import b64encode
+from hashlib import sha256
+from json import dumps,loads
+from pathlib import Path
+from bootstrap import BASE_URL,admin_password
+from httpx2 import BasicAuth,Client
+
+names=['release-job.groovy','release-source.groovy','release-transfer.groovy','release-preparation.groovy']
+source={name:Path('ops/jenkins',name).read_bytes() for name in names}
+fixture=loads(Path('reports/release-source/verification.json').read_text())
+payload={'sources':{name:b64encode(data).decode() for name,data in source.items()},'snapshot':fixture}
+text=b64encode(dumps(payload).encode()).decode()
+expression='['+','.join(repr(text[i:i+32000]) for i in range(0,len(text),32000))+"] .join('')"
+code='''
+def loader=new GroovyClassLoader(jenkins.model.Jenkins.get().pluginManager.uberClassLoader)
+try {
+ def data=new groovy.json.JsonSlurperClassic().parseText(new String(Base64.decoder.decode(__PAYLOAD__),'UTF-8'))
+ ['release-job.groovy','release-source.groovy','release-transfer.groovy','release-preparation.groovy'].each { name ->
+  loader.parseClass(new String(Base64.decoder.decode(data.sources[name]),'UTF-8'))
+ }
+ def helper=loader.loadClass('FinsecureReleasePreparation')
+ def snapshot=data.snapshot + [revision:data.snapshot.source_revision]
+ def candidate=[upstream_build:34,revision:snapshot.revision,lock_sha256:snapshot.lock_sha256,
+  image_id:'sha256:'+'b'*64,archive_sha256:'c'*64]
+ def context=helper.controlContext(candidate,snapshot)
+ assert context.upstream_job=='finsecure-ci' && context.upstream_build==34
+ assert context.local_tag=='finsecure-pay-ci:jenkins-finsecure-ci-34'
+ assert context.source_sha256==snapshot.source_sha256 && context.pyproject_sha256==snapshot.pyproject_sha256
+ def rejected=[]
+ [['revision','f'*40,'RELEASE_SOURCE_SNAPSHOT_MISMATCH'],
+ ['lock_sha256','f'*64,'RELEASE_SOURCE_SNAPSHOT_MISMATCH'],
+ ['upstream_build',true,'RELEASE_BUILD_INVALID']].each { row ->
+  def changed=new LinkedHashMap(candidate);changed[row[0]]=row[1]
+  String reason=null
+  try { helper.controlContext(changed,snapshot) }
+  catch(IllegalStateException error) {reason=error.message}
+  assert reason==row[2];rejected<<row[0]
+ }
+ def actual=[]
+ [33,34].each { number ->
+  def run=jenkins.model.Jenkins.get().getItemByFullName('finsecure-ci').getBuildByNumber(number)
+  String reason=null
+  try {helper.prepare(new Expando(causes:[new hudson.model.Cause.UpstreamCause(run)]),null)}
+  catch(IllegalStateException error) {reason=error.message}
+  assert reason==(number==33 ? 'RELEASE_SUPERSEDED_BUILD' : 'RELEASE_PLATFORM_DENIED')
+  actual << [build:number,reason:reason]
+ }
+ println(groovy.json.JsonOutput.toJson([status:'verified',synthetic_candidate_context:true,
+  context_rejections:rejected,real_upstream_rejections:actual,preparation_completed:false,
+  worker_started:false,credentials_bound:false,publishing_attempted:false,deployment_attempted:false]))
+} finally {loader.close()}
+'''.replace('__PAYLOAD__',expression)
+with Client(auth=BasicAuth('admin',admin_password()),timeout=45,trust_env=False,follow_redirects=False) as client:
+ crumb=client.get(BASE_URL+'/crumbIssuer/api/json').json()
+ response=client.post(BASE_URL+'/scriptText',data={'script':code},headers={crumb['crumbRequestField']:crumb['crumb']});response.raise_for_status()
+ Path('reports/release-source/composition-response.txt').write_text(response.text)
+ result=loads(response.text);result['source_sha256']={name:sha256(value).hexdigest() for name,value in source.items()}
+ Path('reports/release-source/composition.json').write_text(dumps(result,indent=2)+'\n')
+ print(dumps(result))

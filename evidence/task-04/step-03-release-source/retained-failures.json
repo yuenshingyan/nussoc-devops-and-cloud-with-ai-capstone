@@ -1,0 +1,25 @@
+{
+  "failures": [
+    {
+      "attempt": 1,
+      "phase": "observer_compilation",
+      "reason": "Commons Compress unavailable",
+      "source_request_started": false
+    },
+    {
+      "attempt": 2,
+      "phase": "valid_fixture",
+      "reason": "Ant getFile property selected instead of isFile predicate",
+      "source_request_started": false
+    },
+    {
+      "attempt": 3,
+      "phase": "public_archive",
+      "reason": "Git global commit-comment header rejected as ordinary path",
+      "source_request_started": true
+    }
+  ],
+  "credential_bindings": false,
+  "worker_startups": false,
+  "cloud_mutations": false
+}

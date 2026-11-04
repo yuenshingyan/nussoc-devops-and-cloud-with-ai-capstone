@@ -202,6 +202,11 @@ and report retention on an isolated failure. Cloud delivery remains unverified.
   published accessible reports, and provided packages with verified download hashes.
   The build was manually triggered; no source-trigger, release, or deployment gate is claimed.
 
+- [Step 4.3 — Trusted Git source and preparation candidate](task-04/step-03-release-source.md):
+  immutable public snapshot matched 30 Python files and both metadata files from exact
+  local Git objects; native archive/boundary/composition cases passed. 1,064 host tests
+  and source gates passed. No worker startup, positive full preparation or Pipeline run;
+  installed release remains unchanged/disabled/unbuilt and pending approval.
 - [Step 4.3 — Supersession/action-time guard candidate](task-04/step-03-release-supersession.md):
   native ordering/identity checks passed, including rejection of real main #33 behind
   #34. 1,062 host tests and source gates passed. Candidate not installed; old release

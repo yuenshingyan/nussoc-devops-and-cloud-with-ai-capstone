@@ -1,0 +1,24 @@
+"""Read the public archive's first entry metadata to diagnose the retained prefix rejection."""
+from pathlib import Path
+from json import loads,dumps
+from bootstrap import BASE_URL,admin_password
+from httpx2 import BasicAuth,Client
+code='''
+def c=new URL('https://codeload.github.com/yuenshingyan/nussoc-devops-and-cloud-with-ai-capstone/tar.gz/19b44861114c18e07dff249423365215547035a3').openConnection(Proxy.NO_PROXY)
+c.instanceFollowRedirects=false;c.connectTimeout=5000;c.readTimeout=5000
+try {
+ assert c.responseCode==200
+ def a=new org.apache.tools.tar.TarInputStream(new java.util.zip.GZIPInputStream(c.inputStream),512,512,'UTF-8')
+ try {
+  def e=a.nextEntry
+  assert e.size<=1024
+  def body=a.readNBytes((int)e.size)
+  println(groovy.json.JsonOutput.toJson([name:e.name,directory:e.isDirectory(),global_pax:e.isGlobalPaxHeader(),size:e.size,metadata:new String(body,'UTF-8')]))
+ } finally {a.close()}
+} finally {c.disconnect()}
+'''
+with Client(auth=BasicAuth('admin',admin_password()),timeout=25,trust_env=False) as client:
+ crumb=client.get(BASE_URL+'/crumbIssuer/api/json').json()
+ response=client.post(BASE_URL+'/scriptText',data={'script':code},headers={crumb['crumbRequestField']:crumb['crumb']});response.raise_for_status()
+ Path('reports/release-source/header-diagnostic.txt').write_text(response.text)
+ result=loads(response.text);print(dumps(result))

@@ -482,10 +482,55 @@ when checking the live definition: it intentionally differs from the new working
 No job update, script approval, worker startup, upload or cloud mutation occurred.
 See [supersession evidence](../../evidence/task-04/step-03-release-supersession.md).
 
+## Trusted source acquisition and preparation candidate — 4 November 2026
+
+`release-source.groovy` now acquires an immutable archive from the fixed public
+`codeload.github.com/yuenshingyan/nussoc-devops-and-cloud-with-ai-capstone/tar.gz/<sha>`
+endpoint. Only a lowercase 40-character commit SHA is accepted. Requests use HTTPS,
+no proxy, no redirects, no added credentials, and five-second connect/read limits.
+The source authority is GitHub over TLS plus the independently selected revision;
+this is not independent commit-signature verification or reproducible-build attestation.
+
+The controller uses its already-bundled Ant 1.10.18 tar reader. Nothing is checked out,
+extracted, installed or executed. It hashes exactly the Python paths in the existing
+scan scope and retains only `uv.lock` and `pyproject.toml` as data. It rejects path
+escapes, duplicates, links, GNU sparse/unsupported entries and missing required inputs.
+Git's optional global header must be the single exact commit-comment record before
+any tree entry. The gzip stream is drained to check completion/checksum and trailing
+content. Read and skip counters apply to compressed and expanded streams.
+
+Explicit caps are 32 MiB compressed, 64 MiB expanded, 4,096 tree entries, 200 scanned
+Python files, 1 MiB per selected file, and 8 MiB total selected bytes. The preparation
+caller supplies a 120-second cooperative budget. As with the earlier helpers, blocked
+I/O/DNS cancellation and the complete Pipeline wall-clock limit are not proved.
+
+Actual acquisition of published `19b4486` read 1,492 tree entries and 245,380 selected
+bytes in an observed 1.68 seconds. All 30 Python hashes and both metadata hashes matched
+independent local Git objects for that exact revision. Seventeen archive fixture cases,
+three stream-limit/deadline cases and four invalid-revision cases passed. Earlier failures
+(unavailable Commons Compress, ambiguous Ant `file` property, then the Git global header)
+are retained. The fixes use existing Ant APIs and exact format checks, not new dependencies
+or relaxed source identity checks.
+
+`release-preparation.groovy` composes selection, snapshot acquisition, revision/lock binding,
+a fresh authoritative recheck, and controller-owned artifact transfer. Its returned result
+still requires worker verification and does not authorize publishing. The eventual fixed
+Pipeline must bundle reviewed verifier code separately; it must never execute fetched
+Git source. The operation owner remains responsible for its new scratch directory.
+
+Native composition checks rejected mismatched snapshot revision/lock and invalid build
+identity. Actual #33 and #34 were rejected at selection as superseded and ARM64,
+respectively, before preparation. A context-construction fixture used synthetic image
+identity and is not evidence of an eligible main release. **No positive full preparation
+or Pipeline run is claimed.** All 1,064 host tests, Ruff, build and source/dependency gates
+passed. The installed job remains the older disabled/unbuilt/pending-approval definition;
+no worker startup or cloud mutation occurred. See
+[source evidence](../../evidence/task-04/step-03-release-source.md).
+
 ## Remaining verification
 
-Trusted production Git-snapshot acquisition and Pipeline integration, including the
-tested supersession/action-time helpers; reviewed publication and
+Fixed Pipeline assembly and integration of the tested preparation/verifier/action-time
+helpers with an eligible normal-main AMD64 build; reviewed publication and
 normal SCM AMD64 proof; real downstream triggering, serialization, timeout/cancellation
 and restart behavior; immutable upload identity; deployment failure/rollout/smoke checks
 and retained failure reports. Full delivery is pending until all of these run successfully.

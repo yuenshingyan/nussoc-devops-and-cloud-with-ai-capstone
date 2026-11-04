@@ -92,6 +92,31 @@ def test_action_time_recheck_reselects_and_compares_the_original_candidate():
         assert code in script
 
 
+def test_preparation_wires_selection_snapshot_recheck_and_transfer_in_order():
+    source = (ROOT / "ops/jenkins/release-preparation.groovy").read_text()
+    calls = [
+        "FinsecureCandidateSelection.select(releaseRun)",
+        "FinsecureSourceSnapshot.acquire(candidate.revision",
+        "FinsecureCandidateSelection.recheck(releaseRun, candidate)",
+        "FinsecureArtifactTransfer.copy(upstream, destination, context",
+    ]
+    assert [source.index(call) for call in calls] == sorted(source.index(call) for call in calls)
+    assert "publishing_authorized:false" in source
+    assert "artifact_verification_required:true" in source
+    assert "withCredentials(" not in source
+
+
+def test_source_acquisition_has_fixed_public_origin_and_no_code_execution():
+    source = (ROOT / "ops/jenkins/release-source.groovy").read_text()
+    assert "https://codeload.github.com/yuenshingyan/" in source
+    assert "Proxy.NO_PROXY" in source
+    assert "connection.instanceFollowRedirects = false" in source
+    assert "entry.isFile()" in source
+    assert "SOURCE_GIT_HEADER_INVALID" in source
+    for forbidden in ("withCredentials(", "evaluate(", "GroovyShell", "extractAll("):
+        assert forbidden not in source
+
+
 def test_job_cannot_publish_or_execute_upstream_artifacts():
     script = (ROOT / "ops/jenkins/release-job.groovy").read_text()
     assert "timeout(time: 10, unit: 'MINUTES')" in script

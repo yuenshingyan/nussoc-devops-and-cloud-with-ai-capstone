@@ -1,0 +1,30 @@
+{
+  "status": "verified",
+  "synthetic_candidate_context": true,
+  "context_rejections": [
+    "revision",
+    "lock_sha256",
+    "upstream_build"
+  ],
+  "real_upstream_rejections": [
+    {
+      "build": 33,
+      "reason": "RELEASE_SUPERSEDED_BUILD"
+    },
+    {
+      "build": 34,
+      "reason": "RELEASE_PLATFORM_DENIED"
+    }
+  ],
+  "preparation_completed": false,
+  "worker_started": false,
+  "credentials_bound": false,
+  "publishing_attempted": false,
+  "deployment_attempted": false,
+  "source_sha256": {
+    "release-job.groovy": "e0d6db76457e8e654691f302f05e04e9e2a1baf491297d9526d7be7e88965ed5",
+    "release-source.groovy": "4053666172e9203e536035e082fb005bc68a9e67f5e80c626ac3ca8e93498dc9",
+    "release-transfer.groovy": "b56f5e99de14e246e0337c1022ce2e1b91e3e75d24e35d4f2a6984dfafc11c4d",
+    "release-preparation.groovy": "97d53f132ed38b318464c2a7bf2c13c6cc254a7b3b2c85294a00c2a4699ca113"
+  }
+}
