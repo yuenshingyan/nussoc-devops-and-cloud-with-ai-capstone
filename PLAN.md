@@ -4,13 +4,15 @@
 
 The fixed delivery definition now connects independent artifact verification, publication,
 registry readback, conditional image-only deployment, rollout and synthetic smoke checks.
-The controller has scheduling policy v2 and the exact approved mutation-disabled definition,
-with a native SUCCESS upstream trigger, serialization and resume disabled. The isolated
-release worker is online. The next normal main build will exercise the real Pipeline;
-publication/deployment remain disabled until that verification run is inspected.
+The controller has scheduling policy v2 and the exact approved fixed definition,
+with a native SUCCESS upstream trigger, serialization and resume disabled. Automatic source
+build #35 passed and triggered delivery #1, which failed before credentials because Jenkins
+unsets empty environment variables. That failure is retained. The corrected definition is
+now enabled for gated publication/deployment. Each external command retains one process-group
+owner, avoiding nested supervisors killing an owner before it can reap its child.
 
 Application metadata is 0.4.0; business request/response contracts are unchanged. The live
-application remains 0.3.0. Host checks passed (Ruff, 1,347 tests, build and source/dependency
+application remains 0.3.0. Host checks passed (Ruff, 1,348 tests, build and source/dependency
 security gates); Jenkins CPS compilation passed. These are not a completed delivery run.
 Actual publication, rollout, blocking-gate, rollback and monitoring demonstrations remain
 pending. New cloud monitoring volumes still require sufficient-credit confirmation.

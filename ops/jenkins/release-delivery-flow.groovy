@@ -14,7 +14,7 @@ python -I -B -c 'from sys import argv,path; from runpy import run_module; path.i
     "$FINSECURE_RELEASE_SCRATCH/tools" --phase "$FINSECURE_RELEASE_PHASE" \
     --root "$FINSECURE_RELEASE_SCRATCH" --remaining-ms "$FINSECURE_REMAINING_MS" \
     --credential "${FINSECURE_RELEASE_KEY:-}" \
-    --uid "$FINSECURE_BASELINE_UID" --spec-sha256 "$FINSECURE_BASELINE_SPEC"
+    --uid "${FINSECURE_BASELINE_UID:-}" --spec-sha256 "${FINSECURE_BASELINE_SPEC:-}"
 '''
     }
 }

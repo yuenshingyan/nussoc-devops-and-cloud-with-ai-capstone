@@ -128,7 +128,7 @@ def child_phase(arguments: Namespace) -> dict:
 
 
 def phase(arguments: Namespace) -> dict:
-    """Journal each mutation before launch and supervise the full phase, not just crane."""
+    """Journal each mutation; retain a single process-group owner for external commands."""
     root = Path(arguments.root)
     private_directory(root)
     if arguments.phase == "init":
@@ -172,14 +172,20 @@ def phase(arguments: Namespace) -> dict:
             "--spec-sha256",
             arguments.spec_sha256,
         ]
-        result = run_command(command, environment, deadline)
-        document = strict_json(result.stdout)
-        require(type(document) is dict, "RELEASE_PHASE_RESULT_INVALID")
-        if result.returncode:
-            code = document.get("code")
-            if type(code) is str and fullmatch(r"[A-Z][A-Z_]{1,127}", code):
-                raise RuntimeError(code)
-            raise RuntimeError("RELEASE_PHASE_FAILED_INSPECT_OUTCOME_MANUALLY")
+        if arguments.phase == "prepare":
+            result = run_command(command, environment, deadline)
+            document = strict_json(result.stdout)
+            require(type(document) is dict, "RELEASE_PHASE_RESULT_INVALID")
+            if result.returncode:
+                code = document.get("code")
+                if type(code) is str and fullmatch(r"[A-Z][A-Z_]{1,127}", code):
+                    raise RuntimeError(code)
+                raise RuntimeError("RELEASE_PHASE_FAILED_INSPECT_OUTCOME_MANUALLY")
+        else:
+            # Publication and deployment already own supervised command groups. Nesting
+            # another group supervisor could kill their owner before it reaps its child.
+            document = child_phase(Namespace(**{**vars(arguments), "profiles": temporary}))
+        remaining(deadline)
     save(root / (arguments.phase + ".json"), document)
     return document
 

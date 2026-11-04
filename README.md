@@ -14,7 +14,9 @@ only, never customer/payment-card data or credentials.** No money is transferred
 
 The GKE overlay pins published AMD64 **0.3.0**; historical base/demo pins remain 0.2.0.
 The 0.4.0 source candidate integrates automated delivery, but its rollout is not yet verified.
-The installed delivery Pipeline currently permits verification/preflight only, not mutations.
+The corrected gated delivery Pipeline is enabled; its first complete rollout is pending.
+Automatic source build #35 passed; delivery #1 stopped before credentials on an empty-variable
+shell error. That failure is retained, and the shell boundary has been corrected.
 See [image identity](docs/runbooks/image-publication.md),
 [creation/access runbook](docs/runbooks/gke-creation.md),
 [approved resource profile](deploy/infrastructure/gke-proposal.md) and

@@ -2,6 +2,7 @@ from argparse import Namespace
 from json import loads
 from pathlib import Path
 from runpy import run_path
+from subprocess import run
 
 from pytest import raises
 
@@ -37,12 +38,16 @@ def test_uncertain_publication_cannot_be_relaunched_in_same_workspace(tmp_path, 
     )
     calls = []
 
-    def command(argv: list[str], environment: dict[str, str], deadline: float) -> None:
-        calls.append(environment["HOME"])
-        Path(environment["HOME"], "partial-client-cache").write_text("synthetic")
+    def command(arguments: Namespace) -> None:
+        calls.append(arguments.profiles)
+        Path(arguments.profiles, "partial-client-cache").write_text("synthetic")
         raise TimeoutError("RELEASE_COMMAND_TIMEOUT_OUTCOME_UNKNOWN")
 
-    monkeypatch.setattr("scripts.release_worker.run_command", command)
+    def nested_supervisor(*args: object, **kwargs: object) -> None:
+        raise AssertionError("Mutation phases must not nest process-group supervisors")
+
+    monkeypatch.setattr("scripts.release_worker.run_command", nested_supervisor)
+    monkeypatch.setattr("scripts.release_worker.child_phase", command)
     with raises(TimeoutError):
         phase(arguments(root, "publish"))
     assert loads((root / "publish-attempt.json").read_text())["revision"] == context["revision"]
@@ -50,6 +55,30 @@ def test_uncertain_publication_cannot_be_relaunched_in_same_workspace(tmp_path, 
     with raises(FileExistsError):
         phase(arguments(root, "publish"))
     assert len(calls) == 1
+
+
+def test_shell_accepts_jenkins_unset_empty_baseline_variables(tmp_path):
+    root = Path(__file__).resolve().parents[2]
+    flow = (root / "ops/jenkins/release-delivery-flow.groovy").read_text()
+    shell = flow.split("sh '''", 1)[1].split("'''", 1)[0]
+    binary = tmp_path / "python"
+    binary.write_text('#!/bin/sh\nprintf "%s\\n" "$@" > "$CAPTURE_ARGUMENTS"\n')
+    binary.chmod(0o700)
+    captured = tmp_path / "arguments"
+    run(
+        ["/bin/sh", "-c", shell],
+        env={
+            "PATH": str(tmp_path),
+            "CAPTURE_ARGUMENTS": str(captured),
+            "FINSECURE_RELEASE_SCRATCH": str(tmp_path),
+            "FINSECURE_RELEASE_PHASE": "init",
+            "FINSECURE_REMAINING_MS": "500000",
+        },
+        check=True,
+        capture_output=True,
+        timeout=10,
+    )
+    assert "--uid\n\n--spec-sha256\n\n" in captured.read_text()
 
 
 def test_delivery_assembly_is_explicit_and_dry_by_default(monkeypatch):
