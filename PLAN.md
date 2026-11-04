@@ -1,6 +1,29 @@
 # FinSecure Pay — Implementation Plan
 
-## Latest checkpoint — Step 4.3 image-only patch planner / uploader blocker
+## Latest checkpoint — Step 4.3 bounded crane-internal retries approved
+
+The user approved crane's internal retries within the remaining release budget, without
+whole-command/Pipeline retries or automatic rollback. A one-invocation process adapter
+now enforces a worker-local monotonic deadline and 1 MiB combined output limit, drains
+both pipes, discards provider stderr, and cleans up its process group. It is not yet a
+production uploader or part of the installed Pipeline.
+
+Actual pinned-crane fault injection against a synthetic loopback registry in a network-
+disabled container observed three failed POST attempts in one invocation, then a separate
+0.8-second cutoff case stopped after one attempt. No external registry, real credentials,
+or application image execution. All 24 focused cases and 1,164 host tests passed with
+Ruff, package, security and secret-boundary checks. Two new LOW subprocess findings remain
+visible (45 LOW total, zero blocking; 15 clean dependencies).
+
+Remote push is unavailable per the user; no push was attempted or cause inferred. Genuine
+SCM release proof remains blocked, with no local-provenance bypass. Live delivery remains
+disabled/unbuilt, approvals/policy unchanged, release worker stopped and cloud healthy and
+unchanged. See [retry evidence](evidence/task-04/step-03-release-retries.md).
+
+Next: finish production crane input/auth/readback and image-only execution integration;
+resolve remote publication before real SCM/downstream proof. No merge/publication yet.
+
+## Previous checkpoint — Step 4.3 image-only patch planner / uploader blocker
 
 A pure Deployment planner now requires the independently approved UID/full-spec hash,
 checks the fixed target and digest-pinned images, and produces identity/concurrency tests
@@ -421,7 +444,7 @@ The assignment allows equivalent application, build, and unit-testing tools with
 ### Step 4.3 — Automate container delivery
 - **Branch:** `task-04/step-03-container-delivery`
 - **Approved local subset:** separate rootless BuildKit with builder-only security exceptions, local ARM64 build/export, and operator-side artifact smoke verification. Reviewed/merged as `ab538a2`; normal SCM build #2 passed all 245 tests, exported the image, and its downloaded artifact passed operator-side smoke checks. See the [SCM follow-up](evidence/task-04/step-03-scm-verification.md). No registry credentials, publishing, or cloud work is authorized by this subset. See the [builder runbook](docs/runbooks/local-image-builder.md) and [evidence](evidence/task-04/step-03-local-image-builder.md).
-- **Cloud continuation:** dedicated deployer IAM/RBAC and namespace admission are live-verified. The release-worker image/tools and folder credential imports passed actual read-only Jenkins probes. The controller-owned scheduling guard passed ten decision cases and five real Pipeline cases (including three denied assignments); 942 host tests and source/dependency gates passed. Worker stopped and diagnostic jobs disabled after verification. Manual AMD64 candidate CI at `dc7ffe5` subsequently passed 961 tests, all gates and 33 verified artifacts, with zero image findings and matching local mail. The fixed non-sandboxed selection job is installed disabled/pending approval; 975 host tests and native selection checks passed, including rejection of real main #34's ARM64 image through a simulated upstream envelope. Separate transfer/verifier helpers subsequently passed 1,060 host tests and an administrator-owned remoting probe of 21 retained candidate artifacts, including actual byte-tampering rejection and a synthetic stale-clock rejection. These helpers are not yet integrated into the disabled/unbuilt job; no upload or deployment stage exists. Supersession/action-time helper candidates then passed native checks and 1,062 host tests, but are not installed. Trusted-source acquisition and a preparation-composition candidate subsequently passed native checks and 1,064 host tests, but are not integrated into the installed job. A fixed verification-only Pipeline subsequently passed CPS compilation and 1,083 host tests, but was not installed or run. A pure image-only patch planner subsequently passed 57 cases and 1,140 total host tests; upload remains blocked on crane's internal retries versus the approved policy. Network execution, review/publication and normal SCM/downstream runtime proof remain pending. See [setup/status](docs/runbooks/cloud-delivery.md), [selection evidence](evidence/task-04/step-03-release-selection.md) and [artifact evidence](evidence/task-04/step-03-release-artifacts.md).
+- **Cloud continuation:** dedicated deployer IAM/RBAC and namespace admission are live-verified. The release-worker image/tools and folder credential imports passed actual read-only Jenkins probes. The controller-owned scheduling guard passed ten decision cases and five real Pipeline cases (including three denied assignments); 942 host tests and source/dependency gates passed. Worker stopped and diagnostic jobs disabled after verification. Manual AMD64 candidate CI at `dc7ffe5` subsequently passed 961 tests, all gates and 33 verified artifacts, with zero image findings and matching local mail. The fixed non-sandboxed selection job is installed disabled/pending approval; 975 host tests and native selection checks passed, including rejection of real main #34's ARM64 image through a simulated upstream envelope. Separate transfer/verifier helpers subsequently passed 1,060 host tests and an administrator-owned remoting probe of 21 retained candidate artifacts, including actual byte-tampering rejection and a synthetic stale-clock rejection. These helpers are not yet integrated into the disabled/unbuilt job; no upload or deployment stage exists. Supersession/action-time helper candidates then passed native checks and 1,062 host tests, but are not installed. Trusted-source acquisition and a preparation-composition candidate subsequently passed native checks and 1,064 host tests, but are not integrated into the installed job. A fixed verification-only Pipeline subsequently passed CPS compilation and 1,083 host tests, but was not installed or run. A pure image-only patch planner subsequently passed 57 cases and 1,140 total host tests; the user subsequently approved bounded crane-internal retries. A command adapter passed real isolated crane fault injection and 1,164 host tests, but production upload/execution remains unwired. Remote push is unavailable; review/publication and normal SCM/downstream runtime proof remain pending. See [setup/status](docs/runbooks/cloud-delivery.md), [selection evidence](evidence/task-04/step-03-release-selection.md) and [artifact evidence](evidence/task-04/step-03-release-artifacts.md).
 - Full step still requires container build, versioned push, and Kubernetes deployment stages.
 - Deploy the exact built image, wait for rollout completion, and perform a smoke test.
 - Serialize deployments to the shared demo environment to prevent overlapping releases.

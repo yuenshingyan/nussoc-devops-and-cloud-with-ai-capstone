@@ -1,0 +1,4 @@
+{
+  "scripts/release_command.py": "4a3a4a742a34577385659c1ca4fda6ce433289c3034d32c8f94fae20c0e421ce",
+  "tests/unit/test_release_command.py": "0cc69d24e878a738adb9cdf651c91e075515911ec323c6aea715c408e12435c2"
+}

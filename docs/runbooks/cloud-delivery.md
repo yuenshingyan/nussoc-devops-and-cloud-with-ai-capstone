@@ -357,7 +357,8 @@ The operator approved a fixed administrator-owned, non-sandboxed controller defi
 rather than putting Jenkins admin credentials on the worker or relaxing sandbox rules
 globally. The agreed policy is one release at a time, a ten-minute overall Jenkins
 budget, current-main successful AMD64 artifacts only, and no automatic release retries
-or rollback. Publishing/deployment must remain disabled through verification and review.
+or rollback. The later approved crane-internal retry exception is recorded below; it does
+not permit whole-release retries. Publishing/deployment remains disabled through review.
 
 `ops/jenkins/release-job.groovy` implements only the first selection stage. It requires
 one authoritative upstream cause for `finsecure-ci`, the fixed Git repository and
@@ -607,15 +608,55 @@ network-disabled/credential-free containers, not the stopped release-agent servi
 Version-tagged upstream `pkg/v1/remote/options.go` enables retry transport/default backoff;
 `pkg/v1/remote/write.go` wraps blob and manifest upload paths in `retry.Retry`. This is a
 source review, not registry fault injection. Omitting Jenkins `retry` does not disable
-these internal retries on selected transient failures. The approved no-automatic-retry
-policy therefore remains in force and crane upload is **not wired**. Choose explicitly
-between a reviewed no-retry uploader and a revised internal-retry contract before proceeding;
-no library/dependency, credential, policy or infrastructure change was made to work around it.
+these internal retries on selected transient failures. At that checkpoint the original
+no-automatic-retry policy remained in force and upload was not wired. The subsequent
+explicit approval and bounded-command verification below resolve the policy choice,
+not the still-pending production uploader integration.
 See [planner and retry evidence](../../evidence/task-04/step-03-release-deployment.md).
+
+## Approved crane retry exception and bounded execution — 4 November 2026
+
+The user approved retaining crane with bounded internal retries rather than building a
+custom registry client. **Only pinned crane's internal retries are permitted**, within the
+remaining ten-minute release budget. No Jenkins/shell retry loop, command relaunch,
+automatic Kubernetes patch retry/rebase, or automatic rollback is authorized. A nonzero
+exit, output limit or timeout stops delivery for inspection: an external write may already
+have been accepted. No fixed global HTTP-attempt count is asserted across all client paths.
+
+`scripts/release_command.py` runs one fixed administrator-owned argv, without a shell,
+under a caller-owned worker-local monotonic deadline no more than 600 seconds away.
+The caller must use the remaining release budget, not restart it for each command or pass
+another machine's monotonic timestamp. Both pipes are drained with a combined 1 MiB limit;
+provider stderr is discarded, not logged. The owned process group is killed and reaped on
+exit/failure/timeout, including descendants. Stdout remains bounded, untrusted data for
+subsequent validation. The helper does not authorize a release, create credentials, or
+implement the uploader. Real Jenkins cancellation/restart behavior remains pending.
+
+Actual crane 0.22.1 fault injection ran in a temporary, network-disabled, credential-free
+container against a synthetic loopback registry. One invocation made three POST attempts
+under HTTP 503 responses, then exited nonzero after about 4.17 seconds. A second invocation
+with a 0.8-second budget made one POST and was stopped after about 0.81 seconds. These are
+observations for this fixture, not a universal attempt count or wall-clock SLA. No external
+registry was contacted and no application image was executed. The first fixture used an
+outer-gzipped tar and failed with `unexpected EOF` before registry requests; switching only
+the synthetic fixture to an uncompressed Docker tar reached the intended fault path.
+Production artifact preparation must explicitly handle this format without rebuilding or
+changing the verified image; it is not implemented by this probe.
+
+All 24 command tests and all 1,164 host tests passed, along with Ruff, build, existing gates
+and secret-boundary checks. LOW findings increased from 43 to 45: Bandit B404/B603 report
+subprocess import/invocation. They remain visible, without suppression; no blocking findings
+and 15 clean runtime dependencies. Failed fixture/diagnostic attempts remain retained.
+
+The user reports remote pushes unavailable. No Git push was attempted and no cause is
+assumed. Do not replace authoritative main/SCM checks with local fixtures to bypass this
+blocker. Local checks cannot establish a genuine automatically triggered release.
+The existing disabled job, script approvals, scheduling policy and cloud remain unchanged.
+See [retry evidence](../../evidence/task-04/step-03-release-retries.md).
 
 ## Remaining verification
 
-Uploader choice consistent with retry policy, immutable upload and deployment execution;
+Production crane input/profile/readback integration, immutable upload and deployment execution;
 reviewed installation/scheduling
 and actual execution of the fixed Pipeline with an eligible normal-main AMD64 build;
 reviewed publication and

@@ -1,0 +1,9 @@
+{
+  "lint": "import ordering and line length corrected without suppressions",
+  "first_native_fixture": "outer-gzipped tar rejected before registry requests",
+  "explicit_synthetic_diagnostic": "unexpected EOF confirmed with no real credentials or external network",
+  "corrected_fixture": "uncompressed synthetic Docker tar",
+  "first_success_retained": true,
+  "final_helper_retested": true,
+  "git_push_attempted": false
+}
