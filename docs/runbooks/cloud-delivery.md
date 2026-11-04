@@ -654,9 +654,50 @@ blocker. Local checks cannot establish a genuine automatically triggered release
 The existing disabled job, script approvals, scheduling policy and cloud remain unchanged.
 See [retry evidence](../../evidence/task-04/step-03-release-retries.md).
 
+## Verified crane input preparation — 4 November 2026
+
+After the user's explicit push request, feature branch `task-04/step-03-container-delivery`
+was published through `0ac68c1`, with the remote SHA verified. This resolves that feature-
+publication attempt, not main merge or normal SCM release eligibility. Main remains at
+`19b4486`/#34 ARM64; no authority check is replaced with a local fixture.
+
+`scripts/release_input.py` now materializes the exact already-gated compressed artifact as
+`image.tar` in a caller-owned private directory. It requires the expected compressed SHA-256,
+canonical private owned paths, a regular single-link private source and a worker-local
+remaining deadline. Both compressed and expanded tar limits are 64 MiB. Bytes are streamed
+through gzip checksum/completion checks, hashed, and checked for source mutation; no tar
+members are extracted to the filesystem and no image is rebuilt or executed. Output is
+created exclusively with mode 0600. Existing files/links are not overwritten or removed;
+new partial output is removed on failure, or a safe cleanup-failure note preserves the
+primary error. Full image/gate/eligibility verification remains a prerequisite, not a
+claim made by this materializer.
+
+Actual pinned crane checked the retained manual AMD64 candidate in an isolated no-network,
+no-credentials container. Compressed input was 21,435,786 bytes; prepared tar 21,542,912
+bytes. `crane validate --tarball` ran without `--fast`; local `crane digest --tarball` also
+passed. An independent Docker-manifest reconstruction from the same tar config and all
+nine compressed layer blobs matched crane's digest. This confirms format/byte correspondence,
+not a fresh scan, normal-main eligibility, application execution or registry publication.
+
+The local crane manifest digest is
+`sha256:a5fc5aad54f4aa7d8a93154f2c63b704bbde36a8fb552547ac7ccc3c39ff4cb0`;
+the exported OCI manifest remains
+`sha256:27ee6d5d4d5a4af23079d2310ca208c5bb4bd6989231fb858934ff9bfb791099`.
+They are different representations of the verified config/layer bytes, **not interchangeable
+registry evidence**. Future push/readback must verify the actual published manifest.
+
+All 28 input cases and 1,192 total host tests passed, along with Ruff, packaging, existing
+source/dependency gates and secret-boundary checks (45 LOW, zero blocking, 15 clean runtime
+dependencies). Owned temporary data was removed. The release-agent service stayed stopped;
+job definition/approval/policy and cloud remained unchanged. The helper is not yet bundled
+or wired into the installed Pipeline. Host free space measured 3.6 GiB before and 2.7 GiB
+at closure, while Docker backing remained 7.6 GiB; the cause of host growth is unestablished.
+Review headroom before further storage-intensive execution; no shared-cache pruning was
+performed. See [input evidence](../../evidence/task-04/step-03-release-input.md).
+
 ## Remaining verification
 
-Production crane input/profile/readback integration, immutable upload and deployment execution;
+Production crane profile/readback integration, immutable upload and deployment execution;
 reviewed installation/scheduling
 and actual execution of the fixed Pipeline with an eligible normal-main AMD64 build;
 reviewed publication and

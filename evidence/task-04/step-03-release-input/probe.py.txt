@@ -1,0 +1,53 @@
+"""Use the retained real archive locally; no fresh scan, release eligibility or registry proof."""
+from hashlib import sha256
+from json import dumps,loads
+from pathlib import Path
+from re import fullmatch
+from shutil import copyfile
+from sys import path
+from tarfile import TarFile
+from tempfile import TemporaryDirectory
+from time import monotonic
+path.insert(0,'/review')
+from release_input import prepare_crane_tar
+from release_command import run_command
+
+expected='c7173b149f2821d3baba3521397eee791dd53f1b9e33c42b07a91eb2e13a0cf0'
+with TemporaryDirectory(prefix='finsecure-input-') as temporary:
+ root=Path(temporary);root.chmod(0o700)
+ source=root/'candidate.tar.gz';copyfile('/input/candidate.tar.gz',source);source.chmod(0o600)
+ output=root/'prepared';output.mkdir(mode=0o700)
+ deadline=monotonic()+120
+ prepared=prepare_crane_tar(source,output,expected,deadline)
+ environment={'HOME':str(root),'DOCKER_CONFIG':str(root),'PATH':'/usr/local/bin:/usr/bin:/bin'}
+ validation=run_command(['/usr/local/bin/crane','validate','--tarball',str(output/'image.tar')],environment,deadline)
+ assert validation.returncode==0, 'Local full tarball validation failed'
+ digest=run_command(['/usr/local/bin/crane','digest','--tarball',str(output/'image.tar')],environment,deadline)
+ assert digest.returncode==0 and fullmatch(rb'sha256:[a-f0-9]{64}\n',digest.stdout), 'Local digest failed'
+ # Independently bind crane's Docker-manifest interpretation to the same config/layer bytes.
+ with TarFile.open(output/'image.tar','r:') as tar:
+  with tar.extractfile('manifest.json') as stream: docker=loads(stream.read(1048576))
+  assert len(docker)==1
+  names=[docker[0]['Config'],*docker[0]['Layers']]
+  descriptors=[]
+  for index,name in enumerate(names):
+   entry=tar.getmember(name);assert entry.isfile() and entry.size<=64*1024*1024
+   checksum=sha256()
+   with tar.extractfile(entry) as stream:
+    while data:=stream.read(65536): checksum.update(data)
+   descriptors.append({'mediaType':'application/vnd.docker.container.image.v1+json' if index==0 else 'application/vnd.docker.image.rootfs.diff.tar.gzip',
+    'size':entry.size,'digest':'sha256:'+checksum.hexdigest()})
+  assert descriptors[0]['digest']=='sha256:d4c23d06faf317e704f3732cb8af970a7b896556d1b8e5c90ac65e3ab744ac10'
+  docker_manifest={'schemaVersion':2,'mediaType':'application/vnd.docker.distribution.manifest.v2+json','config':descriptors[0],'layers':descriptors[1:]}
+  expected_local='sha256:'+sha256(dumps(docker_manifest,separators=(',',':')).encode()).hexdigest()
+  assert digest.stdout.decode().removesuffix('\n')==expected_local, 'Local interpretation changed config/layer identity'
+ record={'status':'verified','same_config_and_compressed_layer_bytes_verified':True,'layers':len(descriptors)-1,'scope':'local_retained_manual_candidate_archive_only',
+ 'preparation':prepared,'crane_full_tarball_validation':True,
+ 'local_crane_manifest_digest':digest.stdout.decode().removesuffix('\n'),
+ 'archive_oci_manifest_digest':'sha256:27ee6d5d4d5a4af23079d2310ca208c5bb4bd6989231fb858934ff9bfb791099',
+ 'registry_manifest_verified':False,'fresh_security_gates_run':False,'publishing_authorized':False,
+ 'external_network_enabled':False,'credentials_used':False,'application_image_executed':False,
+ 'source_sha256':{name:sha256(Path('/review',name).read_bytes()).hexdigest() for name in ['release_input.py','release_command.py']}}
+assert not root.exists()
+record['owned_scratch_removed']=True
+print(dumps(record))

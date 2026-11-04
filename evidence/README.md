@@ -202,6 +202,10 @@ and report retention on an isolated failure. Cloud delivery remains unverified.
   published accessible reports, and provided packages with verified download hashes.
   The build was manually triggered; no source-trigger, release, or deployment gate is claimed.
 
+- [Step 4.3 — Verified crane input preparation](task-04/step-03-release-input.md):
+  exact bounded gzip-to-tar preparation; real retained archive passed full local crane
+  validation and independent config/nine-layer manifest correspondence. 1,192 host tests
+  and existing gates passed. No registry proof, fresh image scan, live Pipeline or deployment.
 - [Step 4.3 — Approved bounded crane retries](task-04/step-03-release-retries.md):
   real pinned-crane HTTP-503 retries and deadline cutoff against a synthetic, network-isolated
   registry; 24 process tests and 1,164 host tests passed. No production uploader integration,

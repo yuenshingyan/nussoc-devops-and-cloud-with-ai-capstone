@@ -1,0 +1,4 @@
+{
+  "scripts/release_input.py": "e76bb9f388dc6ceb953e5a123447439805bfa533f2c271582a7fa8f1b6d320b2",
+  "tests/unit/test_release_input.py": "cf6b69d371add7b0bd74cd625945efe9d61df9470a5e989f3024a9abe7010c6d"
+}
